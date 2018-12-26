@@ -41,7 +41,7 @@ namespace BAPSPresenter2
             loginAttempt = 0;
             /** Get the default server and port from the config system **/
             Server = ConfigManager.getConfigValueString("ServerAddress", "localhost");
-            PortText = ConfigManager.getConfigValueString("ServerPort", "1350");
+            PortText = ConfigManager.getConfigValueString("ServerPort", Properties.Resources.DefaultPort);
             /** Get the default username and password from the config system **/
             Username = ConfigManager.getConfigValueString("DefaultUsername", "");
             Password = ConfigManager.getConfigValueString("DefaultPassword", "");

@@ -97,7 +97,7 @@ namespace BAPSPresenter2
             catch (System.Exception)
             {
                 System.Windows.Forms.MessageBox.Show("You must enter a number (1-65535).", "Port error:", System.Windows.Forms.MessageBoxButtons.OK);
-                portText.Text = "1350";
+                PortText = Properties.Resources.DefaultPort;
             }
         }
         void Textbox_Enter(object sender, System.EventArgs e)
@@ -113,17 +113,17 @@ namespace BAPSPresenter2
         /// </summary>
         private void InitializeComponent()
         {
-            this.passwordLabel = (new System.Windows.Forms.Label());
-            this.passwordText = (new System.Windows.Forms.TextBox());
-            this.usernameText = (new System.Windows.Forms.TextBox());
-            this.usernameLabel = (new System.Windows.Forms.Label());
-            this.portLabel = (new System.Windows.Forms.Label());
-            this.label1 = (new System.Windows.Forms.Label());
-            this.portText = (new System.Windows.Forms.TextBox());
-            this.helpProvider1 = (new System.Windows.Forms.HelpProvider());
-            this.loginButton = (new System.Windows.Forms.Button());
-            this.cancelButton = (new System.Windows.Forms.Button());
-            this.serverText = (new System.Windows.Forms.ComboBox());
+            this.passwordLabel = new System.Windows.Forms.Label();
+            this.passwordText = new System.Windows.Forms.TextBox();
+            this.usernameText = new System.Windows.Forms.TextBox();
+            this.usernameLabel = new System.Windows.Forms.Label();
+            this.portLabel = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.portText = new System.Windows.Forms.TextBox();
+            this.helpProvider1 = new System.Windows.Forms.HelpProvider();
+            this.loginButton = new System.Windows.Forms.Button();
+            this.cancelButton = new System.Windows.Forms.Button();
+            this.serverText = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // passwordLabel
@@ -145,7 +145,7 @@ namespace BAPSPresenter2
             this.passwordText.Size = new System.Drawing.Size(125, 21);
             this.passwordText.TabIndex = 1;
             this.passwordText.UseSystemPasswordChar = true;
-            this.passwordText.Enter += connectionText_TextChanged;
+            this.passwordText.Enter += new System.EventHandler(this.Textbox_Enter);
             // 
             // usernameText
             // 
@@ -155,7 +155,7 @@ namespace BAPSPresenter2
             this.usernameText.Name = "usernameText";
             this.usernameText.Size = new System.Drawing.Size(125, 21);
             this.usernameText.TabIndex = 0;
-            this.usernameText.Enter += Textbox_Enter;
+            this.usernameText.Enter += new System.EventHandler(this.Textbox_Enter);
             // 
             // usernameLabel
             // 
@@ -192,9 +192,8 @@ namespace BAPSPresenter2
             this.portText.Name = "portText";
             this.portText.Size = new System.Drawing.Size(125, 21);
             this.portText.TabIndex = 7;
-            this.portText.Text = "1350";
-            this.portText.TextChanged += connectionText_TextChanged;
-            this.portText.Enter += Textbox_Enter;
+            this.portText.TextChanged += new System.EventHandler(this.connectionText_TextChanged);
+            this.portText.Enter += new System.EventHandler(this.Textbox_Enter);
             // 
             // loginButton
             // 
@@ -205,7 +204,7 @@ namespace BAPSPresenter2
             this.loginButton.TabIndex = 18;
             this.loginButton.Text = "Login";
             this.loginButton.UseVisualStyleBackColor = true;
-            this.loginButton.Click += loginButton_Click;
+            this.loginButton.Click += new System.EventHandler(this.loginButton_Click);
             // 
             // cancelButton
             // 
@@ -217,13 +216,17 @@ namespace BAPSPresenter2
             this.cancelButton.TabIndex = 19;
             this.cancelButton.Text = "Cancel";
             this.cancelButton.UseVisualStyleBackColor = true;
-            this.cancelButton.Click += cancelButton_Click;
+            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
             // 
             // serverText
             // 
             this.serverText.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.serverText.FormattingEnabled = true;
-            this.serverText.Items.AddRange(new object[] { "localhost", "studio1", "studio2", "production" });
+            this.serverText.Items.AddRange(new object[] {
+            "localhost",
+            "studio1",
+            "studio2",
+            "production"});
             this.serverText.Location = new System.Drawing.Point(82, 63);
             this.serverText.Name = "serverText";
             this.serverText.Size = new System.Drawing.Size(125, 21);
@@ -232,13 +235,12 @@ namespace BAPSPresenter2
             // LoginDialog
             // 
             this.AcceptButton = this.loginButton;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6, 13);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ButtonFace;
             this.CancelButton = this.cancelButton;
             this.ClientSize = new System.Drawing.Size(219, 152);
             this.ControlBox = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Controls.Add(this.serverText);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.loginButton);
@@ -249,13 +251,15 @@ namespace BAPSPresenter2
             this.Controls.Add(this.passwordText);
             this.Controls.Add(this.usernameText);
             this.Controls.Add(this.usernameLabel);
-            this.Font = (new System.Drawing.Font("Tahoma", 8.25f, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
-                (byte)0));
+            this.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.Icon = Properties.Resources.Icon;
+            this.Icon = global::BAPSPresenter2.Properties.Resources.Icon;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "LoginDialog";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "BAPS Presenter: Please Login";
-            this.Load += LoginDialog_Load;
+            this.Load += new System.EventHandler(this.LoginDialog_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

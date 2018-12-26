@@ -278,6 +278,7 @@ namespace BAPSPresenter2
             /** It needs to be synchronized so that enqueue and dequeue are atomic **/
             msgQueue = System.Collections.Queue.Synchronized(msgQueue);
             /** Add the autoupdate message onto the queue (chat(2) and general(1)) **/
+            /** Add the autoupdate message onto the queue (chat(2) and general(1)) **/
             Command cmd = Command.SYSTEM | Command.AUTOUPDATE | (Command)2 | (Command)1;
             msgQueue.Enqueue(new ActionMessage((ushort)cmd));
             for (int i = 0; i < 3; i++)

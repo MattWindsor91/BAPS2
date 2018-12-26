@@ -61,6 +61,15 @@ namespace BAPSPresenter2.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 1350.
+        /// </summary>
+        internal static string DefaultPort {
+            get {
+                return ResourceManager.GetString("DefaultPort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon Icon {
