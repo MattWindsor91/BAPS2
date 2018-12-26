@@ -47,7 +47,7 @@ namespace BAPSPresenter2
                     try
                     {
                         /** Attempt to make a connection to the specified server **/
-                        clientSocket = new ClientSocket(login.getServer(), login.getPort());
+                        clientSocket = new ClientSocket(login.Server, login.Port);
                     }
                     catch (System.Exception e)
                     {
@@ -88,13 +88,13 @@ namespace BAPSPresenter2
                     wasServerError = false;
                 }
                 /** Encrypt the password **/
-                var securedPassword = md5sum(string.Concat(randomSecurityString, md5sum(login.getPassword())));
+                var securedPassword = md5sum(string.Concat(randomSecurityString, md5sum(login.Password)));
                 /** Send LOGIN command **/
                 clientSocket.send((ushort)(Command.SYSTEM | Command.LOGIN | 0));
                 /** Send correct command length **/
-                clientSocket.send((uint)(login.getUsername().Length + securedPassword.Length));
+                clientSocket.send((uint)(login.Username.Length + securedPassword.Length));
                 /** Send username **/
-                clientSocket.send(login.getUsername());
+                clientSocket.send(login.Username);
                 /** Send encrypted password **/
                 clientSocket.send(securedPassword);
                 /** Receive what should be the login result **/
@@ -122,7 +122,7 @@ namespace BAPSPresenter2
                     }
                 }
             }
-            username = login.getUsername();
+            username = login.Username;
             /** Do the form initialization **/
             InitializeComponent();
 

@@ -16,6 +16,39 @@ namespace BAPSPresenter2
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
+            if (msgQueue != null)
+            {
+                /** When we die it is only fair to tell the server **/
+                var cmd = Command.SYSTEM | Command.END;
+                msgQueue.Enqueue(new ActionMessageString((ushort)cmd, "Normal Termination"));
+                /** Wait 500ms for the command to be sent **/
+                int timeout = 500;
+                while (msgQueue.Count > 0 && timeout > 0)
+                {
+                    System.Threading.Thread.Sleep(1);
+                    timeout--;
+                }
+            }
+            /** Notify the send/receive threads they should die **/
+            dead = true;
+            /** Empty the config cache **/
+            ConfigCache.closeConfigCache();
+            /** Force the receive thread to abort FIRST so that we cant receive
+                any messages that need automatic responses **/
+            if (receiverThread != null)
+            {
+                receiverThread.Abort();
+                receiverThread.Join();
+            }
+            /** Force the sender thread to die (should be dead already) **/
+            if (senderThread != null)
+            {
+                senderThread.Abort();
+                senderThread.Join();
+            }
+            /** Close the connection properly **/
+            clientSocket?.Dispose();
+
             if (disposing && (components != null))
             {
                 components.Dispose();
