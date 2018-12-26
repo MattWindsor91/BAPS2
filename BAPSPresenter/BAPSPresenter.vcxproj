@@ -245,7 +245,6 @@ copy bapserror.log ..\release\</Command>
     <ClCompile Include="AudioWall.cpp" />
     <ClCompile Include="BAPSButton.cpp" />
     <ClCompile Include="BAPSLabel.cpp" />
-    <ClCompile Include="BAPSListBox.cpp" />
     <ClCompile Include="BAPSPresenter.cpp" />
     <ClCompile Include="BAPSPresenterMain.cpp" />
     <ClCompile Include="BAPSPresenterMainEvents.cpp" />
@@ -256,7 +255,6 @@ copy bapserror.log ..\release\</Command>
     <ClCompile Include="BAPSPresenterMainReactions_playlist.cpp" />
     <ClCompile Include="BAPSPresenterMainReactions_system.cpp" />
     <ClCompile Include="BAPSPresenter_TrackList.cpp" />
-    <ClCompile Include="BAPSScrollBar.cpp" />
     <ClCompile Include="ClientSocket.cpp" />
     <ClCompile Include="ConfigDialog.cpp" />
     <ClCompile Include="ConfigManager.cpp" />
@@ -302,11 +300,9 @@ copy bapserror.log ..\release\</Command>
     </ClInclude>
     <ClInclude Include="BAPSButton.h" />
     <ClInclude Include="BAPSLabel.h" />
-    <ClInclude Include="BAPSListBox.h" />
     <ClInclude Include="BAPSPresenterMain.h">
       <FileType>CppForm</FileType>
     </ClInclude>
-    <ClInclude Include="BAPSScrollBar.h" />
     <ClInclude Include="ClientHelpers.h" />
     <ClInclude Include="ClientSocket.h" />
     <ClInclude Include="ConfigCache.h" />

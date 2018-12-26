@@ -14,7 +14,6 @@
 #include "TrackList.h"
 #include "BAPSButton.h"
 #include "BAPSLabel.h"
-#include "BAPSListBox.h"
 #include "TimeLine.h"
 #include "ConfigManager.h"
 
