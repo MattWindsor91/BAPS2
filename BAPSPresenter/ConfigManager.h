@@ -5,7 +5,7 @@
  *  and their accessors
 **/
 
-ref class ConfigManager
+public ref class ConfigManager
 {
 public:
 	static void initConfigManager();

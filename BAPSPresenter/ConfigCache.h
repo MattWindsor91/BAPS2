@@ -25,7 +25,7 @@ namespace BAPSPresenter
 		option from the server. It will then associate the result with the
 		name you asked for.
 	**/
-	ref class ConfigCache
+	public ref class ConfigCache
 	{
 	public:
 		/** This is a static class so initialize all the static members **/

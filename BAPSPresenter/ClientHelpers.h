@@ -19,7 +19,7 @@ namespace BAPSPresenter
 	delegate void MethodInvokerStrStrStr(System::String^,System::String^,System::String^);
 
 	/** Used for the addfile buttons' tags **/
-	ref struct ChannelDirectoryLookup
+	public ref struct ChannelDirectoryLookup
 	{
 		int channel;
 		int directory;
@@ -27,7 +27,7 @@ namespace BAPSPresenter
 			: channel(_channel), directory(_directory){};
 	};
 	/** Used for the operation buttons' tags **/
-	ref struct ChannelOperationLookup
+	public ref struct ChannelOperationLookup
 	{
 		int channel;
 		Command co;
@@ -39,7 +39,7 @@ namespace BAPSPresenter
 	#define PLAYLIST_MOVEDOWN		1
 	#define PLAYLIST_DELETEITEM		2
 	/** Used for the up down delete item buttons' tags **/
-	ref struct ChannelPlaylistOperationLookup
+	public ref struct ChannelPlaylistOperationLookup
 	{
 		int channel;
 		int operation;
@@ -47,7 +47,7 @@ namespace BAPSPresenter
 			: channel(_channel), operation(_operation){};
 	};
 
-	ref struct FolderTempStruct
+	public ref struct FolderTempStruct
 	{
 		int fromIndex;
 		int fromFolder;
@@ -56,7 +56,7 @@ namespace BAPSPresenter
 		{}
 	};
 
-	ref struct ChannelTimeoutStruct
+	public ref struct ChannelTimeoutStruct
 	{
 		int channel;
 		int timeout;
@@ -64,7 +64,7 @@ namespace BAPSPresenter
 			:channel(_channel), timeout(_timeout)
 		{}
 	};
-	ref struct CountDownState
+	public ref struct CountDownState
 	{
 		int channel;
 		bool startAt;

@@ -24,7 +24,7 @@ namespace BAPSPresenter2
         }
 
         /** Flag to say if the client crashed **/
-        private bool crashed;
+        private bool crashed = false;
         // Accessor for the crashed variable.
         public bool hasCrashed { get => crashed; }
 
@@ -32,7 +32,7 @@ namespace BAPSPresenter2
             in the case of the receive loop, the flag will not take effect
             until data is received, so an abort message is still required
         **/
-        private bool dead;
+        private bool dead = false;
 
         /** A handle for the connection to the server **/
         private ClientSocket clientSocket;
@@ -52,13 +52,13 @@ namespace BAPSPresenter2
         private System.Collections.Queue msgQueue;
 
         /** Sub-form handles **/
-        RecordLibrarySearch recordLibrarySearch;
-        ConfigDialog configDialog;
-        LoadShowDialog loadShowDialog;
-        SecurityDialog securityDialog;
-        About about;
-        TextDialog textDialog;
-        AudioWall audioWall;
+        RecordLibrarySearch recordLibrarySearch = null;
+        ConfigDialog configDialog = null;
+        LoadShowDialog loadShowDialog = null;
+        SecurityDialog securityDialog = null;
+        About about = null;
+        TextDialog textDialog = null;
+        AudioWall audioWall = null;
 
         /** Arrays with channel number indices for easy updating **/
         private ListBox[] directoryList;
@@ -94,9 +94,6 @@ namespace BAPSPresenter2
         private ToolStripSeparator toolStripSeparator4;
         private ToolStripMenuItem showAudioWallToolStripMenuItem;
         private TimeLine timeLine;
-        private Label label1;
-        private Label label2;
-        private Label label4;
         private ListBox Directory0;
         private ListBox Directory1;
         private ListBox Directory2;
@@ -105,9 +102,6 @@ namespace BAPSPresenter2
         private Button Directory0Refresh;
         private Button Directory1Refresh;
         private Button Directory2Refresh;
-        private Button button1;
-        private Button button2;
-        private Button button3;
         private Button Channel0Play;
         private Button Channel0Pause;
         private Button Channel0Stop;
@@ -124,7 +118,22 @@ namespace BAPSPresenter2
         TrackList[] trackList;
 
 
-        #region PLAYBACK functions
+        /** Generate an md5 sum of the raw argument **/
+        private string md5sum(string raw)
+        {
+            var md5serv = System.Security.Cryptography.MD5CryptoServiceProvider.Create();
+            var stringbuff = new System.Text.StringBuilder();
+            var buffer = System.Text.Encoding.ASCII.GetBytes(raw);
+            var hash = md5serv.ComputeHash(buffer);
+
+            foreach (var h in hash)
+            {
+                stringbuff.Append(h.ToString("x2"));
+            }
+            return stringbuff.ToString();
+        }
+
+#region PLAYBACK functions
 
         private void showChannelOperation(object _channel, object _operation) { }
         private void showPosition(object _channel, object _value) { }
@@ -134,18 +143,18 @@ namespace BAPSPresenter2
         private void showCuePosition(object _channel, object _cuePosition) { }
         private void showIntroPosition(object _channel, object _introPosition) { }
 
-        #endregion PLAYBACK functions
+#endregion PLAYBACK functions
 
-        #region PLAYLIST functions
+#region PLAYLIST functions
 
         private void addItem(object _channel, object _index, object _type, string entry) { }
         private void moveItemTo(object _channel, object _oldIndex, object _newIndex) { }
         private void deleteItem(object _channel, object _index) { }
         private void cleanPlaylist(object _channel) { }
 
-        #endregion PLAYLIST functions
+#endregion PLAYLIST functions
 
-        #region DATABASE functions
+#region DATABASE functions
 
         private void addLibraryResult(System.UInt32 index, int dirtyStatus, string result) { }
         private void setLibraryResultCount(int count) { }
@@ -157,9 +166,9 @@ namespace BAPSPresenter2
         private void setListingResultCount(int count) { }
         private void notifyLoadShowError(int errorCode, string message) { }
 
-        #endregion DATABASE functions
+#endregion DATABASE functions
 
-        #region CONFIG functions
+#region CONFIG functions
 
         private void processOption(Command cmdReceived, int optionid, string description, int type) { }
         private void processOptionCount(int count) { }
@@ -176,15 +185,15 @@ namespace BAPSPresenter2
         private void processIPRestrictionCount(Command cmd, int count) { }
         private void processIPRestriction(Command cmd, string ipaddress, int mask) { }
 
-        #endregion CONFIG functions
+#endregion CONFIG functions
 
-        #region SYSTEM functions
+#region SYSTEM functions
 
         private void addFileToDirectoryList(object _directoryIndex, object _fileIndex, string entry) { }
         private void clearFiles(object _directoryIndex, string niceDirectoryName) { }
         private void displayVersion(string version, string date, string time, string author) { }
 
-        #endregion SYSTEM functions
+#endregion SYSTEM functions
 
         /** Enable or disable the timer controls **/
         private void enableTimerControls(bool shouldEnable) { }
@@ -353,13 +362,13 @@ namespace BAPSPresenter2
                         {
                             wasOpen = false;
                             textDialog.Show();
-                            MethodInvokerStr ^ mi = new MethodInvokerStr(textDialog, &TextDialog.updateText);
-                            array < System.Object ^>^ dd = new array < System.Object ^> (1) { MainTextDisplay.Text};
+                            MethodInvokerStr  mi = new MethodInvokerStr(textDialog, &TextDialog.updateText);
+                            array < System.Object > dd = new array < System.Object > (1) { MainTextDisplay.Text};
                             textDialog.Invoke(mi, dd);
                         }
                         if (e.Shift)
                         {
-                            MethodInvoker ^ mi = new MethodInvoker(textDialog, &TextDialog.toggleMaximize);
+                            MethodInvoker  mi = new MethodInvoker(textDialog, &TextDialog.toggleMaximize);
                             textDialog.Invoke(mi);
                         }
                         else if (wasOpen)
@@ -398,6 +407,7 @@ namespace BAPSPresenter2
             uint intArg = (uint)trackBar.Value * 100;
             msgQueue.Enqueue(new ActionMessageU32int((ushort)cmd, intArg));
         }
+
         private void RefreshDirectory_Click(object sender, System.EventArgs e) { }
         private void newChatMessage_TextChanged(object sender, System.EventArgs e) { }
         private void SearchRecordLib_Click(object sender, System.EventArgs e) { }
@@ -422,17 +432,6 @@ namespace BAPSPresenter2
         private BAPSLabel Channel2TimeGone;
         private BAPSLabel Channel2TimeLeft;
         private BAPSLabel Channel2Length;
-
-
-
-
-
-
-
-
-
-
-
 
         private TrackTime trackTime0;
         private TrackTime trackTime1;
