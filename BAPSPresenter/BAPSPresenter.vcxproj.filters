@@ -51,9 +51,6 @@
     <ClCompile Include="BAPSLabel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BAPSPresenter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="BAPSPresenter_TrackList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
