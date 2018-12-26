@@ -23,7 +23,7 @@ namespace BAPSPresenter
 		CHANGE_COPY
 	};
 
-	ref struct TrackListDragDrop
+	public ref struct TrackListDragDrop
 	{
 		int fromIndex;
 		int fromChannel;
@@ -34,7 +34,7 @@ namespace BAPSPresenter
 		{}
 	};
 
-	ref struct EntryInfo
+	public ref struct EntryInfo
 	{
 		int type;
 		System::String^ description;
@@ -48,7 +48,7 @@ namespace BAPSPresenter
 		}
 	};
 
-	ref class RequestChangeEventArgs : System::EventArgs
+	public ref class RequestChangeEventArgs : System::EventArgs
 	{
 	public:
 		RequestChangeEventArgs(int _channel, ChangeType _ct, int _index)
@@ -62,7 +62,7 @@ namespace BAPSPresenter
 		int index2;
 		int channel;
 	};
-	delegate void RequestChangeEventHandler(System::Object^, RequestChangeEventArgs^);
+	public delegate void RequestChangeEventHandler(System::Object^, RequestChangeEventArgs^);
 
 	public ref class TrackListDesigner: public System::Windows::Forms::Design::ControlDesigner
 	{
@@ -85,7 +85,7 @@ namespace BAPSPresenter
 	};
 
 	[DesignerAttribute(TrackListDesigner::typeid)]
-	ref class TrackList : System::Windows::Forms::Control
+	public ref class TrackList : System::Windows::Forms::Control
     {
 	public:
 		System::Collections::Generic::List<EntryInfo^>^ items;

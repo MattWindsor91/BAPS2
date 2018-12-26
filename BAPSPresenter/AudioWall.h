@@ -25,7 +25,7 @@ namespace BAPSPresenter {
 	///          the designers will not be able to interact properly with localized
 	///          resources associated with this form.
 	/// </summary>
-	private ref class AudioWall : public System::Windows::Forms::Form
+	public ref class AudioWall : public System::Windows::Forms::Form
 	{
 	public:
 		AudioWall(BAPSPresenterMain^ _bapsPresenterMain, System::Collections::Queue^ _msgQueue, TrackList^ _tl)

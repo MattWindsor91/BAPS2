@@ -14,10 +14,10 @@ namespace BAPSPresenter2
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            var main = new BAPSPresenter.BAPSPresenterMain();
+            var main = new Main();
             Application.Run(main);
 
-            bool crashed = main.hasCrashed();
+            bool crashed = main.hasCrashed;
             Application.Exit();
             if (crashed)
             {

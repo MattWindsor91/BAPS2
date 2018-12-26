@@ -8,7 +8,7 @@
 
 namespace BAPSPresenter
 {
-	ref class ActionMessage
+	public ref class ActionMessage
 	{
 	protected:
 		Command cmd;

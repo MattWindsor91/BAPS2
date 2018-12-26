@@ -8,7 +8,7 @@
 
 namespace BAPSPresenter
 {
-	ref class ActionMessageStringStringString: public ActionMessage
+	public ref class ActionMessageStringStringString: public ActionMessage
 	{
 		System::String ^s1, ^s2, ^s3;
 

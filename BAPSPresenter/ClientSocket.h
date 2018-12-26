@@ -10,7 +10,7 @@
 **/
 namespace BAPSPresenter
 {
-	ref class ClientSocket
+	public ref class ClientSocket
 	{
 	public:
 		/** Create and connect a socket **/
