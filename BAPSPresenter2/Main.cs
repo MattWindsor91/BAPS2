@@ -362,7 +362,7 @@ namespace BAPSPresenter2
                                         {
                                             var duration = clientSocket.receiveI();
                                             Invoke((Action<ushort, uint>)showDuration, channel, duration);
-                                            Invoke((Action<ushort, uint>)showPosition, channel, 0);
+                                            Invoke((Action<ushort, uint>)showPosition, channel, 0U);
                                         }
                                         break;
                                     case Command.VOIDITEM:
@@ -377,8 +377,8 @@ namespace BAPSPresenter2
                                         }
                                         break;
                                     default:
-                                        Invoke((Action<ushort, uint>)showDuration, channel, 0);
-                                        Invoke((Action<ushort, uint>)showPosition, channel, 0);
+                                        Invoke((Action<ushort, uint>)showDuration, channel, 0U);
+                                        Invoke((Action<ushort, uint>)showPosition, channel, 0U);
                                         break;
                                 }
                             }
@@ -727,6 +727,24 @@ namespace BAPSPresenter2
         /** Loop to watch for an outgoing message on the queue and send it **/
         private void SenderFunc()
         {
+            ActionMessage currentMessage = null;
+            /** Drop out if something goes horribly wrong elsewhere **/
+            while (!dead)
+            {
+                /** Grab a message if there is one **/
+                if (msgQueue.Count > 0)
+                {
+                    currentMessage = (ActionMessage)msgQueue.Dequeue();
+                    currentMessage.sendMsg(clientSocket);
+                    /** Don't sleep if we have just processed a message, it is
+                        likely there will be another
+                    **/
+                }
+                else
+                {
+                    System.Threading.Thread.Sleep(1);
+                }
+            }
         }
     }
 }
