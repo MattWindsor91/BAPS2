@@ -525,12 +525,12 @@ namespace BAPSPresenter2
                                     var optionid = clientSocket.receiveI();
                                     var description = clientSocket.receiveS();
                                     var type = clientSocket.receiveI();
-                                    processOption(cmdReceived, (int)optionid, description, (int)type);
+                                    processOption(cmdReceived, optionid, description, type);
                                 }
                                 else
                                 {
                                     var count = clientSocket.receiveI();
-                                    processOptionCount((int)count);
+                                    processOptionCount(count);
                                 }
                             }
                             break;
@@ -547,7 +547,7 @@ namespace BAPSPresenter2
                                 {
                                     var optionid = clientSocket.receiveI();
                                     var count = clientSocket.receiveI();
-                                    processChoiceCount((int)optionid, (int)count);
+                                    processChoiceCount(optionid, count);
                                 }
                             }
                             break;
@@ -569,14 +569,14 @@ namespace BAPSPresenter2
                             {
                                 var optionid = clientSocket.receiveI();
                                 var result = clientSocket.receiveI();
-                                processConfigResult(cmdReceived, (int)optionid, (int)result);
+                                processConfigResult(cmdReceived, optionid, result);
                             }
                             break;
                         case Command.CONFIGERROR:
                             {
                                 var errorCode = cmdReceived & Command.CONFIG_VALUEMASK;
                                 var description = clientSocket.receiveS();
-                                processConfigError((int)errorCode, description);
+                                processConfigError((uint)errorCode, description);
                             }
                             break;
                         case Command.USER:
@@ -585,12 +585,12 @@ namespace BAPSPresenter2
                                 {
                                     var username = clientSocket.receiveS();
                                     var permissions = clientSocket.receiveI();
-                                    processUserInfo(username, (int)permissions);
+                                    processUserInfo(username, permissions);
                                 }
                                 else
                                 {
                                     var count = clientSocket.receiveI();
-                                    processUserCount((int)count);
+                                    processUserCount(count);
                                 }
                             }
                             break;
@@ -600,12 +600,12 @@ namespace BAPSPresenter2
                                 {
                                     var permissionCode = clientSocket.receiveI();
                                     var description = clientSocket.receiveS();
-                                    processPermissionInfo((int)permissionCode, description);
+                                    processPermissionInfo(permissionCode, description);
                                 }
                                 else
                                 {
                                     var count = clientSocket.receiveI();
-                                    processPermissionCount((int)count);
+                                    processPermissionCount(count);
                                 }
                             }
                             break;
@@ -613,7 +613,7 @@ namespace BAPSPresenter2
                             {
                                 var resultCode = cmdReceived & Command.CONFIG_VALUEMASK;
                                 var description = clientSocket.receiveS();
-                                processUserResult((int)resultCode, description);
+                                processUserResult((uint)resultCode, description);
                             }
                             break;
                         case Command.IPRESTRICTION:
@@ -622,12 +622,12 @@ namespace BAPSPresenter2
                                 {
                                     var ipaddress = clientSocket.receiveS();
                                     var mask = clientSocket.receiveI();
-                                    processIPRestriction(cmdReceived, ipaddress, (int)mask);
+                                    processIPRestriction(cmdReceived, ipaddress, mask);
                                 }
                                 else
                                 {
                                     var count = clientSocket.receiveI();
-                                    processIPRestrictionCount(cmdReceived, (int)count);
+                                    processIPRestrictionCount(cmdReceived, count);
                                 }
                             }
                             break;

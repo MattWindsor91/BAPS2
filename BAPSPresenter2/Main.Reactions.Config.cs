@@ -17,125 +17,117 @@ namespace BAPSPresenter2
             ConfigCache.addOptionChoice((int)optionid, (int)choiceIndex, choiceDescription);
             /** Ignore if the config dialog is closed **/
             var cd = configDialog;
-            if (cd != null)
+            if (cd == null) return;
+            try
             {
-                try
+                cd.closeMutex.WaitOne();
+                if (cd.Visible)
                 {
-                    cd.closeMutex.WaitOne();
-                    if (cd.Visible)
-                    {
-                        configDialog.Invoke((Action<object, object, string>)configDialog.addChoice, optionid, choiceIndex, choiceDescription);
-                    }
+                    cd.Invoke((Action<object, object, string>)configDialog.addChoice, optionid, choiceIndex, choiceDescription);
                 }
-                catch (Exception e)
-        		{
-                    var error = string.Concat("Failed to process choice:\n", e.Message, "\nStack Trace:\n", e.StackTrace);
-                    logError(error);
-                }
-                finally
-                {
-                    cd.closeMutex.ReleaseMutex();
-                }
+            }
+            catch (Exception e)
+            {
+                var error = string.Concat("Failed to process choice:\n", e.Message, "\nStack Trace:\n", e.StackTrace);
+                logError(error);
+            }
+            finally
+            {
+                cd.closeMutex.ReleaseMutex();
             }
         }
 
-        void processChoiceCount(int optionid, int count)
+        void processChoiceCount(uint optionid, uint count)
         {
             /** Ignore if the config dialog is closed **/
             var cd = configDialog;
-            if (cd != null)
+            if (cd == null) return;
+            try
             {
-                try
+                cd.closeMutex.WaitOne();
+                if (cd.Visible)
                 {
-                    cd.closeMutex.WaitOne();
-                    if (cd.Visible)
-                    {
-                        configDialog.Invoke((Action<object, object>)configDialog.setChoiceCount, optionid, count);
-                    }
+                    cd.Invoke((Action<object, object>)configDialog.setChoiceCount, optionid, count);
                 }
-                catch (Exception e)
-        		{
-                    var error = string.Concat("Failed to process choice count:\n", e.Message, "\nStack Trace:\n", e.StackTrace);
-                    logError(error);
-                }
-                finally
-                {
-                    cd.closeMutex.ReleaseMutex();
-                }
+            }
+            catch (Exception e)
+            {
+                var error = string.Concat("Failed to process choice count:\n", e.Message, "\nStack Trace:\n", e.StackTrace);
+                logError(error);
+            }
+            finally
+            {
+                cd.closeMutex.ReleaseMutex();
             }
         }
 
-        void processOption(Command cmdReceived, int optionid, string description, int type)
+        void processOption(Command cmdReceived, uint optionid, string description, uint type)
         {
             /** Cache this info **/
-            ConfigCache.addOptionDescription(optionid, type, description, ((cmdReceived & Command.CONFIG_USEVALUEMASK) != 0));
+            ConfigCache.addOptionDescription((int)optionid, (int)type, description, (cmdReceived & Command.CONFIG_USEVALUEMASK) != 0);
             /** Pass onto the config dialog if available **/
             var cd = configDialog;
-            if (cd != null)
+            if (cd == null) return;
+            try
             {
-                try
+                cd.closeMutex.WaitOne();
+                if (cd.Visible)
                 {
-                    cd.closeMutex.WaitOne();
-                    if (cd.Visible)
+                    /** Check for an indexed option **/
+                    if (cmdReceived.IsFlagSet(Command.CONFIG_USEVALUEMASK))
                     {
-                        /** Check for an indexed option **/
-                        if (cmdReceived.IsFlagSet(Command.CONFIG_USEVALUEMASK))
-                        {
-                            /** Indexed option - does not update the form UI just data **/
-                            var indexid = (ushort) (cmdReceived & Command.CONFIG_VALUEMASK);
-                            configDialog.addOption(new ConfigOptionInfo(optionid, description, type, indexid));
-                        }
-                        else
-                        {
-                            /** Non indexed option - does not update the form ui just data **/
-                            configDialog.addOption(new ConfigOptionInfo(optionid, description, type));
-                        }
-                        /** The configDialog form knows how many options it is expecting and
-                            will report true when it has them all, at this point it is able to
-                            draw itself
-                        **/
-                        if (configDialog.isReadyToShow())
-                        {
-                            /** Tell the form to draw its controls **/
-                            configDialog.Invoke((Action)configDialog.updateUI);
-                        }
+                        /** Indexed option - does not update the form UI just data **/
+                        var indexid = (ushort)(cmdReceived & Command.CONFIG_VALUEMASK);
+                        cd.addOption(new ConfigOptionInfo((int)optionid, description, (int)type, indexid));
+                    }
+                    else
+                    {
+                        /** Non indexed option - does not update the form ui just data **/
+                        cd.addOption(new ConfigOptionInfo((int)optionid, description, (int)type));
+                    }
+                    /** The configDialog form knows how many options it is expecting and
+                        will report true when it has them all, at this point it is able to
+                        draw itself
+                    **/
+                    if (cd.isReadyToShow())
+                    {
+                        /** Tell the form to draw its controls **/
+                        cd.Invoke((Action)configDialog.updateUI);
                     }
                 }
-                catch (Exception e)
-	        	{
-                    var error = string.Concat("Failed to process option:\n", e.Message, "\nStack Trace:\n", e.StackTrace);
-                    logError(error);
-                }
-                finally
-                {
-                    cd.closeMutex.ReleaseMutex();
-                }
+            }
+            catch (Exception e)
+            {
+                var error = string.Concat("Failed to process option:\n", e.Message, "\nStack Trace:\n", e.StackTrace);
+                logError(error);
+            }
+            finally
+            {
+                cd.closeMutex.ReleaseMutex();
             }
         }
 
-        void processOptionCount(int count)
+        void processOptionCount(uint count)
         {
             /** Let the config dialog know how many options to expect **/
             var cd = configDialog;
-            if (cd != null)
+            if (cd == null) return;
+            try
             {
-                try
+                cd.closeMutex.WaitOne();
+                if (cd.Visible)
                 {
-                    cd.closeMutex.WaitOne();
-                    if (cd.Visible)
-                    {
-                        configDialog.setNumberOfOptions(count);
-                    }
+                    cd.setNumberOfOptions((int)count);
                 }
-                catch (Exception e)
-		        {
-                    var error = string.Concat("Failed to process option count:\n", e.Message, "\nStack Trace:\n", e.StackTrace);
-                    logError(error);
-                }
-                finally
-                {
-                    cd.closeMutex.ReleaseMutex();
-                }
+            }
+            catch (Exception e)
+            {
+                var error = string.Concat("Failed to process option count:\n", e.Message, "\nStack Trace:\n", e.StackTrace);
+                logError(error);
+            }
+            finally
+            {
+                cd.closeMutex.ReleaseMutex();
             }
         }
 
@@ -240,7 +232,7 @@ namespace BAPSPresenter2
                     }
                 }
                 catch (Exception e)
-        		{
+                {
                     var error = string.Concat("Failed to process config setting: ", optionid.ToString(), ":\n", e.Message, "\nStack Trace:\n", e.StackTrace);
                     logError(error);
                 }
@@ -251,102 +243,84 @@ namespace BAPSPresenter2
             }
         }
 
-        void processConfigResult(Command cmdReceived, int optionid, int result)
+        void processConfigResult(Command cmdReceived, uint optionid, uint result)
         {
             /** We receive a result for every config setting we try to update **/
             /** Only report these if the form is still open, it is a serious error, if
                 we receive one of these when the form is closing **/
-            if (configDialog != null)
+            if (configDialog == null) return;
+            // NB: indexes don't seem to be used here.
+            try
             {
-                // NB: indexes don't seem to be used here.
-                try
-                {
-                    configDialog.Invoke((Action<object, object>)configDialog.setResult, optionid, result);
-                }
-                catch (Exception e)
-		        {
-                    var error = string.Concat("Failed to process config result:\n", e.Message, "\nStack Trace:\n", e.StackTrace);
-                    logError(error);
-                }
+                configDialog.Invoke((Action<object, object>)configDialog.setResult, optionid, result);
+            }
+            catch (Exception e)
+            {
+                var error = string.Concat("Failed to process config result:\n", e.Message, "\nStack Trace:\n", e.StackTrace);
+                logError(error);
             }
         }
 
-        void processConfigError(int errorCode, string description)
+        void processConfigError(uint errorCode, string description)
         {
-            if (securityDialog != null)
+            if (securityDialog == null) return;
+            securityDialog.Invoke((Action<object, string>)securityDialog.receiveConfigError, errorCode, description);
+        }
+
+        void processUserInfo(string username, uint permissions)
+        {
+            if (securityDialog == null) return;
+            securityDialog.Invoke((Action<string, object>)securityDialog.receiveUserInfo, username, permissions);
+        }
+
+        void processUserCount(uint userCount)
+        {
+            if (securityDialog == null) return;
+            securityDialog.Invoke((Action<object>)securityDialog.receiveUserCount, userCount);
+        }
+
+        void processUserResult(uint resultCode, string description)
+        {
+            if (securityDialog == null) return;
+            securityDialog.Invoke((Action<object, string>)securityDialog.receiveUserResult, resultCode, description);
+        }
+
+        void processPermissionInfo(uint permissionCode, string description)
+        {
+            if (securityDialog == null) return;
+            securityDialog.Invoke((Action<object, string>)securityDialog.receivePermissionInfo, permissionCode, description);
+        }
+
+        void processPermissionCount(uint permissionCount)
+        {
+            if (securityDialog == null) return;
+            securityDialog.Invoke((Action<object>)securityDialog.receivePermissionCount, permissionCount);
+        }
+
+        void processIPRestrictionCount(Command cmd, uint count)
+        {
+            if (securityDialog == null) return;
+            if (cmd.IsFlagSet(Command.CONFIG_USEVALUEMASK))
             {
-                securityDialog.Invoke((Action<object, string>)securityDialog.receiveConfigError, errorCode, description);
+                securityDialog.Invoke((Action<object>)securityDialog.receiveIPDenyCount, count);
+            }
+            else
+            {
+                securityDialog.Invoke((Action<object>)securityDialog.receiveIPAllowCount, count);
             }
         }
 
-        void processUserInfo(string username, int permissions)
+        void processIPRestriction(Command cmd, string ipaddress, uint mask)
         {
-            if (securityDialog != null)
+            if (securityDialog == null) return;
+            if (cmd.IsFlagSet(Command.CONFIG_USEVALUEMASK))
             {
-                securityDialog.Invoke((Action<string, object>)securityDialog.receiveUserInfo, username, permissions);
+                securityDialog.Invoke((Action<string, object>)securityDialog.receiveIPDeny, ipaddress, mask);
             }
-        }
-
-        void processUserCount(int userCount)
-        {
-            if (securityDialog != null)
+            else
             {
-                securityDialog.Invoke((Action<object>)securityDialog.receiveUserCount, userCount);
+                securityDialog.Invoke((Action<string, object>)securityDialog.receiveIPAllow, ipaddress, mask);
             }
         }
-
-        void processUserResult(int resultCode, string description)
-        {
-            if (securityDialog != null)
-            {
-                securityDialog.Invoke((Action<object, string>)securityDialog.receiveUserResult, resultCode, description);
-            }
-        }
-
-        void processPermissionInfo(int permissionCode, string description)
-        {
-            if (securityDialog != null)
-            {
-                securityDialog.Invoke((Action<object, string>)securityDialog.receivePermissionInfo, permissionCode, description);
-            }
-        }
-
-        void processPermissionCount(int permissionCount)
-        {
-            if (securityDialog != null)
-            {
-                securityDialog.Invoke((Action<object>)securityDialog.receivePermissionCount, permissionCount);
-            }
-        }
-
-        void processIPRestrictionCount(Command cmd, int count)
-        {
-            if (securityDialog != null)
-            {
-                if (cmd.IsFlagSet(Command.CONFIG_USEVALUEMASK))
-                {
-                    securityDialog.Invoke((Action<object>)securityDialog.receiveIPDenyCount, count);
-                }
-                else
-                {
-                    securityDialog.Invoke((Action<object>)securityDialog.receiveIPAllowCount, count);
-                }
-            }
-        }
-
-        void processIPRestriction(Command cmd, string ipaddress, int mask)
-        {
-                if (securityDialog != null)
-                {
-                    if (cmd.IsFlagSet(Command.CONFIG_USEVALUEMASK))
-                    {
-                        securityDialog.Invoke((Action<string, object>)securityDialog.receiveIPDeny, ipaddress, mask);
-                    }
-                    else
-                    {
-                        securityDialog.Invoke((Action<string, object>)securityDialog.receiveIPAllow, ipaddress, mask);
-                    }
-                }
-            }
-        }
+    }
 }
