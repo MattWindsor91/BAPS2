@@ -17,13 +17,12 @@ namespace BAPSPresenter2
 
             // Don't initialise this array _before_ initialising the component;
             // else, OnResize will trip a null-pointer exception.
-            buttons = new BAPSButton[20];
-            BAPSButton bapsButton;
+            buttons = new BAPSFormControls.BAPSButton[20];
             for (int i = 0; i < 5; i++)
             {
                 for (int j = 0; j < 4; j++)
                 {
-                    bapsButton = new BAPSButton
+                    var bapsButton = new BAPSFormControls.BAPSButton
                     {
                         BackColor = Color.Transparent,
                         DialogResult = DialogResult.None,
@@ -105,7 +104,7 @@ namespace BAPSPresenter2
 
         private void audioWallClick(object o, EventArgs e)
         {
-            var bb = (BAPSButton)o;
+            var bb = (BAPSFormControls.BAPSButton)o;
             var index = (uint)(int)bb.Tag;  // These two casts are deliberate.
             if (!bb.Highlighted)
             {
@@ -149,6 +148,6 @@ namespace BAPSPresenter2
         System.Collections.Queue msgQueue = null;
         private TrackList tl = null;
 
-        private BAPSButton[] buttons = null;
+        private BAPSFormControls.BAPSButton[] buttons = null;
     }
 }

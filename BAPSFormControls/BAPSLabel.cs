@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace BAPSFormControls
 {
-    public partial class BAPSLabel : Control
+    public partial class BAPSLabel : UserControl
     {
         private System.Drawing.Drawing2D.LinearGradientBrush backBrush = new System.Drawing.Drawing2D.LinearGradientBrush(new Rectangle(0, 0, 10, 10), Color.Tan, Color.Snow, System.Drawing.Drawing2D.LinearGradientMode.Vertical);
         private Bitmap offScreen = new Bitmap(1, 1);
