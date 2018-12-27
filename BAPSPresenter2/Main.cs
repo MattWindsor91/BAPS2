@@ -1,10 +1,18 @@
 ﻿using BAPSPresenter; // Legacy
+using System;
 using System.Windows.Forms;
 
 namespace BAPSPresenter2
 {
     public partial class Main : Form
     {
+        /** This flag is used to cleanly exit the send/receive loops
+            in the case of the receive loop, the flag will not take effect
+            until data is received, so an abort message is still required
+        **/
+        private bool dead = false;
+
+
         public Main()
         {
             ConfigManager.initConfigManager();
@@ -293,13 +301,432 @@ namespace BAPSPresenter2
             enableTimerControls(enableTimers);
 
             /** Start the receive thread so we are ready for the autoupdate messages **/
-            receiverThread = new System.Threading.Thread(receiverFunc);
+            receiverThread = new System.Threading.Thread(ReceiverFunc);
             receiverThread.Start();
             /** Start the sender thread last so that everything is ready for the autoupdate
                 message to be sent and acted upon by the server
             **/
-            senderThread = new System.Threading.Thread(senderFunc);
+            senderThread = new System.Threading.Thread(SenderFunc);
             senderThread.Start();
+        }
+
+        /** Loop to wait for a command and then process it correctly **/
+        private void ReceiverFunc()
+        {
+            while (!dead)
+            {
+                DecodeCommand((Command)clientSocket.receiveC());
+            }
+        }
+
+        /** Helper function to do command decoding **/
+        private void DecodeCommand(Command cmdReceived)
+        {
+            _ /* length */ = clientSocket.receiveI();
+            switch (cmdReceived & Command.GROUPMASK)
+            {
+                case Command.PLAYBACK:
+                    var op = cmdReceived & Command.PLAYBACK_OPMASK;
+                    switch (op)
+                    {
+                        case Command.PLAY:
+                        case Command.PAUSE:
+                        case Command.STOP:
+                            {
+                                var channel = cmdReceived & Command.PLAYBACK_CHANNELMASK;
+                                Invoke((Action<ushort, ushort>)showChannelOperation, channel, op);
+                            }
+                            break;
+                        case Command.POSITION:
+                            {
+                                var channel = cmdReceived & Command.PLAYBACK_CHANNELMASK;
+                                var position = clientSocket.receiveI();
+                                Invoke((Action<ushort, uint>)showPosition, channel, position);
+                            }
+                            break;
+                        case Command.VOLUME:
+                            {
+                                _ = clientSocket.receiveF();
+                            }
+                            break;
+                        case Command.LOAD:
+                            {
+                                var channel = cmdReceived & Command.PLAYLIST_CHANNELMASK;
+                                var index = clientSocket.receiveI();
+                                var type = (Command)clientSocket.receiveI();
+                                var description = clientSocket.receiveS();
+                                switch (type)
+                                {
+                                    case Command.FILEITEM:
+                                    case Command.LIBRARYITEM:
+                                        {
+                                            var duration = clientSocket.receiveI();
+                                            Invoke((Action<ushort, uint>)showDuration, channel, duration);
+                                            Invoke((Action<ushort, uint>)showPosition, channel, 0);
+                                        }
+                                        break;
+                                    case Command.VOIDITEM:
+                                        {
+                                            Invoke((Action<ushort, uint, uint, string>)showLoadedItem, channel, index, type, description);
+                                        }
+                                        break;
+                                    case Command.TEXTITEM:
+                                        {
+                                            var text = clientSocket.receiveS();
+                                            Invoke((Action<ushort, uint, string, string>)showText, channel, index, description, text);
+                                        }
+                                        break;
+                                    default:
+                                        Invoke((Action<ushort, uint>)showDuration, channel, 0);
+                                        Invoke((Action<ushort, uint>)showPosition, channel, 0);
+                                        break;
+                                }
+                            }
+                            break;
+                        case Command.CUEPOSITION:
+                            {
+                                var channel = cmdReceived.Channel();
+                                var cuePosition = clientSocket.receiveI();
+                                Invoke((Action<ushort, uint>)showCuePosition, channel, cuePosition);
+                            }
+                            break;
+                        case Command.INTROPOSITION:
+                            {
+                                var channel = cmdReceived.Channel();
+                                var introPosition = clientSocket.receiveI();
+                                Invoke((Action<ushort, uint>)showIntroPosition, channel, introPosition);
+                            }
+                            break;
+                        default:
+                            {
+                                /** ERROR **/
+                                sendQuit("Received unknown command, possibly a malformed PLAYBACK.\n", false);
+                            }
+                            break;
+                    }
+                    break;
+                case Command.PLAYLIST:
+                    switch (cmdReceived & Command.PLAYLIST_OPMASK)
+                    {
+                        case Command.ITEM:
+                            if (cmdReceived.IsFlagSet(Command.PLAYLIST_MODEMASK))
+                            {
+                                var channel = cmdReceived.Channel();
+                                var index = clientSocket.receiveI();
+                                var type = clientSocket.receiveI();
+                                var description = clientSocket.receiveS();
+                                Invoke((Action<ushort, uint, uint, string>)addItem, channel, index, type, description);
+                            }
+                            else
+                            {
+                                _ = clientSocket.receiveI();
+                            }
+                            break;
+                        case Command.MOVEITEMTO:
+                            {
+                                var channel = cmdReceived.Channel();
+                                var indexFrom = clientSocket.receiveI();
+                                var indexTo = clientSocket.receiveI();
+                                Invoke((Action<ushort, uint, uint>)moveItemTo, channel, indexFrom, indexTo);
+                            }
+                            break;
+                        case Command.DELETEITEM:
+                            {
+                                var channel = cmdReceived.Channel();
+                                var index = clientSocket.receiveI();
+                                Invoke((Action<ushort, uint>)deleteItem, channel, index);
+                            }
+                            break;
+                        case Command.RESETPLAYLIST:
+                            {
+                                var channel = cmdReceived.Channel();
+                                Invoke((Action<ushort>)cleanPlaylist, channel);
+                            }
+                            break;
+                        default:
+                            {
+                                /** ERROR **/
+                                sendQuit("Received unknown command, possibly a malformed PLAYLIST.\n", false);
+                            }
+                            break;
+                    }
+                    break;
+                case Command.DATABASE:
+                    switch (cmdReceived & Command.DATABASE_OPMASK)
+                    {
+                        case Command.LIBRARYRESULT:
+                            {
+                                if (cmdReceived.IsFlagSet(Command.DATABASE_MODEMASK))
+                                {
+                                    var dirtyStatus = (ushort)(cmdReceived & Command.DATABASE_VALUEMASK);
+                                    var resultid = clientSocket.receiveI();
+                                    var description = clientSocket.receiveS();
+                                    addLibraryResult(resultid, dirtyStatus, description);
+                                }
+                                else
+                                {
+                                    var count = clientSocket.receiveI();
+                                    setLibraryResultCount((int)count);
+                                }
+                            }
+                            break;
+                        case Command.LIBRARYERROR:
+                            {
+                                var description = clientSocket.receiveS();
+                                notifyLibraryError((ushort) (cmdReceived & Command.DATABASE_VALUEMASK), description);
+                            }
+                            break;
+                        case Command.SHOW:
+                            if (cmdReceived.IsFlagSet(Command.DATABASE_MODEMASK))
+                            {
+                                var showid = clientSocket.receiveI();
+                                var description = clientSocket.receiveS();
+                                addShowResult(showid, description);
+                            }
+                            else
+                            {
+                                var count = clientSocket.receiveI();
+                                setShowResultCount((int)count);
+                            }
+                            break;
+                        case Command.LISTING:
+                            if (cmdReceived.IsFlagSet(Command.DATABASE_MODEMASK))
+                            {
+                                var listingid = clientSocket.receiveI();
+                                var channel = clientSocket.receiveI();
+                                var description = clientSocket.receiveS();
+                                addListingResult(listingid, channel, description);
+                            }
+                            else
+                            {
+                                var count = clientSocket.receiveI();
+                                setListingResultCount((int) count);
+                            }
+                            break;
+                        case Command.BAPSDBERROR:
+                            /** There is an error code in the command **/
+                            notifyLoadShowError((ushort) (cmdReceived & Command.DATABASE_VALUEMASK), clientSocket.receiveS());
+                            break;
+                        default:
+                            {
+                                /** ERROR **/
+                                sendQuit("Received unknown command, possibly a malformed DATABASE.\n", false);
+                            }
+                            break;
+                    }
+                    break;
+                case Command.CONFIG:
+                    switch (cmdReceived & Command.CONFIG_OPMASK)
+                    {
+                        case Command.OPTION:
+                            {
+                                if (cmdReceived.IsFlagSet(Command.CONFIG_MODEMASK))
+                                {
+                                    var optionid = clientSocket.receiveI();
+                                    var description = clientSocket.receiveS();
+                                    var type = clientSocket.receiveI();
+                                    processOption(cmdReceived, (int)optionid, description, (int)type);
+                                }
+                                else
+                                {
+                                    var count = clientSocket.receiveI();
+                                    processOptionCount((int)count);
+                                }
+                            }
+                            break;
+                        case Command.OPTIONCHOICE:
+                            {
+                                if (cmdReceived.IsFlagSet(Command.CONFIG_MODEMASK))
+                                {
+                                    var optionid = clientSocket.receiveI();
+                                    var choiceIndex = clientSocket.receiveI();
+                                    var choiceDescription = clientSocket.receiveS();
+                                    processChoice(optionid, choiceIndex, choiceDescription);
+                                }
+                                else
+                                {
+                                    var optionid = clientSocket.receiveI();
+                                    var count = clientSocket.receiveI();
+                                    processChoiceCount((int)optionid, (int)count);
+                                }
+                            }
+                            break;
+                        case Command.CONFIGSETTING:
+                            {
+                                if (cmdReceived.IsFlagSet(Command.CONFIG_MODEMASK))
+                                {
+                                    var optionid = clientSocket.receiveI();
+                                    var type = clientSocket.receiveI();
+                                    processConfigSetting(cmdReceived, optionid, (ConfigType)type);
+                                }
+                                else
+                                {
+                                    _ = clientSocket.receiveI();
+                                }
+                            }
+                            break;
+                        case Command.CONFIGRESULT:
+                            {
+                                var optionid = clientSocket.receiveI();
+                                var result = clientSocket.receiveI();
+                                processConfigResult(cmdReceived, (int)optionid, (int)result);
+                            }
+                            break;
+                        case Command.CONFIGERROR:
+                            {
+                                var errorCode = cmdReceived & Command.CONFIG_VALUEMASK;
+                                var description = clientSocket.receiveS();
+                                processConfigError((int)errorCode, description);
+                            }
+                            break;
+                        case Command.USER:
+                            {
+                                if (cmdReceived.IsFlagSet(Command.CONFIG_MODEMASK))
+                                {
+                                    var username = clientSocket.receiveS();
+                                    var permissions = clientSocket.receiveI();
+                                    processUserInfo(username, (int)permissions);
+                                }
+                                else
+                                {
+                                    var count = clientSocket.receiveI();
+                                    processUserCount((int)count);
+                                }
+                            }
+                            break;
+                        case Command.PERMISSION:
+                            {
+                                if (cmdReceived.IsFlagSet(Command.CONFIG_MODEMASK))
+                                {
+                                    var permissionCode = clientSocket.receiveI();
+                                    var description = clientSocket.receiveS();
+                                    processPermissionInfo((int)permissionCode, description);
+                                }
+                                else
+                                {
+                                    var count = clientSocket.receiveI();
+                                    processPermissionCount((int)count);
+                                }
+                            }
+                            break;
+                        case Command.USERRESULT:
+                            {
+                                var resultCode = cmdReceived & Command.CONFIG_VALUEMASK;
+                                var description = clientSocket.receiveS();
+                                processUserResult((int)resultCode, description);
+                            }
+                            break;
+                        case Command.IPRESTRICTION:
+                            {
+                                if (cmdReceived.IsFlagSet(Command.CONFIG_MODEMASK))
+                                {
+                                    var ipaddress = clientSocket.receiveS();
+                                    var mask = clientSocket.receiveI();
+                                    processIPRestriction(cmdReceived, ipaddress, (int)mask);
+                                }
+                                else
+                                {
+                                    var count = clientSocket.receiveI();
+                                    processIPRestrictionCount(cmdReceived, (int)count);
+                                }
+                            }
+                            break;
+                        default:
+                            {
+                                /** ERROR **/
+                                sendQuit("Received unknown command, possibly a malformed CONFIG.\n", false);
+                            }
+                            break;
+                    }
+                    break;
+                case Command.SYSTEM:
+                    switch (cmdReceived & Command.SYSTEM_OPMASK)
+                    {
+                        case Command.SENDLOGMESSAGE:
+                            clientSocket.receiveS();
+                            break;
+                        case Command.FILENAME:
+                            if (cmdReceived.IsFlagSet(Command.SYSTEM_MODEMASK))
+                            {
+                                var directoryIndex = cmdReceived & Command.SYSTEM_VALUEMASK;
+                                var index = clientSocket.receiveI();
+                                var description = clientSocket.receiveS();
+                                Invoke((Action<ushort, uint, string>)addFileToDirectoryList, directoryIndex, index, description);
+                            }
+                            else
+                            {
+                                var directoryIndex = cmdReceived & Command.SYSTEM_VALUEMASK;
+                                _ = clientSocket.receiveI();
+                                var niceDirectoryName = clientSocket.receiveS();
+                                Invoke((Action<ushort, string>)clearFiles, directoryIndex, niceDirectoryName);
+                            }
+                            break;
+                        case Command.VERSION:
+                            {
+                                var version = clientSocket.receiveS();
+                                var date = clientSocket.receiveS();
+                                var time = clientSocket.receiveS();
+                                var author = clientSocket.receiveS();
+                                displayVersion(version, date, time, author);
+                            }
+                            break;
+                        case Command.FEEDBACK:
+                            {
+                                _ = clientSocket.receiveI();
+                            }
+                            break;
+                        case Command.SENDMESSAGE:
+                            {
+                                _ = clientSocket.receiveS();
+                                _ = clientSocket.receiveS();
+                                _ = clientSocket.receiveS();
+                            }
+                            break;
+                        case Command.CLIENTCHANGE:
+                            {
+                                _ = clientSocket.receiveS();
+                            }
+                            break;
+                        case Command.SCROLLTEXT:
+                            {
+                                var updown = cmdReceived & Command.SYSTEM_VALUEMASK;
+                                Invoke((Action<ushort>) (x => textDialog.scroll(x)), updown);
+                            }
+                            break;
+                        case Command.TEXTSIZE:
+                            {
+                                var updown = cmdReceived & Command.SYSTEM_VALUEMASK;
+                                Invoke((Action<ushort>)(x => textDialog.textSize(x)), updown);
+                            }
+                            break;
+                        case Command.QUIT:
+                            {
+                                //The server should send an int representing if this is an expected quit (0) or an exception error (1)."
+                                bool expected = clientSocket.receiveI() == 0;
+                                sendQuit("The Server is shutting down/restarting.\n", expected);
+                            }
+                            break;
+                        default:
+                            {
+                                /** ERROR **/
+                                sendQuit("Received unknown command, possibly a malformed SYSTEM.\n", false);
+                            }
+                            break;
+                    }
+                    break;
+                default:
+                    {
+                        /** ERROR **/
+                        sendQuit("Received unknown command.\n", false);
+                    }
+                    break;
+            }
+
+        }
+
+        /** Loop to watch for an outgoing message on the queue and send it **/
+        private void SenderFunc()
+        {
         }
     }
 }

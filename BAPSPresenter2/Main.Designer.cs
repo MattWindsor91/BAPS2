@@ -61,12 +61,6 @@ namespace BAPSPresenter2
         // Accessor for the crashed variable.
         public bool hasCrashed { get => crashed; }
 
-        /** This flag is used to cleanly exit the send/receive loops
-            in the case of the receive loop, the flag will not take effect
-            until data is received, so an abort message is still required
-        **/
-        private bool dead = false;
-
         /** A handle for the connection to the server **/
         private ClientSocket clientSocket;
 
@@ -168,22 +162,22 @@ namespace BAPSPresenter2
 
 #region PLAYBACK functions
 
-        private void showChannelOperation(object _channel, object _operation) { }
-        private void showPosition(object _channel, object _value) { }
-        private void showLoadedItem(object _channel, object _index, object _itemType, string description) { }
-        private void showDuration(object _channel, object _value) { }
-        private void showText(object _channel, object _index, string description, string text) { }
-        private void showCuePosition(object _channel, object _cuePosition) { }
-        private void showIntroPosition(object _channel, object _introPosition) { }
+        private void showChannelOperation(ushort _channel, ushort _operation) { }
+        private void showPosition(ushort _channel, uint _value) { }
+        private void showLoadedItem(ushort _channel, uint _index, uint _itemType, string description) { }
+        private void showDuration(ushort _channel, uint _value) { }
+        private void showText(ushort _channel, uint _index, string description, string text) { }
+        private void showCuePosition(ushort _channel, uint _cuePosition) { }
+        private void showIntroPosition(ushort _channel, uint _introPosition) { }
 
 #endregion PLAYBACK functions
 
 #region PLAYLIST functions
 
-        private void addItem(object _channel, object _index, object _type, string entry) { }
-        private void moveItemTo(object _channel, object _oldIndex, object _newIndex) { }
-        private void deleteItem(object _channel, object _index) { }
-        private void cleanPlaylist(object _channel) { }
+        private void addItem(ushort _channel, uint _index, uint _type, string entry) { }
+        private void moveItemTo(ushort _channel, uint _oldIndex, uint _newIndex) { }
+        private void deleteItem(ushort _channel, uint _index) { }
+        private void cleanPlaylist(ushort _channel) { }
 
 #endregion PLAYLIST functions
 
@@ -201,29 +195,10 @@ namespace BAPSPresenter2
 
 #endregion DATABASE functions
 
-#region CONFIG functions
-
-        private void processOption(Command cmdReceived, int optionid, string description, int type) { }
-        private void processOptionCount(int count) { }
-        private void processChoice(int optionid, int choiceIndex, string choiceDescription) { }
-        private void processChoiceCount(int optionid, int count) { }
-        private void processConfigSetting(Command cmdReceived, int optionid, int type) { }
-        private void processConfigResult(Command cmdReceived, int optionid, int result) { }
-        private void processConfigError(int errorCode, string description) { }
-        private void processUserInfo(string username, int permissions) { }
-        private void processUserCount(int userCount) { }
-        private void processPermissionInfo(int permissionCode, string description) { }
-        private void processPermissionCount(int permissionCount) { }
-        private void processUserResult(int resultCode, string description) { }
-        private void processIPRestrictionCount(Command cmd, int count) { }
-        private void processIPRestriction(Command cmd, string ipaddress, int mask) { }
-
-#endregion CONFIG functions
-
 #region SYSTEM functions
 
-        private void addFileToDirectoryList(object _directoryIndex, object _fileIndex, string entry) { }
-        private void clearFiles(object _directoryIndex, string niceDirectoryName) { }
+        private void addFileToDirectoryList(ushort _directoryIndex, uint _fileIndex, string entry) { }
+        private void clearFiles(ushort _directoryIndex, string niceDirectoryName) { }
         private void displayVersion(string version, string date, string time, string author) { }
 
 #endregion SYSTEM functions
@@ -232,12 +207,6 @@ namespace BAPSPresenter2
         private void enableTimerControls(bool shouldEnable) { }
         /** Notify AudioWall to Update **/
         private void refreshAudioWall() { }
-        /** Loop to wait for a command and then process it correctly **/
-        private void receiverFunc() { }
-        /** Helper function to do command decoding **/
-        private void decodeCommand(Command cmdReceived) { }
-        /** Loop to watch for an outgoing message on the queue and send it **/
-        private void senderFunc() { }
         /** Function to async send the notify of a Comms Error / allow a way to restart the client. **/
         private void sendQuit(string description, bool silent) { }
         /** Function to notify of a Comms Error **/

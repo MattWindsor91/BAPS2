@@ -134,7 +134,7 @@
 
         /**
          * Config
-        **/
+         **/
         GETOPTIONS = (0 << 8),  //(no args)			OPTION (count-data)
         GETOPTIONCHOICES = (1 << 8),    //u32int optionid 	OPTIONCHOICE (count-data)
         GETCONFIGSETTINGS = (2 << 8),   //(no args)			CONFIGSETTING (count-data)
@@ -211,5 +211,11 @@
 
         //	 [VALUE-1] text bigger
         QUIT = (15 << 8), //(no args)
+    }
+
+    internal static class CommandExtensions
+    {
+        internal static ushort Channel(this Command cmd) => (ushort)(cmd & Command.PLAYBACK_CHANNELMASK);
+        internal static bool IsFlagSet(this Command cmd, Command flag) => (cmd & flag) == flag;
     }
 }
