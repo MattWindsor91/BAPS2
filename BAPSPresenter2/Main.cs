@@ -347,9 +347,9 @@ namespace BAPSPresenter2
         /** Notify AudioWall to Update **/
         private void refreshAudioWall()
         {
-            if (audioWall != null && audioWall.Visible)
+            if (audioWall?.Visible ?? false)
             {
-                audioWall.Invoke((Action)refreshAudioWall);
+                audioWall.Invoke((Action)audioWall.refreshWall);
             }
         }
 

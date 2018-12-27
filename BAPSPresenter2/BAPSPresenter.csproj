@@ -52,6 +52,12 @@
     <Compile Include="AboutDialog.Designer.cs">
       <DependentUpon>AboutDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="AudioWall.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AudioWall.Designer.cs">
+      <DependentUpon>AudioWall.cs</DependentUpon>
+    </Compile>
     <Compile Include="ChangeType.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="ConfigOptions.cs" />
@@ -89,6 +95,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="AboutDialog.resx">
       <DependentUpon>AboutDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AudioWall.resx">
+      <DependentUpon>AudioWall.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="LoginDialog.resx">
       <DependentUpon>LoginDialog.cs</DependentUpon>

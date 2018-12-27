@@ -365,7 +365,7 @@ namespace BAPSPresenter2
                 {
                     newSetting = "No";
                 }
-                msgQueue.Enqueue(new ActionMessageU32intU32intU32int((ushort)cmd, (uint)oci.optionid, (uint)oci.type, (uint)oci.choiceList[newSetting]));
+                msgQueue.Enqueue(new ActionMessageU32intU32intU32int((ushort)cmd, (uint)oci.optionid, (uint)oci.type, (uint)(int)oci.choiceList[newSetting]));
             }
             else if (e.ClickedItem == playOnLoadToolStripMenuItem)
             {
@@ -375,22 +375,22 @@ namespace BAPSPresenter2
                 {
                     newSetting = "No";
                 }
-                msgQueue.Enqueue(new ActionMessageU32intU32intU32int((ushort)cmd, (uint)oci.optionid, (uint)oci.type, (uint)oci.choiceList[newSetting]));
+                msgQueue.Enqueue(new ActionMessageU32intU32intU32int((ushort)cmd, (uint)oci.optionid, (uint)oci.type, (uint)(int)oci.choiceList[newSetting]));
             }
             else if (e.ClickedItem == repeatNoneToolStripMenuItem && !repeatNoneToolStripMenuItem.Checked)
             {
                 var oci = ConfigCache.getOption("Repeat");
-                msgQueue.Enqueue(new ActionMessageU32intU32intU32int((ushort)cmd, (uint)oci.optionid, (uint)oci.type, (uint)oci.choiceList["No repeat"]));
+                msgQueue.Enqueue(new ActionMessageU32intU32intU32int((ushort)cmd, (uint)oci.optionid, (uint)oci.type, (uint)(int)oci.choiceList["No repeat"]));
             }
             else if (e.ClickedItem == repeatOneToolStripMenuItem && !repeatOneToolStripMenuItem.Checked)
             {
                 var oci = ConfigCache.getOption("Repeat");
-                msgQueue.Enqueue(new ActionMessageU32intU32intU32int((ushort)cmd, (uint)oci.optionid, (uint)oci.type, (uint)oci.choiceList["Repeat one"]));
+                msgQueue.Enqueue(new ActionMessageU32intU32intU32int((ushort)cmd, (uint)oci.optionid, (uint)oci.type, (uint)(int)oci.choiceList["Repeat one"]));
             }
             else if (e.ClickedItem == repeatAllToolStripMenuItem && !repeatAllToolStripMenuItem.Checked)
             {
                 var oci = ConfigCache.getOption("Repeat");
-                msgQueue.Enqueue(new ActionMessageU32intU32intU32int((ushort)cmd, (uint)oci.optionid, (uint)oci.type, (uint)oci.choiceList["Repeat all"]));
+                msgQueue.Enqueue(new ActionMessageU32intU32intU32int((ushort)cmd, (uint)oci.optionid, (uint)oci.type, (uint)(int)oci.choiceList["Repeat all"]));
             }
             else if (e.ClickedItem == deleteItemToolStripMenuItem)
             {
@@ -406,10 +406,8 @@ namespace BAPSPresenter2
             {
                 if (audioWall == null || !audioWall.Visible)
                 {
-#if false // TODO(@MattWindsor91): port this
                     audioWall = new AudioWall(this, msgQueue, tl);
                     audioWall.Show();
-#endif
                 }
                 else
                 {
