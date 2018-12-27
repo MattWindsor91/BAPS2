@@ -149,79 +149,87 @@ namespace BAPSPresenter2
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = (new System.ComponentModel.Container());
-            this.trackListContextMenuStrip = (new System.Windows.Forms.ContextMenuStrip(this.components));
-            this.resetChannelStripMenuItem = (new System.Windows.Forms.ToolStripMenuItem());
-            this.toolStripSeparator2 = (new System.Windows.Forms.ToolStripSeparator());
-            this.deleteItemToolStripMenuItem = (new System.Windows.Forms.ToolStripMenuItem());
-            this.toolStripSeparator3 = (new System.Windows.Forms.ToolStripSeparator());
-            this.automaticAdvanceToolStripMenuItem = (new System.Windows.Forms.ToolStripMenuItem());
-            this.playOnLoadToolStripMenuItem = (new System.Windows.Forms.ToolStripMenuItem());
-            this.toolStripSeparator1 = (new System.Windows.Forms.ToolStripSeparator());
-            this.repeatAllToolStripMenuItem = (new System.Windows.Forms.ToolStripMenuItem());
-            this.repeatOneToolStripMenuItem = (new System.Windows.Forms.ToolStripMenuItem());
-            this.repeatNoneToolStripMenuItem = (new System.Windows.Forms.ToolStripMenuItem());
-            this.toolStripSeparator4 = (new System.Windows.Forms.ToolStripSeparator());
-            this.showAudioWallToolStripMenuItem = (new System.Windows.Forms.ToolStripMenuItem());
-            this.MainTextDisplay = (new System.Windows.Forms.TextBox());
-            this.Directory0 = (new System.Windows.Forms.ListBox());
-            this.Directory1 = (new System.Windows.Forms.ListBox());
-            this.Directory2 = (new System.Windows.Forms.ListBox());
-            this.loadShowButton = (new System.Windows.Forms.Button());
-            this.bapsButton1 = (new System.Windows.Forms.Button());
-            this.Directory0Refresh = (new System.Windows.Forms.Button());
-            this.Directory1Refresh = (new System.Windows.Forms.Button());
-            this.Directory2Refresh = (new System.Windows.Forms.Button());
-            this.Channel0Play = (new System.Windows.Forms.Button());
-            this.Channel0Pause = (new System.Windows.Forms.Button());
-            this.Channel0Stop = (new System.Windows.Forms.Button());
-            this.Channel1Play = (new System.Windows.Forms.Button());
-            this.Channel1Pause = (new System.Windows.Forms.Button());
-            this.Channel1Stop = (new System.Windows.Forms.Button());
-            this.Channel2Play = (new System.Windows.Forms.Button());
-            this.Channel2Pause = (new System.Windows.Forms.Button());
-            this.Channel2Stop = (new System.Windows.Forms.Button());
-            this.Channel0LoadedText = (new System.Windows.Forms.Label());
-            this.Channel1LoadedText = (new System.Windows.Forms.Label());
-            this.Channel2LoadedText = (new System.Windows.Forms.Label());
-            this.timeLine = (new BAPSPresenter.TimeLine());
-            this.Channel2Length = (new BAPSFormControls.BAPSLabel());
-            this.Channel1TimeLeft = (new BAPSFormControls.BAPSLabel());
-            this.Channel1Length = (new BAPSFormControls.BAPSLabel());
-            this.trackList0 = (new BAPSPresenter.TrackList());
-            this.Channel0Length = (new BAPSFormControls.BAPSLabel());
-            this.Channel2TimeLeft = (new BAPSFormControls.BAPSLabel());
-            this.Channel0TimeLeft = (new BAPSFormControls.BAPSLabel());
-            this.Channel1TimeGone = (new BAPSFormControls.BAPSLabel());
-            this.Channel2TimeGone = (new BAPSFormControls.BAPSLabel());
-            this.Channel0TimeGone = (new BAPSFormControls.BAPSLabel());
-            this.trackList2 = (new BAPSPresenter.TrackList());
-            this.trackList1 = (new BAPSPresenter.TrackList());
-            this.trackTime1 = (new BAPSPresenter.TrackTime());
-            this.trackTime2 = (new BAPSPresenter.TrackTime());
-            this.trackTime0 = (new BAPSPresenter.TrackTime());
+            this.components = new System.ComponentModel.Container();
+            this.trackListContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.resetChannelStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.deleteItemToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.automaticAdvanceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.playOnLoadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.repeatAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.repeatOneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.repeatNoneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.showAudioWallToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.MainTextDisplay = new System.Windows.Forms.TextBox();
+            this.Directory0 = new System.Windows.Forms.ListBox();
+            this.Directory1 = new System.Windows.Forms.ListBox();
+            this.Directory2 = new System.Windows.Forms.ListBox();
+            this.loadShowButton = new System.Windows.Forms.Button();
+            this.bapsButton1 = new System.Windows.Forms.Button();
+            this.Directory0Refresh = new System.Windows.Forms.Button();
+            this.Directory1Refresh = new System.Windows.Forms.Button();
+            this.Directory2Refresh = new System.Windows.Forms.Button();
+            this.Channel0Play = new System.Windows.Forms.Button();
+            this.Channel0Pause = new System.Windows.Forms.Button();
+            this.Channel0Stop = new System.Windows.Forms.Button();
+            this.Channel1Play = new System.Windows.Forms.Button();
+            this.Channel1Pause = new System.Windows.Forms.Button();
+            this.Channel1Stop = new System.Windows.Forms.Button();
+            this.Channel2Play = new System.Windows.Forms.Button();
+            this.Channel2Pause = new System.Windows.Forms.Button();
+            this.Channel2Stop = new System.Windows.Forms.Button();
+            this.Channel0LoadedText = new System.Windows.Forms.Label();
+            this.Channel1LoadedText = new System.Windows.Forms.Label();
+            this.Channel2LoadedText = new System.Windows.Forms.Label();
+            this.timeLine = new BAPSPresenter.TimeLine();
+            this.trackList0 = new BAPSPresenter.TrackList();
+            this.trackList2 = new BAPSPresenter.TrackList();
+            this.trackList1 = new BAPSPresenter.TrackList();
+            this.trackTime1 = new BAPSPresenter.TrackTime();
+            this.trackTime2 = new BAPSPresenter.TrackTime();
+            this.trackTime0 = new BAPSPresenter.TrackTime();
+            this.Channel2Length = new BAPSFormControls.BAPSLabel();
+            this.Channel1TimeLeft = new BAPSFormControls.BAPSLabel();
+            this.Channel1Length = new BAPSFormControls.BAPSLabel();
+            this.Channel0Length = new BAPSFormControls.BAPSLabel();
+            this.Channel2TimeLeft = new BAPSFormControls.BAPSLabel();
+            this.Channel0TimeLeft = new BAPSFormControls.BAPSLabel();
+            this.Channel1TimeGone = new BAPSFormControls.BAPSLabel();
+            this.Channel2TimeGone = new BAPSFormControls.BAPSLabel();
+            this.Channel0TimeGone = new BAPSFormControls.BAPSLabel();
             this.trackListContextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // trackListContextMenuStrip
             // 
-            this.trackListContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[12] {
-                this.resetChannelStripMenuItem,
-                this.toolStripSeparator2, this.deleteItemToolStripMenuItem, this.toolStripSeparator3, this.automaticAdvanceToolStripMenuItem,
-                this.playOnLoadToolStripMenuItem, this.toolStripSeparator1, this.repeatAllToolStripMenuItem, this.repeatOneToolStripMenuItem,
-                this.repeatNoneToolStripMenuItem, this.toolStripSeparator4, this.showAudioWallToolStripMenuItem});
+            this.trackListContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.resetChannelStripMenuItem,
+            this.toolStripSeparator2,
+            this.deleteItemToolStripMenuItem,
+            this.toolStripSeparator3,
+            this.automaticAdvanceToolStripMenuItem,
+            this.playOnLoadToolStripMenuItem,
+            this.toolStripSeparator1,
+            this.repeatAllToolStripMenuItem,
+            this.repeatOneToolStripMenuItem,
+            this.repeatNoneToolStripMenuItem,
+            this.toolStripSeparator4,
+            this.showAudioWallToolStripMenuItem});
             this.trackListContextMenuStrip.Name = "trackListContextMenuStrip";
             this.trackListContextMenuStrip.ShowCheckMargin = true;
             this.trackListContextMenuStrip.ShowImageMargin = false;
             this.trackListContextMenuStrip.Size = new System.Drawing.Size(178, 204);
-            this.trackListContextMenuStrip.ItemClicked += trackListContextMenuStrip_ItemClicked;
-            this.trackListContextMenuStrip.Opening += trackListContextMenuStrip_Opening;
+            this.trackListContextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.trackListContextMenuStrip_Opening);
+            this.trackListContextMenuStrip.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.trackListContextMenuStrip_ItemClicked);
             // 
             // resetChannelStripMenuItem
             // 
             this.resetChannelStripMenuItem.Name = "resetChannelStripMenuItem";
             this.resetChannelStripMenuItem.Size = new System.Drawing.Size(177, 22);
-            this.resetChannelStripMenuItem.Text = "&Reset Channe";
+            this.resetChannelStripMenuItem.Text = "&Reset Channel";
             // 
             // toolStripSeparator2
             // 
@@ -260,7 +268,7 @@ namespace BAPSPresenter2
             // 
             this.repeatAllToolStripMenuItem.Name = "repeatAllToolStripMenuItem";
             this.repeatAllToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
-            this.repeatAllToolStripMenuItem.Text = "Repeat a&l";
+            this.repeatAllToolStripMenuItem.Text = "Repeat a&ll";
             // 
             // repeatOneToolStripMenuItem
             // 
@@ -283,14 +291,13 @@ namespace BAPSPresenter2
             // 
             this.showAudioWallToolStripMenuItem.Name = "showAudioWallToolStripMenuItem";
             this.showAudioWallToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
-            this.showAudioWallToolStripMenuItem.Text = "&Show AudioWal";
+            this.showAudioWallToolStripMenuItem.Text = "&Show AudioWall";
             // 
             // MainTextDisplay
             // 
             this.MainTextDisplay.AcceptsReturn = true;
             this.MainTextDisplay.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.MainTextDisplay.Font = (new System.Drawing.Font("Tahoma", 15.75f, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
-                (byte)0));
+            this.MainTextDisplay.Font = new System.Drawing.Font("Tahoma", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MainTextDisplay.Location = new System.Drawing.Point(8, 647);
             this.MainTextDisplay.Multiline = true;
             this.MainTextDisplay.Name = "MainTextDisplay";
@@ -306,7 +313,7 @@ namespace BAPSPresenter2
             this.Directory0.Name = "Directory0";
             this.Directory0.Size = new System.Drawing.Size(234, 132);
             this.Directory0.TabIndex = 215;
-            this.Directory0.MouseDown += Directory_MouseDown;
+            this.Directory0.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Directory_MouseDown);
             // 
             // Directory1
             // 
@@ -315,7 +322,7 @@ namespace BAPSPresenter2
             this.Directory1.Name = "Directory1";
             this.Directory1.Size = new System.Drawing.Size(234, 132);
             this.Directory1.TabIndex = 216;
-            this.Directory1.MouseDown += Directory_MouseDown;
+            this.Directory1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Directory_MouseDown);
             // 
             // Directory2
             // 
@@ -324,31 +331,29 @@ namespace BAPSPresenter2
             this.Directory2.Name = "Directory2";
             this.Directory2.Size = new System.Drawing.Size(234, 132);
             this.Directory2.TabIndex = 217;
-            this.Directory2.MouseDown += Directory_MouseDown;
+            this.Directory2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Directory_MouseDown);
             // 
             // loadShowButton
             // 
             this.loadShowButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.loadShowButton.Font = (new System.Drawing.Font("Tahoma", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point,
-                (byte)0));
+            this.loadShowButton.Font = new System.Drawing.Font("Tahoma", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.loadShowButton.Location = new System.Drawing.Point(12, 12);
             this.loadShowButton.Name = "loadShowButton";
             this.loadShowButton.Size = new System.Drawing.Size(114, 64);
             this.loadShowButton.TabIndex = 218;
             this.loadShowButton.Text = "Load Show";
-            this.loadShowButton.Click += loadShow_Click;
+            this.loadShowButton.Click += new System.EventHandler(this.loadShow_Click);
             // 
             // bapsButton1
             // 
             this.bapsButton1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.bapsButton1.Font = (new System.Drawing.Font("Tahoma", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point,
-                (byte)0));
+            this.bapsButton1.Font = new System.Drawing.Font("Tahoma", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.bapsButton1.Location = new System.Drawing.Point(132, 12);
             this.bapsButton1.Name = "bapsButton1";
             this.bapsButton1.Size = new System.Drawing.Size(114, 64);
             this.bapsButton1.TabIndex = 219;
             this.bapsButton1.Text = "Search Library";
-            this.bapsButton1.Click += SearchRecordLib_Click;
+            this.bapsButton1.Click += new System.EventHandler(this.SearchRecordLib_Click);
             // 
             // Directory0Refresh
             // 
@@ -357,7 +362,7 @@ namespace BAPSPresenter2
             this.Directory0Refresh.Name = "Directory0Refresh";
             this.Directory0Refresh.Size = new System.Drawing.Size(234, 23);
             this.Directory0Refresh.TabIndex = 220;
-            this.Directory0Refresh.Click += RefreshDirectory_Click;
+            this.Directory0Refresh.Click += new System.EventHandler(this.RefreshDirectory_Click);
             // 
             // Directory1Refresh
             // 
@@ -366,7 +371,7 @@ namespace BAPSPresenter2
             this.Directory1Refresh.Name = "Directory1Refresh";
             this.Directory1Refresh.Size = new System.Drawing.Size(234, 23);
             this.Directory1Refresh.TabIndex = 221;
-            this.Directory1Refresh.Click += RefreshDirectory_Click;
+            this.Directory1Refresh.Click += new System.EventHandler(this.RefreshDirectory_Click);
             // 
             // Directory2Refresh
             // 
@@ -375,7 +380,7 @@ namespace BAPSPresenter2
             this.Directory2Refresh.Name = "Directory2Refresh";
             this.Directory2Refresh.Size = new System.Drawing.Size(234, 23);
             this.Directory2Refresh.TabIndex = 222;
-            this.Directory2Refresh.Click += RefreshDirectory_Click;
+            this.Directory2Refresh.Click += new System.EventHandler(this.RefreshDirectory_Click);
             // 
             // Channel0Play
             // 
@@ -387,7 +392,7 @@ namespace BAPSPresenter2
             this.Channel0Play.TabIndex = 223;
             this.Channel0Play.Text = "F1 - Play";
             this.Channel0Play.UseVisualStyleBackColor = false;
-            this.Channel0Play.Click += ChannelOperation_Click;
+            this.Channel0Play.Click += new System.EventHandler(this.ChannelOperation_Click);
             // 
             // Channel0Pause
             // 
@@ -398,7 +403,7 @@ namespace BAPSPresenter2
             this.Channel0Pause.TabIndex = 223;
             this.Channel0Pause.Text = "F2 - Pause";
             this.Channel0Pause.UseVisualStyleBackColor = true;
-            this.Channel0Pause.Click += ChannelOperation_Click;
+            this.Channel0Pause.Click += new System.EventHandler(this.ChannelOperation_Click);
             // 
             // Channel0Stop
             // 
@@ -409,7 +414,7 @@ namespace BAPSPresenter2
             this.Channel0Stop.TabIndex = 223;
             this.Channel0Stop.Text = "F3 - Stop";
             this.Channel0Stop.UseVisualStyleBackColor = true;
-            this.Channel0Stop.Click += ChannelOperation_Click;
+            this.Channel0Stop.Click += new System.EventHandler(this.ChannelOperation_Click);
             // 
             // Channel1Play
             // 
@@ -420,7 +425,7 @@ namespace BAPSPresenter2
             this.Channel1Play.TabIndex = 223;
             this.Channel1Play.Text = "F5 - Play";
             this.Channel1Play.UseVisualStyleBackColor = true;
-            this.Channel1Play.Click += ChannelOperation_Click;
+            this.Channel1Play.Click += new System.EventHandler(this.ChannelOperation_Click);
             // 
             // Channel1Pause
             // 
@@ -431,7 +436,7 @@ namespace BAPSPresenter2
             this.Channel1Pause.TabIndex = 223;
             this.Channel1Pause.Text = "F6 - Pause";
             this.Channel1Pause.UseVisualStyleBackColor = true;
-            this.Channel1Pause.Click += ChannelOperation_Click;
+            this.Channel1Pause.Click += new System.EventHandler(this.ChannelOperation_Click);
             // 
             // Channel1Stop
             // 
@@ -442,7 +447,7 @@ namespace BAPSPresenter2
             this.Channel1Stop.TabIndex = 223;
             this.Channel1Stop.Text = "F7 - Stop";
             this.Channel1Stop.UseVisualStyleBackColor = true;
-            this.Channel1Stop.Click += ChannelOperation_Click;
+            this.Channel1Stop.Click += new System.EventHandler(this.ChannelOperation_Click);
             // 
             // Channel2Play
             // 
@@ -453,7 +458,7 @@ namespace BAPSPresenter2
             this.Channel2Play.TabIndex = 223;
             this.Channel2Play.Text = "F9 - Play";
             this.Channel2Play.UseVisualStyleBackColor = true;
-            this.Channel2Play.Click += ChannelOperation_Click;
+            this.Channel2Play.Click += new System.EventHandler(this.ChannelOperation_Click);
             // 
             // Channel2Pause
             // 
@@ -464,7 +469,7 @@ namespace BAPSPresenter2
             this.Channel2Pause.TabIndex = 223;
             this.Channel2Pause.Text = "F10 - Pause";
             this.Channel2Pause.UseVisualStyleBackColor = true;
-            this.Channel2Pause.Click += ChannelOperation_Click;
+            this.Channel2Pause.Click += new System.EventHandler(this.ChannelOperation_Click);
             // 
             // Channel2Stop
             // 
@@ -475,7 +480,7 @@ namespace BAPSPresenter2
             this.Channel2Stop.TabIndex = 223;
             this.Channel2Stop.Text = "F11 - Stop";
             this.Channel2Stop.UseVisualStyleBackColor = true;
-            this.Channel2Stop.Click += ChannelOperation_Click;
+            this.Channel2Stop.Click += new System.EventHandler(this.ChannelOperation_Click);
             // 
             // Channel0LoadedText
             // 
@@ -518,61 +523,14 @@ namespace BAPSPresenter2
             // 
             // timeLine
             // 
-            this.timeLine.Font = (new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
-                (byte)0));
+            this.timeLine.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.timeLine.Location = new System.Drawing.Point(12, 589);
             this.timeLine.Name = "timeLine";
             this.timeLine.Size = new System.Drawing.Size(1020, 52);
             this.timeLine.TabIndex = 214;
             this.timeLine.TabStop = false;
             this.timeLine.Text = "timeLine1";
-            this.timeLine.StartTimeChanged += timeLine_StartTimeChanged;
-            // 
-            // Channel2Length
-            // 
-            this.Channel2Length.Font = (new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
-                (byte)0));
-            this.Channel2Length.HighlightColor = System.Drawing.Color.Red;
-            this.Channel2Length.Highlighted = false;
-            this.Channel2Length.InfoText = "End At: 59:50";
-            this.Channel2Length.Location = new System.Drawing.Point(950, 551);
-            this.Channel2Length.Name = "Channel2Length";
-            this.Channel2Length.Size = new System.Drawing.Size(82, 32);
-            this.Channel2Length.TabIndex = 117;
-            this.Channel2Length.TabStop = false;
-            this.Channel2Length.Tag = "";
-            this.Channel2Length.Text = "--:--";
-            this.Channel2Length.MouseDown += ChannelLength_MouseDown;
-            // 
-            // Channel1TimeLeft
-            // 
-            this.Channel1TimeLeft.Font = (new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
-                (byte)0));
-            this.Channel1TimeLeft.HighlightColor = System.Drawing.Color.HotPink;
-            this.Channel1TimeLeft.Highlighted = false;
-            this.Channel1TimeLeft.InfoText = "Remaining:";
-            this.Channel1TimeLeft.Location = new System.Drawing.Point(599, 551);
-            this.Channel1TimeLeft.Name = "Channel1TimeLeft";
-            this.Channel1TimeLeft.Size = new System.Drawing.Size(82, 32);
-            this.Channel1TimeLeft.TabIndex = 113;
-            this.Channel1TimeLeft.TabStop = false;
-            this.Channel1TimeLeft.Text = "0:00:00";
-            // 
-            // Channel1Length
-            // 
-            this.Channel1Length.Font = (new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
-                (byte)0));
-            this.Channel1Length.HighlightColor = System.Drawing.Color.Red;
-            this.Channel1Length.Highlighted = false;
-            this.Channel1Length.InfoText = "End At: 59:50";
-            this.Channel1Length.Location = new System.Drawing.Point(687, 551);
-            this.Channel1Length.Name = "Channel1Length";
-            this.Channel1Length.Size = new System.Drawing.Size(82, 32);
-            this.Channel1Length.TabIndex = 114;
-            this.Channel1Length.TabStop = false;
-            this.Channel1Length.Tag = "";
-            this.Channel1Length.Text = "--:--";
-            this.Channel1Length.MouseDown += ChannelLength_MouseDown;
+            this.timeLine.StartTimeChanged += new BAPSPresenter.TimeLineEventHandler(this.timeLine_StartTimeChanged);
             // 
             // trackList0
             // 
@@ -580,8 +538,7 @@ namespace BAPSPresenter2
             this.trackList0.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.trackList0.Channel = 0;
             this.trackList0.ContextMenuStrip = this.trackListContextMenuStrip;
-            this.trackList0.Font = (new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
-                (byte)0));
+            this.trackList0.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.trackList0.LastIndexClicked = -1;
             this.trackList0.LoadedIndex = -1;
             this.trackList0.Location = new System.Drawing.Point(252, 12);
@@ -589,101 +546,14 @@ namespace BAPSPresenter2
             this.trackList0.Size = new System.Drawing.Size(256, 397);
             this.trackList0.TabIndex = 10;
             this.trackList0.Text = "trackList0";
-            this.trackList0.RequestChange += TrackList_RequestChange;
-            // 
-            // Channel0Length
-            // 
-            this.Channel0Length.Font = (new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
-                (byte)0));
-            this.Channel0Length.HighlightColor = System.Drawing.Color.Red;
-            this.Channel0Length.Highlighted = false;
-            this.Channel0Length.InfoText = "End At: 59:50";
-            this.Channel0Length.Location = new System.Drawing.Point(426, 551);
-            this.Channel0Length.Name = "Channel0Length";
-            this.Channel0Length.Size = new System.Drawing.Size(82, 32);
-            this.Channel0Length.TabIndex = 111;
-            this.Channel0Length.TabStop = false;
-            this.Channel0Length.Tag = "";
-            this.Channel0Length.Text = "--:--";
-            this.Channel0Length.MouseDown += ChannelLength_MouseDown;
-            // 
-            // Channel2TimeLeft
-            // 
-            this.Channel2TimeLeft.Font = (new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
-                (byte)0));
-            this.Channel2TimeLeft.HighlightColor = System.Drawing.Color.HotPink;
-            this.Channel2TimeLeft.Highlighted = false;
-            this.Channel2TimeLeft.InfoText = "Remaining:";
-            this.Channel2TimeLeft.Location = new System.Drawing.Point(863, 551);
-            this.Channel2TimeLeft.Name = "Channel2TimeLeft";
-            this.Channel2TimeLeft.Size = new System.Drawing.Size(82, 32);
-            this.Channel2TimeLeft.TabIndex = 116;
-            this.Channel2TimeLeft.TabStop = false;
-            this.Channel2TimeLeft.Text = "0:00:00";
-            // 
-            // Channel0TimeLeft
-            // 
-            this.Channel0TimeLeft.Font = (new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
-                (byte)0));
-            this.Channel0TimeLeft.HighlightColor = System.Drawing.Color.HotPink;
-            this.Channel0TimeLeft.Highlighted = false;
-            this.Channel0TimeLeft.InfoText = "Remaining:";
-            this.Channel0TimeLeft.Location = new System.Drawing.Point(339, 551);
-            this.Channel0TimeLeft.Name = "Channel0TimeLeft";
-            this.Channel0TimeLeft.Size = new System.Drawing.Size(82, 32);
-            this.Channel0TimeLeft.TabIndex = 110;
-            this.Channel0TimeLeft.TabStop = false;
-            this.Channel0TimeLeft.Text = "0:00:00";
-            // 
-            // Channel1TimeGone
-            // 
-            this.Channel1TimeGone.Font = (new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
-                (byte)0));
-            this.Channel1TimeGone.HighlightColor = System.Drawing.Color.Red;
-            this.Channel1TimeGone.Highlighted = false;
-            this.Channel1TimeGone.InfoText = "Elapsed:";
-            this.Channel1TimeGone.Location = new System.Drawing.Point(514, 551);
-            this.Channel1TimeGone.Name = "Channel1TimeGone";
-            this.Channel1TimeGone.Size = new System.Drawing.Size(82, 32);
-            this.Channel1TimeGone.TabIndex = 112;
-            this.Channel1TimeGone.TabStop = false;
-            this.Channel1TimeGone.Text = "0:00:00";
-            // 
-            // Channel2TimeGone
-            // 
-            this.Channel2TimeGone.Font = (new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
-                (byte)0));
-            this.Channel2TimeGone.HighlightColor = System.Drawing.Color.Red;
-            this.Channel2TimeGone.Highlighted = false;
-            this.Channel2TimeGone.InfoText = "Elapsed:";
-            this.Channel2TimeGone.Location = new System.Drawing.Point(776, 551);
-            this.Channel2TimeGone.Name = "Channel2TimeGone";
-            this.Channel2TimeGone.Size = new System.Drawing.Size(82, 32);
-            this.Channel2TimeGone.TabIndex = 115;
-            this.Channel2TimeGone.TabStop = false;
-            this.Channel2TimeGone.Text = "0:00:00";
-            // 
-            // Channel0TimeGone
-            // 
-            this.Channel0TimeGone.Font = (new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
-                (byte)0));
-            this.Channel0TimeGone.HighlightColor = System.Drawing.Color.Red;
-            this.Channel0TimeGone.Highlighted = false;
-            this.Channel0TimeGone.InfoText = "Elapsed:";
-            this.Channel0TimeGone.Location = new System.Drawing.Point(252, 551);
-            this.Channel0TimeGone.Name = "Channel0TimeGone";
-            this.Channel0TimeGone.Size = new System.Drawing.Size(82, 32);
-            this.Channel0TimeGone.TabIndex = 109;
-            this.Channel0TimeGone.TabStop = false;
-            this.Channel0TimeGone.Text = "0:00:00";
+            this.trackList0.RequestChange += new BAPSPresenter.RequestChangeEventHandler(this.TrackList_RequestChange);
             // 
             // trackList2
             // 
             this.trackList2.AllowDrop = true;
             this.trackList2.Channel = 2;
             this.trackList2.ContextMenuStrip = this.trackListContextMenuStrip;
-            this.trackList2.Font = (new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
-                (byte)0));
+            this.trackList2.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.trackList2.LastIndexClicked = -1;
             this.trackList2.LoadedIndex = -1;
             this.trackList2.Location = new System.Drawing.Point(776, 12);
@@ -691,15 +561,14 @@ namespace BAPSPresenter2
             this.trackList2.Size = new System.Drawing.Size(256, 397);
             this.trackList2.TabIndex = 14;
             this.trackList2.Text = "trackList2";
-            this.trackList2.RequestChange += TrackList_RequestChange;
+            this.trackList2.RequestChange += new BAPSPresenter.RequestChangeEventHandler(this.TrackList_RequestChange);
             // 
             // trackList1
             // 
             this.trackList1.AllowDrop = true;
             this.trackList1.Channel = 1;
             this.trackList1.ContextMenuStrip = this.trackListContextMenuStrip;
-            this.trackList1.Font = (new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
-                (byte)0));
+            this.trackList1.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.trackList1.LastIndexClicked = -1;
             this.trackList1.LoadedIndex = -1;
             this.trackList1.Location = new System.Drawing.Point(514, 12);
@@ -707,15 +576,14 @@ namespace BAPSPresenter2
             this.trackList1.Size = new System.Drawing.Size(256, 397);
             this.trackList1.TabIndex = 12;
             this.trackList1.Text = "trackList1";
-            this.trackList1.RequestChange += TrackList_RequestChange;
+            this.trackList1.RequestChange += new BAPSPresenter.RequestChangeEventHandler(this.TrackList_RequestChange);
             // 
             // trackTime1
             // 
             this.trackTime1.Channel = 1;
             this.trackTime1.CuePosition = 0;
             this.trackTime1.Duration = 0;
-            this.trackTime1.Font = (new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
-                (byte)0));
+            this.trackTime1.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.trackTime1.IntroPosition = 0;
             this.trackTime1.Location = new System.Drawing.Point(514, 474);
             this.trackTime1.Name = "trackTime1";
@@ -730,8 +598,7 @@ namespace BAPSPresenter2
             this.trackTime2.Channel = 2;
             this.trackTime2.CuePosition = 0;
             this.trackTime2.Duration = 0;
-            this.trackTime2.Font = (new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
-                (byte)0));
+            this.trackTime2.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.trackTime2.IntroPosition = 0;
             this.trackTime2.Location = new System.Drawing.Point(776, 474);
             this.trackTime2.Name = "trackTime2";
@@ -746,8 +613,7 @@ namespace BAPSPresenter2
             this.trackTime0.Channel = 0;
             this.trackTime0.CuePosition = 0;
             this.trackTime0.Duration = 0;
-            this.trackTime0.Font = (new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
-                (byte)0));
+            this.trackTime0.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.trackTime0.IntroPosition = 0;
             this.trackTime0.Location = new System.Drawing.Point(252, 474);
             this.trackTime0.Name = "trackTime0";
@@ -757,9 +623,123 @@ namespace BAPSPresenter2
             this.trackTime0.TabIndex = 25;
             this.trackTime0.Text = "trackTime0";
             // 
-            // BAPSPresenterMain
+            // Channel2Length
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6, 13);
+            this.Channel2Length.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Channel2Length.HighlightColor = System.Drawing.Color.Red;
+            this.Channel2Length.Highlighted = false;
+            this.Channel2Length.InfoText = "End At: 59:50";
+            this.Channel2Length.Location = new System.Drawing.Point(950, 551);
+            this.Channel2Length.Name = "Channel2Length";
+            this.Channel2Length.Size = new System.Drawing.Size(82, 32);
+            this.Channel2Length.TabIndex = 117;
+            this.Channel2Length.TabStop = false;
+            this.Channel2Length.Tag = "";
+            this.Channel2Length.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ChannelLength_MouseDown);
+            // 
+            // Channel1TimeLeft
+            // 
+            this.Channel1TimeLeft.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Channel1TimeLeft.HighlightColor = System.Drawing.Color.HotPink;
+            this.Channel1TimeLeft.Highlighted = false;
+            this.Channel1TimeLeft.InfoText = "Remaining:";
+            this.Channel1TimeLeft.Location = new System.Drawing.Point(599, 551);
+            this.Channel1TimeLeft.Name = "Channel1TimeLeft";
+            this.Channel1TimeLeft.Size = new System.Drawing.Size(82, 32);
+            this.Channel1TimeLeft.TabIndex = 113;
+            this.Channel1TimeLeft.TabStop = false;
+            // 
+            // Channel1Length
+            // 
+            this.Channel1Length.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Channel1Length.HighlightColor = System.Drawing.Color.Red;
+            this.Channel1Length.Highlighted = false;
+            this.Channel1Length.InfoText = "End At: 59:50";
+            this.Channel1Length.Location = new System.Drawing.Point(687, 551);
+            this.Channel1Length.Name = "Channel1Length";
+            this.Channel1Length.Size = new System.Drawing.Size(82, 32);
+            this.Channel1Length.TabIndex = 114;
+            this.Channel1Length.TabStop = false;
+            this.Channel1Length.Tag = "";
+            this.Channel1Length.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ChannelLength_MouseDown);
+            // 
+            // Channel0Length
+            // 
+            this.Channel0Length.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Channel0Length.HighlightColor = System.Drawing.Color.Red;
+            this.Channel0Length.Highlighted = false;
+            this.Channel0Length.InfoText = "End At: 59:50";
+            this.Channel0Length.Location = new System.Drawing.Point(426, 551);
+            this.Channel0Length.Name = "Channel0Length";
+            this.Channel0Length.Size = new System.Drawing.Size(82, 32);
+            this.Channel0Length.TabIndex = 111;
+            this.Channel0Length.TabStop = false;
+            this.Channel0Length.Tag = "";
+            this.Channel0Length.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ChannelLength_MouseDown);
+            // 
+            // Channel2TimeLeft
+            // 
+            this.Channel2TimeLeft.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Channel2TimeLeft.HighlightColor = System.Drawing.Color.HotPink;
+            this.Channel2TimeLeft.Highlighted = false;
+            this.Channel2TimeLeft.InfoText = "Remaining:";
+            this.Channel2TimeLeft.Location = new System.Drawing.Point(863, 551);
+            this.Channel2TimeLeft.Name = "Channel2TimeLeft";
+            this.Channel2TimeLeft.Size = new System.Drawing.Size(82, 32);
+            this.Channel2TimeLeft.TabIndex = 116;
+            this.Channel2TimeLeft.TabStop = false;
+            // 
+            // Channel0TimeLeft
+            // 
+            this.Channel0TimeLeft.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Channel0TimeLeft.HighlightColor = System.Drawing.Color.HotPink;
+            this.Channel0TimeLeft.Highlighted = false;
+            this.Channel0TimeLeft.InfoText = "Remaining:";
+            this.Channel0TimeLeft.Location = new System.Drawing.Point(339, 551);
+            this.Channel0TimeLeft.Name = "Channel0TimeLeft";
+            this.Channel0TimeLeft.Size = new System.Drawing.Size(82, 32);
+            this.Channel0TimeLeft.TabIndex = 110;
+            this.Channel0TimeLeft.TabStop = false;
+            // 
+            // Channel1TimeGone
+            // 
+            this.Channel1TimeGone.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Channel1TimeGone.HighlightColor = System.Drawing.Color.Red;
+            this.Channel1TimeGone.Highlighted = false;
+            this.Channel1TimeGone.InfoText = "Elapsed:";
+            this.Channel1TimeGone.Location = new System.Drawing.Point(514, 551);
+            this.Channel1TimeGone.Name = "Channel1TimeGone";
+            this.Channel1TimeGone.Size = new System.Drawing.Size(82, 32);
+            this.Channel1TimeGone.TabIndex = 112;
+            this.Channel1TimeGone.TabStop = false;
+            // 
+            // Channel2TimeGone
+            // 
+            this.Channel2TimeGone.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Channel2TimeGone.HighlightColor = System.Drawing.Color.Red;
+            this.Channel2TimeGone.Highlighted = false;
+            this.Channel2TimeGone.InfoText = "Elapsed:";
+            this.Channel2TimeGone.Location = new System.Drawing.Point(776, 551);
+            this.Channel2TimeGone.Name = "Channel2TimeGone";
+            this.Channel2TimeGone.Size = new System.Drawing.Size(82, 32);
+            this.Channel2TimeGone.TabIndex = 115;
+            this.Channel2TimeGone.TabStop = false;
+            // 
+            // Channel0TimeGone
+            // 
+            this.Channel0TimeGone.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Channel0TimeGone.HighlightColor = System.Drawing.Color.Red;
+            this.Channel0TimeGone.Highlighted = false;
+            this.Channel0TimeGone.InfoText = "Elapsed:";
+            this.Channel0TimeGone.Location = new System.Drawing.Point(252, 551);
+            this.Channel0TimeGone.Name = "Channel0TimeGone";
+            this.Channel0TimeGone.Size = new System.Drawing.Size(82, 32);
+            this.Channel0TimeGone.TabIndex = 109;
+            this.Channel0TimeGone.TabStop = false;
+            // 
+            // Main
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(1044, 737);
@@ -801,18 +781,17 @@ namespace BAPSPresenter2
             this.Controls.Add(this.trackTime1);
             this.Controls.Add(this.trackTime2);
             this.Controls.Add(this.trackTime0);
-            this.Font = (new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
-                (byte)0));
+            this.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.Icon = Properties.Resources.Icon;
+            this.Icon = global::BAPSPresenter2.Properties.Resources.Icon;
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "BAPSPresenterMain";
+            this.Name = "Main";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "BAPS Presenter";
-            this.KeyDown += BAPSPresenterMain_KeyDown;
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.BAPSPresenterMain_KeyDown);
             this.trackListContextMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
