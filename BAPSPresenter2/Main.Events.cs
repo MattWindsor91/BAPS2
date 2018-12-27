@@ -105,10 +105,10 @@ namespace BAPSPresenter2
                 case Keys.Q: /** Ctrl+Alt+Q Shutdown **/
                     if (e.Control && e.Alt)
                     {
-                        System.Windows.Forms.DialogResult result = System.Windows.Forms.MessageBox.Show("Do you wish to disconnect?", "Shutdown?", System.Windows.Forms.MessageBoxButtons.YesNo);
-                        if (result == System.Windows.Forms.DialogResult.Yes)
+                        var result = MessageBox.Show("Do you wish to disconnect?", "Shutdown?", MessageBoxButtons.YesNo);
+                        if (result == DialogResult.Yes)
                         {
-                            this.Close();
+                            Close();
                         }
                         e.Handled = true;
                     }
@@ -116,20 +116,20 @@ namespace BAPSPresenter2
                 case Keys.W: /** Ctrl+Alt+W Alter Window **/
                     if (e.Control && e.Alt)
                     {
-                        if (this.WindowState == System.Windows.Forms.FormWindowState.Normal)
+                        if (WindowState == FormWindowState.Normal)
                         {
-                            System.Drawing.Rectangle bounds = System.Windows.Forms.Screen.GetWorkingArea(this);
+                            System.Drawing.Rectangle bounds = Screen.GetWorkingArea(this);
                             bounds.X = 0;
                             bounds.Y = 0;
-                            this.MaximizedBounds = bounds;
-                            this.MaximumSize = bounds.Size;
-                            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-                            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+                            MaximizedBounds = bounds;
+                            MaximumSize = bounds.Size;
+                            FormBorderStyle = FormBorderStyle.None;
+                            WindowState = FormWindowState.Maximized;
                         }
                         else
                         {
-                            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-                            this.WindowState = System.Windows.Forms.FormWindowState.Normal;
+                            FormBorderStyle = FormBorderStyle.FixedSingle;
+                            WindowState = FormWindowState.Normal;
                         }
                     }
                     break;
@@ -137,15 +137,15 @@ namespace BAPSPresenter2
                     if (e.Control)
                     {
                         // TODO(@MattWindsor91): port these
-#if false
                         if (e.Shift)
                         {
                             LocalConfigDialog ccd = new LocalConfigDialog(this);
                             ccd.ShowDialog();
                             /** Enable or disable the timers depending on the config setting **/
-                            bool enableTimers = (System.String.Compare(ConfigManager.getConfigValueString("EnableTimers", "Yes"), "Yes") == 0);
+                            bool enableTimers = string.Compare(ConfigManager.getConfigValueString("EnableTimers", "Yes"), "Yes") == 0;
                             enableTimerControls(enableTimers);
                         }
+#if false
                         else
                         {
                             configDialog = new ConfigDialog(this, msgQueue);
@@ -288,7 +288,7 @@ namespace BAPSPresenter2
             {
                 case ChangeType.SELECTEDINDEX:
                     {
-                        if (((Command)trackList[e.channel].items[e.index].type == Command.TEXTITEM) || (channelPlay[e.channel].Enabled))
+                        if (((Command)trackList[e.channel].items[e.index].type == Command.TEXTITEM) || channelPlay[e.channel].Enabled)
                         {
                             var cmd = Command.PLAYBACK | Command.LOAD;
                             /** Channel number is in the sender's tag **/
@@ -302,7 +302,7 @@ namespace BAPSPresenter2
                         }
                         else
                         {
-                            ((ChannelTimeoutStruct)(loadImpossibleTimer[e.channel].Tag)).timeout = 10;
+                            ((ChannelTimeoutStruct)loadImpossibleTimer[e.channel].Tag).timeout = 10;
                             loadImpossibleTimer[e.channel].Enabled = true;
                         }
                     }
@@ -338,19 +338,19 @@ namespace BAPSPresenter2
         {
             var tl = (TrackList)trackListContextMenuStrip.SourceControl;
             var testValue = ConfigCache.getValueInt("Automatically advance", tl.Channel);
-            var shouldCheck = (testValue == ConfigCache.findChoiceIndexFor("Automatically advance", "Yes"));
+            var shouldCheck = testValue == ConfigCache.findChoiceIndexFor("Automatically advance", "Yes");
             automaticAdvanceToolStripMenuItem.Checked = shouldCheck;
             testValue = ConfigCache.getValueInt("Play on load", tl.Channel);
-            shouldCheck = (testValue == ConfigCache.findChoiceIndexFor("Play on load", "Yes"));
+            shouldCheck = testValue == ConfigCache.findChoiceIndexFor("Play on load", "Yes");
             playOnLoadToolStripMenuItem.Checked = shouldCheck;
             testValue = ConfigCache.getValueInt("Repeat", tl.Channel);
-            shouldCheck = (testValue == ConfigCache.findChoiceIndexFor("Repeat", "No repeat"));
+            shouldCheck = testValue == ConfigCache.findChoiceIndexFor("Repeat", "No repeat");
             repeatNoneToolStripMenuItem.Checked = shouldCheck;
-            shouldCheck = (testValue == ConfigCache.findChoiceIndexFor("Repeat", "Repeat one"));
+            shouldCheck = testValue == ConfigCache.findChoiceIndexFor("Repeat", "Repeat one");
             repeatOneToolStripMenuItem.Checked = shouldCheck;
-            shouldCheck = (testValue == ConfigCache.findChoiceIndexFor("Repeat", "Repeat all"));
+            shouldCheck = testValue == ConfigCache.findChoiceIndexFor("Repeat", "Repeat all");
             repeatAllToolStripMenuItem.Checked = shouldCheck;
-            deleteItemToolStripMenuItem.Enabled = (tl.LastIndexClicked != -1);
+            deleteItemToolStripMenuItem.Enabled = tl.LastIndexClicked != -1;
         }
 
         private void trackListContextMenuStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -544,7 +544,7 @@ namespace BAPSPresenter2
                         var cmd = Command.PLAYBACK | Command.PLAY | (Command)i;
                         msgQueue.Enqueue(new ActionMessage((ushort)cmd));
                     }
-                    trackLengthText[i].Text = System.String.Concat((valuesecs / 60).ToString("00"), ":", (valuesecs % 60).ToString("00"));
+                    trackLengthText[i].Text = string.Concat((valuesecs / 60).ToString("00"), ":", (valuesecs % 60).ToString("00"));
 
                     timeLine.UpdateStartTime(i, value);
                 }
@@ -575,7 +575,7 @@ namespace BAPSPresenter2
             if (!timersEnabled) return;
             var cds = (CountDownState)trackLengthText[e.channel].Tag;
             cds.startAt = true;
-            cds.theTime = (e.startTime / 1000) % 3600;
+            cds.theTime = e.startTime / 1000 % 3600;
             cds.running = true;
         }
     }

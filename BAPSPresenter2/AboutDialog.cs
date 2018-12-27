@@ -119,15 +119,8 @@ namespace BAPSPresenter2
 
         private void AboutDialog_KeyDown(object sender, KeyEventArgs e)
         {
-            switch (e.KeyCode)
-            {
-                case Keys.A: /** Ctrl+a opens this window, we don't want another **/
-                    if (e.Control) return;
-                    goto default;
-                default:
-                    main.Invoke((Action<object, KeyEventArgs>)main.BAPSPresenterMain_KeyDown, sender, e);
-                    break;
-            }
+            if (e.Control && e.KeyCode == Keys.A) return; // Ctrl+a opens this window, we don't want another
+            main.Invoke((KeyEventHandler)main.BAPSPresenterMain_KeyDown, sender, e);
         }
     }
 }
