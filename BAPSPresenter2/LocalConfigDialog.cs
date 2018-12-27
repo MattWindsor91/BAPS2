@@ -52,7 +52,7 @@ namespace BAPSPresenter2
 
         private void LocalConfigDialog_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Control && e.Shift && e.KeyCode == Keys.O) return; // Ctrl+Shift+O opens this window, we don't want another
+            if (e.KeyData == KeyShortcuts.LocalConfig) return;
             main.Invoke((KeyEventHandler)main.BAPSPresenterMain_KeyDown, sender, e);
         }
     }

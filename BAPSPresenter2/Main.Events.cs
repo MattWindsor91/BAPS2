@@ -1,4 +1,5 @@
 ﻿using BAPSPresenter;
+using System;
 using System.Windows.Forms;
 
 namespace BAPSPresenter2
@@ -43,7 +44,7 @@ namespace BAPSPresenter2
         {
             /** Placeholder for the command we generate **/
             Command cmd;
-            switch (e.KeyCode)
+            switch (e.KeyData)
             {
                 /** Keys F1-F4 are for channel 0 **/
                 case Keys.F1: /** F1 play **/
@@ -61,8 +62,7 @@ namespace BAPSPresenter2
                     msgQueue.Enqueue(new ActionMessage((ushort)cmd));
                     e.Handled = true;
                     break;
-                case Keys.F4:
-                    if (e.Alt)
+                case Keys.F4 | Keys.Alt:
                     {
                         e.Handled = true;
                     }
@@ -102,8 +102,7 @@ namespace BAPSPresenter2
                     e.Handled = true;
                     break;
                 /** Other keyboard Commands **/
-                case Keys.Q: /** Ctrl+Alt+Q Shutdown **/
-                    if (e.Control && e.Alt)
+                case KeyShortcuts.Shutdown:
                     {
                         var result = MessageBox.Show("Do you wish to disconnect?", "Shutdown?", MessageBoxButtons.YesNo);
                         if (result == DialogResult.Yes)
@@ -113,8 +112,7 @@ namespace BAPSPresenter2
                         e.Handled = true;
                     }
                     break;
-                case Keys.W: /** Ctrl+Alt+W Alter Window **/
-                    if (e.Control && e.Alt)
+                case KeyShortcuts.AlterWindow:
                     {
                         if (WindowState == FormWindowState.Normal)
                         {
@@ -131,34 +129,31 @@ namespace BAPSPresenter2
                             FormBorderStyle = FormBorderStyle.FixedSingle;
                             WindowState = FormWindowState.Normal;
                         }
+                        e.Handled = true;
                     }
                     break;
-                case Keys.O:
-                    if (e.Control)
+                case KeyShortcuts.LocalConfig:
                     {
-                        // TODO(@MattWindsor91): port these
-                        if (e.Shift)
-                        {
-                            LocalConfigDialog ccd = new LocalConfigDialog(this);
-                            ccd.ShowDialog();
-                            /** Enable or disable the timers depending on the config setting **/
-                            bool enableTimers = string.Compare(ConfigManager.getConfigValueString("EnableTimers", "Yes"), "Yes") == 0;
-                            enableTimerControls(enableTimers);
-                        }
+                        LocalConfigDialog ccd = new LocalConfigDialog(this);
+                        ccd.ShowDialog();
+                        /** Enable or disable the timers depending on the config setting **/
+                        bool enableTimers = string.Compare(ConfigManager.getConfigValueString("EnableTimers", "Yes"), "Yes") == 0;
+                        enableTimerControls(enableTimers);
+                        e.Handled = true;
+                    }
+                    break;
+                case KeyShortcuts.Config:
+                    {
 #if false
-                        else
-                        {
-                            configDialog = new ConfigDialog(this, msgQueue);
-                            configDialog.ShowDialog();
-                            delete configDialog;
-                            configDialog = nullptr;
-                        }
+                        configDialog = new ConfigDialog(this, msgQueue);
+                        configDialog.ShowDialog();
+                        delete configDialog;
+                        configDialog = nullptr;
 #endif
                         e.Handled = true;
                     }
                     break;
-                case Keys.S:
-                    if (e.Control)
+                case KeyShortcuts.Security:
                     {
                         // TODO(@MattWindsor91): port these
 #if false
@@ -172,35 +167,28 @@ namespace BAPSPresenter2
                         e.Handled = true;
                     }
                     break;
-                case Keys.N:
-                    if (e.Control)
+                case KeyShortcuts.TextMaximised:
+                case KeyShortcuts.Text:
                     {
-                        // TODO(@MattWindsor91): port these
-#if false
                         bool wasOpen = true;
                         if (!textDialog.Visible)
                         {
                             wasOpen = false;
                             textDialog.Show();
-                            MethodInvokerStr  mi = new MethodInvokerStr(textDialog, &TextDialog.updateText);
-                            array < System.Object > dd = new array < System.Object > (1) { MainTextDisplay.Text};
-                            textDialog.Invoke(mi, dd);
+                            textDialog.Invoke((Action<string>)textDialog.updateText, MainTextDisplay.Text);
                         }
                         if (e.Shift)
                         {
-                            MethodInvoker  mi = new MethodInvoker(textDialog, &TextDialog.toggleMaximize);
-                            textDialog.Invoke(mi);
+                            textDialog.Invoke((Action)textDialog.toggleMaximize);
                         }
                         else if (wasOpen)
                         {
                             textDialog.Hide();
                         }
-#endif
                         e.Handled = true;
                     }
                     break;
-                case Keys.A:
-                    if (e.Control && e.Alt)
+                case KeyShortcuts.About:
                     {
                         // TODO(@MattWindsor91): port these
                         about = new AboutDialog(this);

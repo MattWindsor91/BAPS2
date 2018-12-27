@@ -267,9 +267,7 @@ namespace BAPSPresenter2
             countdownTimer.Tick += countdownTick;
             countdownTimer.Start();
 
-#if false // TODO(@MattWindsor91): port this
-                textDialog = new TextDialog(this, "Write on me");
-#endif
+            textDialog = new TextDialog(this, "Write on me");
 
             ConfigCache.initConfigCache();
             /** Create a message queue for sending commands to the server **/
@@ -766,13 +764,13 @@ namespace BAPSPresenter2
                         case Command.SCROLLTEXT:
                             {
                                 var updown = cmdReceived & Command.SYSTEM_VALUEMASK;
-                                Invoke((Action<object>)textDialog.scroll, updown);
+                                Invoke((Action<int>)textDialog.scroll, (int)updown);
                             }
                             break;
                         case Command.TEXTSIZE:
                             {
                                 var updown = cmdReceived & Command.SYSTEM_VALUEMASK;
-                                Invoke((Action<object>)textDialog.textSize, updown);
+                                Invoke((Action<int>)textDialog.textSize, (int)updown);
                             }
                             break;
                         case Command.QUIT:

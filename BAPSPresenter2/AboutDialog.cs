@@ -119,7 +119,7 @@ namespace BAPSPresenter2
 
         private void AboutDialog_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Control && e.KeyCode == Keys.A) return; // Ctrl+a opens this window, we don't want another
+            if (e.KeyData == KeyShortcuts.About) return;
             main.Invoke((KeyEventHandler)main.BAPSPresenterMain_KeyDown, sender, e);
         }
     }
