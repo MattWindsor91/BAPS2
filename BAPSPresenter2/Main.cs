@@ -49,7 +49,7 @@ namespace BAPSPresenter2
                         /** Destroy old connection (if present) **/
                         clientSocket?.Dispose();
                     }
-                    catch (System.Exception)
+                    catch (Exception)
                     {
                         /** Do nothing **/
                     }
@@ -58,7 +58,7 @@ namespace BAPSPresenter2
                         /** Attempt to make a connection to the specified server **/
                         clientSocket = new ClientSocket(login.Server, login.Port);
                     }
-                    catch (System.Exception e)
+                    catch (Exception e)
                     {
                         /** If an error occurs just give the exception message and start again **/
                         var errorMessage = string.Concat("System Error:\n", e.Message, "\nStack Trace:\n", e.StackTrace);
@@ -143,78 +143,47 @@ namespace BAPSPresenter2
             /** Array initialisation so that controls can be found by channel
                 number at runtime
             **/
-            trackLengthText = new BAPSLabel[3];
-            trackLengthText[0] = Channel0Length;
-            trackLengthText[1] = Channel1Length;
-            trackLengthText[2] = Channel2Length;
+            trackLengthText = new BAPSLabel[3] { Channel0Length, Channel1Length, Channel2Length };
             Channel0Length.Tag = new CountDownState(0);
             Channel1Length.Tag = new CountDownState(1);
             Channel2Length.Tag = new CountDownState(2);
 
-            timeLeftText = new BAPSLabel[3];
-            timeLeftText[0] = Channel0TimeLeft;
-            timeLeftText[1] = Channel1TimeLeft;
-            timeLeftText[2] = Channel2TimeLeft;
-            timeGoneText = new BAPSLabel[3];
+            timeLeftText = new BAPSLabel[3] { Channel0TimeLeft, Channel1TimeLeft, Channel2TimeLeft };
+            timeGoneText = new BAPSLabel[3] { Channel0TimeGone, Channel1TimeGone, Channel2TimeGone };
             timeGoneText[0] = Channel0TimeGone;
             timeGoneText[1] = Channel1TimeGone;
             timeGoneText[2] = Channel2TimeGone;
 
-            channelPlay = new Button[3];
-            channelPlay[0] = Channel0Play;
+            channelPlay = new Button[3] { Channel0Play, Channel1Play, Channel2Play };
             channelPlay[0].Tag = new ChannelOperationLookup(0, (ushort)Command.PLAY);
-            channelPlay[1] = Channel1Play;
             channelPlay[1].Tag = new ChannelOperationLookup(1, (ushort)Command.PLAY);
-            channelPlay[2] = Channel2Play;
             channelPlay[2].Tag = new ChannelOperationLookup(2, (ushort)Command.PLAY);
 
-            channelPause = new Button[3];
-            channelPause[0] = Channel0Pause;
+            channelPause = new Button[3] { Channel0Pause, Channel1Pause, Channel2Pause };
             channelPause[0].Tag = new ChannelOperationLookup(0, (ushort)Command.PAUSE);
-            channelPause[1] = Channel1Pause;
             channelPause[1].Tag = new ChannelOperationLookup(1, (ushort)Command.PAUSE);
-            channelPause[2] = Channel2Pause;
             channelPause[2].Tag = new ChannelOperationLookup(2, (ushort)Command.PAUSE);
 
-            channelStop = new Button[3];
-            channelStop[0] = Channel0Stop;
+            channelStop = new Button[3] { Channel0Stop, Channel1Stop, Channel2Stop };
             channelStop[0].Tag = new ChannelOperationLookup(0, (ushort)Command.STOP);
-            channelStop[1] = Channel1Stop;
             channelStop[1].Tag = new ChannelOperationLookup(1, (ushort)Command.STOP);
-            channelStop[2] = Channel2Stop;
             channelStop[2].Tag = new ChannelOperationLookup(2, (ushort)Command.STOP);
 
-            trackList = new TrackList[3];
-            trackList[0] = trackList0;
-            trackList[1] = trackList1;
-            trackList[2] = trackList2;
+            trackList = new TrackList[3] { trackList0, trackList1, trackList2 };
 
-            directoryList = new ListBox[3];
-            directoryList[0] = Directory0;
-            directoryList[1] = Directory1;
-            directoryList[2] = Directory2;
+            directoryList = new ListBox[3] { Directory0, Directory1, Directory2 };
             directoryList[0].Tag = number0;
             directoryList[1].Tag = number1;
             directoryList[2].Tag = number2;
 
-            directoryRefresh = new Button[3];
-            directoryRefresh[0] = Directory0Refresh;
-            directoryRefresh[1] = Directory1Refresh;
-            directoryRefresh[2] = Directory2Refresh;
+            directoryRefresh = new Button[3] { Directory0Refresh, Directory1Refresh, Directory2Refresh };
             directoryRefresh[0].Tag = number0;
             directoryRefresh[1].Tag = number1;
             directoryRefresh[2].Tag = number2;
 
-            loadedText = new Label[3];
-            loadedText[0] = Channel0LoadedText;
-            loadedText[1] = Channel1LoadedText;
-            loadedText[2] = Channel2LoadedText;
+            loadedText = new Label[3] { Channel0LoadedText, Channel1LoadedText, Channel2LoadedText };
 
-            trackTime = new TrackTime[3];
-            trackTime[0] = trackTime0;
-            trackTime[1] = trackTime1;
-            trackTime[2] = trackTime2;
-
+            trackTime = new TrackTime[3] { trackTime0, trackTime1, trackTime2 };
             trackTime[0].Dock = DockStyle.None;
             trackTime[1].Dock = DockStyle.None;
             trackTime[2].Dock = DockStyle.None;
