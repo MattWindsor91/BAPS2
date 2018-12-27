@@ -56,28 +56,6 @@ namespace BAPSPresenter2
             base.Dispose(disposing);
         }
 
-        /** Flag to say if the client crashed **/
-        private bool crashed = false;
-        // Accessor for the crashed variable.
-        public bool hasCrashed { get => crashed; }
-
-        /** A handle for the connection to the server **/
-        private ClientSocket clientSocket;
-
-        /** The current user **/
-        private string username;
-
-
-        /** The sender thread **/
-        private System.Threading.Thread senderThread;
-        /** The receiver thread **/
-        private System.Threading.Thread receiverThread;
-        /** Whether or not the timers are enabled **/
-        private bool timersEnabled;
-
-        /** The outgoing message queue (Should only have ActionMessage objects)**/
-        private System.Collections.Queue msgQueue;
-
         /** Sub-form handles **/
         RecordLibrarySearch recordLibrarySearch = null;
         ConfigDialog configDialog = null;
