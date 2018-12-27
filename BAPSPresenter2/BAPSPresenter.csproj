@@ -73,6 +73,12 @@
     <Compile Include="AudioWall.Designer.cs">
       <DependentUpon>AudioWall.cs</DependentUpon>
     </Compile>
+    <Compile Include="BAPSChannel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="BAPSChannel.Designer.cs">
+      <DependentUpon>BAPSChannel.cs</DependentUpon>
+    </Compile>
     <Compile Include="ChangeType.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="ConfigOptions.cs" />
@@ -126,6 +132,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="AudioWall.resx">
       <DependentUpon>AudioWall.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="BAPSChannel.resx">
+      <DependentUpon>BAPSChannel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="LocalConfigDialog.resx">
       <DependentUpon>LocalConfigDialog.cs</DependentUpon>

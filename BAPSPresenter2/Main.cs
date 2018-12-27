@@ -820,5 +820,19 @@ namespace BAPSPresenter2
                 }
             }
         }
+
+        public void OpenAudioWall(TrackList tl)
+        {
+            if (audioWall == null || !audioWall.Visible)
+            {
+                audioWall = new AudioWall(this, msgQueue, tl);
+                audioWall.Show();
+            }
+            else
+            {
+                audioWall.setChannel(tl);
+                refreshAudioWall();
+            }
+        }
     }
 }

@@ -270,7 +270,7 @@ namespace BAPSPresenter2
             msgQueue.Enqueue(new ActionMessage((ushort)cmd));
         }
 
-        private void TrackList_RequestChange(object o, RequestChangeEventArgs e)
+        internal void TrackList_RequestChange(object o, RequestChangeEventArgs e)
         {
             switch ((ChangeType)e.ct)
             {
@@ -392,16 +392,7 @@ namespace BAPSPresenter2
             }
             else if (e.ClickedItem == showAudioWallToolStripMenuItem)
             {
-                if (audioWall == null || !audioWall.Visible)
-                {
-                    audioWall = new AudioWall(this, msgQueue, tl);
-                    audioWall.Show();
-                }
-                else
-                {
-                    audioWall.setChannel(tl);
-                    refreshAudioWall();
-                }
+                OpenAudioWall(tl);
             }
         }
 
