@@ -84,7 +84,7 @@
             this.layoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
             this.layoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.layoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
-            this.layoutPanel.Size = new System.Drawing.Size(360, 689);
+            this.layoutPanel.Size = new System.Drawing.Size(363, 689);
             this.layoutPanel.TabIndex = 0;
             // 
             // loadedText
@@ -97,7 +97,7 @@
             this.loadedText.ForeColor = System.Drawing.Color.MidnightBlue;
             this.loadedText.Location = new System.Drawing.Point(3, 435);
             this.loadedText.Name = "loadedText";
-            this.loadedText.Size = new System.Drawing.Size(354, 32);
+            this.loadedText.Size = new System.Drawing.Size(357, 32);
             this.loadedText.TabIndex = 231;
             this.loadedText.Text = "--NONE--";
             this.loadedText.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -115,9 +115,12 @@
             this.trackTime.Name = "trackTime";
             this.trackTime.Position = 0;
             this.trackTime.SilencePosition = 0;
-            this.trackTime.Size = new System.Drawing.Size(354, 72);
+            this.trackTime.Size = new System.Drawing.Size(357, 72);
             this.trackTime.TabIndex = 227;
             this.trackTime.Text = "trackTime0";
+            this.trackTime.CuePositionChanged += new System.EventHandler(this.OnCuePositionChanged);
+            this.trackTime.IntroPositionChanged += new System.EventHandler(this.OnIntroPositionChanged);
+            this.trackTime.PositionChanged += new System.EventHandler(this.OnPositionChanged);
             // 
             // trackList
             // 
@@ -125,13 +128,14 @@
             this.trackList.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.trackList.Channel = 0;
             this.layoutPanel.SetColumnSpan(this.trackList, 3);
+            this.trackList.ContextMenuStrip = this.trackListContextMenuStrip;
             this.trackList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.trackList.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.trackList.LastIndexClicked = -1;
             this.trackList.LoadedIndex = -1;
             this.trackList.Location = new System.Drawing.Point(3, 3);
             this.trackList.Name = "trackList0";
-            this.trackList.Size = new System.Drawing.Size(354, 397);
+            this.trackList.Size = new System.Drawing.Size(357, 397);
             this.trackList.TabIndex = 11;
             this.trackList.Text = "trackList";
             this.trackList.RequestChange += new BAPSPresenter.RequestChangeEventHandler(this.TrackList_RequestChange);
@@ -143,7 +147,7 @@
             this.playButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.playButton.Location = new System.Drawing.Point(3, 406);
             this.playButton.Name = "playButton";
-            this.playButton.Size = new System.Drawing.Size(113, 23);
+            this.playButton.Size = new System.Drawing.Size(114, 23);
             this.playButton.TabIndex = 225;
             this.playButton.Text = "Play";
             this.playButton.UseVisualStyleBackColor = false;
@@ -153,9 +157,9 @@
             // 
             this.stopButton.Dock = System.Windows.Forms.DockStyle.Top;
             this.stopButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.stopButton.Location = new System.Drawing.Point(242, 406);
+            this.stopButton.Location = new System.Drawing.Point(244, 406);
             this.stopButton.Name = "stopButton";
-            this.stopButton.Size = new System.Drawing.Size(115, 23);
+            this.stopButton.Size = new System.Drawing.Size(116, 23);
             this.stopButton.TabIndex = 226;
             this.stopButton.Text = "Stop";
             this.stopButton.UseVisualStyleBackColor = true;
@@ -166,9 +170,9 @@
             this.pauseButton.BackColor = System.Drawing.SystemColors.Control;
             this.pauseButton.Dock = System.Windows.Forms.DockStyle.Top;
             this.pauseButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.pauseButton.Location = new System.Drawing.Point(122, 406);
+            this.pauseButton.Location = new System.Drawing.Point(123, 406);
             this.pauseButton.Name = "pauseButton";
-            this.pauseButton.Size = new System.Drawing.Size(114, 23);
+            this.pauseButton.Size = new System.Drawing.Size(115, 23);
             this.pauseButton.TabIndex = 224;
             this.pauseButton.Text = "Pause";
             this.pauseButton.UseVisualStyleBackColor = false;
@@ -183,7 +187,7 @@
             this.timeGone.InfoText = "Elapsed:";
             this.timeGone.Location = new System.Drawing.Point(3, 548);
             this.timeGone.Name = "timeGone";
-            this.timeGone.Size = new System.Drawing.Size(113, 138);
+            this.timeGone.Size = new System.Drawing.Size(114, 138);
             this.timeGone.TabIndex = 228;
             this.timeGone.TabStop = false;
             // 
@@ -194,9 +198,9 @@
             this.timeLeft.HighlightColor = System.Drawing.Color.HotPink;
             this.timeLeft.Highlighted = false;
             this.timeLeft.InfoText = "Remaining:";
-            this.timeLeft.Location = new System.Drawing.Point(122, 548);
+            this.timeLeft.Location = new System.Drawing.Point(123, 548);
             this.timeLeft.Name = "timeLeft";
-            this.timeLeft.Size = new System.Drawing.Size(114, 138);
+            this.timeLeft.Size = new System.Drawing.Size(115, 138);
             this.timeLeft.TabIndex = 229;
             this.timeLeft.TabStop = false;
             // 
@@ -207,9 +211,9 @@
             this.length.HighlightColor = System.Drawing.Color.Red;
             this.length.Highlighted = false;
             this.length.InfoText = "End At: 59:50";
-            this.length.Location = new System.Drawing.Point(242, 548);
+            this.length.Location = new System.Drawing.Point(244, 548);
             this.length.Name = "length";
-            this.length.Size = new System.Drawing.Size(115, 138);
+            this.length.Size = new System.Drawing.Size(116, 138);
             this.length.TabIndex = 230;
             this.length.TabStop = false;
             this.length.Tag = "";
@@ -243,74 +247,75 @@
             this.trackListContextMenuStrip.ShowCheckMargin = true;
             this.trackListContextMenuStrip.ShowImageMargin = false;
             this.trackListContextMenuStrip.Size = new System.Drawing.Size(181, 226);
+            this.trackListContextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.TrackListContextMenuStrip_Opening);
             this.trackListContextMenuStrip.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.TrackListContextMenuStrip_ItemClicked);
             // 
             // resetChannelStripMenuItem
             // 
             this.resetChannelStripMenuItem.Name = "resetChannelStripMenuItem";
-            this.resetChannelStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.resetChannelStripMenuItem.Size = new System.Drawing.Size(177, 22);
             this.resetChannelStripMenuItem.Text = "&Reset Channel";
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(174, 6);
             // 
             // deleteItemToolStripMenuItem
             // 
             this.deleteItemToolStripMenuItem.Name = "deleteItemToolStripMenuItem";
-            this.deleteItemToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.deleteItemToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
             this.deleteItemToolStripMenuItem.Text = "&Delete Item";
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(174, 6);
             // 
             // automaticAdvanceToolStripMenuItem
             // 
             this.automaticAdvanceToolStripMenuItem.Name = "automaticAdvanceToolStripMenuItem";
-            this.automaticAdvanceToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.automaticAdvanceToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
             this.automaticAdvanceToolStripMenuItem.Text = "&Automatic advance";
             // 
             // playOnLoadToolStripMenuItem
             // 
             this.playOnLoadToolStripMenuItem.Name = "playOnLoadToolStripMenuItem";
-            this.playOnLoadToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.playOnLoadToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
             this.playOnLoadToolStripMenuItem.Text = "&Play on load";
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(174, 6);
             // 
             // repeatAllToolStripMenuItem
             // 
             this.repeatAllToolStripMenuItem.Name = "repeatAllToolStripMenuItem";
-            this.repeatAllToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.repeatAllToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
             this.repeatAllToolStripMenuItem.Text = "Repeat a&ll";
             // 
             // repeatOneToolStripMenuItem
             // 
             this.repeatOneToolStripMenuItem.Name = "repeatOneToolStripMenuItem";
-            this.repeatOneToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.repeatOneToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
             this.repeatOneToolStripMenuItem.Text = "Repeat &one";
             // 
             // repeatNoneToolStripMenuItem
             // 
             this.repeatNoneToolStripMenuItem.Name = "repeatNoneToolStripMenuItem";
-            this.repeatNoneToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.repeatNoneToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
             this.repeatNoneToolStripMenuItem.Text = "Repeat &none";
             // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(174, 6);
             // 
             // showAudioWallToolStripMenuItem
             // 
             this.showAudioWallToolStripMenuItem.Name = "showAudioWallToolStripMenuItem";
-            this.showAudioWallToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.showAudioWallToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
             this.showAudioWallToolStripMenuItem.Text = "&Show AudioWall";
             // 
             // BAPSChannel
@@ -320,7 +325,7 @@
             this.AutoSize = true;
             this.Controls.Add(this.layoutPanel);
             this.Name = "BAPSChannel";
-            this.Size = new System.Drawing.Size(360, 689);
+            this.Size = new System.Drawing.Size(363, 689);
             this.layoutPanel.ResumeLayout(false);
             this.trackListContextMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);

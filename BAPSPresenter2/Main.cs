@@ -20,6 +20,7 @@ namespace BAPSPresenter2
         /** The current user **/
         private string username;
 
+        private BAPSChannel[] bapsChannels;
 
         /** The sender thread **/
         private System.Threading.Thread senderThread;
@@ -164,33 +165,27 @@ namespace BAPSPresenter2
             /** Array initialisation so that controls can be found by channel
                 number at runtime
             **/
-            trackLengthText = new BAPSFormControls.BAPSLabel[3] { Channel0Length, Channel1Length, Channel2Length };
-            Channel0Length.Tag = new CountDownState(0);
-            Channel1Length.Tag = new CountDownState(1);
-            Channel2Length.Tag = new CountDownState(2);
+            bapsChannels = new BAPSChannel[3] { bapsChannel1, bapsChannel2, bapsChannel3 };
+            for (ushort i = 0; i < bapsChannels.Length; i++)
+            {
+                // This is needed to make sure the lambdas below capture copies of the channel;
+                // otherwise, they'll all get the value of 'i' at the end of the loop.
+                ushort c = i;
 
-            timeLeftText = new BAPSFormControls.BAPSLabel[3] { Channel0TimeLeft, Channel1TimeLeft, Channel2TimeLeft };
-            timeGoneText = new BAPSFormControls.BAPSLabel[3] { Channel0TimeGone, Channel1TimeGone, Channel2TimeGone };
-            timeGoneText[0] = Channel0TimeGone;
-            timeGoneText[1] = Channel1TimeGone;
-            timeGoneText[2] = Channel2TimeGone;
-
-            channelPlay = new Button[3] { Channel0Play, Channel1Play, Channel2Play };
-            channelPlay[0].Tag = new ChannelOperationLookup(0, (ushort)Command.PLAY);
-            channelPlay[1].Tag = new ChannelOperationLookup(1, (ushort)Command.PLAY);
-            channelPlay[2].Tag = new ChannelOperationLookup(2, (ushort)Command.PLAY);
-
-            channelPause = new Button[3] { Channel0Pause, Channel1Pause, Channel2Pause };
-            channelPause[0].Tag = new ChannelOperationLookup(0, (ushort)Command.PAUSE);
-            channelPause[1].Tag = new ChannelOperationLookup(1, (ushort)Command.PAUSE);
-            channelPause[2].Tag = new ChannelOperationLookup(2, (ushort)Command.PAUSE);
-
-            channelStop = new Button[3] { Channel0Stop, Channel1Stop, Channel2Stop };
-            channelStop[0].Tag = new ChannelOperationLookup(0, (ushort)Command.STOP);
-            channelStop[1].Tag = new ChannelOperationLookup(1, (ushort)Command.STOP);
-            channelStop[2].Tag = new ChannelOperationLookup(2, (ushort)Command.STOP);
-
-            trackList = new TrackList[3] { trackList0, trackList1, trackList2 };
+                var bc = bapsChannels[i];
+                bc.TrackListRequestChange += (e, x) => Invoke((Action<ushort, RequestChangeEventArgs>)TrackList_RequestChange, c, x);
+                bc.PlayRequested += (e, x) => Invoke((Action<ChannelOperationLookup>)ChannelOperation_Click, new ChannelOperationLookup(c, (ushort)Command.PLAY));
+                bc.PauseRequested += (e, x) => Invoke((Action<ChannelOperationLookup>)ChannelOperation_Click, new ChannelOperationLookup(c, (ushort)Command.PAUSE));
+                bc.StopRequested += (e, x) => Invoke((Action<ChannelOperationLookup>)ChannelOperation_Click, new ChannelOperationLookup(c, (ushort)Command.STOP));
+                bc.PositionChanged += (e, pos) => Invoke((Action<ushort, int>)positionChanged, c, pos);
+                bc.CuePositionChanged += (e, pos) => Invoke((Action<ushort, int>)cuePositionChanged, c, pos);
+                bc.IntroPositionChanged += (e, pos) => Invoke((Action<ushort, int>)introPositionChanged, c, pos);
+                bc.TimelineStartChanged += (e, pos) => Invoke((Action<int, int>)timeLine.UpdateStartTime, (int)c, pos);
+                bc.TimelineDurationChanged += (e, pos) => Invoke((Action<int, int>)timeLine.UpdateDuration, (int)c, pos);
+                bc.TimelinePositionChanged += (e, pos) => Invoke((Action<int, int>)timeLine.UpdatePosition, (int)c, pos);
+                bc.TrackBarMoved += (e, x) => Invoke((Action<ushort, uint>)TrackBar_Scroll, c, x);
+                //bc.TrackListContextMenuStripItemClicked += (e, x) => Invoke((ToolStripItemClickedEventHandler)trackListContextMenuStrip_ItemClicked, e, x);
+            }
 
             directoryList = new ListBox[3] { Directory0, Directory1, Directory2 };
             directoryList[0].Tag = number0;
@@ -201,64 +196,6 @@ namespace BAPSPresenter2
             directoryRefresh[0].Tag = number0;
             directoryRefresh[1].Tag = number1;
             directoryRefresh[2].Tag = number2;
-
-            loadedText = new Label[3] { Channel0LoadedText, Channel1LoadedText, Channel2LoadedText };
-
-            trackTime = new TrackTime[3] { trackTime0, trackTime1, trackTime2 };
-            trackTime[0].Dock = DockStyle.None;
-            trackTime[1].Dock = DockStyle.None;
-            trackTime[2].Dock = DockStyle.None;
-            Controls.Add(trackTime[0]);
-            Controls.Add(trackTime[1]);
-            Controls.Add(trackTime[2]);
-            trackTime[0].PositionChanged += positionChanged;
-            trackTime[1].PositionChanged += positionChanged;
-            trackTime[2].PositionChanged += positionChanged;
-            trackTime[0].CuePositionChanged += cuePositionChanged;
-            trackTime[1].CuePositionChanged += cuePositionChanged;
-            trackTime[2].CuePositionChanged += cuePositionChanged;
-            trackTime[0].IntroPositionChanged += introPositionChanged;
-            trackTime[1].IntroPositionChanged += introPositionChanged;
-            trackTime[2].IntroPositionChanged += introPositionChanged;
-
-            loadImpossibleTimer = new Timer[3];
-            loadImpossibleTimer[0] = new Timer
-            {
-                Interval = 70,
-                Tag = new ChannelTimeoutStruct(0, 10)
-            };
-            loadImpossibleTimer[0].Tick += loadImpossibleFlicker;
-            loadImpossibleTimer[1] = new Timer
-            {
-                Interval = 70,
-                Tag = new ChannelTimeoutStruct(1, 10)
-            };
-            loadImpossibleTimer[1].Tick += loadImpossibleFlicker;
-            loadImpossibleTimer[2] = new Timer
-            {
-                Interval = 70,
-                Tag = new ChannelTimeoutStruct(2, 10)
-            };
-            loadImpossibleTimer[2].Tick += loadImpossibleFlicker;
-            nearEndTimer = new Timer[3];
-            nearEndTimer[0] = new Timer
-            {
-                Interval = 100,
-                Tag = 0
-            };
-            nearEndTimer[0].Tick += nearEndFlash;
-            nearEndTimer[1] = new Timer
-            {
-                Interval = 100,
-                Tag = 1
-            };
-            nearEndTimer[1].Tick += nearEndFlash;
-            nearEndTimer[2] = new Timer
-            {
-                Interval = 100,
-                Tag = 2
-            };
-            nearEndTimer[2].Tick += nearEndFlash;
 
             countdownTimer = new Timer
             {
@@ -327,19 +264,8 @@ namespace BAPSPresenter2
         private void enableTimerControls(bool shouldEnable)
         {
             timersEnabled = shouldEnable;
-            Channel0Length.Visible = shouldEnable;
-            Channel1Length.Visible = shouldEnable;
-            Channel2Length.Visible = shouldEnable;
-            Channel0Length.Enabled = shouldEnable;
-            Channel1Length.Enabled = shouldEnable;
-            Channel2Length.Enabled = shouldEnable;
+            foreach (var chan in bapsChannels) chan.EnableTimerControls(shouldEnable);
             timeLine.DragEnabled = shouldEnable;
-            var cds = (CountDownState)trackLengthText[0].Tag;
-            cds.running = false;
-            cds = (CountDownState)trackLengthText[1].Tag;
-            cds.running = false;
-            cds = (CountDownState)trackLengthText[2].Tag;
-            cds.running = false;
         }
 
         /** Notify AudioWall to Update **/

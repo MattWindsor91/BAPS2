@@ -1,5 +1,6 @@
 ﻿using BAPSPresenter;
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace BAPSPresenter2
@@ -8,29 +9,26 @@ namespace BAPSPresenter2
     {
 
         /** functions to receive events from the custom TrackTime class */
-        private void positionChanged(object sender, System.EventArgs e)
+        private void positionChanged(ushort channel, int position)
         {
-            var tt = (TrackTime)sender;
-            var cmd = Command.PLAYBACK | Command.POSITION | (Command)tt.Channel;
-            msgQueue.Enqueue(new ActionMessageU32int((ushort)cmd, (uint)tt.Position));
+            var cmd = Command.PLAYBACK | Command.POSITION | (Command)channel;
+            msgQueue.Enqueue(new ActionMessageU32int((ushort)cmd, (uint)position));
         }
 
-        private void cuePositionChanged(object sender, System.EventArgs e)
+        private void cuePositionChanged(ushort channel, int cuePosition)
         {
-            var tt = (TrackTime)sender;
-            var cmd = Command.PLAYBACK | Command.CUEPOSITION | (Command)tt.Channel;
-            msgQueue.Enqueue(new ActionMessageU32int((ushort)cmd, (uint)tt.CuePosition));
+            var cmd = Command.PLAYBACK | Command.CUEPOSITION | (Command)channel;
+            msgQueue.Enqueue(new ActionMessageU32int((ushort)cmd, (uint)cuePosition));
         }
 
-        private void introPositionChanged(object sender, System.EventArgs e)
+        private void introPositionChanged(ushort channel, int introPosition)
         {
-            var tt = (TrackTime)sender;
-            var cmd = Command.PLAYBACK | Command.INTROPOSITION | (Command)tt.Channel;
-            msgQueue.Enqueue(new ActionMessageU32int((ushort)cmd, (uint)tt.IntroPosition));
+            var cmd = Command.PLAYBACK | Command.INTROPOSITION | (Command)channel;
+            msgQueue.Enqueue(new ActionMessageU32int((ushort)cmd, (uint)introPosition));
         }
 
         /** functions to receive context menu events **/
-        private void ChannelListClear_Click(object sender, System.EventArgs e)
+        private void ChannelListClear_Click(object sender, EventArgs e)
         {
             var mi = (MenuItem)sender;
             var cm = (ContextMenu)mi.Parent;
@@ -204,16 +202,13 @@ namespace BAPSPresenter2
             }
         }
 
-        private void TrackBar_Scroll(object sender, System.EventArgs e)
+        private void TrackBar_Scroll(ushort channel, uint value)
         {
-            var trackBar = (TrackBar)sender;
             /** Update the server with the new value the user has selected **/
             Command cmd = Command.PLAYBACK | Command.POSITION;
-            /** The tag contains the channel number as a managed int **/
-            cmd |= ((Command)trackBar.Tag) & (Command)0x3f;
+            cmd |= ((Command)channel) & (Command)0x3f;
             /** The scrollbar value is the new setting **/
-            uint intArg = (uint)trackBar.Value * 100;
-            msgQueue.Enqueue(new ActionMessageU32int((ushort)cmd, intArg));
+            msgQueue.Enqueue(new ActionMessageU32int((ushort)cmd, value));
         }
 
         private void RefreshDirectory_Click(object sender, System.EventArgs e)
@@ -258,41 +253,24 @@ namespace BAPSPresenter2
             _ = lb.DoDragDrop(fts, DragDropEffects.Copy);
         }
 
-        private void ChannelOperation_Click(object sender, System.EventArgs e)
+        private void ChannelOperation_Click(ChannelOperationLookup col)
         {
-            var ctl = (Control)sender;
-            var col = (ChannelOperationLookup)ctl.Tag;
-            if (col.co != (ushort)Command.PLAY)
-            {
-                trackList[col.channel].clearPendingLoadRequest();
-            }
             var cmd = Command.PLAYBACK | (Command)col.co | (Command)(col.channel & 0x3f);
             msgQueue.Enqueue(new ActionMessage((ushort)cmd));
         }
 
-        internal void TrackList_RequestChange(object o, RequestChangeEventArgs e)
+        internal void TrackList_RequestChange(ushort channelID, RequestChangeEventArgs e)
         {
             switch ((ChangeType)e.ct)
             {
                 case ChangeType.SELECTEDINDEX:
                     {
-                        if (((Command)trackList[e.channel].items[e.index].type == Command.TEXTITEM) || channelPlay[e.channel].Enabled)
-                        {
-                            var cmd = Command.PLAYBACK | Command.LOAD;
-                            /** Channel number is in the sender's tag **/
-                            cmd |= (Command)(e.channel & 0x3f);
-                            /** Get the selected index as above **/
-                            var intArg = (uint)e.index;
-                            msgQueue.Enqueue(new ActionMessageU32int((ushort)cmd, intArg));
-
-                            loadImpossibleTimer[e.channel].Enabled = false;
-                            loadedText[e.channel].BackColor = System.Drawing.SystemColors.Window;
-                        }
-                        else
-                        {
-                            ((ChannelTimeoutStruct)loadImpossibleTimer[e.channel].Tag).timeout = 10;
-                            loadImpossibleTimer[e.channel].Enabled = true;
-                        }
+                        // This won't be an impossible load---they're filtered out in BAPSChannel.
+                        var cmd = Command.PLAYBACK | Command.LOAD;
+                        cmd |= (Command)(channelID & 0x3f);
+                        /** Get the selected index as above **/
+                        var intArg = (uint)e.index;
+                        msgQueue.Enqueue(new ActionMessageU32int((ushort)cmd, intArg));
                     }
                     break;
                 case ChangeType.MOVEINDEX:
@@ -322,40 +300,24 @@ namespace BAPSPresenter2
             }
         }
 
-        private void trackListContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            var tl = (TrackList)trackListContextMenuStrip.SourceControl;
-            var testValue = ConfigCache.getValueInt("Automatically advance", tl.Channel);
-            var shouldCheck = testValue == ConfigCache.findChoiceIndexFor("Automatically advance", "Yes");
-            automaticAdvanceToolStripMenuItem.Checked = shouldCheck;
-            testValue = ConfigCache.getValueInt("Play on load", tl.Channel);
-            shouldCheck = testValue == ConfigCache.findChoiceIndexFor("Play on load", "Yes");
-            playOnLoadToolStripMenuItem.Checked = shouldCheck;
-            testValue = ConfigCache.getValueInt("Repeat", tl.Channel);
-            shouldCheck = testValue == ConfigCache.findChoiceIndexFor("Repeat", "No repeat");
-            repeatNoneToolStripMenuItem.Checked = shouldCheck;
-            shouldCheck = testValue == ConfigCache.findChoiceIndexFor("Repeat", "Repeat one");
-            repeatOneToolStripMenuItem.Checked = shouldCheck;
-            shouldCheck = testValue == ConfigCache.findChoiceIndexFor("Repeat", "Repeat all");
-            repeatAllToolStripMenuItem.Checked = shouldCheck;
-            deleteItemToolStripMenuItem.Enabled = tl.LastIndexClicked != -1;
-        }
-
+#if false // @MattWindsor91
         private void trackListContextMenuStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
-            var tl = (TrackList)trackListContextMenuStrip.SourceControl;
+            var tl = (TrackList)sender;
+            Debug.Assert(tl != null, "menu strip doesn't have a source control!");
+
             var cmd = Command.CONFIG | Command.SETCONFIGVALUE | Command.CONFIG_USEVALUEMASK | (Command)tl.Channel;
-            if (e.ClickedItem == automaticAdvanceToolStripMenuItem)
+            if (e.ClickedItem == BAPSChannel.automaticAdvanceToolStripMenuItem)
             {
                 var oci = ConfigCache.getOption("Automatically advance");
                 var newSetting = "Yes";
-                if (automaticAdvanceToolStripMenuItem.Checked)
+                if (BAPSChannelautomaticAdvanceToolStripMenuItem.Checked)
                 {
                     newSetting = "No";
                 }
                 msgQueue.Enqueue(new ActionMessageU32intU32intU32int((ushort)cmd, (uint)oci.optionid, (uint)oci.type, (uint)(int)oci.choiceList[newSetting]));
             }
-            else if (e.ClickedItem == playOnLoadToolStripMenuItem)
+            else if (e.ClickedItem == BAPSChannelplayOnLoadToolStripMenuItem)
             {
                 var oci = ConfigCache.getOption("Play on load");
                 var newSetting = "Yes";
@@ -395,167 +357,21 @@ namespace BAPSPresenter2
                 OpenAudioWall(tl);
             }
         }
-
-        private void loadImpossibleFlicker(object sender, System.EventArgs e)
+        #endif
+        
+        private void countdownTick(object sender, EventArgs e)
         {
-            var timer = (Timer)sender;
-            var cts = (ChannelTimeoutStruct)timer.Tag;
-            cts.timeout--;
-            if (cts.timeout == 0)
+            if (timersEnabled)
             {
-                timer.Enabled = false;
-                loadedText[cts.channel].BackColor = System.Drawing.SystemColors.Window;
+                foreach (var chan in bapsChannels) chan.CountdownTick();
             }
-            else
-            {
-                if (loadedText[cts.channel].BackColor == System.Drawing.SystemColors.Window)
-                    loadedText[cts.channel].BackColor = System.Drawing.Color.LightSteelBlue;
-                else
-                    loadedText[cts.channel].BackColor = System.Drawing.SystemColors.Window;
-            }
-        }
-
-        private void nearEndFlash(object sender, System.EventArgs e)
-        {
-            var timer = (Timer)sender;
-            var channel = (int)timer.Tag;
-            timeLeftText[channel].Highlighted = !timeLeftText[channel].Highlighted;
-        }
-
-        private void ChannelLength_MouseDown(object sender, MouseEventArgs e)
-        {
-            var label = (BAPSFormControls.BAPSLabel)sender;
-            var cds = (CountDownState)label.Tag;
-
-            if (e.Y > 15)
-            {
-                cds.running = !cds.running;
-            }
-            else if (e.X > 3 * (label.ClientRectangle.Width / 4))
-            {
-                if (e.Button == MouseButtons.Left)
-                {
-                    cds.theTime++;
-                    cds.theTime = cds.theTime % 3600;
-                }
-                else if (e.Button == MouseButtons.Right)
-                {
-                    cds.theTime--;
-                    if (cds.theTime < 0)
-                    {
-                        cds.theTime += 3600;
-                    }
-                }
-            }
-            else if (e.X > label.ClientRectangle.Width / 2)
-            {
-                if (e.Button == MouseButtons.Left)
-                {
-                    cds.theTime += 60;
-                    cds.theTime = cds.theTime % 3600;
-                }
-                else if (e.Button == MouseButtons.Right)
-                {
-                    cds.theTime -= 60;
-                    if (cds.theTime < 0)
-                    {
-                        cds.theTime += 3600;
-                    }
-                }
-            }
-            else
-            {
-                if (cds.running)
-                {
-                    if (cds.startAt)
-                    {
-                        cds.theTime += (trackTime[cds.channel].Duration - trackTime[cds.channel].CuePosition) / 1000;
-                    }
-                    else
-                    {
-                        cds.theTime += 3600;
-                        cds.theTime -= (trackTime[cds.channel].Duration - trackTime[cds.channel].CuePosition) / 1000;
-                    }
-                    cds.theTime = cds.theTime % 3600;
-                }
-                cds.startAt = !cds.startAt;
-            }
-            if (cds.startAt)
-            {
-                label.InfoText = "Start At: ";
-            }
-            else
-            {
-                label.InfoText = "End At: ";
-            }
-            label.InfoText = string.Concat(label.InfoText, (cds.theTime / 60).ToString("00"), ":", (cds.theTime % 60).ToString("00"));
-        }
-
-        private void countdownTick(object sender, System.EventArgs e)
-        {
-            if (!timersEnabled) goto End;
-
-            for (int i = 0; i < 3; i++)
-            {
-                var cds = (CountDownState)trackLengthText[i].Tag;
-
-                if (channelPlay[i].Enabled && cds.running)
-                {
-                    System.DateTime dt = System.DateTime.Now;
-                    if (!cds.startAt)
-                    {
-                        dt = dt.AddMilliseconds(trackTime[i].Duration - trackTime[i].CuePosition);
-                    }
-                    int millisecsPastHour = (((dt.Minute * 60) + dt.Second) * 1000) + dt.Millisecond;
-                    int value = cds.theTime * 1000;
-                    if (value < millisecsPastHour)
-                    {
-                        value += 3600000;
-                    }
-                    value -= millisecsPastHour;
-                    int valuesecs = value / 1000;
-                    /** WORK NEEDED: This allows 5 seconds grace in case of heavy system load
-                     *               It would be better if there were guaranteed start if it didnt kick in.
-                     **/
-                    if (valuesecs > 3595)
-                    {
-                        cds.running = false;
-                        var cmd = Command.PLAYBACK | Command.PLAY | (Command)i;
-                        msgQueue.Enqueue(new ActionMessage((ushort)cmd));
-                    }
-                    trackLengthText[i].Text = string.Concat((valuesecs / 60).ToString("00"), ":", (valuesecs % 60).ToString("00"));
-
-                    timeLine.UpdateStartTime(i, value);
-                }
-                else
-                {
-                    cds.running = false;
-                    timeLine.UpdateStartTime(i, -1);
-                    trackLengthText[i].Text = "--:--";
-                }
-                if (cds.startAt)
-                {
-                    trackLengthText[i].InfoText = "Start At: ";
-                }
-                else
-                {
-                    trackLengthText[i].InfoText = "End At: ";
-                }
-                trackLengthText[i].InfoText = string.Concat(trackLengthText[i].InfoText, (cds.theTime / 60).ToString("00"), ":", (cds.theTime % 60).ToString("00"));
-
-            }
-
-            End:
             timeLine.tick();
         }
 
         private void timeLine_StartTimeChanged(object sender, TimeLineEventArgs e)
         {
             if (!timersEnabled) return;
-            var cds = (CountDownState)trackLengthText[e.channel].Tag;
-            cds.startAt = true;
-            cds.theTime = e.startTime / 1000 % 3600;
-            cds.running = true;
+            bapsChannels[e.channel].UpdateCountDown(e.startTime / 1000 % 3600);
         }
     }
 }

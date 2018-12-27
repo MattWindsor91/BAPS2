@@ -22,7 +22,9 @@ namespace BAPSPresenter2
         /// </summary>
         private ChannelTimeoutStruct cts;
 
-        public BAPSChannel(ushort channelID)
+        public int LoadedTextIndex { set { trackList.LoadedTextIndex = value; } }
+
+        public BAPSChannel(ushort channelID) : base()
         {
             this.channelID = channelID;
 
@@ -37,6 +39,10 @@ namespace BAPSPresenter2
             nearEndTimer.Tag = channelID; // Needed?
         }
 
+        public BAPSChannel() : this(0) { }
+
+        #region Events used to talk to the main presenter
+
         public event RequestChangeEventHandler TrackListRequestChange;
         public event EventHandler PlayRequested;
         public event EventHandler PauseRequested;
@@ -44,10 +50,37 @@ namespace BAPSPresenter2
         public event EventHandler<int> PositionChanged;
         public event EventHandler<int> CuePositionChanged;
         public event EventHandler<int> IntroPositionChanged;
-        public event EventHandler<int> TimeLineUpdateNeeded;
+        public event EventHandler<int> TimelineStartChanged;
+        public event EventHandler<int> TimelinePositionChanged;
+        public event EventHandler<int> TimelineDurationChanged;
         public event EventHandler<uint> TrackBarMoved;
-
         public event ToolStripItemClickedEventHandler TrackListContextMenuStripItemClicked;
+
+        #endregion Events used to talk to the main presenter
+
+        private string TimeToString(int hours, int minutes, int seconds, int centiseconds)
+        {
+            /** WORK NEEDED: fix me **/
+            var htemp = hours.ToString();
+            var mtemp = (minutes < 10) ? string.Concat("0", minutes.ToString()) : minutes.ToString();
+            var stemp = (seconds < 10) ? string.Concat("0", seconds.ToString()) : seconds.ToString();
+            return string.Concat(htemp, ":", mtemp, ":", stemp);
+        }
+
+        private string MillisecondsToTimeString(int msecs)
+        {
+            /** WORK NEEDED: lots **/
+            int secs = msecs / 1000;
+
+            var hours = Math.DivRem(secs, 3600, out _);
+            int mins = Math.DivRem(secs, 60, out _) - (hours * 60);
+
+            secs = secs - ((mins * 60) + (hours * 3600));
+
+            return TimeToString(hours, mins, secs, msecs % 1000 / 10);
+        }
+
+        #region Updating the channel's view
 
         public void ShowPlay()
         {
@@ -73,6 +106,107 @@ namespace BAPSPresenter2
             stopButton.BackColor = System.Drawing.Color.Firebrick;
         }
 
+        public int DisplayedPosition
+        {
+            set
+            {
+                /** Channels are ready when they have a valid duration **/
+                if (trackTime.Duration >= value)
+                {
+                    trackTime.Position = value;
+                    TimelinePositionChanged?.Invoke(this, value - trackTime.CuePosition);
+
+                    value = (int)(Math.Round(value / 1000f) * 1000);
+                    /** Set the amount of time gone **/
+                    timeGone.Text = MillisecondsToTimeString(value);
+                    var timeleft = trackTime.Duration - value;
+                    timeLeft.Text = MillisecondsToTimeString(timeleft);
+                    if (playButton.Enabled || timeleft > 10000 || timeleft < 500)
+                    {
+                        nearEndTimer.Enabled = false;
+                        timeLeft.Highlighted = false;
+                    }
+                    else if (!playButton.Enabled)
+                    {
+                        nearEndTimer.Interval = 100;
+                        nearEndTimer.Enabled = true;
+                    }
+                }
+                else
+                {
+                    /** WORK NEEDED: there is a problem **/
+                }
+            }
+        }
+
+        public int DisplayedCuePosition
+        {
+            set
+            {
+                trackTime.CuePosition = value;
+                TimelineDurationChanged?.Invoke(this, trackTime.Duration - trackTime.CuePosition);
+            }
+        }
+
+        public int DisplayedDuration
+        {
+            set
+            {
+                trackTime.Position = 0;
+                trackTime.Duration = value;
+                TimelineDurationChanged?.Invoke(this, value - trackTime.CuePosition);
+            }
+        }
+
+        public int DisplayedIntroPosition
+        {
+            set
+            {
+                trackTime.IntroPosition = value;
+            }
+        }
+
+        internal void ShowLoadedItem(uint index, Command itemType, string description)
+        {
+            trackList.LoadedIndex = (int)index;
+            loadedText.Text = description;
+            cds.running = false;
+            if (itemType == Command.VOIDITEM)
+            {
+                trackTime.Position = 0;
+                TimelinePositionChanged?.Invoke(this, 0);
+                trackTime.Duration = 0;
+                TimelineDurationChanged?.Invoke(this, 0);
+                trackTime.CuePosition = 0;
+                trackTime.IntroPosition = 0;
+                timeLeft.Text = MillisecondsToTimeString(0);
+                timeGone.Text = MillisecondsToTimeString(0);
+                nearEndTimer.Enabled = false;
+                timeLeft.Highlighted = false;
+            }
+        }
+
+        internal void AddTrack(uint index, uint type, string description)
+        {
+            /** Add an item to the end of the list ( only method currently supported by server ) **/
+            trackList.addTrack((int)type, description);
+        }
+
+        internal void MoveTrack(uint oldIndex, uint newIndex)
+        {
+            trackList.moveTrack((int)oldIndex, (int)newIndex);
+        }
+
+        internal void RemoveTrack(uint index) => trackList.removeTrack((int)index);
+
+        internal void CleanPlaylist()
+        {
+            trackList.clearTrackList();
+            cds.running = false;
+        }
+
+        #endregion Updating the channel view
+
         /** Enable or disable the timer controls **/
         public void EnableTimerControls(bool shouldEnable)
         {
@@ -85,8 +219,16 @@ namespace BAPSPresenter2
         #region Mouse events
 
         private void playButton_Click(object sender, EventArgs e) => PlayRequested?.Invoke(sender, e);
-        private void pauseButton_Click(object sender, EventArgs e) => PauseRequested?.Invoke(sender, e);
-        private void stopButton_Click(object sender, EventArgs e) => StopRequested?.Invoke(sender, e);
+        private void pauseButton_Click(object sender, EventArgs e)
+        {
+            trackList.clearPendingLoadRequest();
+            PauseRequested?.Invoke(sender, e);
+        }
+        private void stopButton_Click(object sender, EventArgs e)
+        {
+            trackList.clearPendingLoadRequest();
+            StopRequested?.Invoke(sender, e);
+        }
 
         private void Length_MouseDown(object sender, MouseEventArgs e)
         {
@@ -156,7 +298,7 @@ namespace BAPSPresenter2
             label.InfoText = string.Concat(label.InfoText, (cds.theTime / 60).ToString("00"), ":", (cds.theTime % 60).ToString("00"));
         }
 
-        private void TrackBar_Scroll(object sender, System.EventArgs e)
+        private void TrackBar_Scroll(object sender, EventArgs e)
         {
             var trackBar = (TrackBar)sender;
             TrackBarMoved?.Invoke(sender, (uint)trackBar.Value * 100);
@@ -185,9 +327,29 @@ namespace BAPSPresenter2
 
         #region Track list events
 
+        private bool IsTextItemAt(int index) =>
+            (Command)trackList.items[index].type == Command.TEXTITEM;
+
+        private bool IsLoadPossible(int index) =>
+            IsTextItemAt(index) || playButton.Enabled;
+
         private void TrackList_RequestChange(object o, RequestChangeEventArgs e)
         {
             Debug.Assert(e.channel == channelID);
+
+            // Don't propagate impossible loads outside the channel.
+            if ((ChangeType)e.ct == ChangeType.SELECTEDINDEX)
+            {
+                if (!IsLoadPossible(e.index))
+                {
+                    cts.timeout = 10;
+                    loadImpossibleTimer.Enabled = true;
+                    return;
+                }
+                loadImpossibleTimer.Enabled = false;
+                loadedText.BackColor = System.Drawing.SystemColors.Window;
+            }
+
             TrackListRequestChange?.Invoke(o, e);
         }
 
@@ -212,7 +374,8 @@ namespace BAPSPresenter2
 
         private void TrackListContextMenuStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
-            TrackListContextMenuStripItemClicked?.Invoke(sender, e);
+            var tl = (TrackList)trackListContextMenuStrip.SourceControl;
+            TrackListContextMenuStripItemClicked?.Invoke(tl /* TODO(@MattWindsor91): this is a hack! */, e);
         }
 
         #endregion Track list events
@@ -240,8 +403,6 @@ namespace BAPSPresenter2
 
         private void NearEndFlash(object sender, EventArgs e)
         {
-            var timer = (Timer)sender;
-            var channel = (int)timer.Tag;
             timeLeft.Highlighted = !timeLeft.Highlighted;
         }
 
@@ -272,12 +433,12 @@ namespace BAPSPresenter2
                 }
                 length.Text = string.Concat((valuesecs / 60).ToString("00"), ":", (valuesecs % 60).ToString("00"));
 
-                TimeLineUpdateNeeded?.Invoke(this, value);
+                TimelineStartChanged?.Invoke(this, value);
             }
             else
             {
                 cds.running = false;
-                TimeLineUpdateNeeded?.Invoke(this, -1);
+                TimelineStartChanged?.Invoke(this, -1);
                 length.Text = "--:--";
             }
             if (cds.startAt)
@@ -289,6 +450,13 @@ namespace BAPSPresenter2
                 length.InfoText = "End At: ";
             }
             length.InfoText = string.Concat(length.InfoText, (cds.theTime / 60).ToString("00"), ":", (cds.theTime % 60).ToString("00"));
+        }
+
+        internal void UpdateCountDown(int theTime)
+        {
+            cds.startAt = true;
+            cds.theTime = theTime;
+            cds.running = true;
         }
 
         #endregion Timer events
