@@ -11,7 +11,7 @@ namespace BAPSPresenter2
 	        update the configDialog... exceptions to the rule exist... read on
         **/
 
-        void processChoice(uint optionid, uint choiceIndex, string choiceDescription)
+        private void processChoice(uint optionid, uint choiceIndex, string choiceDescription)
         {
             /** Cache this info **/
             ConfigCache.addOptionChoice((int)optionid, (int)choiceIndex, choiceDescription);
@@ -37,7 +37,7 @@ namespace BAPSPresenter2
             }
         }
 
-        void processChoiceCount(uint optionid, uint count)
+        private void processChoiceCount(uint optionid, uint count)
         {
             /** Ignore if the config dialog is closed **/
             var cd = configDialog;
@@ -61,7 +61,7 @@ namespace BAPSPresenter2
             }
         }
 
-        void processOption(Command cmdReceived, uint optionid, string description, uint type)
+        private void processOption(Command cmdReceived, uint optionid, string description, uint type)
         {
             /** Cache this info **/
             ConfigCache.addOptionDescription((int)optionid, (int)type, description, (cmdReceived & Command.CONFIG_USEVALUEMASK) != 0);
@@ -107,7 +107,7 @@ namespace BAPSPresenter2
             }
         }
 
-        void processOptionCount(uint count)
+        private void processOptionCount(uint count)
         {
             /** Let the config dialog know how many options to expect **/
             var cd = configDialog;
@@ -131,7 +131,7 @@ namespace BAPSPresenter2
             }
         }
 
-        void processConfigSetting(Command cmdReceived, uint optionid, ConfigType type)
+        private void processConfigSetting(Command cmdReceived, uint optionid, ConfigType type)
         {
             uint valueInt = 0;
             string valueStr = null;
@@ -243,7 +243,7 @@ namespace BAPSPresenter2
             }
         }
 
-        void processConfigResult(Command cmdReceived, uint optionid, uint result)
+        private void processConfigResult(Command cmdReceived, uint optionid, uint result)
         {
             /** We receive a result for every config setting we try to update **/
             /** Only report these if the form is still open, it is a serious error, if
@@ -261,43 +261,43 @@ namespace BAPSPresenter2
             }
         }
 
-        void processConfigError(uint errorCode, string description)
+        private void processConfigError(uint errorCode, string description)
         {
             if (securityDialog == null) return;
             securityDialog.Invoke((Action<object, string>)securityDialog.receiveConfigError, errorCode, description);
         }
 
-        void processUserInfo(string username, uint permissions)
+        private void processUserInfo(string username, uint permissions)
         {
             if (securityDialog == null) return;
             securityDialog.Invoke((Action<string, object>)securityDialog.receiveUserInfo, username, permissions);
         }
 
-        void processUserCount(uint userCount)
+        private void processUserCount(uint userCount)
         {
             if (securityDialog == null) return;
             securityDialog.Invoke((Action<object>)securityDialog.receiveUserCount, userCount);
         }
 
-        void processUserResult(uint resultCode, string description)
+        private void processUserResult(uint resultCode, string description)
         {
             if (securityDialog == null) return;
             securityDialog.Invoke((Action<object, string>)securityDialog.receiveUserResult, resultCode, description);
         }
 
-        void processPermissionInfo(uint permissionCode, string description)
+        private void processPermissionInfo(uint permissionCode, string description)
         {
             if (securityDialog == null) return;
             securityDialog.Invoke((Action<object, string>)securityDialog.receivePermissionInfo, permissionCode, description);
         }
 
-        void processPermissionCount(uint permissionCount)
+        private void processPermissionCount(uint permissionCount)
         {
             if (securityDialog == null) return;
             securityDialog.Invoke((Action<object>)securityDialog.receivePermissionCount, permissionCount);
         }
 
-        void processIPRestrictionCount(Command cmd, uint count)
+        private void processIPRestrictionCount(Command cmd, uint count)
         {
             if (securityDialog == null) return;
             if (cmd.IsFlagSet(Command.CONFIG_USEVALUEMASK))
@@ -310,7 +310,7 @@ namespace BAPSPresenter2
             }
         }
 
-        void processIPRestriction(Command cmd, string ipaddress, uint mask)
+        private void processIPRestriction(Command cmd, string ipaddress, uint mask)
         {
             if (securityDialog == null) return;
             if (cmd.IsFlagSet(Command.CONFIG_USEVALUEMASK))

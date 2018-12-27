@@ -160,18 +160,6 @@ namespace BAPSPresenter2
             return stringbuff.ToString();
         }
 
-#region PLAYBACK functions
-
-        private void showChannelOperation(ushort _channel, ushort _operation) { }
-        private void showPosition(ushort _channel, uint _value) { }
-        private void showLoadedItem(ushort _channel, uint _index, uint _itemType, string description) { }
-        private void showDuration(ushort _channel, uint _value) { }
-        private void showText(ushort _channel, uint _index, string description, string text) { }
-        private void showCuePosition(ushort _channel, uint _cuePosition) { }
-        private void showIntroPosition(ushort _channel, uint _introPosition) { }
-
-#endregion PLAYBACK functions
-
 #region DATABASE functions
 
         private void addLibraryResult(System.UInt32 index, int dirtyStatus, string result) { }

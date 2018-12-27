@@ -12,6 +12,7 @@ namespace BAPSPresenter2
         **/
         private bool dead = false;
 
+        private bool ChannelOutOfBounds(ushort channel) => 3 <= channel;
 
         public Main()
         {
@@ -334,7 +335,7 @@ namespace BAPSPresenter2
                         case Command.STOP:
                             {
                                 var channel = cmdReceived & Command.PLAYBACK_CHANNELMASK;
-                                Invoke((Action<ushort, ushort>)showChannelOperation, channel, op);
+                                Invoke((Action<ushort, Command>)showChannelOperation, channel, op);
                             }
                             break;
                         case Command.POSITION:
@@ -367,7 +368,7 @@ namespace BAPSPresenter2
                                         break;
                                     case Command.VOIDITEM:
                                         {
-                                            Invoke((Action<ushort, uint, uint, string>)showLoadedItem, channel, index, type, description);
+                                            Invoke((Action<ushort, uint, Command, string>)showLoadedItem, channel, index, type, description);
                                         }
                                         break;
                                     case Command.TEXTITEM:

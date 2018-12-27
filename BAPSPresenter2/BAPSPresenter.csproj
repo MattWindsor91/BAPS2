@@ -63,6 +63,9 @@
     <Compile Include="Main.Reactions.Config.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Main.Reactions.Playback.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Main.Reactions.Playlist.cs">
       <SubType>Form</SubType>
     </Compile>
