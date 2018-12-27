@@ -11,11 +11,8 @@ namespace BAPSPresenter2
             until data is received, so an abort message is still required
         **/
         private bool dead = false;
-
-        /** Flag to say if the client crashed **/
-        private bool crashed = false;
         // Accessor for the crashed variable.
-        public bool hasCrashed { get => crashed; }
+        public bool hasCrashed { get; private set; } = false;
 
         /** A handle for the connection to the server **/
         private ClientSocket clientSocket;
@@ -28,8 +25,9 @@ namespace BAPSPresenter2
         private System.Threading.Thread senderThread;
         /** The receiver thread **/
         private System.Threading.Thread receiverThread;
+ 
         /** Whether or not the timers are enabled **/
-        private bool timersEnabled;
+        private bool timersEnabled = true;
 
         /** The outgoing message queue (Should only have ActionMessage objects)**/
         private System.Collections.Queue msgQueue;
@@ -312,6 +310,91 @@ namespace BAPSPresenter2
             }
         }
 
+        /** Generate an md5 sum of the raw argument **/
+        private string md5sum(string raw)
+        {
+            var md5serv = System.Security.Cryptography.MD5.Create();
+            var stringbuff = new System.Text.StringBuilder();
+            var buffer = System.Text.Encoding.ASCII.GetBytes(raw);
+            var hash = md5serv.ComputeHash(buffer);
+
+            foreach (var h in hash)
+            {
+                stringbuff.Append(h.ToString("x2"));
+            }
+            return stringbuff.ToString();
+        }
+
+        /** Enable or disable the timer controls **/
+        private void enableTimerControls(bool shouldEnable)
+        {
+            timersEnabled = shouldEnable;
+            Channel0Length.Visible = shouldEnable;
+            Channel1Length.Visible = shouldEnable;
+            Channel2Length.Visible = shouldEnable;
+            Channel0Length.Enabled = shouldEnable;
+            Channel1Length.Enabled = shouldEnable;
+            Channel2Length.Enabled = shouldEnable;
+            timeLine.DragEnabled = shouldEnable;
+            var cds = (CountDownState)trackLengthText[0].Tag;
+            cds.running = false;
+            cds = (CountDownState)trackLengthText[1].Tag;
+            cds.running = false;
+            cds = (CountDownState)trackLengthText[2].Tag;
+            cds.running = false;
+        }
+
+        /** Notify AudioWall to Update **/
+        private void refreshAudioWall()
+        {
+            if (audioWall != null && audioWall.Visible)
+            {
+                audioWall.Invoke((Action)refreshAudioWall);
+            }
+        }
+
+        /** Function to async send the notify of a Comms Error / allow a way to restart the client. **/
+        private void sendQuit(string description, bool silent)
+        {
+            if (hasCrashed) return;
+
+            _ = BeginInvoke((Action<string, bool>)quit, description, silent);
+        }
+
+        /** Function to notify of a Comms Error **/
+        private void quit(string description, bool silent)
+        {
+            /** On Communications errors this is called to notify the user **/
+            /** Only current option is to die **/
+            dead = true;
+            if (!silent)
+            {
+                MessageBox.Show(string.Concat(description, "\nClick OK to restart the Presenter Interface.\nPlease notify support that an error occurred."), "System error:", MessageBoxButtons.OK);
+                logError(description);
+            }
+            hasCrashed = true;
+            Close();
+        }
+
+        /** Function to open write and close a log file -- FOR EMERGENCIES ONLY **/
+        private void logError(string errorMessage)
+        {
+            System.IO.StreamWriter stream = null;
+            try
+            {
+                stream = new System.IO.StreamWriter("bapserror.log", true);
+                stream.Write(errorMessage);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show(string.Concat("Unable to write log file, Please write down the following information:\n", errorMessage), "Log file error", MessageBoxButtons.OK);
+            }
+            finally
+            {
+                stream?.Close();
+            }
+        }
+
         /** Helper function to do command decoding **/
         private void DecodeCommand(Command cmdReceived)
         {
@@ -357,7 +440,7 @@ namespace BAPSPresenter2
                                             Invoke((Action<ushort, uint>)showDuration, channel, duration);
                                             Invoke((Action<ushort, uint>)showPosition, channel, 0U);
                                         }
-                                        break;
+                                        goto case Command.VOIDITEM;
                                     case Command.VOIDITEM:
                                         {
                                             Invoke((Action<ushort, uint, Command, string>)showLoadedItem, channel, index, type, description);
@@ -683,13 +766,13 @@ namespace BAPSPresenter2
                         case Command.SCROLLTEXT:
                             {
                                 var updown = cmdReceived & Command.SYSTEM_VALUEMASK;
-                                Invoke((Action<ushort>) (x => textDialog.scroll(x)), updown);
+                                Invoke((Action<object>)textDialog.scroll, updown);
                             }
                             break;
                         case Command.TEXTSIZE:
                             {
                                 var updown = cmdReceived & Command.SYSTEM_VALUEMASK;
-                                Invoke((Action<ushort>)(x => textDialog.textSize(x)), updown);
+                                Invoke((Action<object>)textDialog.textSize, updown);
                             }
                             break;
                         case Command.QUIT:

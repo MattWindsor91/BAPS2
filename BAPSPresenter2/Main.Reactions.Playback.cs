@@ -133,7 +133,7 @@ namespace BAPSPresenter2
             trackList[2].LoadedTextIndex = -1;
             trackList[channel].LoadedTextIndex = (int)index;
             MainTextDisplay.Text = text;
-            if (textDialog.Visible)
+            if (textDialog?.Visible ?? false)
             {
                 textDialog.Invoke((Action<string>)textDialog.updateText, text);
             }

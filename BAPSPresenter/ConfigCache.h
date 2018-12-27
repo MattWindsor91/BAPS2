@@ -8,7 +8,7 @@ namespace BAPSPresenter
 	/**
 		This stores all the info there is about a given option in hashtable
 	**/
-	ref struct OptionCacheInfo
+	public ref struct OptionCacheInfo
 	{
 		int optionid;
 		int type;

@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChangeType.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="ConfigOptions.cs" />
     <Compile Include="LoginDialog.cs">
