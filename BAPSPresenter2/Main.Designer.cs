@@ -172,15 +172,6 @@ namespace BAPSPresenter2
 
 #endregion PLAYBACK functions
 
-#region PLAYLIST functions
-
-        private void addItem(ushort _channel, uint _index, uint _type, string entry) { }
-        private void moveItemTo(ushort _channel, uint _oldIndex, uint _newIndex) { }
-        private void deleteItem(ushort _channel, uint _index) { }
-        private void cleanPlaylist(ushort _channel) { }
-
-#endregion PLAYLIST functions
-
 #region DATABASE functions
 
         private void addLibraryResult(System.UInt32 index, int dirtyStatus, string result) { }
