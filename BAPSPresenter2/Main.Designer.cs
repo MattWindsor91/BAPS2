@@ -138,28 +138,6 @@ namespace BAPSPresenter2
             return stringbuff.ToString();
         }
 
-#region DATABASE functions
-
-        private void addLibraryResult(System.UInt32 index, int dirtyStatus, string result) { }
-        private void setLibraryResultCount(int count) { }
-        private void notifyLibraryError(int errorcode, string description) { }
-
-        private void addShowResult(System.UInt32 showid, string description) { }
-        private void setShowResultCount(int count) { }
-        private void addListingResult(System.UInt32 listingid, System.UInt32 channel, string description) { }
-        private void setListingResultCount(int count) { }
-        private void notifyLoadShowError(int errorCode, string message) { }
-
-#endregion DATABASE functions
-
-#region SYSTEM functions
-
-        private void addFileToDirectoryList(ushort _directoryIndex, uint _fileIndex, string entry) { }
-        private void clearFiles(ushort _directoryIndex, string niceDirectoryName) { }
-        private void displayVersion(string version, string date, string time, string author) { }
-
-#endregion SYSTEM functions
-
         /** Enable or disable the timer controls **/
         private void enableTimerControls(bool shouldEnable) { }
         /** Notify AudioWall to Update **/

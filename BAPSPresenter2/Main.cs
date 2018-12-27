@@ -35,6 +35,7 @@ namespace BAPSPresenter2
         private System.Collections.Queue msgQueue;
 
         private bool ChannelOutOfBounds(ushort channel) => 3 <= channel;
+        private bool DirectoryOutOfBounds(ushort directory) => 3 <= directory;
 
         public Main()
         {
