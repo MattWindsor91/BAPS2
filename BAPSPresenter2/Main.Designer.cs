@@ -62,7 +62,7 @@ namespace BAPSPresenter2
         ConfigDialog configDialog = null;
         LoadShowDialog loadShowDialog = null;
         SecurityDialog securityDialog = null;
-        About about = null;
+        AboutDialog about = null;
         TextDialog textDialog = null;
         AudioWall audioWall = null;
 
@@ -319,12 +319,10 @@ namespace BAPSPresenter2
                     if (e.Control && e.Alt)
                     {
                          // TODO(@MattWindsor91): port these
-#if false
-                        about = new About(this);
-                        msgQueue.Enqueue(new ActionMessage(Command.SYSTEM | Command.VERSION));
+                        about = new AboutDialog(this);
+                        msgQueue.Enqueue(new ActionMessage((ushort) (Command.SYSTEM | Command.VERSION)));
                         about.ShowDialog();
-                        about = nullptr;
-#endif
+                        about = null;
                         e.Handled = true;
                     }
                     break;
