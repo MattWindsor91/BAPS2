@@ -69,9 +69,9 @@ namespace BAPSPresenter2
         private ListBox[] directoryList;
         private Button[] directoryRefresh;
         private Label[] loadedText;
-        private BAPSLabel[] trackLengthText;
-        private BAPSLabel[] timeLeftText;
-        private BAPSLabel[] timeGoneText;
+        private BAPSFormControls.BAPSLabel[] trackLengthText;
+        private BAPSFormControls.BAPSLabel[] timeLeftText;
+        private BAPSFormControls.BAPSLabel[] timeGoneText;
         private Button[] channelPlay;
         private Button[] channelPause;
         private Button[] channelStop;
@@ -382,15 +382,15 @@ namespace BAPSPresenter2
         private void countdownTick(object sender, System.EventArgs e) { }
         private void timeLine_StartTimeChanged(object sender, TimeLineEventArgs e) { }
 
-        private BAPSLabel Channel0TimeGone;
-        private BAPSLabel Channel0TimeLeft;
-        private BAPSLabel Channel0Length;
-        private BAPSLabel Channel1TimeGone;
-        private BAPSLabel Channel1TimeLeft;
-        private BAPSLabel Channel1Length;
-        private BAPSLabel Channel2TimeGone;
-        private BAPSLabel Channel2TimeLeft;
-        private BAPSLabel Channel2Length;
+        private BAPSFormControls.BAPSLabel Channel0TimeGone;
+        private BAPSFormControls.BAPSLabel Channel0TimeLeft;
+        private BAPSFormControls.BAPSLabel Channel0Length;
+        private BAPSFormControls.BAPSLabel Channel1TimeGone;
+        private BAPSFormControls.BAPSLabel Channel1TimeLeft;
+        private BAPSFormControls.BAPSLabel Channel1Length;
+        private BAPSFormControls.BAPSLabel Channel2TimeGone;
+        private BAPSFormControls.BAPSLabel Channel2TimeLeft;
+        private BAPSFormControls.BAPSLabel Channel2Length;
 
         private TrackTime trackTime0;
         private TrackTime trackTime1;
@@ -444,16 +444,16 @@ namespace BAPSPresenter2
             this.Channel1LoadedText = (new System.Windows.Forms.Label());
             this.Channel2LoadedText = (new System.Windows.Forms.Label());
             this.timeLine = (new BAPSPresenter.TimeLine());
-            this.Channel2Length = (new BAPSPresenter.BAPSLabel());
-            this.Channel1TimeLeft = (new BAPSPresenter.BAPSLabel());
-            this.Channel1Length = (new BAPSPresenter.BAPSLabel());
+            this.Channel2Length = (new BAPSFormControls.BAPSLabel());
+            this.Channel1TimeLeft = (new BAPSFormControls.BAPSLabel());
+            this.Channel1Length = (new BAPSFormControls.BAPSLabel());
             this.trackList0 = (new BAPSPresenter.TrackList());
-            this.Channel0Length = (new BAPSPresenter.BAPSLabel());
-            this.Channel2TimeLeft = (new BAPSPresenter.BAPSLabel());
-            this.Channel0TimeLeft = (new BAPSPresenter.BAPSLabel());
-            this.Channel1TimeGone = (new BAPSPresenter.BAPSLabel());
-            this.Channel2TimeGone = (new BAPSPresenter.BAPSLabel());
-            this.Channel0TimeGone = (new BAPSPresenter.BAPSLabel());
+            this.Channel0Length = (new BAPSFormControls.BAPSLabel());
+            this.Channel2TimeLeft = (new BAPSFormControls.BAPSLabel());
+            this.Channel0TimeLeft = (new BAPSFormControls.BAPSLabel());
+            this.Channel1TimeGone = (new BAPSFormControls.BAPSLabel());
+            this.Channel2TimeGone = (new BAPSFormControls.BAPSLabel());
+            this.Channel0TimeGone = (new BAPSFormControls.BAPSLabel());
             this.trackList2 = (new BAPSPresenter.TrackList());
             this.trackList1 = (new BAPSPresenter.TrackList());
             this.trackTime1 = (new BAPSPresenter.TrackTime());

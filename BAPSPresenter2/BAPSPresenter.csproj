@@ -98,6 +98,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BAPSFormControls\BAPSFormControls.csproj">
+      <Project>{4c3d1722-7b93-4081-8d61-572f8f088ced}</Project>
+      <Name>BAPSFormControls</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BAPSPresenter\BAPSPresenter.vcxproj">
       <Project>{46fd9397-dd3b-456a-9d95-504d60f6a9b5}</Project>
       <Name>BAPSPresenterLegacy</Name>

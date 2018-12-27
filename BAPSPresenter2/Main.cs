@@ -165,13 +165,13 @@ namespace BAPSPresenter2
             /** Array initialisation so that controls can be found by channel
                 number at runtime
             **/
-            trackLengthText = new BAPSLabel[3] { Channel0Length, Channel1Length, Channel2Length };
+            trackLengthText = new BAPSFormControls.BAPSLabel[3] { Channel0Length, Channel1Length, Channel2Length };
             Channel0Length.Tag = new CountDownState(0);
             Channel1Length.Tag = new CountDownState(1);
             Channel2Length.Tag = new CountDownState(2);
 
-            timeLeftText = new BAPSLabel[3] { Channel0TimeLeft, Channel1TimeLeft, Channel2TimeLeft };
-            timeGoneText = new BAPSLabel[3] { Channel0TimeGone, Channel1TimeGone, Channel2TimeGone };
+            timeLeftText = new BAPSFormControls.BAPSLabel[3] { Channel0TimeLeft, Channel1TimeLeft, Channel2TimeLeft };
+            timeGoneText = new BAPSFormControls.BAPSLabel[3] { Channel0TimeGone, Channel1TimeGone, Channel2TimeGone };
             timeGoneText[0] = Channel0TimeGone;
             timeGoneText[1] = Channel1TimeGone;
             timeGoneText[2] = Channel2TimeGone;

@@ -21,8 +21,8 @@ namespace BAPSPresenter2
             /** WORK NEEDED: lots **/
             int secs = msecs / 1000;
 
-            var hours = System.Math.DivRem(secs, 3600, out _);
-            int mins = System.Math.DivRem(secs, 60, out _) - (hours * 60);
+            var hours = Math.DivRem(secs, 3600, out _);
+            int mins = Math.DivRem(secs, 60, out _) - (hours * 60);
 
             secs = secs - ((mins * 60) + (hours * 3600));
 
@@ -70,7 +70,7 @@ namespace BAPSPresenter2
                 trackTime[channel].Position = value;
                 timeLine.UpdatePosition(channel, value - trackTime[channel].CuePosition);
 
-                value = (int)(System.Math.Round(value / 1000f) * 1000);
+                value = (int)(Math.Round(value / 1000f) * 1000);
                 /** Set the amount of time gone **/
                 timeGoneText[channel].Text = MillisecondsToTimeString(value);
                 /** Set the time left **/
