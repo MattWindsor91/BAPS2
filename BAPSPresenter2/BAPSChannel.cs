@@ -10,21 +10,26 @@ namespace BAPSPresenter2
         /// <summary>
         /// The ID of this channel.
         /// </summary>
+        /// <remarks>
+        /// The first time this property is accessed, we retrieve the
+        /// channel ID from this channel's Tag.  The tag must be
+        /// a string.
+        /// </remarks>
         internal ushort ChannelID
         {
             get
             {
-                if (channelID == null)
+                if (_channelID == null)
                 {
                     var t = Tag as string;
                     Debug.Assert(t != null, "Tried to get channel ID before it is set");
-                    channelID = ushort.Parse(t);
+                    _channelID = ushort.Parse(t);
                     SetupTimers();
                 }
-                return channelID ?? 0;
+                return _channelID ?? 0;
             }
         }
-        private ushort? channelID = null;
+        private ushort? _channelID = null;
 
         /// <summary>
         /// This channel's count-down state.
@@ -45,7 +50,7 @@ namespace BAPSPresenter2
 
         private void SetupTimers()
         {
-            Debug.Assert(channelID != null, "should have set channel ID before doing this");
+            Debug.Assert(_channelID != null, "should have set channel ID before doing this");
 
             cds = new CountDownState(ChannelID);
             length.Tag = cds; // Needed?
@@ -53,7 +58,7 @@ namespace BAPSPresenter2
             cts = new ChannelTimeoutStruct(ChannelID, 10);
             loadImpossibleTimer.Tag = cts; // Needed?
 
-            nearEndTimer.Tag = channelID; // Needed?
+            nearEndTimer.Tag = _channelID; // Needed?
         }
 
         #region Events used to talk to the main presenter
@@ -225,7 +230,7 @@ namespace BAPSPresenter2
         /** Enable or disable the timer controls **/
         public void EnableTimerControls(bool shouldEnable)
         {
-            Debug.Assert(channelID != null, "shouldn't enable timer controls before setting channel ID"); 
+            Debug.Assert(_channelID != null, "shouldn't enable timer controls before setting channel ID"); 
             length.Visible = shouldEnable;
             length.Enabled = shouldEnable;
             cds.running = false;

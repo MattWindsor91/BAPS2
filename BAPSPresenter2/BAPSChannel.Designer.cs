@@ -33,14 +33,6 @@
             this.loadedText = new System.Windows.Forms.Label();
             this.trackTime = new BAPSPresenter.TrackTime();
             this.trackList = new BAPSPresenter.TrackList();
-            this.playButton = new System.Windows.Forms.Button();
-            this.stopButton = new System.Windows.Forms.Button();
-            this.pauseButton = new System.Windows.Forms.Button();
-            this.timeGone = new BAPSFormControls.BAPSLabel();
-            this.timeLeft = new BAPSFormControls.BAPSLabel();
-            this.length = new BAPSFormControls.BAPSLabel();
-            this.loadImpossibleTimer = new System.Windows.Forms.Timer(this.components);
-            this.nearEndTimer = new System.Windows.Forms.Timer(this.components);
             this.trackListContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.resetChannelStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
@@ -54,6 +46,14 @@
             this.repeatNoneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.showAudioWallToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.playButton = new System.Windows.Forms.Button();
+            this.stopButton = new System.Windows.Forms.Button();
+            this.pauseButton = new System.Windows.Forms.Button();
+            this.timeGone = new BAPSFormControls.BAPSLabel();
+            this.timeLeft = new BAPSFormControls.BAPSLabel();
+            this.length = new BAPSFormControls.BAPSLabel();
+            this.loadImpossibleTimer = new System.Windows.Forms.Timer(this.components);
+            this.nearEndTimer = new System.Windows.Forms.Timer(this.components);
             this.layoutPanel.SuspendLayout();
             this.trackListContextMenuStrip.SuspendLayout();
             this.SuspendLayout();
@@ -79,12 +79,12 @@
             this.layoutPanel.Location = new System.Drawing.Point(0, 0);
             this.layoutPanel.Name = "layoutPanel";
             this.layoutPanel.RowCount = 5;
-            this.layoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.layoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.layoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
             this.layoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
             this.layoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.layoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
-            this.layoutPanel.Size = new System.Drawing.Size(363, 689);
+            this.layoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 64F));
+            this.layoutPanel.Size = new System.Drawing.Size(369, 689);
             this.layoutPanel.TabIndex = 0;
             // 
             // loadedText
@@ -95,9 +95,9 @@
             this.layoutPanel.SetColumnSpan(this.loadedText, 3);
             this.loadedText.Dock = System.Windows.Forms.DockStyle.Fill;
             this.loadedText.ForeColor = System.Drawing.Color.MidnightBlue;
-            this.loadedText.Location = new System.Drawing.Point(3, 435);
+            this.loadedText.Location = new System.Drawing.Point(3, 515);
             this.loadedText.Name = "loadedText";
-            this.loadedText.Size = new System.Drawing.Size(357, 32);
+            this.loadedText.Size = new System.Drawing.Size(363, 32);
             this.loadedText.TabIndex = 231;
             this.loadedText.Text = "--NONE--";
             this.loadedText.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -111,11 +111,11 @@
             this.trackTime.Duration = 0;
             this.trackTime.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.trackTime.IntroPosition = 0;
-            this.trackTime.Location = new System.Drawing.Point(3, 470);
+            this.trackTime.Location = new System.Drawing.Point(3, 550);
             this.trackTime.Name = "trackTime";
             this.trackTime.Position = 0;
             this.trackTime.SilencePosition = 0;
-            this.trackTime.Size = new System.Drawing.Size(357, 72);
+            this.trackTime.Size = new System.Drawing.Size(363, 72);
             this.trackTime.TabIndex = 227;
             this.trackTime.Text = "trackTime0";
             this.trackTime.CuePositionChanged += new System.EventHandler(this.OnCuePositionChanged);
@@ -135,98 +135,10 @@
             this.trackList.LoadedIndex = -1;
             this.trackList.Location = new System.Drawing.Point(3, 3);
             this.trackList.Name = "trackList0";
-            this.trackList.Size = new System.Drawing.Size(357, 397);
+            this.trackList.Size = new System.Drawing.Size(363, 477);
             this.trackList.TabIndex = 11;
             this.trackList.Text = "trackList";
             this.trackList.RequestChange += new BAPSPresenter.RequestChangeEventHandler(this.TrackList_RequestChange);
-            // 
-            // playButton
-            // 
-            this.playButton.BackColor = System.Drawing.SystemColors.Control;
-            this.playButton.Dock = System.Windows.Forms.DockStyle.Top;
-            this.playButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.playButton.Location = new System.Drawing.Point(3, 406);
-            this.playButton.Name = "playButton";
-            this.playButton.Size = new System.Drawing.Size(114, 23);
-            this.playButton.TabIndex = 225;
-            this.playButton.Text = "Play";
-            this.playButton.UseVisualStyleBackColor = false;
-            this.playButton.Click += new System.EventHandler(this.playButton_Click);
-            // 
-            // stopButton
-            // 
-            this.stopButton.Dock = System.Windows.Forms.DockStyle.Top;
-            this.stopButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.stopButton.Location = new System.Drawing.Point(244, 406);
-            this.stopButton.Name = "stopButton";
-            this.stopButton.Size = new System.Drawing.Size(116, 23);
-            this.stopButton.TabIndex = 226;
-            this.stopButton.Text = "Stop";
-            this.stopButton.UseVisualStyleBackColor = true;
-            this.stopButton.Click += new System.EventHandler(this.stopButton_Click);
-            // 
-            // pauseButton
-            // 
-            this.pauseButton.BackColor = System.Drawing.SystemColors.Control;
-            this.pauseButton.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pauseButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.pauseButton.Location = new System.Drawing.Point(123, 406);
-            this.pauseButton.Name = "pauseButton";
-            this.pauseButton.Size = new System.Drawing.Size(115, 23);
-            this.pauseButton.TabIndex = 224;
-            this.pauseButton.Text = "Pause";
-            this.pauseButton.UseVisualStyleBackColor = false;
-            this.pauseButton.Click += new System.EventHandler(this.pauseButton_Click);
-            // 
-            // timeGone
-            // 
-            this.timeGone.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.timeGone.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.timeGone.HighlightColor = System.Drawing.Color.Red;
-            this.timeGone.Highlighted = false;
-            this.timeGone.InfoText = "Elapsed:";
-            this.timeGone.Location = new System.Drawing.Point(3, 548);
-            this.timeGone.Name = "timeGone";
-            this.timeGone.Size = new System.Drawing.Size(114, 138);
-            this.timeGone.TabIndex = 228;
-            this.timeGone.TabStop = false;
-            // 
-            // timeLeft
-            // 
-            this.timeLeft.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.timeLeft.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.timeLeft.HighlightColor = System.Drawing.Color.HotPink;
-            this.timeLeft.Highlighted = false;
-            this.timeLeft.InfoText = "Remaining:";
-            this.timeLeft.Location = new System.Drawing.Point(123, 548);
-            this.timeLeft.Name = "timeLeft";
-            this.timeLeft.Size = new System.Drawing.Size(115, 138);
-            this.timeLeft.TabIndex = 229;
-            this.timeLeft.TabStop = false;
-            // 
-            // length
-            // 
-            this.length.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.length.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.length.HighlightColor = System.Drawing.Color.Red;
-            this.length.Highlighted = false;
-            this.length.InfoText = "End At: 59:50";
-            this.length.Location = new System.Drawing.Point(244, 548);
-            this.length.Name = "length";
-            this.length.Size = new System.Drawing.Size(116, 138);
-            this.length.TabIndex = 230;
-            this.length.TabStop = false;
-            this.length.Tag = "";
-            this.length.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Length_MouseDown);
-            // 
-            // loadImpossibleTimer
-            // 
-            this.loadImpossibleTimer.Interval = 70;
-            this.loadImpossibleTimer.Tick += new System.EventHandler(this.LoadImpossibleFlicker);
-            // 
-            // nearEndTimer
-            // 
-            this.nearEndTimer.Tick += new System.EventHandler(this.NearEndFlash);
             // 
             // trackListContextMenuStrip
             // 
@@ -246,7 +158,7 @@
             this.trackListContextMenuStrip.Name = "trackListContextMenuStrip";
             this.trackListContextMenuStrip.ShowCheckMargin = true;
             this.trackListContextMenuStrip.ShowImageMargin = false;
-            this.trackListContextMenuStrip.Size = new System.Drawing.Size(181, 226);
+            this.trackListContextMenuStrip.Size = new System.Drawing.Size(178, 204);
             this.trackListContextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.TrackListContextMenuStrip_Opening);
             this.trackListContextMenuStrip.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.TrackListContextMenuStrip_ItemClicked);
             // 
@@ -318,6 +230,94 @@
             this.showAudioWallToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
             this.showAudioWallToolStripMenuItem.Text = "&Show AudioWall";
             // 
+            // playButton
+            // 
+            this.playButton.BackColor = System.Drawing.SystemColors.Control;
+            this.playButton.Dock = System.Windows.Forms.DockStyle.Top;
+            this.playButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.playButton.Location = new System.Drawing.Point(3, 486);
+            this.playButton.Name = "playButton";
+            this.playButton.Size = new System.Drawing.Size(116, 23);
+            this.playButton.TabIndex = 225;
+            this.playButton.Text = "Play";
+            this.playButton.UseVisualStyleBackColor = false;
+            this.playButton.Click += new System.EventHandler(this.playButton_Click);
+            // 
+            // stopButton
+            // 
+            this.stopButton.Dock = System.Windows.Forms.DockStyle.Top;
+            this.stopButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.stopButton.Location = new System.Drawing.Point(248, 486);
+            this.stopButton.Name = "stopButton";
+            this.stopButton.Size = new System.Drawing.Size(118, 23);
+            this.stopButton.TabIndex = 226;
+            this.stopButton.Text = "Stop";
+            this.stopButton.UseVisualStyleBackColor = true;
+            this.stopButton.Click += new System.EventHandler(this.stopButton_Click);
+            // 
+            // pauseButton
+            // 
+            this.pauseButton.BackColor = System.Drawing.SystemColors.Control;
+            this.pauseButton.Dock = System.Windows.Forms.DockStyle.Top;
+            this.pauseButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.pauseButton.Location = new System.Drawing.Point(125, 486);
+            this.pauseButton.Name = "pauseButton";
+            this.pauseButton.Size = new System.Drawing.Size(117, 23);
+            this.pauseButton.TabIndex = 224;
+            this.pauseButton.Text = "Pause";
+            this.pauseButton.UseVisualStyleBackColor = false;
+            this.pauseButton.Click += new System.EventHandler(this.pauseButton_Click);
+            // 
+            // timeGone
+            // 
+            this.timeGone.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.timeGone.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.timeGone.HighlightColor = System.Drawing.Color.Red;
+            this.timeGone.Highlighted = false;
+            this.timeGone.InfoText = "Elapsed:";
+            this.timeGone.Location = new System.Drawing.Point(3, 628);
+            this.timeGone.Name = "timeGone";
+            this.timeGone.Size = new System.Drawing.Size(116, 58);
+            this.timeGone.TabIndex = 228;
+            this.timeGone.TabStop = false;
+            // 
+            // timeLeft
+            // 
+            this.timeLeft.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.timeLeft.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.timeLeft.HighlightColor = System.Drawing.Color.HotPink;
+            this.timeLeft.Highlighted = false;
+            this.timeLeft.InfoText = "Remaining:";
+            this.timeLeft.Location = new System.Drawing.Point(125, 628);
+            this.timeLeft.Name = "timeLeft";
+            this.timeLeft.Size = new System.Drawing.Size(117, 58);
+            this.timeLeft.TabIndex = 229;
+            this.timeLeft.TabStop = false;
+            // 
+            // length
+            // 
+            this.length.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.length.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.length.HighlightColor = System.Drawing.Color.Red;
+            this.length.Highlighted = false;
+            this.length.InfoText = "End At: 59:50";
+            this.length.Location = new System.Drawing.Point(248, 628);
+            this.length.Name = "length";
+            this.length.Size = new System.Drawing.Size(118, 58);
+            this.length.TabIndex = 230;
+            this.length.TabStop = false;
+            this.length.Tag = "";
+            this.length.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Length_MouseDown);
+            // 
+            // loadImpossibleTimer
+            // 
+            this.loadImpossibleTimer.Interval = 70;
+            this.loadImpossibleTimer.Tick += new System.EventHandler(this.LoadImpossibleFlicker);
+            // 
+            // nearEndTimer
+            // 
+            this.nearEndTimer.Tick += new System.EventHandler(this.NearEndFlash);
+            // 
             // BAPSChannel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -325,7 +325,7 @@
             this.AutoSize = true;
             this.Controls.Add(this.layoutPanel);
             this.Name = "BAPSChannel";
-            this.Size = new System.Drawing.Size(363, 689);
+            this.Size = new System.Drawing.Size(369, 689);
             this.layoutPanel.ResumeLayout(false);
             this.trackListContextMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
