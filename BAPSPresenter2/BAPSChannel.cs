@@ -118,7 +118,7 @@ namespace BAPSPresenter2
             playButton.BackColor = System.Drawing.SystemColors.Control;
             playButton.Enabled = true;
             pauseButton.BackColor = System.Drawing.Color.DarkOrange;
-            pauseButton.BackColor = System.Drawing.SystemColors.Control;
+            stopButton.BackColor = System.Drawing.SystemColors.Control;
         }
 
         public void ShowStop()
