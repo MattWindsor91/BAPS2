@@ -66,21 +66,13 @@ namespace BAPSPresenter2
         TextDialog textDialog = null;
         AudioWall audioWall = null;
 
-        private ListBox[] directoryList;
-        private Button[] directoryRefresh;
         private Timer countdownTimer;
 
         private ToolStripSeparator toolStripSeparator4;
         private ToolStripMenuItem showAudioWallToolStripMenuItem;
         private TimeLine timeLine;
-        private ListBox Directory0;
-        private ListBox Directory1;
-        private ListBox Directory2;
         private Button loadShowButton;
         private Button bapsButton1;
-        private Button Directory0Refresh;
-        private Button Directory1Refresh;
-        private Button Directory2Refresh;
 
 #region Windows Form Designer generated code
 
@@ -92,14 +84,8 @@ namespace BAPSPresenter2
         {
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.showAudioWallToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.Directory0 = new System.Windows.Forms.ListBox();
-            this.Directory1 = new System.Windows.Forms.ListBox();
-            this.Directory2 = new System.Windows.Forms.ListBox();
             this.loadShowButton = new System.Windows.Forms.Button();
             this.bapsButton1 = new System.Windows.Forms.Button();
-            this.Directory0Refresh = new System.Windows.Forms.Button();
-            this.Directory1Refresh = new System.Windows.Forms.Button();
-            this.Directory2Refresh = new System.Windows.Forms.Button();
             this.timeLine = new BAPSPresenter.TimeLine();
             this.bapsChannel1 = new BAPSPresenter2.BAPSChannel();
             this.bapsChannel2 = new BAPSPresenter2.BAPSChannel();
@@ -107,14 +93,11 @@ namespace BAPSPresenter2
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.MainTextDisplay = new System.Windows.Forms.TextBox();
             this.topButtonsPanel = new System.Windows.Forms.FlowLayoutPanel();
-            this.directory0Panel = new System.Windows.Forms.FlowLayoutPanel();
-            this.directory1Panel = new System.Windows.Forms.FlowLayoutPanel();
-            this.directory2Panel = new System.Windows.Forms.FlowLayoutPanel();
+            this.bapsDirectory1 = new BAPSPresenter2.BAPSDirectory();
+            this.bapsDirectory2 = new BAPSPresenter2.BAPSDirectory();
+            this.bapsDirectory3 = new BAPSPresenter2.BAPSDirectory();
             this.tableLayoutPanel1.SuspendLayout();
             this.topButtonsPanel.SuspendLayout();
-            this.directory0Panel.SuspendLayout();
-            this.directory1Panel.SuspendLayout();
-            this.directory2Panel.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolStripSeparator4
@@ -126,33 +109,6 @@ namespace BAPSPresenter2
             // 
             this.showAudioWallToolStripMenuItem.Name = "showAudioWallToolStripMenuItem";
             this.showAudioWallToolStripMenuItem.Size = new System.Drawing.Size(32, 19);
-            // 
-            // Directory0
-            // 
-            this.Directory0.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.Directory0.Location = new System.Drawing.Point(3, 32);
-            this.Directory0.Name = "Directory0";
-            this.Directory0.Size = new System.Drawing.Size(234, 132);
-            this.Directory0.TabIndex = 215;
-            this.Directory0.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Directory_MouseDown);
-            // 
-            // Directory1
-            // 
-            this.Directory1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.Directory1.Location = new System.Drawing.Point(3, 32);
-            this.Directory1.Name = "Directory1";
-            this.Directory1.Size = new System.Drawing.Size(234, 132);
-            this.Directory1.TabIndex = 216;
-            this.Directory1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Directory_MouseDown);
-            // 
-            // Directory2
-            // 
-            this.Directory2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.Directory2.Location = new System.Drawing.Point(3, 32);
-            this.Directory2.Name = "Directory2";
-            this.Directory2.Size = new System.Drawing.Size(234, 132);
-            this.Directory2.TabIndex = 217;
-            this.Directory2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Directory_MouseDown);
             // 
             // loadShowButton
             // 
@@ -175,33 +131,6 @@ namespace BAPSPresenter2
             this.bapsButton1.TabIndex = 219;
             this.bapsButton1.Text = "Search Library";
             this.bapsButton1.Click += new System.EventHandler(this.SearchRecordLib_Click);
-            // 
-            // Directory0Refresh
-            // 
-            this.Directory0Refresh.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.Directory0Refresh.Location = new System.Drawing.Point(3, 3);
-            this.Directory0Refresh.Name = "Directory0Refresh";
-            this.Directory0Refresh.Size = new System.Drawing.Size(234, 23);
-            this.Directory0Refresh.TabIndex = 220;
-            this.Directory0Refresh.Click += new System.EventHandler(this.RefreshDirectory_Click);
-            // 
-            // Directory1Refresh
-            // 
-            this.Directory1Refresh.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.Directory1Refresh.Location = new System.Drawing.Point(3, 3);
-            this.Directory1Refresh.Name = "Directory1Refresh";
-            this.Directory1Refresh.Size = new System.Drawing.Size(234, 23);
-            this.Directory1Refresh.TabIndex = 221;
-            this.Directory1Refresh.Click += new System.EventHandler(this.RefreshDirectory_Click);
-            // 
-            // Directory2Refresh
-            // 
-            this.Directory2Refresh.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.Directory2Refresh.Location = new System.Drawing.Point(3, 3);
-            this.Directory2Refresh.Name = "Directory2Refresh";
-            this.Directory2Refresh.Size = new System.Drawing.Size(234, 23);
-            this.Directory2Refresh.TabIndex = 222;
-            this.Directory2Refresh.Click += new System.EventHandler(this.RefreshDirectory_Click);
             // 
             // timeLine
             // 
@@ -262,9 +191,9 @@ namespace BAPSPresenter2
             this.tableLayoutPanel1.Controls.Add(this.bapsChannel2, 2, 0);
             this.tableLayoutPanel1.Controls.Add(this.bapsChannel1, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.topButtonsPanel, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.directory0Panel, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.directory1Panel, 0, 2);
-            this.tableLayoutPanel1.Controls.Add(this.directory2Panel, 0, 3);
+            this.tableLayoutPanel1.Controls.Add(this.bapsDirectory1, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.bapsDirectory2, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.bapsDirectory3, 0, 3);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -306,35 +235,35 @@ namespace BAPSPresenter2
             this.topButtonsPanel.TabIndex = 229;
             this.topButtonsPanel.WrapContents = false;
             // 
-            // directory0Panel
+            // bapsDirectory1
             // 
-            this.directory0Panel.Controls.Add(this.Directory0Refresh);
-            this.directory0Panel.Controls.Add(this.Directory0);
-            this.directory0Panel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.directory0Panel.Location = new System.Drawing.Point(3, 79);
-            this.directory0Panel.Name = "directory0Panel";
-            this.directory0Panel.Size = new System.Drawing.Size(240, 162);
-            this.directory0Panel.TabIndex = 228;
+            this.bapsDirectory1.AutoSize = true;
+            this.bapsDirectory1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.bapsDirectory1.Location = new System.Drawing.Point(3, 79);
+            this.bapsDirectory1.Name = "bapsDirectory1";
+            this.bapsDirectory1.Size = new System.Drawing.Size(240, 162);
+            this.bapsDirectory1.TabIndex = 230;
+            this.bapsDirectory1.Tag = "0";
             // 
-            // directory1Panel
+            // bapsDirectory2
             // 
-            this.directory1Panel.Controls.Add(this.Directory1Refresh);
-            this.directory1Panel.Controls.Add(this.Directory1);
-            this.directory1Panel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.directory1Panel.Location = new System.Drawing.Point(3, 247);
-            this.directory1Panel.Name = "directory1Panel";
-            this.directory1Panel.Size = new System.Drawing.Size(240, 162);
-            this.directory1Panel.TabIndex = 230;
+            this.bapsDirectory2.AutoSize = true;
+            this.bapsDirectory2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.bapsDirectory2.Location = new System.Drawing.Point(3, 247);
+            this.bapsDirectory2.Name = "bapsDirectory2";
+            this.bapsDirectory2.Size = new System.Drawing.Size(240, 162);
+            this.bapsDirectory2.TabIndex = 231;
+            this.bapsDirectory2.Tag = "1";
             // 
-            // directory2Panel
+            // bapsDirectory3
             // 
-            this.directory2Panel.Controls.Add(this.Directory2Refresh);
-            this.directory2Panel.Controls.Add(this.Directory2);
-            this.directory2Panel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.directory2Panel.Location = new System.Drawing.Point(3, 415);
-            this.directory2Panel.Name = "directory2Panel";
-            this.directory2Panel.Size = new System.Drawing.Size(240, 162);
-            this.directory2Panel.TabIndex = 231;
+            this.bapsDirectory3.AutoSize = true;
+            this.bapsDirectory3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.bapsDirectory3.Location = new System.Drawing.Point(3, 415);
+            this.bapsDirectory3.Name = "bapsDirectory3";
+            this.bapsDirectory3.Size = new System.Drawing.Size(240, 162);
+            this.bapsDirectory3.TabIndex = 232;
+            this.bapsDirectory3.Tag = "2";
             // 
             // Main
             // 
@@ -356,9 +285,6 @@ namespace BAPSPresenter2
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.topButtonsPanel.ResumeLayout(false);
-            this.directory0Panel.ResumeLayout(false);
-            this.directory1Panel.ResumeLayout(false);
-            this.directory2Panel.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -369,9 +295,9 @@ namespace BAPSPresenter2
         private BAPSChannel bapsChannel3;
         private TableLayoutPanel tableLayoutPanel1;
         private FlowLayoutPanel topButtonsPanel;
-        private FlowLayoutPanel directory0Panel;
-        private FlowLayoutPanel directory1Panel;
-        private FlowLayoutPanel directory2Panel;
         private TextBox MainTextDisplay;
+        private BAPSDirectory bapsDirectory1;
+        private BAPSDirectory bapsDirectory2;
+        private BAPSDirectory bapsDirectory3;
     }
 }

@@ -22,6 +22,7 @@ namespace BAPSPresenter2
         private string username;
 
         private BAPSChannel[] bapsChannels;
+        private BAPSDirectory[] bapsDirectories;
 
         /** The sender thread **/
         private System.Threading.Thread senderThread;
@@ -183,15 +184,11 @@ namespace BAPSPresenter2
                 //bc.TrackListContextMenuStripItemClicked += (e, x) => Invoke((ToolStripItemClickedEventHandler)trackListContextMenuStrip_ItemClicked, e, x);
             }
 
-            directoryList = new ListBox[3] { Directory0, Directory1, Directory2 };
-            directoryList[0].Tag = number0;
-            directoryList[1].Tag = number1;
-            directoryList[2].Tag = number2;
-
-            directoryRefresh = new Button[3] { Directory0Refresh, Directory1Refresh, Directory2Refresh };
-            directoryRefresh[0].Tag = number0;
-            directoryRefresh[1].Tag = number1;
-            directoryRefresh[2].Tag = number2;
+            bapsDirectories = new BAPSDirectory[3] { bapsDirectory1, bapsDirectory2, bapsDirectory3 };
+            foreach (var dir in bapsDirectories)
+            {
+                dir.RefreshRequest += RefreshDirectory;
+            }
 
             countdownTimer = new Timer
             {

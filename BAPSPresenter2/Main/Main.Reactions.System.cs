@@ -9,16 +9,16 @@ namespace BAPSPresenter2
         private void addFileToDirectoryList(ushort directoryIndex, uint _fileIndex, string entry)
         {
             if (DirectoryOutOfBounds(directoryIndex)) return;
+            // TODO(@MattWindsor91): file index?
             /** Add the new entry to the bottom of the listbox **/
-            directoryList[directoryIndex].Items.Add(entry);
+            bapsDirectories[directoryIndex].Add(entry);
         }
 
         private void clearFiles(ushort directoryIndex, string niceDirectoryName)
         {
             if (DirectoryOutOfBounds(directoryIndex)) return;
             /** Empty the list box ready for new entries (required due to implicit indexing) **/
-            directoryList[directoryIndex].Items.Clear();
-            directoryRefresh[directoryIndex].Text = niceDirectoryName;
+            bapsDirectories[directoryIndex].Clear(niceDirectoryName);
         }
 
         private void displayVersion(string version, string date, string time, string author)

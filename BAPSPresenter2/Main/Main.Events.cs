@@ -216,11 +216,10 @@ namespace BAPSPresenter2
             msgQueue.Enqueue(new ActionMessageU32int((ushort)cmd, value));
         }
 
-        private void RefreshDirectory_Click(object sender, System.EventArgs e)
+        private void RefreshDirectory(object sender, ushort channel)
         {
             var cmd = Command.SYSTEM | Command.LISTFILES;
-            /** The senders tag refers to the folder that needs to be refreshed **/
-            cmd |= ((Command)((Button)sender).Tag) & (Command)0x3f;
+            cmd |= (Command)channel & (Command)0x3f;
             msgQueue.Enqueue(new ActionMessage((ushort)cmd));
         }
 
@@ -293,7 +292,7 @@ namespace BAPSPresenter2
                 case ChangeType.ADD:
                     {
                         var cmd = Command.PLAYLIST | Command.ADDITEM | (Command)(e.channel & 0x3f);
-                        msgQueue.Enqueue(new ActionMessageU32intU32intString((ushort)cmd, (uint)Command.FILEITEM, (uint)e.index, directoryList[e.index].Items[e.index2].ToString()));
+                        msgQueue.Enqueue(new ActionMessageU32intU32intString((ushort)cmd, (uint)Command.FILEITEM, (uint)e.index, bapsDirectories[e.index].TrackAt(e.index2)));
                     }
                     break;
                 case ChangeType.COPY:

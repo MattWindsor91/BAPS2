@@ -9,25 +9,31 @@ namespace BAPSPresenter2
     {
         /// <summary>
         /// The ID of this channel.
-        /// </summary>
-        /// <remarks>
+        /// <para>
         /// The first time this property is accessed, we retrieve the
         /// channel ID from this channel's Tag.  The tag must be
         /// a string.
-        /// </remarks>
-        internal ushort ChannelID
+        /// </para>
+        /// <para>
+        /// If the ID is negative, there was an error retrieving the ID.
+        /// </para>
+        /// </summary>
+        public int ChannelID
         {
-            get
+            get => _channelID ?? PopulateChannelID();
+        }
+        private int PopulateChannelID()
+        {
+            if (!(Tag is string t)) return -1;
+
+            if (ushort.TryParse(t, out var result))
             {
-                if (_channelID == null)
-                {
-                    var t = Tag as string;
-                    Debug.Assert(t != null, "Tried to get channel ID before it is set");
-                    _channelID = ushort.Parse(t);
-                    SetupTimers();
-                }
-                return _channelID ?? 0;
+                _channelID = result;
+                SetupTimers();
+                return result;
             }
+
+            return -2;
         }
         private ushort? _channelID = null;
 
@@ -74,7 +80,9 @@ namespace BAPSPresenter2
 
         private void RequestTimelineChange(TimelineChangeType type, int value)
         {
-            TimelineChanged?.Invoke(this, new TimelineChangeEventArgs(ChannelID, type, value));
+            var id = ChannelID;
+            if (0 < id) return;
+            TimelineChanged?.Invoke(this, new TimelineChangeEventArgs((ushort)id, type, value));
         }
 
         private string TimeToString(int hours, int minutes, int seconds, int centiseconds)
@@ -335,7 +343,9 @@ namespace BAPSPresenter2
 
         private void OnPositionRequestChange(PositionType type, int requestedValue)
         {
-            PositionRequestChange?.Invoke(this, new PositionRequestChange(ChannelID, type, requestedValue));
+            var id = ChannelID;
+            if (0 < id) return;
+            PositionRequestChange?.Invoke(this, new PositionRequestChange((ushort)id, type, requestedValue));
         }
 
 
