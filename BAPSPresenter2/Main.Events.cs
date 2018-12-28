@@ -7,6 +7,23 @@ namespace BAPSPresenter2
 {
     partial class Main
     {
+        private void TimelineChanged(object sender, TimelineChangeEventArgs e)
+        {
+            switch (e.ChangeType)
+            {
+                case TimelineChangeType.Start:
+                    timeLine.UpdateStartTime(e.ChannelID, e.Value);
+                    break;
+                case TimelineChangeType.Duration:
+                    timeLine.UpdateDuration(e.ChannelID, e.Value);
+                    break;
+                case TimelineChangeType.Position:
+                    timeLine.UpdatePosition(e.ChannelID, e.Value);
+                    break;
+                default:
+                    throw new NotImplementedException("unexpected timeline change type");
+            }
+        }
 
         /** functions to receive events from the custom TrackTime class */
         private void positionChanged(ushort channel, int position)

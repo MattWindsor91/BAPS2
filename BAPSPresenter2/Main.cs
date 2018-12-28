@@ -182,9 +182,7 @@ namespace BAPSPresenter2
                 bc.PositionChanged += (e, pos) => Invoke((Action<ushort, int>)positionChanged, c, pos);
                 bc.CuePositionChanged += (e, pos) => Invoke((Action<ushort, int>)cuePositionChanged, c, pos);
                 bc.IntroPositionChanged += (e, pos) => Invoke((Action<ushort, int>)introPositionChanged, c, pos);
-                bc.TimelineStartChanged += (e, pos) => Invoke((Action<int, int>)timeLine.UpdateStartTime, (int)c, pos);
-                bc.TimelineDurationChanged += (e, pos) => Invoke((Action<int, int>)timeLine.UpdateDuration, (int)c, pos);
-                bc.TimelinePositionChanged += (e, pos) => Invoke((Action<int, int>)timeLine.UpdatePosition, (int)c, pos);
+                bc.TimelineChanged += (e, pos) => Invoke((TimelineChangeEventHandler)TimelineChanged, e, pos);
                 bc.TrackBarMoved += (e, x) => Invoke((Action<ushort, uint>)TrackBar_Scroll, c, x);
                 //bc.TrackListContextMenuStripItemClicked += (e, x) => Invoke((ToolStripItemClickedEventHandler)trackListContextMenuStrip_ItemClicked, e, x);
             }

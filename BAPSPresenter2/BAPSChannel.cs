@@ -70,13 +70,16 @@ namespace BAPSPresenter2
         public event EventHandler<int> PositionChanged;
         public event EventHandler<int> CuePositionChanged;
         public event EventHandler<int> IntroPositionChanged;
-        public event EventHandler<int> TimelineStartChanged;
-        public event EventHandler<int> TimelinePositionChanged;
-        public event EventHandler<int> TimelineDurationChanged;
+        public event TimelineChangeEventHandler TimelineChanged;
         public event EventHandler<uint> TrackBarMoved;
         public event ToolStripItemClickedEventHandler TrackListContextMenuStripItemClicked;
 
         #endregion Events used to talk to the main presenter
+
+        private void RequestTimelineChange(TimelineChangeType type, int value)
+        {
+            TimelineChanged?.Invoke(this, new TimelineChangeEventArgs(ChannelID, type, value));
+        }
 
         private string TimeToString(int hours, int minutes, int seconds, int centiseconds)
         {
@@ -134,7 +137,7 @@ namespace BAPSPresenter2
                 if (trackTime.Duration >= value)
                 {
                     trackTime.Position = value;
-                    TimelinePositionChanged?.Invoke(this, value - trackTime.CuePosition);
+                    RequestTimelineChange(TimelineChangeType.Position, value - trackTime.CuePosition);
 
                     value = (int)(Math.Round(value / 1000f) * 1000);
                     /** Set the amount of time gone **/
@@ -164,7 +167,7 @@ namespace BAPSPresenter2
             set
             {
                 trackTime.CuePosition = value;
-                TimelineDurationChanged?.Invoke(this, trackTime.Duration - trackTime.CuePosition);
+                RequestTimelineChange(TimelineChangeType.Duration, trackTime.Duration - value);
             }
         }
 
@@ -174,7 +177,7 @@ namespace BAPSPresenter2
             {
                 trackTime.Position = 0;
                 trackTime.Duration = value;
-                TimelineDurationChanged?.Invoke(this, value - trackTime.CuePosition);
+                RequestTimelineChange(TimelineChangeType.Duration, value - trackTime.CuePosition);
             }
         }
 
@@ -194,9 +197,9 @@ namespace BAPSPresenter2
             if (itemType == Command.VOIDITEM)
             {
                 trackTime.Position = 0;
-                TimelinePositionChanged?.Invoke(this, 0);
+                RequestTimelineChange(TimelineChangeType.Position, 0);
                 trackTime.Duration = 0;
-                TimelineDurationChanged?.Invoke(this, 0);
+                RequestTimelineChange(TimelineChangeType.Duration, 0);
                 trackTime.CuePosition = 0;
                 trackTime.IntroPosition = 0;
                 timeLeft.Text = MillisecondsToTimeString(0);
@@ -453,12 +456,12 @@ namespace BAPSPresenter2
                 }
                 length.Text = string.Concat((valuesecs / 60).ToString("00"), ":", (valuesecs % 60).ToString("00"));
 
-                TimelineStartChanged?.Invoke(this, value);
+                RequestTimelineChange(TimelineChangeType.Start, value);
             }
             else
             {
                 cds.running = false;
-                TimelineStartChanged?.Invoke(this, -1);
+                RequestTimelineChange(TimelineChangeType.Start, -1);
                 length.Text = "--:--";
             }
             if (cds.startAt)
