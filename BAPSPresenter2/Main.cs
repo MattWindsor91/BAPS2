@@ -1,5 +1,6 @@
 ﻿using BAPSPresenter; // Legacy
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace BAPSPresenter2
@@ -168,11 +169,12 @@ namespace BAPSPresenter2
             bapsChannels = new BAPSChannel[3] { bapsChannel1, bapsChannel2, bapsChannel3 };
             for (ushort i = 0; i < bapsChannels.Length; i++)
             {
+                var bc = bapsChannels[i];
+                // Channels get their IDs from their tags in the designer.
+                Debug.Assert(bc.ChannelID == i, "Mismatch between channel IDs and array positions");
                 // This is needed to make sure the lambdas below capture copies of the channel;
                 // otherwise, they'll all get the value of 'i' at the end of the loop.
                 ushort c = i;
-
-                var bc = bapsChannels[i];
                 bc.TrackListRequestChange += (e, x) => Invoke((Action<ushort, RequestChangeEventArgs>)TrackList_RequestChange, c, x);
                 bc.PlayRequested += (e, x) => Invoke((Action<ChannelOperationLookup>)ChannelOperation_Click, new ChannelOperationLookup(c, (ushort)Command.PLAY));
                 bc.PauseRequested += (e, x) => Invoke((Action<ChannelOperationLookup>)ChannelOperation_Click, new ChannelOperationLookup(c, (ushort)Command.PAUSE));

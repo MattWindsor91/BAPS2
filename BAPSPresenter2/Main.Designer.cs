@@ -105,11 +105,11 @@ namespace BAPSPresenter2
             this.bapsChannel2 = new BAPSPresenter2.BAPSChannel();
             this.bapsChannel3 = new BAPSPresenter2.BAPSChannel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.MainTextDisplay = new System.Windows.Forms.TextBox();
             this.topButtonsPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.directory0Panel = new System.Windows.Forms.FlowLayoutPanel();
             this.directory1Panel = new System.Windows.Forms.FlowLayoutPanel();
             this.directory2Panel = new System.Windows.Forms.FlowLayoutPanel();
-            this.MainTextDisplay = new System.Windows.Forms.TextBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.topButtonsPanel.SuspendLayout();
             this.directory0Panel.SuspendLayout();
@@ -225,6 +225,7 @@ namespace BAPSPresenter2
             this.tableLayoutPanel1.SetRowSpan(this.bapsChannel1, 4);
             this.bapsChannel1.Size = new System.Drawing.Size(365, 574);
             this.bapsChannel1.TabIndex = 225;
+            this.bapsChannel1.Tag = "0";
             // 
             // bapsChannel2
             // 
@@ -235,6 +236,7 @@ namespace BAPSPresenter2
             this.tableLayoutPanel1.SetRowSpan(this.bapsChannel2, 4);
             this.bapsChannel2.Size = new System.Drawing.Size(365, 574);
             this.bapsChannel2.TabIndex = 226;
+            this.bapsChannel2.Tag = "1";
             // 
             // bapsChannel3
             // 
@@ -245,6 +247,7 @@ namespace BAPSPresenter2
             this.tableLayoutPanel1.SetRowSpan(this.bapsChannel3, 4);
             this.bapsChannel3.Size = new System.Drawing.Size(366, 574);
             this.bapsChannel3.TabIndex = 227;
+            this.bapsChannel3.Tag = "2";
             // 
             // tableLayoutPanel1
             // 
@@ -275,6 +278,21 @@ namespace BAPSPresenter2
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(1360, 737);
             this.tableLayoutPanel1.TabIndex = 228;
+            // 
+            // MainTextDisplay
+            // 
+            this.MainTextDisplay.AcceptsReturn = true;
+            this.MainTextDisplay.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tableLayoutPanel1.SetColumnSpan(this.MainTextDisplay, 4);
+            this.MainTextDisplay.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.MainTextDisplay.Font = new System.Drawing.Font("Tahoma", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.MainTextDisplay.Location = new System.Drawing.Point(3, 641);
+            this.MainTextDisplay.Multiline = true;
+            this.MainTextDisplay.Name = "MainTextDisplay";
+            this.MainTextDisplay.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.MainTextDisplay.Size = new System.Drawing.Size(1354, 93);
+            this.MainTextDisplay.TabIndex = 29;
+            this.MainTextDisplay.Text = "<You can type notes here>";
             // 
             // topButtonsPanel
             // 
@@ -317,21 +335,6 @@ namespace BAPSPresenter2
             this.directory2Panel.Name = "directory2Panel";
             this.directory2Panel.Size = new System.Drawing.Size(240, 162);
             this.directory2Panel.TabIndex = 231;
-            // 
-            // MainTextDisplay
-            // 
-            this.MainTextDisplay.AcceptsReturn = true;
-            this.MainTextDisplay.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tableLayoutPanel1.SetColumnSpan(this.MainTextDisplay, 4);
-            this.MainTextDisplay.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.MainTextDisplay.Font = new System.Drawing.Font("Tahoma", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MainTextDisplay.Location = new System.Drawing.Point(3, 641);
-            this.MainTextDisplay.Multiline = true;
-            this.MainTextDisplay.Name = "MainTextDisplay";
-            this.MainTextDisplay.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.MainTextDisplay.Size = new System.Drawing.Size(1354, 93);
-            this.MainTextDisplay.TabIndex = 29;
-            this.MainTextDisplay.Text = "<You can type notes here>";
             // 
             // Main
             // 

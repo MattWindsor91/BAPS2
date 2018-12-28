@@ -10,36 +10,51 @@ namespace BAPSPresenter2
         /// <summary>
         /// The ID of this channel.
         /// </summary>
-        private ushort channelID;
+        internal ushort ChannelID
+        {
+            get
+            {
+                if (channelID == null)
+                {
+                    var t = Tag as string;
+                    Debug.Assert(t != null, "Tried to get channel ID before it is set");
+                    channelID = ushort.Parse(t);
+                    SetupTimers();
+                }
+                return channelID ?? 0;
+            }
+        }
+        private ushort? channelID = null;
 
         /// <summary>
         /// This channel's count-down state.
         /// </summary>
-        private CountDownState cds;
+        private CountDownState cds = null;
 
         /// <summary>
         /// This channel's timeout struct.
         /// </summary>
-        private ChannelTimeoutStruct cts;
+        private ChannelTimeoutStruct cts = null;
 
         public int LoadedTextIndex { set { trackList.LoadedTextIndex = value; } }
 
-        public BAPSChannel(ushort channelID) : base()
+        public BAPSChannel() : base()
         {
-            this.channelID = channelID;
-
             InitializeComponent();
+        }
 
-            cds = new CountDownState(channelID);
+        private void SetupTimers()
+        {
+            Debug.Assert(channelID != null, "should have set channel ID before doing this");
+
+            cds = new CountDownState(ChannelID);
             length.Tag = cds; // Needed?
 
-            cts = new ChannelTimeoutStruct(channelID, 10);
+            cts = new ChannelTimeoutStruct(ChannelID, 10);
             loadImpossibleTimer.Tag = cts; // Needed?
 
             nearEndTimer.Tag = channelID; // Needed?
         }
-
-        public BAPSChannel() : this(0) { }
 
         #region Events used to talk to the main presenter
 
@@ -210,9 +225,9 @@ namespace BAPSPresenter2
         /** Enable or disable the timer controls **/
         public void EnableTimerControls(bool shouldEnable)
         {
+            Debug.Assert(channelID != null, "shouldn't enable timer controls before setting channel ID"); 
             length.Visible = shouldEnable;
             length.Enabled = shouldEnable;
-            var cds = (CountDownState)length.Tag;
             cds.running = false;
         }
 
@@ -335,7 +350,7 @@ namespace BAPSPresenter2
 
         private void TrackList_RequestChange(object o, RequestChangeEventArgs e)
         {
-            Debug.Assert(e.channel == channelID);
+            Debug.Assert(e.channel == ChannelID);
 
             // Don't propagate impossible loads outside the channel.
             if ((ChangeType)e.ct == ChangeType.SELECTEDINDEX)
