@@ -399,7 +399,9 @@ namespace BAPSPresenter
 					//scroll->IndexAtTop = 0;
 					//scroll->ViewableItems = items->Count;
 					scroll->Value = 0;
-					offScreen = gcnew System::Drawing::Bitmap(this->ClientSize.Width - 1, this->ClientSize.Height - 2);
+					int w = this->ClientSize.Width - 1;
+					if (w <= 0) w = 1;
+					offScreen = gcnew System::Drawing::Bitmap(w, this->ClientSize.Height - 2);
 				}
 				//scroll->TotalItems = items->Count;
 				scroll->Maximum = (items->Count - 14 > 0) ? items->Count - 14 : items->Count;
