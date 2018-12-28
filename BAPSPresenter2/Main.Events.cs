@@ -26,22 +26,10 @@ namespace BAPSPresenter2
         }
 
         /** functions to receive events from the custom TrackTime class */
-        private void positionChanged(ushort channel, int position)
+        private void HandlePositionChanged(object sender, PositionRequestChange e)
         {
-            var cmd = Command.PLAYBACK | Command.POSITION | (Command)channel;
-            msgQueue.Enqueue(new ActionMessageU32int((ushort)cmd, (uint)position));
-        }
-
-        private void cuePositionChanged(ushort channel, int cuePosition)
-        {
-            var cmd = Command.PLAYBACK | Command.CUEPOSITION | (Command)channel;
-            msgQueue.Enqueue(new ActionMessageU32int((ushort)cmd, (uint)cuePosition));
-        }
-
-        private void introPositionChanged(ushort channel, int introPosition)
-        {
-            var cmd = Command.PLAYBACK | Command.INTROPOSITION | (Command)channel;
-            msgQueue.Enqueue(new ActionMessageU32int((ushort)cmd, (uint)introPosition));
+            var cmd = Command.PLAYBACK | e.ChangeType.AsCommand() | (Command)e.ChannelID;
+            msgQueue.Enqueue(new ActionMessageU32int((ushort)cmd, (uint)e.Value));
         }
 
         /** functions to receive context menu events **/

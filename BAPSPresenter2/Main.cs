@@ -176,12 +176,8 @@ namespace BAPSPresenter2
                 // otherwise, they'll all get the value of 'i' at the end of the loop.
                 ushort c = i;
                 bc.TrackListRequestChange += (e, x) => Invoke((Action<ushort, RequestChangeEventArgs>)TrackList_RequestChange, c, x);
-                bc.PlayRequested += (e, x) => Invoke((Action<ChannelOperationLookup>)ChannelOperation_Click, new ChannelOperationLookup(c, (ushort)Command.PLAY));
-                bc.PauseRequested += (e, x) => Invoke((Action<ChannelOperationLookup>)ChannelOperation_Click, new ChannelOperationLookup(c, (ushort)Command.PAUSE));
-                bc.StopRequested += (e, x) => Invoke((Action<ChannelOperationLookup>)ChannelOperation_Click, new ChannelOperationLookup(c, (ushort)Command.STOP));
-                bc.PositionChanged += (e, pos) => Invoke((Action<ushort, int>)positionChanged, c, pos);
-                bc.CuePositionChanged += (e, pos) => Invoke((Action<ushort, int>)cuePositionChanged, c, pos);
-                bc.IntroPositionChanged += (e, pos) => Invoke((Action<ushort, int>)introPositionChanged, c, pos);
+                bc.OpRequest += (e, x) => Invoke((Action<ChannelOperationLookup>)ChannelOperation_Click, x);
+                bc.PositionRequestChange += (e, pos) => Invoke((PositionRequestChangeEventHandler)HandlePositionChanged, e, pos);
                 bc.TimelineChanged += (e, pos) => Invoke((TimelineChangeEventHandler)TimelineChanged, e, pos);
                 bc.TrackBarMoved += (e, x) => Invoke((Action<ushort, uint>)TrackBar_Scroll, c, x);
                 //bc.TrackListContextMenuStripItemClicked += (e, x) => Invoke((ToolStripItemClickedEventHandler)trackListContextMenuStrip_ItemClicked, e, x);

@@ -64,12 +64,8 @@ namespace BAPSPresenter2
         #region Events used to talk to the main presenter
 
         public event RequestChangeEventHandler TrackListRequestChange;
-        public event EventHandler PlayRequested;
-        public event EventHandler PauseRequested;
-        public event EventHandler StopRequested;
-        public event EventHandler<int> PositionChanged;
-        public event EventHandler<int> CuePositionChanged;
-        public event EventHandler<int> IntroPositionChanged;
+        public event EventHandler<ChannelOperationLookup> OpRequest;
+        public event PositionRequestChangeEventHandler PositionRequestChange;
         public event TimelineChangeEventHandler TimelineChanged;
         public event EventHandler<uint> TrackBarMoved;
         public event ToolStripItemClickedEventHandler TrackListContextMenuStripItemClicked;
@@ -241,16 +237,22 @@ namespace BAPSPresenter2
 
         #region Mouse events
 
-        private void playButton_Click(object sender, EventArgs e) => PlayRequested?.Invoke(sender, e);
+        private void RequestOp(Command command)
+        {
+            // TODO(@MattWindsor91): decouple this from BAPSNET commands.
+            OpRequest?.Invoke(this, new ChannelOperationLookup(ChannelID, (ushort)command));
+        }
+
+        private void playButton_Click(object sender, EventArgs e) => RequestOp(Command.PLAY);
         private void pauseButton_Click(object sender, EventArgs e)
         {
             trackList.clearPendingLoadRequest();
-            PauseRequested?.Invoke(sender, e);
+            RequestOp(Command.PAUSE);
         }
         private void stopButton_Click(object sender, EventArgs e)
         {
             trackList.clearPendingLoadRequest();
-            StopRequested?.Invoke(sender, e);
+            RequestOp(Command.STOP);
         }
 
         private void Length_MouseDown(object sender, MouseEventArgs e)
@@ -331,19 +333,29 @@ namespace BAPSPresenter2
 
         #region Position movement events
 
+        private void OnPositionRequestChange(PositionType type, int requestedValue)
+        {
+            PositionRequestChange?.Invoke(this, new PositionRequestChange(ChannelID, type, requestedValue));
+        }
+
+
         private void OnPositionChanged(object sender, EventArgs e)
         {
-            PositionChanged?.Invoke(sender, ((TrackTime)sender).Position);
+            Debug.Assert(sender == trackTime, "Got position change request from unexpected place");
+            OnPositionRequestChange(PositionType.Position, trackTime.Position);
         }
 
         private void OnCuePositionChanged(object sender, EventArgs e)
         {
-            CuePositionChanged?.Invoke(sender, ((TrackTime)sender).CuePosition);
+            Debug.Assert(sender == trackTime, "Got position change request from unexpected place");
+            OnPositionRequestChange(PositionType.Cue, trackTime.CuePosition);
         }
 
         private void OnIntroPositionChanged(object sender, EventArgs e)
         {
-            IntroPositionChanged?.Invoke(sender, ((TrackTime)sender).IntroPosition);
+            Debug.Assert(sender == trackTime, "Got position change request from unexpected place");
+            OnPositionRequestChange(PositionType.Intro, trackTime.IntroPosition);
+
         }
 
         #endregion Position movement events
@@ -452,7 +464,7 @@ namespace BAPSPresenter2
                 if (valuesecs > 3595)
                 {
                     cds.running = false;
-                    PlayRequested?.Invoke(this, EventArgs.Empty);
+                    RequestOp(Command.PLAY);
                 }
                 length.Text = string.Concat((valuesecs / 60).ToString("00"), ":", (valuesecs % 60).ToString("00"));
 
