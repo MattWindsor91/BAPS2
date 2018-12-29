@@ -24,7 +24,8 @@ namespace BAPSPresenter2
                 if (0 <= _channelID) throw new InvalidOperationException("Can't set a channel ID multiple times");
                 _channelID = value;
                 trackList.Channel = value;
-                SetupTimers();
+                trackTime.Channel = value;
+                if (0 <= _channelID) SetupTimers();
             }
         }
         private int _channelID = -1;
@@ -333,7 +334,7 @@ namespace BAPSPresenter2
         private void OnPositionRequestChange(PositionType type, int requestedValue)
         {
             var id = ChannelID;
-            if (0 < id) return;
+            if (id < 0) return;
             PositionRequestChange?.Invoke(this, new PositionRequestChange((ushort)id, type, requestedValue));
         }
 
