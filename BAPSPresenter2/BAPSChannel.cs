@@ -72,7 +72,7 @@ namespace BAPSPresenter2
         private void RequestTimelineChange(TimelineChangeType type, int value)
         {
             var id = ChannelID;
-            if (0 < id) return;
+            if (id < 0) return;
             TimelineChanged?.Invoke(this, new TimelineChangeEventArgs((ushort)id, type, value));
         }
 
