@@ -238,7 +238,7 @@ namespace BAPSPresenter2.Dialogs
                         dt = new System.Data.DataTable();
 
                         /** Add an index column so that visually we can see which index we are editing **/
-                        dt.Columns.Add("index", System.Type.GetType("System.Int32"));
+                        dt.Columns.Add("index", Type.GetType("System.Int32"));
                         dt.Columns["index"].ReadOnly = true;
                         /** Add a column style so that the column created above can be seen **/
                         var tbc = new DataGridTextBoxColumn
@@ -284,7 +284,7 @@ namespace BAPSPresenter2.Dialogs
                         case ConfigType.STR:
                             {
                                 /** Strings are stored as... strings **/
-                                dt.Columns.Add(option.getDescription(), System.Type.GetType("System.String"));
+                                dt.Columns.Add(option.getDescription(), Type.GetType("System.String"));
                                 /** In... textboxes **/
                                 var tbc = new DataGridTextBoxColumn
                                 {

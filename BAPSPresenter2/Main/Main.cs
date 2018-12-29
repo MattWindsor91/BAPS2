@@ -61,7 +61,7 @@ namespace BAPSPresenter2
                 **/
                 if (login.ShowDialog() == DialogResult.Cancel)
                 {
-                    System.Diagnostics.Process.GetCurrentProcess().Kill();
+                    Process.GetCurrentProcess().Kill();
                 }
                 /** If either the server or port have been changed since last attempt
                     we need to reconnect.
@@ -107,7 +107,7 @@ namespace BAPSPresenter2
                     /** Verify the server is sending what we expect **/
                     if ((seedCmd & (Command.GROUPMASK | Command.SYSTEM_OPMASK)) != (Command.SYSTEM | Command.SEED))
                     {
-                        MessageBox.Show("Server login procedure is not compatible with this client.", "Server error:", System.Windows.Forms.MessageBoxButtons.OK);
+                        MessageBox.Show("Server login procedure is not compatible with this client.", "Server error:", MessageBoxButtons.OK);
                         /** Notify a server error so a reconnect is attempted **/
                         wasServerError = true;
                         continue;
@@ -135,7 +135,7 @@ namespace BAPSPresenter2
                 /** Verify it is what we expected **/
                 if ((authResult & (Command.GROUPMASK | Command.SYSTEM_OPMASK)) != (Command.SYSTEM | Command.LOGINRESULT))
                 {
-                    MessageBox.Show("Server login procedure is not compatible with this client.", "Server error:", System.Windows.Forms.MessageBoxButtons.OK);
+                    MessageBox.Show("Server login procedure is not compatible with this client.", "Server error:", MessageBoxButtons.OK);
                     /** This is a server error as the server is incompatible with this client **/
                     wasServerError = true;
                     continue;
