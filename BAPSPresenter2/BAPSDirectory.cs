@@ -1,6 +1,6 @@
-﻿using System.Windows.Forms;
+﻿using System;
 using System.Diagnostics;
-using System;
+using System.Windows.Forms;
 
 namespace BAPSPresenter2
 {
@@ -26,6 +26,7 @@ namespace BAPSPresenter2
                 _directoryID = value;
             }
         }
+
         private int _directoryID = -1;
 
         #region Events

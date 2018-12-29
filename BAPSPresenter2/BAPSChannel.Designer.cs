@@ -31,7 +31,7 @@
             this.components = new System.ComponentModel.Container();
             this.layoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.loadedText = new System.Windows.Forms.Label();
-            this.trackTime = new BAPSPresenter.TrackTime();
+            this.trackTime = new BAPSFormControls.TrackTime();
             this.trackList = new BAPSPresenter.TrackList();
             this.trackListContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.resetChannelStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -84,7 +84,7 @@
             this.layoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
             this.layoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.layoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 64F));
-            this.layoutPanel.Size = new System.Drawing.Size(369, 689);
+            this.layoutPanel.Size = new System.Drawing.Size(372, 689);
             this.layoutPanel.TabIndex = 0;
             // 
             // loadedText
@@ -97,7 +97,7 @@
             this.loadedText.ForeColor = System.Drawing.Color.MidnightBlue;
             this.loadedText.Location = new System.Drawing.Point(3, 515);
             this.loadedText.Name = "loadedText";
-            this.loadedText.Size = new System.Drawing.Size(363, 32);
+            this.loadedText.Size = new System.Drawing.Size(366, 32);
             this.loadedText.TabIndex = 231;
             this.loadedText.Text = "--NONE--";
             this.loadedText.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -115,7 +115,7 @@
             this.trackTime.Name = "trackTime";
             this.trackTime.Position = 0;
             this.trackTime.SilencePosition = 0;
-            this.trackTime.Size = new System.Drawing.Size(363, 72);
+            this.trackTime.Size = new System.Drawing.Size(366, 72);
             this.trackTime.TabIndex = 227;
             this.trackTime.Text = "trackTime0";
             this.trackTime.CuePositionChanged += new System.EventHandler(this.OnCuePositionChanged);
@@ -135,7 +135,7 @@
             this.trackList.LoadedIndex = -1;
             this.trackList.Location = new System.Drawing.Point(3, 3);
             this.trackList.Name = "trackList0";
-            this.trackList.Size = new System.Drawing.Size(363, 477);
+            this.trackList.Size = new System.Drawing.Size(366, 477);
             this.trackList.TabIndex = 11;
             this.trackList.Text = "trackList";
             this.trackList.RequestChange += new BAPSPresenter.RequestChangeEventHandler(this.TrackList_RequestChange);
@@ -237,7 +237,7 @@
             this.playButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.playButton.Location = new System.Drawing.Point(3, 486);
             this.playButton.Name = "playButton";
-            this.playButton.Size = new System.Drawing.Size(116, 23);
+            this.playButton.Size = new System.Drawing.Size(117, 23);
             this.playButton.TabIndex = 225;
             this.playButton.Text = "Play";
             this.playButton.UseVisualStyleBackColor = false;
@@ -247,9 +247,9 @@
             // 
             this.stopButton.Dock = System.Windows.Forms.DockStyle.Top;
             this.stopButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.stopButton.Location = new System.Drawing.Point(248, 486);
+            this.stopButton.Location = new System.Drawing.Point(250, 486);
             this.stopButton.Name = "stopButton";
-            this.stopButton.Size = new System.Drawing.Size(118, 23);
+            this.stopButton.Size = new System.Drawing.Size(119, 23);
             this.stopButton.TabIndex = 226;
             this.stopButton.Text = "Stop";
             this.stopButton.UseVisualStyleBackColor = true;
@@ -260,9 +260,9 @@
             this.pauseButton.BackColor = System.Drawing.SystemColors.Control;
             this.pauseButton.Dock = System.Windows.Forms.DockStyle.Top;
             this.pauseButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.pauseButton.Location = new System.Drawing.Point(125, 486);
+            this.pauseButton.Location = new System.Drawing.Point(126, 486);
             this.pauseButton.Name = "pauseButton";
-            this.pauseButton.Size = new System.Drawing.Size(117, 23);
+            this.pauseButton.Size = new System.Drawing.Size(118, 23);
             this.pauseButton.TabIndex = 224;
             this.pauseButton.Text = "Pause";
             this.pauseButton.UseVisualStyleBackColor = false;
@@ -277,7 +277,7 @@
             this.timeGone.InfoText = "Elapsed:";
             this.timeGone.Location = new System.Drawing.Point(3, 628);
             this.timeGone.Name = "timeGone";
-            this.timeGone.Size = new System.Drawing.Size(116, 58);
+            this.timeGone.Size = new System.Drawing.Size(117, 58);
             this.timeGone.TabIndex = 228;
             this.timeGone.TabStop = false;
             // 
@@ -288,9 +288,9 @@
             this.timeLeft.HighlightColor = System.Drawing.Color.HotPink;
             this.timeLeft.Highlighted = false;
             this.timeLeft.InfoText = "Remaining:";
-            this.timeLeft.Location = new System.Drawing.Point(125, 628);
+            this.timeLeft.Location = new System.Drawing.Point(126, 628);
             this.timeLeft.Name = "timeLeft";
-            this.timeLeft.Size = new System.Drawing.Size(117, 58);
+            this.timeLeft.Size = new System.Drawing.Size(118, 58);
             this.timeLeft.TabIndex = 229;
             this.timeLeft.TabStop = false;
             // 
@@ -301,9 +301,9 @@
             this.length.HighlightColor = System.Drawing.Color.Red;
             this.length.Highlighted = false;
             this.length.InfoText = "End At: 59:50";
-            this.length.Location = new System.Drawing.Point(248, 628);
+            this.length.Location = new System.Drawing.Point(250, 628);
             this.length.Name = "length";
-            this.length.Size = new System.Drawing.Size(118, 58);
+            this.length.Size = new System.Drawing.Size(119, 58);
             this.length.TabIndex = 230;
             this.length.TabStop = false;
             this.length.Tag = "";
@@ -325,7 +325,7 @@
             this.AutoSize = true;
             this.Controls.Add(this.layoutPanel);
             this.Name = "BAPSChannel";
-            this.Size = new System.Drawing.Size(369, 689);
+            this.Size = new System.Drawing.Size(372, 689);
             this.layoutPanel.ResumeLayout(false);
             this.trackListContextMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -343,7 +343,7 @@
         private BAPSFormControls.BAPSLabel timeGone;
         private BAPSFormControls.BAPSLabel timeLeft;
         private BAPSFormControls.BAPSLabel length;
-        private BAPSPresenter.TrackTime trackTime;
+        private BAPSFormControls.TrackTime trackTime;
         private System.Windows.Forms.Label loadedText;
         private System.Windows.Forms.Timer loadImpossibleTimer;
         private System.Windows.Forms.Timer nearEndTimer;

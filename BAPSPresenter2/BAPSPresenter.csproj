@@ -141,6 +141,7 @@
       <DependentUpon>Main.cs</DependentUpon>
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Utils.cs" />
     <Compile Include="PositionRequestChange.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

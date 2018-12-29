@@ -76,28 +76,6 @@ namespace BAPSPresenter2
             TimelineChanged?.Invoke(this, new TimelineChangeEventArgs((ushort)id, type, value));
         }
 
-        private string TimeToString(int hours, int minutes, int seconds, int centiseconds)
-        {
-            /** WORK NEEDED: fix me **/
-            var htemp = hours.ToString();
-            var mtemp = (minutes < 10) ? string.Concat("0", minutes.ToString()) : minutes.ToString();
-            var stemp = (seconds < 10) ? string.Concat("0", seconds.ToString()) : seconds.ToString();
-            return string.Concat(htemp, ":", mtemp, ":", stemp);
-        }
-
-        private string MillisecondsToTimeString(int msecs)
-        {
-            /** WORK NEEDED: lots **/
-            int secs = msecs / 1000;
-
-            var hours = Math.DivRem(secs, 3600, out _);
-            int mins = Math.DivRem(secs, 60, out _) - (hours * 60);
-
-            secs = secs - ((mins * 60) + (hours * 3600));
-
-            return TimeToString(hours, mins, secs, msecs % 1000 / 10);
-        }
-
         #region Updating the channel's view
 
         public void ShowPlay()
@@ -136,9 +114,9 @@ namespace BAPSPresenter2
 
                     value = (int)(Math.Round(value / 1000f) * 1000);
                     /** Set the amount of time gone **/
-                    timeGone.Text = MillisecondsToTimeString(value);
+                    timeGone.Text = BAPSFormControls.Utils.MillisecondsToTimeString(value);
                     var timeleft = trackTime.Duration - value;
-                    timeLeft.Text = MillisecondsToTimeString(timeleft);
+                    timeLeft.Text = BAPSFormControls.Utils.MillisecondsToTimeString(timeleft);
                     if (playButton.Enabled || timeleft > 10000 || timeleft < 500)
                     {
                         nearEndTimer.Enabled = false;
@@ -197,8 +175,8 @@ namespace BAPSPresenter2
                 RequestTimelineChange(TimelineChangeType.Duration, 0);
                 trackTime.CuePosition = 0;
                 trackTime.IntroPosition = 0;
-                timeLeft.Text = MillisecondsToTimeString(0);
-                timeGone.Text = MillisecondsToTimeString(0);
+                timeLeft.Text = BAPSFormControls.Utils.MillisecondsToTimeString(0);
+                timeGone.Text = BAPSFormControls.Utils.MillisecondsToTimeString(0);
                 nearEndTimer.Enabled = false;
                 timeLeft.Highlighted = false;
             }
