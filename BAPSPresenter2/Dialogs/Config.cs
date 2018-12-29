@@ -11,7 +11,8 @@ namespace BAPSPresenter2.Dialogs
         /// <summary>
         /// optionid to optioninfo lookup.
         /// </summary>
-        private System.Collections.Hashtable options = new System.Collections.Hashtable();
+        private System.Collections.Generic.SortedDictionary<uint, ConfigOptionInfo> options =
+            new System.Collections.Generic.SortedDictionary<uint, ConfigOptionInfo>();
 
         private bool optionCountSet = false;
 
@@ -21,7 +22,8 @@ namespace BAPSPresenter2.Dialogs
         /// Used to store datagrid controls (for indexed options) options
         /// are columns in the datagrid that share the same index control.
         /// </summary>
-        private System.Collections.Hashtable indexControls = new System.Collections.Hashtable();
+        private System.Collections.Generic.Dictionary<int, IndexControlsLookup> indexControls =
+            new System.Collections.Generic.Dictionary<int, IndexControlsLookup>();
 
         /// <summary>
         /// A mutex to stop the form closing while it is being updated.
@@ -94,7 +96,7 @@ namespace BAPSPresenter2.Dialogs
             /** Decrement the number of options remaining so that we know when we can draw the form **/
             numberOfOptions--;
             /** Add the option to the hashtable **/
-            options.Add(option.getOptionid(), option);
+            options.Add((uint)option.getOptionid(), option);
             /** If it is a choice type we must get the choices for it before requesting the settings **/
             if ((ConfigType)option.getType() == ConfigType.CHOICE)
             {
@@ -109,14 +111,8 @@ namespace BAPSPresenter2.Dialogs
             TextBox tb;
             Label lbl;
             ComboBox cb;
-            /** A handle for the current option which is having its UI generated **/
-            ConfigOptionInfo option;
             /** We don't care about the association of optionid to optioninfo just the info **/
-            var ops = new System.Collections.ArrayList(options.Values);
-            /** For some odd reason the array comes out backwards, WORK NEEDED: this is assumed internal
-                workings of .NET framework
-            **/
-            ops.Reverse();
+            var ops = options.Values;
 
             /** The vertical multiplier (essentially how many control have been generated into the
                 current column.
@@ -155,7 +151,8 @@ namespace BAPSPresenter2.Dialogs
             **/
 
             /** i . The current index into the option array **/
-            for (int i = 0; i < ops.Count; i++, yMultiplier++)
+            int i = 0;
+            foreach (var option in options.Values)
             {
                 splitColumn = (columnNumber < (totalColumns) && i - 1 >= columnNumber * (ops.Count / totalColumns));
                 /**
@@ -192,8 +189,6 @@ namespace BAPSPresenter2.Dialogs
                     /** Set the offset to the same value as originally **/
                     yOffset = columnTopBottomPadding;
                 }
-                /** Get the current option **/
-                option = (ConfigOptionInfo)ops[i];
                 /** Indexed options must be treated differently, they are placed into datagrids **/
                 if (option.isIndexed())
                 {
@@ -207,7 +202,7 @@ namespace BAPSPresenter2.Dialogs
                     /** Create a handle for the datagrid and datatable **/
                     DataGrid dg;
                     System.Data.DataTable dt;
-                    if (indexControls[option.getGroupid()] == null)
+                    if (!indexControls.ContainsKey(option.getGroupid()))
                     {
                         dg = new DataGrid();
                         /** Create a table style for the datagrid **/
@@ -277,7 +272,7 @@ namespace BAPSPresenter2.Dialogs
                             from the column by backing up the vertical offset by the row height (the same value as
                             the multiplier's multiplicand)
                         **/
-                        var icl = (IndexControlsLookup)indexControls[option.getGroupid()];
+                        var icl = indexControls[option.getGroupid()];
                         dt = icl.dt;
                         dg = icl.dg;
                         yOffset -= rowHeight;
@@ -417,6 +412,9 @@ namespace BAPSPresenter2.Dialogs
                             break;
                     }
                 }
+
+                i++;
+                yMultiplier++;
             }
             /** Get the required height for column 2 (same equation as used after end of column 1) **/
             int minHeight = (28 + yOffset + (24 * (yMultiplier + 1)) + status.Height + 32);
@@ -442,10 +440,10 @@ namespace BAPSPresenter2.Dialogs
         public void setResult(uint optionid, ConfigResult res)
         {
             // WORK NEEDED: fix this
-            ((ConfigOptionInfo)options[optionid]).setResult(res == ConfigResult.SUCCESS);
+            options[optionid].setResult(res == ConfigResult.SUCCESS);
             if (res != ConfigResult.SUCCESS)
             {
-                statusLabel.Text = string.Concat("Failed to set: ", ((ConfigOptionInfo)options[optionid]).getDescription(), ". Error: ", ConfigResultText.text[(int)res]);
+                statusLabel.Text = string.Concat("Failed to set: ", options[optionid].getDescription(), ". Error: ", ConfigResultText.text[(int)res]);
             }
             var ops = new System.Collections.ArrayList(options.Values);
             int i = 0;
@@ -465,7 +463,7 @@ namespace BAPSPresenter2.Dialogs
             if (allReceived && allSucceeded)
             {
                 closeMutex.WaitOne();
-                this.Close();
+                Close();
                 closeMutex.ReleaseMutex();
             }
             else if (allReceived)
@@ -476,37 +474,37 @@ namespace BAPSPresenter2.Dialogs
 
         public void setValue(uint id, string str)
         {
-            ((ConfigOptionInfo)options[id]).setValue(str);
+            options[id].setValue(str);
             enableSaveButtonIfReady();
         }
 
         public void setValue(uint id, int value)
         {
-            ((ConfigOptionInfo)options[id]).setValue(value);
+            options[id].setValue(value);
             enableSaveButtonIfReady();
         }
 
         public void setValue(uint id, int index, string str)
         {
-            ((ConfigOptionInfo)options[id]).setValue(index, str);
+            options[id].setValue(index, str);
             enableSaveButtonIfReady();
         }
 
         public void setValue(uint id, int index, int value)
         {
-            ((ConfigOptionInfo)options[id]).setValue(index, value);
+            options[id].setValue(index, value);
             enableSaveButtonIfReady();
         }
 
         public void addChoice(uint optionid, int choiceid, string description)
         {
-            ((ConfigOptionInfo)options[optionid]).addChoice(choiceid, description);
+            options[optionid].addChoice(choiceid, description);
             receiveSettingsIfReady();
         }
 
         public void setChoiceCount(uint optionid, int count)
         {
-            ((ConfigOptionInfo)options[optionid]).setChoiceCount(count);
+            options[optionid].setChoiceCount(count);
         }
 
         private void receiveSettingsIfReady()
