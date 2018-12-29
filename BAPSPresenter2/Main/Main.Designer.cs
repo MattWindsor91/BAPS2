@@ -59,7 +59,7 @@ namespace BAPSPresenter2
 
         /** Sub-form handles **/
         RecordLibrarySearch recordLibrarySearch = null;
-        ConfigDialog configDialog = null;
+        Dialogs.Config configDialog = null;
         LoadShowDialog loadShowDialog = null;
         SecurityDialog securityDialog = null;
         AboutDialog about = null;
@@ -240,34 +240,34 @@ namespace BAPSPresenter2
             // 
             // bapsDirectory1
             // 
+            this.bapsDirectory1.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.bapsDirectory1.AutoSize = true;
             this.bapsDirectory1.DirectoryID = 0;
-            this.bapsDirectory1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.bapsDirectory1.Location = new System.Drawing.Point(3, 79);
+            this.bapsDirectory1.Location = new System.Drawing.Point(6, 82);
             this.bapsDirectory1.Name = "bapsDirectory1";
-            this.bapsDirectory1.Size = new System.Drawing.Size(240, 162);
+            this.bapsDirectory1.Size = new System.Drawing.Size(234, 155);
             this.bapsDirectory1.TabIndex = 230;
             this.bapsDirectory1.Tag = "";
             // 
             // bapsDirectory2
             // 
+            this.bapsDirectory2.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.bapsDirectory2.AutoSize = true;
             this.bapsDirectory2.DirectoryID = 1;
-            this.bapsDirectory2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.bapsDirectory2.Location = new System.Drawing.Point(3, 247);
+            this.bapsDirectory2.Location = new System.Drawing.Point(6, 250);
             this.bapsDirectory2.Name = "bapsDirectory2";
-            this.bapsDirectory2.Size = new System.Drawing.Size(240, 162);
+            this.bapsDirectory2.Size = new System.Drawing.Size(234, 155);
             this.bapsDirectory2.TabIndex = 231;
             this.bapsDirectory2.Tag = "";
             // 
             // bapsDirectory3
             // 
+            this.bapsDirectory3.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.bapsDirectory3.AutoSize = true;
             this.bapsDirectory3.DirectoryID = 2;
-            this.bapsDirectory3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.bapsDirectory3.Location = new System.Drawing.Point(3, 415);
+            this.bapsDirectory3.Location = new System.Drawing.Point(6, 418);
             this.bapsDirectory3.Name = "bapsDirectory3";
-            this.bapsDirectory3.Size = new System.Drawing.Size(240, 162);
+            this.bapsDirectory3.Size = new System.Drawing.Size(234, 155);
             this.bapsDirectory3.TabIndex = 232;
             this.bapsDirectory3.Tag = "";
             // 

@@ -23,7 +23,7 @@ namespace BAPSPresenter2
                 cd.closeMutex.WaitOne();
                 if (cd.Visible)
                 {
-                    cd.Invoke((Action<object, object, string>)configDialog.addChoice, optionid, choiceIndex, choiceDescription);
+                    cd.Invoke((Action<uint, int, string>)configDialog.addChoice, optionid, choiceIndex, choiceDescription);
                 }
             }
             catch (Exception e)
@@ -37,7 +37,7 @@ namespace BAPSPresenter2
             }
         }
 
-        private void processChoiceCount(uint optionid, uint count)
+        private void processChoiceCount(uint optionid, int count)
         {
             /** Ignore if the config dialog is closed **/
             var cd = configDialog;
@@ -47,7 +47,7 @@ namespace BAPSPresenter2
                 cd.closeMutex.WaitOne();
                 if (cd.Visible)
                 {
-                    cd.Invoke((Action<object, object>)configDialog.setChoiceCount, optionid, count);
+                    cd.Invoke((Action<uint, int>)configDialog.setChoiceCount, optionid, count);
                 }
             }
             catch (Exception e)
@@ -201,12 +201,12 @@ namespace BAPSPresenter2
                                         /** Box it up and send it off, choices can be treated as
                                             just ints because that is the underlying datatype
                                         **/
-                                        configDialog.Invoke((Action<object, object, object>)configDialog.setValue, optionid, index, valueInt);
+                                        configDialog.Invoke((Action<uint, int, int>)configDialog.setValue, optionid, index, valueInt);
                                     }
                                     break;
                                 case ConfigType.STR:
                                     {
-                                        configDialog.Invoke((Action<object, object, object>)configDialog.setValue, optionid, index, valueStr);
+                                        configDialog.Invoke((Action<uint, int, string>)configDialog.setValue, optionid, index, valueStr);
                                     }
                                     break;
                             }
@@ -219,12 +219,12 @@ namespace BAPSPresenter2
                                 case ConfigType.INT:
                                 case ConfigType.CHOICE:
                                     {
-                                        configDialog.Invoke((Action<object, object>)configDialog.setValue, optionid, valueInt);
+                                        configDialog.Invoke((Action<uint, int>)configDialog.setValue, optionid, valueInt);
                                     }
                                     break;
                                 case ConfigType.STR:
                                     {
-                                        configDialog.Invoke((Action<object, object>)configDialog.setValue, optionid, valueStr);
+                                        configDialog.Invoke((Action<uint, string>)configDialog.setValue, optionid, valueStr);
                                     }
                                     break;
                             }
@@ -243,7 +243,7 @@ namespace BAPSPresenter2
             }
         }
 
-        private void processConfigResult(Command cmdReceived, uint optionid, uint result)
+        private void processConfigResult(Command cmdReceived, uint optionid, ConfigResult result)
         {
             /** We receive a result for every config setting we try to update **/
             /** Only report these if the form is still open, it is a serious error, if
@@ -252,7 +252,7 @@ namespace BAPSPresenter2
             // NB: indexes don't seem to be used here.
             try
             {
-                configDialog.Invoke((Action<object, object>)configDialog.setResult, optionid, result);
+                configDialog.Invoke((Action<uint, ConfigResult>)configDialog.setResult, optionid, result);
             }
             catch (Exception e)
             {

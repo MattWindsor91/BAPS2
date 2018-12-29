@@ -6,7 +6,7 @@
 
 namespace BAPSPresenter
 {
-	ref class DataGridComboBoxColumn : public System::Windows::Forms::DataGridColumnStyle
+	public ref class DataGridComboBoxColumn : public System::Windows::Forms::DataGridColumnStyle
 	{
 	public:
 		DataGridComboBoxColumn()
@@ -21,7 +21,6 @@ namespace BAPSPresenter
 			return comboBox;
 		}
 
-	protected:
 		virtual void Abort(int /*rowNum*/) override
 		{
 			/** If we abort we reset the state of this column without saving **/

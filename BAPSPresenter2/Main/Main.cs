@@ -535,7 +535,7 @@ namespace BAPSPresenter2
                                 {
                                     var optionid = clientSocket.receiveI();
                                     var count = clientSocket.receiveI();
-                                    processChoiceCount(optionid, count);
+                                    processChoiceCount(optionid, (int)count);
                                 }
                             }
                             break;
@@ -557,7 +557,7 @@ namespace BAPSPresenter2
                             {
                                 var optionid = clientSocket.receiveI();
                                 var result = clientSocket.receiveI();
-                                processConfigResult(cmdReceived, optionid, result);
+                                processConfigResult(cmdReceived, optionid, (ConfigResult)result);
                             }
                             break;
                         case Command.CONFIGERROR:

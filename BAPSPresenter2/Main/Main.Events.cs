@@ -147,12 +147,10 @@ namespace BAPSPresenter2
                     break;
                 case KeyShortcuts.Config:
                     {
-#if false
-                        configDialog = new ConfigDialog(this, msgQueue);
+                        configDialog = new Dialogs.Config(this, msgQueue);
                         configDialog.ShowDialog();
-                        delete configDialog;
-                        configDialog = nullptr;
-#endif
+                        configDialog.Dispose();
+                        configDialog = null;
                         e.Handled = true;
                     }
                     break;
@@ -223,7 +221,7 @@ namespace BAPSPresenter2
             msgQueue.Enqueue(new ActionMessage((ushort)cmd));
         }
 
-        private void SearchRecordLib_Click(object sender, System.EventArgs e)
+        private void SearchRecordLib_Click(object sender, EventArgs e)
         {
 #if false // TODO(@MattWindsor91): port this
 	        /** We have a handle stored in the class so that data can be passed to the object **/
@@ -235,7 +233,7 @@ namespace BAPSPresenter2
 #endif
         }
 
-        private void loadShow_Click(object sender, System.EventArgs e)
+        private void loadShow_Click(object sender, EventArgs e)
         {
 #if false // TODO(@MattWindsor91): port this
             /** Handle stored for same reason as record library **/
