@@ -155,7 +155,7 @@ namespace BAPSPresenter2.Dialogs
             int i = 0;
             foreach (var option in options.Values)
             {
-                splitColumn = (columnNumber < (totalColumns) && i - 1 >= columnNumber * (ops.Count / totalColumns));
+                splitColumn = columnNumber < totalColumns && i - 1 >= columnNumber * (ops.Count / totalColumns);
                 /**
                  * If splitting to new column or if we've reached the end of the last column
                  * check if we need to make the window height larger based on the last row's contents
@@ -163,7 +163,7 @@ namespace BAPSPresenter2.Dialogs
                 if (splitColumn || (i == ops.Count - 1))
                 {
                     /** Set the form height to the height of the first column **/
-                    int newHeight = ((rowHeight * (yMultiplier)) + status.Height + (2 * columnTopBottomPadding));
+                    int newHeight = (rowHeight * yMultiplier) + status.Height + (2 * columnTopBottomPadding);
                     if (newHeight > Height) Height = newHeight;
                 }
                 /** When half the controls have been generated move onto the second column
@@ -173,10 +173,10 @@ namespace BAPSPresenter2.Dialogs
                 if (splitColumn)
                 {
                     /** Place the statusBar correctly after resize **/
-                    status.Top = yOffset + (rowHeight * (yMultiplier)) + columnTopBottomPadding;
+                    status.Top = yOffset + (rowHeight * yMultiplier) + columnTopBottomPadding;
 
                     /** Move the buttons to a sensible place **/
-                    int buttonTopOffset = yOffset + (rowHeight * (yMultiplier)) + (2 * columnTopBottomPadding);
+                    int buttonTopOffset = yOffset + (rowHeight * yMultiplier) + (2 * columnTopBottomPadding);
                     saveButton.Location = new System.Drawing.Point(columnLRPadding, buttonTopOffset);
                     cancelButton.Location = new System.Drawing.Point(saveButton.Right + 10, buttonTopOffset);
                     restartButton.Location = new System.Drawing.Point(cancelButton.Right + 10, buttonTopOffset);
@@ -231,7 +231,7 @@ namespace BAPSPresenter2.Dialogs
                         dgts.MappingName = "";
                         /** Add it to the form controls **/
                         Controls.Add(dg);
-                        ((System.ComponentModel.ISupportInitialize)(dg)).EndInit();
+                        ((System.ComponentModel.ISupportInitialize)dg).EndInit();
                         /** Finished basic datagrid initialization **/
 
                         /** Create a datatable to hold all the info for this set of options **/
@@ -284,7 +284,7 @@ namespace BAPSPresenter2.Dialogs
                         case ConfigType.STR:
                             {
                                 /** Strings are stored as... strings **/
-                                dt.Columns.Add(option.getDescription(), Type.GetType("System.String"));
+                                dt.Columns.Add(option.getDescription(), typeof(string));
                                 /** In... textboxes **/
                                 var tbc = new DataGridTextBoxColumn
                                 {
@@ -301,7 +301,7 @@ namespace BAPSPresenter2.Dialogs
                         case ConfigType.INT:
                             {
                                 /** Integers are stored as... integers **/
-                                dt.Columns.Add(option.getDescription(), Type.GetType("System.Int32"));
+                                dt.Columns.Add(option.getDescription(), typeof(int));
                                 /** In text boxes... WORK NEEDED: perhaps add a textchanged event to validate it being a number **/
                                 var tbc = new DataGridTextBoxColumn
                                 {
@@ -316,7 +316,7 @@ namespace BAPSPresenter2.Dialogs
                         case ConfigType.CHOICE:
                             {
                                 /** Choice types are stored as integers as well because we refer to the choice index not the value **/
-                                dt.Columns.Add(option.getDescription(), Type.GetType("System.Int32"));
+                                dt.Columns.Add(option.getDescription(), typeof(int));
                                 var cbc = new DataGridComboBoxColumn
                                 {
                                     HeaderText = option.getDescription(),
@@ -418,15 +418,15 @@ namespace BAPSPresenter2.Dialogs
                 yMultiplier++;
             }
             /** Get the required height for column 2 (same equation as used after end of column 1) **/
-            int minHeight = (28 + yOffset + (24 * (yMultiplier + 1)) + status.Height + 32);
+            int minHeight = 28 + yOffset + (24 * (yMultiplier + 1)) + status.Height + 32;
             /** If the height of the form is less that what is needed resize as above **/
             if (Height < minHeight)
             {
                 Height = minHeight;
-                status.Top = yOffset + (24 * (yMultiplier + 1) + 32);
-                saveButton.Top = yOffset + (24 * (yMultiplier)) + 4;
-                restartButton.Top = yOffset + (24 * (yMultiplier)) + 4;
-                cancelButton.Top = yOffset + (24 * (yMultiplier)) + 4;
+                status.Top = yOffset + 24 * (yMultiplier + 1) + 32;
+                saveButton.Top = yOffset + (24 * yMultiplier) + 4;
+                restartButton.Top = yOffset + (24 * yMultiplier) + 4;
+                cancelButton.Top = yOffset + (24 * yMultiplier) + 4;
             }
             Width = totalColumns * (columnWidth + 2 * columnLRPadding);
             /** Show all the controls that have just been made **/

@@ -147,7 +147,7 @@ namespace BAPSPresenter2
                     /** Receive the description of the result code **/
                     var description = clientSocket.receiveS();
                     /** Check the value for '0' meaning success **/
-                    authenticated = ((authResult & Command.SYSTEM_VALUEMASK) == 0);
+                    authenticated = (authResult & Command.SYSTEM_VALUEMASK) == 0;
                     if (!authenticated)
                     {
                         /** Tell the client of any failure **/
@@ -211,7 +211,7 @@ namespace BAPSPresenter2
             }
 
             /** Enable or disable the timers depending on the config setting, enable on default when no registry config value set. **/
-            var enableTimers = (string.Compare(ConfigManager.getConfigValueString("EnableTimers", "Yes"), "Yes") == 0);
+            var enableTimers = string.Compare(ConfigManager.getConfigValueString("EnableTimers", "Yes"), "Yes") == 0;
             enableTimerControls(enableTimers);
 
             /** Start the receive thread so we are ready for the autoupdate messages **/
