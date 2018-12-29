@@ -159,11 +159,6 @@ namespace BAPSPresenter2
             /** Do the form initialization **/
             InitializeComponent();
 
-            /** Tag codes for the controls so they can be identified at runtime **/
-            object number0 = 0;
-            object number1 = 1;
-            object number2 = 2;
-
             /** Array initialisation so that controls can be found by channel
                 number at runtime
             **/
@@ -171,7 +166,7 @@ namespace BAPSPresenter2
             for (ushort i = 0; i < bapsChannels.Length; i++)
             {
                 var bc = bapsChannels[i];
-                // Channels get their IDs from their tags in the designer.
+                // Channels get their IDs from the designer.
                 Debug.Assert(bc.ChannelID == i, "Mismatch between channel IDs and array positions");
                 // This is needed to make sure the lambdas below capture copies of the channel;
                 // otherwise, they'll all get the value of 'i' at the end of the loop.

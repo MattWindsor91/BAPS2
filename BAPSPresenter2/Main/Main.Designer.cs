@@ -87,12 +87,12 @@ namespace BAPSPresenter2
             this.loadShowButton = new System.Windows.Forms.Button();
             this.bapsButton1 = new System.Windows.Forms.Button();
             this.timeLine = new BAPSPresenter.TimeLine();
-            this.bapsChannel1 = new BAPSPresenter2.BAPSChannel();
-            this.bapsChannel2 = new BAPSPresenter2.BAPSChannel();
-            this.bapsChannel3 = new BAPSPresenter2.BAPSChannel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.MainTextDisplay = new System.Windows.Forms.TextBox();
             this.topButtonsPanel = new System.Windows.Forms.FlowLayoutPanel();
+            this.bapsChannel3 = new BAPSPresenter2.BAPSChannel();
+            this.bapsChannel2 = new BAPSPresenter2.BAPSChannel();
+            this.bapsChannel1 = new BAPSPresenter2.BAPSChannel();
             this.bapsDirectory1 = new BAPSPresenter2.BAPSDirectory();
             this.bapsDirectory2 = new BAPSPresenter2.BAPSDirectory();
             this.bapsDirectory3 = new BAPSPresenter2.BAPSDirectory();
@@ -144,39 +144,6 @@ namespace BAPSPresenter2
             this.timeLine.TabStop = false;
             this.timeLine.Text = "timeLine1";
             this.timeLine.StartTimeChanged += new BAPSPresenter.TimeLineEventHandler(this.timeLine_StartTimeChanged);
-            // 
-            // bapsChannel1
-            // 
-            this.bapsChannel1.AutoSize = true;
-            this.bapsChannel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.bapsChannel1.Location = new System.Drawing.Point(249, 3);
-            this.bapsChannel1.Name = "bapsChannel1";
-            this.tableLayoutPanel1.SetRowSpan(this.bapsChannel1, 4);
-            this.bapsChannel1.Size = new System.Drawing.Size(365, 574);
-            this.bapsChannel1.TabIndex = 225;
-            this.bapsChannel1.Tag = "0";
-            // 
-            // bapsChannel2
-            // 
-            this.bapsChannel2.AutoSize = true;
-            this.bapsChannel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.bapsChannel2.Location = new System.Drawing.Point(620, 3);
-            this.bapsChannel2.Name = "bapsChannel2";
-            this.tableLayoutPanel1.SetRowSpan(this.bapsChannel2, 4);
-            this.bapsChannel2.Size = new System.Drawing.Size(365, 574);
-            this.bapsChannel2.TabIndex = 226;
-            this.bapsChannel2.Tag = "1";
-            // 
-            // bapsChannel3
-            // 
-            this.bapsChannel3.AutoSize = true;
-            this.bapsChannel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.bapsChannel3.Location = new System.Drawing.Point(991, 3);
-            this.bapsChannel3.Name = "bapsChannel3";
-            this.tableLayoutPanel1.SetRowSpan(this.bapsChannel3, 4);
-            this.bapsChannel3.Size = new System.Drawing.Size(366, 574);
-            this.bapsChannel3.TabIndex = 227;
-            this.bapsChannel3.Tag = "2";
             // 
             // tableLayoutPanel1
             // 
@@ -234,6 +201,42 @@ namespace BAPSPresenter2
             this.topButtonsPanel.Size = new System.Drawing.Size(240, 70);
             this.topButtonsPanel.TabIndex = 229;
             this.topButtonsPanel.WrapContents = false;
+            // 
+            // bapsChannel3
+            // 
+            this.bapsChannel3.AutoSize = true;
+            this.bapsChannel3.ChannelID = 2;
+            this.bapsChannel3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.bapsChannel3.Location = new System.Drawing.Point(991, 3);
+            this.bapsChannel3.Name = "bapsChannel3";
+            this.tableLayoutPanel1.SetRowSpan(this.bapsChannel3, 4);
+            this.bapsChannel3.Size = new System.Drawing.Size(366, 574);
+            this.bapsChannel3.TabIndex = 227;
+            this.bapsChannel3.Tag = "2";
+            // 
+            // bapsChannel2
+            // 
+            this.bapsChannel2.AutoSize = true;
+            this.bapsChannel2.ChannelID = 1;
+            this.bapsChannel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.bapsChannel2.Location = new System.Drawing.Point(620, 3);
+            this.bapsChannel2.Name = "bapsChannel2";
+            this.tableLayoutPanel1.SetRowSpan(this.bapsChannel2, 4);
+            this.bapsChannel2.Size = new System.Drawing.Size(365, 574);
+            this.bapsChannel2.TabIndex = 226;
+            this.bapsChannel2.Tag = "1";
+            // 
+            // bapsChannel1
+            // 
+            this.bapsChannel1.AutoSize = true;
+            this.bapsChannel1.ChannelID = 0;
+            this.bapsChannel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.bapsChannel1.Location = new System.Drawing.Point(249, 3);
+            this.bapsChannel1.Name = "bapsChannel1";
+            this.tableLayoutPanel1.SetRowSpan(this.bapsChannel1, 4);
+            this.bapsChannel1.Size = new System.Drawing.Size(365, 574);
+            this.bapsChannel1.TabIndex = 225;
+            this.bapsChannel1.Tag = "0";
             // 
             // bapsDirectory1
             // 
