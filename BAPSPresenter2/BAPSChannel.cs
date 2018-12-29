@@ -29,6 +29,7 @@ namespace BAPSPresenter2
             if (ushort.TryParse(t, out var result))
             {
                 _channelID = result;
+                trackList.Channel = result;
                 SetupTimers();
                 return result;
             }
@@ -380,7 +381,7 @@ namespace BAPSPresenter2
 
         private void TrackList_RequestChange(object o, RequestChangeEventArgs e)
         {
-            Debug.Assert(e.channel == ChannelID);
+            Debug.Assert(e.channel == ChannelID, "Unexpected channel ID", "Expected {0}, but this RequestChange came from {1}", ChannelID, e.channel);
 
             // Don't propagate impossible loads outside the channel.
             if ((ChangeType)e.ct == ChangeType.SELECTEDINDEX)
