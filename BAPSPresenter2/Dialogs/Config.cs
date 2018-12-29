@@ -1,5 +1,6 @@
 ﻿using BAPSPresenter;
 using System;
+using System.Linq; // for collection queries
 using System.Windows.Forms;
 
 namespace BAPSPresenter2.Dialogs
@@ -445,28 +446,18 @@ namespace BAPSPresenter2.Dialogs
             {
                 statusLabel.Text = string.Concat("Failed to set: ", options[optionid].getDescription(), ". Error: ", ConfigResultText.text[(int)res]);
             }
-            var ops = new System.Collections.ArrayList(options.Values);
-            int i = 0;
-            bool allReceived = true;
-            bool allSucceeded = true;
-            for (i = 0; i < options.Count && allReceived && allSucceeded; i++)
-            {
-                if (!((ConfigOptionInfo)ops[i]).hasReceivedResult())
-                {
-                    allReceived = false;
-                }
-                else if (!((ConfigOptionInfo)ops[i]).getResult())
-                {
-                    allSucceeded = false;
-                }
-            }
-            if (allReceived && allSucceeded)
+            var allReceived = options.Values.All(op => op.hasReceivedResult());
+            if (!allReceived) return;
+
+            var allSucceeded = options.Values.All(op => op.getResult());
+
+            if (allSucceeded)
             {
                 closeMutex.WaitOne();
                 Close();
                 closeMutex.ReleaseMutex();
             }
-            else if (allReceived)
+            else
             {
                 saveButton.Enabled = true;
             }
@@ -510,12 +501,7 @@ namespace BAPSPresenter2.Dialogs
         private void receiveSettingsIfReady()
         {
             if (!(optionCountSet && (numberOfOptions == 0))) return;
-
-            var ops = new System.Collections.ArrayList(options.Values);
-            for (int i = 0; i < options.Count; i++)
-            {
-                if (!((ConfigOptionInfo)ops[i]).isValid()) return;
-            }
+            if (options.Values.Any(op => !op.isValid())) return;
             Command cmd = Command.CONFIG | Command.GETCONFIGSETTINGS;
             msgQueue.Enqueue(new ActionMessage((ushort)cmd));
             optionCountSet = false;

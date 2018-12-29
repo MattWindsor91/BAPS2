@@ -216,6 +216,5 @@
     internal static class CommandExtensions
     {
         internal static ushort Channel(this Command cmd) => (ushort)(cmd & Command.PLAYBACK_CHANNELMASK);
-        internal static bool IsFlagSet(this Command cmd, Command flag) => (cmd & flag) == flag;
     }
 }

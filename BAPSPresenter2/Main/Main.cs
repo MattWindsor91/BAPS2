@@ -397,7 +397,7 @@ namespace BAPSPresenter2
                     switch (cmdReceived & Command.PLAYLIST_OPMASK)
                     {
                         case Command.ITEM:
-                            if (cmdReceived.IsFlagSet(Command.PLAYLIST_MODEMASK))
+                            if (cmdReceived.HasFlag(Command.PLAYLIST_MODEMASK))
                             {
                                 var channel = cmdReceived.Channel();
                                 var index = clientSocket.receiveI();
@@ -444,7 +444,7 @@ namespace BAPSPresenter2
                     {
                         case Command.LIBRARYRESULT:
                             {
-                                if (cmdReceived.IsFlagSet(Command.DATABASE_MODEMASK))
+                                if (cmdReceived.HasFlag(Command.DATABASE_MODEMASK))
                                 {
                                     var dirtyStatus = (ushort)(cmdReceived & Command.DATABASE_VALUEMASK);
                                     var resultid = clientSocket.receiveI();
@@ -465,7 +465,7 @@ namespace BAPSPresenter2
                             }
                             break;
                         case Command.SHOW:
-                            if (cmdReceived.IsFlagSet(Command.DATABASE_MODEMASK))
+                            if (cmdReceived.HasFlag(Command.DATABASE_MODEMASK))
                             {
                                 var showid = clientSocket.receiveI();
                                 var description = clientSocket.receiveS();
@@ -478,7 +478,7 @@ namespace BAPSPresenter2
                             }
                             break;
                         case Command.LISTING:
-                            if (cmdReceived.IsFlagSet(Command.DATABASE_MODEMASK))
+                            if (cmdReceived.HasFlag(Command.DATABASE_MODEMASK))
                             {
                                 var listingid = clientSocket.receiveI();
                                 var channel = clientSocket.receiveI();
@@ -508,7 +508,7 @@ namespace BAPSPresenter2
                     {
                         case Command.OPTION:
                             {
-                                if (cmdReceived.IsFlagSet(Command.CONFIG_MODEMASK))
+                                if (cmdReceived.HasFlag(Command.CONFIG_MODEMASK))
                                 {
                                     var optionid = clientSocket.receiveI();
                                     var description = clientSocket.receiveS();
@@ -524,7 +524,7 @@ namespace BAPSPresenter2
                             break;
                         case Command.OPTIONCHOICE:
                             {
-                                if (cmdReceived.IsFlagSet(Command.CONFIG_MODEMASK))
+                                if (cmdReceived.HasFlag(Command.CONFIG_MODEMASK))
                                 {
                                     var optionid = clientSocket.receiveI();
                                     var choiceIndex = clientSocket.receiveI();
@@ -541,7 +541,7 @@ namespace BAPSPresenter2
                             break;
                         case Command.CONFIGSETTING:
                             {
-                                if (cmdReceived.IsFlagSet(Command.CONFIG_MODEMASK))
+                                if (cmdReceived.HasFlag(Command.CONFIG_MODEMASK))
                                 {
                                     var optionid = clientSocket.receiveI();
                                     var type = clientSocket.receiveI();
@@ -569,7 +569,7 @@ namespace BAPSPresenter2
                             break;
                         case Command.USER:
                             {
-                                if (cmdReceived.IsFlagSet(Command.CONFIG_MODEMASK))
+                                if (cmdReceived.HasFlag(Command.CONFIG_MODEMASK))
                                 {
                                     var username = clientSocket.receiveS();
                                     var permissions = clientSocket.receiveI();
@@ -584,7 +584,7 @@ namespace BAPSPresenter2
                             break;
                         case Command.PERMISSION:
                             {
-                                if (cmdReceived.IsFlagSet(Command.CONFIG_MODEMASK))
+                                if (cmdReceived.HasFlag(Command.CONFIG_MODEMASK))
                                 {
                                     var permissionCode = clientSocket.receiveI();
                                     var description = clientSocket.receiveS();
@@ -606,7 +606,7 @@ namespace BAPSPresenter2
                             break;
                         case Command.IPRESTRICTION:
                             {
-                                if (cmdReceived.IsFlagSet(Command.CONFIG_MODEMASK))
+                                if (cmdReceived.HasFlag(Command.CONFIG_MODEMASK))
                                 {
                                     var ipaddress = clientSocket.receiveS();
                                     var mask = clientSocket.receiveI();
@@ -634,7 +634,7 @@ namespace BAPSPresenter2
                             clientSocket.receiveS();
                             break;
                         case Command.FILENAME:
-                            if (cmdReceived.IsFlagSet(Command.SYSTEM_MODEMASK))
+                            if (cmdReceived.HasFlag(Command.SYSTEM_MODEMASK))
                             {
                                 var directoryIndex = cmdReceived & Command.SYSTEM_VALUEMASK;
                                 var index = clientSocket.receiveI();

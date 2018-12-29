@@ -23,14 +23,16 @@ namespace BAPSPresenter2
                 cd.closeMutex.WaitOne();
                 if (cd.Visible)
                 {
-                    cd.Invoke((Action<uint, int, string>)configDialog.addChoice, optionid, choiceIndex, choiceDescription);
+                    cd.Invoke((Action<uint, int, string>)configDialog.addChoice, optionid, (int)choiceIndex, choiceDescription);
                 }
             }
+#if !DEBUG
             catch (Exception e)
             {
                 var error = string.Concat("Failed to process choice:\n", e.Message, "\nStack Trace:\n", e.StackTrace);
                 logError(error);
             }
+#endif
             finally
             {
                 cd.closeMutex.ReleaseMutex();
@@ -50,11 +52,13 @@ namespace BAPSPresenter2
                     cd.Invoke((Action<uint, int>)configDialog.setChoiceCount, optionid, count);
                 }
             }
+#if !DEBUG
             catch (Exception e)
             {
                 var error = string.Concat("Failed to process choice count:\n", e.Message, "\nStack Trace:\n", e.StackTrace);
                 logError(error);
             }
+#endif
             finally
             {
                 cd.closeMutex.ReleaseMutex();
@@ -64,7 +68,7 @@ namespace BAPSPresenter2
         private void processOption(Command cmdReceived, uint optionid, string description, uint type)
         {
             /** Cache this info **/
-            ConfigCache.addOptionDescription((int)optionid, (int)type, description, (cmdReceived & Command.CONFIG_USEVALUEMASK) != 0);
+            ConfigCache.addOptionDescription((int)optionid, (int)type, description, cmdReceived.HasFlag(Command.CONFIG_USEVALUEMASK));
             /** Pass onto the config dialog if available **/
             var cd = configDialog;
             if (cd == null) return;
@@ -74,7 +78,7 @@ namespace BAPSPresenter2
                 if (cd.Visible)
                 {
                     /** Check for an indexed option **/
-                    if (cmdReceived.IsFlagSet(Command.CONFIG_USEVALUEMASK))
+                    if (cmdReceived.HasFlag(Command.CONFIG_USEVALUEMASK))
                     {
                         /** Indexed option - does not update the form UI just data **/
                         var indexid = (ushort)(cmdReceived & Command.CONFIG_VALUEMASK);
@@ -96,11 +100,13 @@ namespace BAPSPresenter2
                     }
                 }
             }
+#if DEBUG
             catch (Exception e)
             {
                 var error = string.Concat("Failed to process option:\n", e.Message, "\nStack Trace:\n", e.StackTrace);
                 logError(error);
             }
+#endif
             finally
             {
                 cd.closeMutex.ReleaseMutex();
@@ -120,11 +126,13 @@ namespace BAPSPresenter2
                     cd.setNumberOfOptions((int)count);
                 }
             }
+#if !DEBUG
             catch (Exception e)
             {
                 var error = string.Concat("Failed to process option count:\n", e.Message, "\nStack Trace:\n", e.StackTrace);
                 logError(error);
             }
+#endif
             finally
             {
                 cd.closeMutex.ReleaseMutex();
@@ -155,7 +163,7 @@ namespace BAPSPresenter2
             /** Cache this setting **/
             /** Use index=-1 to represent a non indexed setting **/
             int index = -1;
-            if (cmdReceived.IsFlagSet(Command.CONFIG_USEVALUEMASK))
+            if (cmdReceived.HasFlag(Command.CONFIG_USEVALUEMASK))
             {
                 index = (int)(cmdReceived & Command.CONFIG_VALUEMASK);
             }
@@ -191,7 +199,7 @@ namespace BAPSPresenter2
                         /** If the value mask is used it means that the setting is for an indexed
                             option and the specified index is in the value
                         **/
-                        if (cmdReceived.IsFlagSet(Command.CONFIG_USEVALUEMASK))
+                        if (cmdReceived.HasFlag(Command.CONFIG_USEVALUEMASK))
                         {
                             switch (type)
                             {
@@ -201,7 +209,7 @@ namespace BAPSPresenter2
                                         /** Box it up and send it off, choices can be treated as
                                             just ints because that is the underlying datatype
                                         **/
-                                        configDialog.Invoke((Action<uint, int, int>)configDialog.setValue, optionid, index, valueInt);
+                                        configDialog.Invoke((Action<uint, int, int>)configDialog.setValue, optionid, index, (int)valueInt);
                                     }
                                     break;
                                 case ConfigType.STR:
@@ -219,7 +227,7 @@ namespace BAPSPresenter2
                                 case ConfigType.INT:
                                 case ConfigType.CHOICE:
                                     {
-                                        configDialog.Invoke((Action<uint, int>)configDialog.setValue, optionid, valueInt);
+                                        configDialog.Invoke((Action<uint, int>)configDialog.setValue, optionid, (int)valueInt);
                                     }
                                     break;
                                 case ConfigType.STR:
@@ -231,11 +239,13 @@ namespace BAPSPresenter2
                         }
                     }
                 }
+#if !DEBUG
                 catch (Exception e)
                 {
                     var error = string.Concat("Failed to process config setting: ", optionid.ToString(), ":\n", e.Message, "\nStack Trace:\n", e.StackTrace);
                     logError(error);
                 }
+#endif
                 finally
                 {
                     cd.closeMutex.ReleaseMutex();
@@ -250,16 +260,21 @@ namespace BAPSPresenter2
                 we receive one of these when the form is closing **/
             if (configDialog == null) return;
             // NB: indexes don't seem to be used here.
+#if !DEBUG
             try
             {
+#endif
                 configDialog.Invoke((Action<uint, ConfigResult>)configDialog.setResult, optionid, result);
+#if !DEBUG
+
             }
             catch (Exception e)
             {
                 var error = string.Concat("Failed to process config result:\n", e.Message, "\nStack Trace:\n", e.StackTrace);
                 logError(error);
             }
-        }
+#endif
+            }
 
         private void processConfigError(uint errorCode, string description)
         {
@@ -300,27 +315,19 @@ namespace BAPSPresenter2
         private void processIPRestrictionCount(Command cmd, uint count)
         {
             if (securityDialog == null) return;
-            if (cmd.IsFlagSet(Command.CONFIG_USEVALUEMASK))
-            {
-                securityDialog.Invoke((Action<object>)securityDialog.receiveIPDenyCount, count);
-            }
-            else
-            {
-                securityDialog.Invoke((Action<object>)securityDialog.receiveIPAllowCount, count);
-            }
+            var target = cmd.HasFlag(Command.CONFIG_USEVALUEMASK)
+                ? (Action<object>)securityDialog.receiveIPDenyCount
+                : securityDialog.receiveIPAllowCount;
+            securityDialog.Invoke(target, count);
         }
 
         private void processIPRestriction(Command cmd, string ipaddress, uint mask)
         {
             if (securityDialog == null) return;
-            if (cmd.IsFlagSet(Command.CONFIG_USEVALUEMASK))
-            {
-                securityDialog.Invoke((Action<string, object>)securityDialog.receiveIPDeny, ipaddress, mask);
-            }
-            else
-            {
-                securityDialog.Invoke((Action<string, object>)securityDialog.receiveIPAllow, ipaddress, mask);
-            }
+            var target = cmd.HasFlag(Command.CONFIG_USEVALUEMASK)
+                ? (Action<string, object>)securityDialog.receiveIPDeny
+                : securityDialog.receiveIPAllow;
+            securityDialog.Invoke(target, ipaddress, mask);
         }
     }
 }
