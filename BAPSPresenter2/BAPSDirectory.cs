@@ -19,21 +19,14 @@ namespace BAPSPresenter2
         /// </summary>
         public int DirectoryID
         {
-            get => _directoryID ?? PopulateDirectoryID();
-        }
-        private int PopulateDirectoryID()
-        {
-            if (!(Tag is string t)) return -1;
-
-            if (ushort.TryParse(t, out var result))
+            get => _directoryID;
+            set
             {
-                _directoryID = result;
-                return result;
+                if (0 <= _directoryID) throw new InvalidOperationException("Can't set a directory ID multiple times");
+                _directoryID = value;
             }
-
-            return -2;
         }
-        private ushort? _directoryID = null;
+        private int _directoryID = -1;
 
         #region Events
 
