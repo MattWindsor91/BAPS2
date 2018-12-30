@@ -101,6 +101,7 @@ namespace BAPSFormControls
         protected override void OnResize(EventArgs e)
         {
             SetupBackBrush(isHighlighted ? highlightColor : Color.Tan);
+            base.OnResize(e);
         }
 
         protected override void OnMouseDown(MouseEventArgs e)
