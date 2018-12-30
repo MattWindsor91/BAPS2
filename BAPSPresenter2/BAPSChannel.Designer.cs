@@ -114,7 +114,6 @@
             this.trackTime.Location = new System.Drawing.Point(3, 550);
             this.trackTime.Name = "trackTime";
             this.trackTime.Position = 0;
-            this.trackTime.SilencePosition = 0;
             this.trackTime.Size = new System.Drawing.Size(366, 72);
             this.trackTime.TabIndex = 227;
             this.trackTime.Text = "trackTime0";

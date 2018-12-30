@@ -53,25 +53,7 @@ namespace BAPSFormControls
             }
         }
 
-        public int PositionPoint => (int)(division * position);
         private int position = 0;
-
-        public int SilencePosition
-        {
-            get => silencePosition;
-            set
-            {
-                silencePosition = value;
-                silencePath = new GraphicsPath();
-
-                var rect = new Rectangle(0, 0, SilencePoint, ClientRectangle.Height);
-                silencePath.AddRectangle(rect);
-                Invalidate();
-            }
-        }
-
-        public int SilencePoint => (int)(division * silencePosition);
-        private int silencePosition = 0;
 
         public int CuePosition
         {
@@ -79,15 +61,10 @@ namespace BAPSFormControls
             set
             {
                 cuePosition = value;
-                cuePath = new GraphicsPath();
-
-                var rect = new Rectangle(0, 0, CuePoint, ClientRectangle.Height);
-                cuePath.AddRectangle(rect);
                 Invalidate();
             }
         }
 
-        int CuePoint => (int)(division * cuePosition);
         private int cuePosition = 0;
 
         public int IntroPosition
@@ -96,15 +73,10 @@ namespace BAPSFormControls
             set
             {
                 introPosition = value;
-                introPath = new GraphicsPath();
-
-                var rect = new Rectangle(0, 0, IntroPoint, ClientRectangle.Height);
-                introPath.AddRectangle(rect);
                 Invalidate();
             }
         }
 
-        int IntroPoint => (int)(division * introPosition);
         private int introPosition = 0;
 
         private TrackTimeMovingType movingItem = TrackTimeMovingType.NONE;
@@ -113,12 +85,6 @@ namespace BAPSFormControls
         private Brush backBrush = SystemBrushes.Control;
         private Brush cueBrush = Brushes.Crimson;
         private Brush introBrush = Brushes.ForestGreen;
-        private int curveWidth = 20;
-
-        private GraphicsPath backgroundPath;
-        private GraphicsPath introPath;
-        private GraphicsPath cuePath;
-        private GraphicsPath silencePath;
 
         private ToolTip tooltip;
 
@@ -145,61 +111,45 @@ namespace BAPSFormControls
             };
         }
 
-        protected override void OnResize(EventArgs e)
-        {
-            base.OnResize(e);
-            backgroundPath = new GraphicsPath();
-            var rect = new Rectangle(0, 0, ClientRectangle.Width, ClientRectangle.Height);
-            backgroundPath.AddRectangle(rect);
-        }
-
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
 
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-            e.Graphics.FillPath(backBrush, backgroundPath);
+            e.Graphics.FillRectangle(backBrush, new Rectangle(0, 0, ClientRectangle.Width, ClientRectangle.Height));
 
             if (duration != 0)
             {
-                if (IntroPoint < curveWidth / 2)
-                {
-                    e.Graphics.FillRectangle(introBrush, 0, curveWidth / 2, IntroPoint, ClientRectangle.Height - curveWidth);
-                }
-                else
-                {
-                    e.Graphics.FillPath(introBrush, introPath);
-                }
-                if (CuePoint < curveWidth / 2)
-                {
-                    e.Graphics.FillRectangle(cueBrush, 0, curveWidth, CuePoint, ClientRectangle.Height - (int)1.5 * curveWidth);
-                }
-                else
-                {
-                    e.Graphics.FillPath(cueBrush, cuePath);
-                }
-
-                if (SilencePoint < curveWidth / 2)
-                {
-                    e.Graphics.FillRectangle(Brushes.Black, 0, curveWidth / 2, SilencePoint, ClientRectangle.Height - curveWidth);
-                }
-                else
-                {
-                    e.Graphics.FillPath(Brushes.Black, silencePath);
-                }
-
-                e.Graphics.FillRectangle(Brushes.Red, new Rectangle(0, BASE_Y_LINE - 2, PositionPoint, 2));
-                DrawMarkers(e, division);
-                /** Draw the cue arrow and text **/
-                DrawMiniArrow(e, CuePoint, BASE_Y_LINE + BASE_Y_CUE_ARROW);
-                DrawTime(e, cuePosition, CuePoint, BASE_Y_LINE + BASE_Y_CUE_ARROW);
-                /** Draw the intro arrow and text **/
-                DrawMiniArrow(e, IntroPoint, BASE_Y_INTRO_ARROW);
-                DrawTime(e, introPosition, IntroPoint, BASE_Y_INTRO_ARROW);
-                /** Draw the position arrow **/
-                DrawPositionArrow(e, PositionPoint, BASE_Y_LINE - 2);
+                DrawSecondaryPosition(e, introBrush, IntroPosition, BASE_Y_INTRO_ARROW);
+                DrawSecondaryPosition(e, cueBrush, CuePosition, BASE_Y_LINE + BASE_Y_CUE_ARROW);
+                DrawPrimaryPosition(e);
+                DrawMarkers(e);
             }
             DrawMainLine(e);
+        }
+
+        private int XToPos(int x)
+        {
+            if (x < 0) return 0;
+            if (ClientRectangle.Width <= x) return duration;
+            return (int)(x / division);
+        }
+
+        private int PosToX(int position) => (int)(division * position);
+
+        private void DrawSecondaryPosition(PaintEventArgs e, Brush brush, int position, int arrowY)
+        {
+            var posX = PosToX(position);
+            e.Graphics.FillRectangle(brush, new Rectangle(0, 0, posX, ClientRectangle.Height));
+            DrawMiniArrow(e, posX, arrowY);
+            DrawTime(e, position, posX, arrowY);
+        }
+
+        private void DrawPrimaryPosition(PaintEventArgs e)
+        {
+            var positionPoint = PosToX(position);
+            e.Graphics.FillRectangle(Brushes.Red, new Rectangle(0, BASE_Y_LINE - 2, positionPoint, 2));
+            DrawPositionArrow(e, positionPoint, BASE_Y_LINE - 2);
         }
 
         private void DrawMainLine(PaintEventArgs e)
@@ -216,16 +166,16 @@ namespace BAPSFormControls
 
         private static bool IsMajorTick(int i) => i % (MarkerDivisor * MarkerMajorTick) == 0;
 
-        private void DrawMarkers(PaintEventArgs e, float division)
+        private void DrawMarkers(PaintEventArgs e)
         {
-            int markerCount = duration / MarkerDivisor;
             for (int i = MarkerDivisor; i < duration; i += MarkerDivisor)
             {
+                var x = PosToX(i);
                 int markerHeight = IsMajorTick(i) ? MarkerMajorHeight : MarkerMinorHeight;
                 e.Graphics.DrawLine(Pens.Black,
-                                    (int)(division * i),
+                                    x,
                                     BASE_Y_LINE - markerHeight,
-                                    (int)(division * i),
+                                    x,
                                     BASE_Y_LINE);
             }
         }
@@ -275,95 +225,96 @@ namespace BAPSFormControls
             base.OnMouseMove(e);
             if (e.Button == MouseButtons.Left)
             {
-                int newPosition;
-                if (e.X < 0)
-                {
-                    newPosition = 0;
-                }
-                else if (e.X > ClientRectangle.Width - 1)
-                {
-                    newPosition = duration;
-                }
-                else
-                {
-                    newPosition = (int)((e.X) / division);
-                }
-                switch (movingItem)
-                {
-                    case TrackTimeMovingType.POSITION:
-                        if (position != newPosition)
-                        {
-                            if (newPosition >= cuePosition)
-                            {
-                                position = newPosition;
-                            }
-                            else
-                            {
-                                position = cuePosition;
-                            }
-                            PositionChanged(this, EventArgs.Empty);
-                        }
-                        break;
-
-                    case TrackTimeMovingType.CUEPOSITION:
-                        if (cuePosition != newPosition)
-                        {
-                            cuePosition = newPosition;
-                            CuePositionChanged(this, EventArgs.Empty);
-                            if (cuePosition > position)
-                            {
-                                position = cuePosition;
-                                PositionChanged(this, EventArgs.Empty);
-                            }
-                        }
-                        break;
-
-                    case TrackTimeMovingType.INTROPOSITION:
-                        if (introPosition != newPosition)
-                        {
-                            introPosition = newPosition;
-                            Invalidate();
-                            IntroPositionChanged(this, EventArgs.Empty);
-                        }
-                        break;
-                }
+                OnPossibleMouseDrag(e);
             }
             else
             {
-                var pt = e.Location;
-                if (IntersectsWithPositionMarker(pt))
-                {
-                    movingItem = TrackTimeMovingType.POSITION;
-                }
-                else if (IntersectsWithIntroMarker(pt))
-                {
-                    movingItem = TrackTimeMovingType.INTROPOSITION;
-                    tooltip.SetToolTip(this, "Intro Position");
-                }
-                else if (IntersectsWithCueMarker(pt))
-                {
-                    movingItem = TrackTimeMovingType.CUEPOSITION;
-                    tooltip.SetToolTip(this, "Cue Position");
-                }
-                else
-                {
-                    movingItem = TrackTimeMovingType.NONE;
-                    tooltip.SetToolTip(this, null);
-                }
-                SetMouseCursor();
+                OnPossibleMouseOver(e);
             }
+        }
+
+        private void OnPossibleMouseDrag(MouseEventArgs e)
+        {
+            int newPosition = XToPos(e.X);
+            switch (movingItem)
+            {
+                case TrackTimeMovingType.POSITION:
+                    HandlePositionDrag(newPosition);
+                    break;
+
+                case TrackTimeMovingType.CUEPOSITION:
+                    HandleCueDrag(newPosition);
+                    break;
+
+                case TrackTimeMovingType.INTROPOSITION:
+                    HandleIntroDrag(newPosition);
+                    break;
+            }
+        }
+
+        private void HandlePositionDrag(int newPosition)
+        {
+            if (position == newPosition) return;
+            position = Math.Max(newPosition, cuePosition);
+            PositionChanged(this, EventArgs.Empty);
+        }
+
+        private void HandleCueDrag(int newPosition)
+        {
+            if (cuePosition == newPosition) return;
+
+            cuePosition = newPosition;
+            CuePositionChanged(this, EventArgs.Empty);
+
+            if (cuePosition > position)
+            {
+                position = cuePosition;
+                PositionChanged(this, EventArgs.Empty);
+            }
+        }
+
+        private void HandleIntroDrag(int newPosition)
+        {
+            if (introPosition == newPosition) return;
+            introPosition = newPosition;
+            IntroPositionChanged(this, EventArgs.Empty);
+        }
+
+        private void OnPossibleMouseOver(MouseEventArgs e)
+        {
+            var pt = e.Location;
+            if (IntersectsWithPositionMarker(pt))
+            {
+                movingItem = TrackTimeMovingType.POSITION;
+            }
+            else if (IntersectsWithIntroMarker(pt))
+            {
+                movingItem = TrackTimeMovingType.INTROPOSITION;
+                tooltip.SetToolTip(this, "Intro Position");
+            }
+            else if (IntersectsWithCueMarker(pt))
+            {
+                movingItem = TrackTimeMovingType.CUEPOSITION;
+                tooltip.SetToolTip(this, "Cue Position");
+            }
+            else
+            {
+                movingItem = TrackTimeMovingType.NONE;
+                tooltip.SetToolTip(this, null);
+            }
+            SetMouseCursor();
         }
 
         private bool IntersectsWithPositionMarker(Point p)
         {
-            int positionPoint = (int)(division * position);
+            int positionPoint = PosToX(position);
             var rect = new Rectangle(positionPoint - 5, BASE_Y_LINE - 22, 10, 20);
             return rect.Contains(p);
         }
 
         private bool IntersectsWithCueMarker(Point p)
         {
-            int cuePoint = (int)(division * cuePosition);
+            int cuePoint = PosToX(cuePosition);
             var rect = new Rectangle(cuePoint - 2, 0, 4, ClientRectangle.Height);
             var rect2 = new Rectangle(cuePoint, BASE_Y_LINE + BASE_Y_CUE_ARROW, WIDTH_ARROW, HEIGHT_ARROW);
             return rect.Contains(p) || rect2.Contains(p);
@@ -371,7 +322,7 @@ namespace BAPSFormControls
 
         private bool IntersectsWithIntroMarker(Point p)
         {
-            int introPoint = (int)(division * introPosition);
+            int introPoint = PosToX(introPosition);
             var rect = new Rectangle(introPoint - 2, 0, 4, ClientRectangle.Height);
             var rect2 = new Rectangle(introPoint, BASE_Y_INTRO_ARROW, WIDTH_ARROW, HEIGHT_ARROW);
             return rect.Contains(p) || rect2.Contains(p);
