@@ -57,7 +57,7 @@ namespace BAPSPresenter2
         }
 
         public RequestChangeEventArgs(ushort _channel, ChangeType _ct, int _index)
-            : this(_channel, _ct, _index, default(int))
+            : this(_channel, _ct, _index, default)
         { }
     }
 
