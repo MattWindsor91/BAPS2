@@ -62,23 +62,32 @@ namespace BAPSPresenter2
 
     public delegate void RequestChangeEventHandler(object sender, RequestChangeEventArgs e);
 
+    public enum ChangeType
+    {
+        SELECTEDINDEX,
+        MOVEINDEX,
+        DELETEINDEX,
+        ADD,
+        COPY
+    };
+
     public partial class TrackList : Control
     {
         private System.Collections.Generic.List<EntryInfo> items = new System.Collections.Generic.List<EntryInfo>();
 
         public bool IsTextItemAt(int index) =>
-            getTrack(index).type == Command.TEXTITEM;
+            GetTrack(index).type == Command.TEXTITEM;
 
-        public EntryInfo getTrack(int i) => i < items.Count ? items[i] : new EntryInfo(Command.TEXTITEM, "NONE");
+        public EntryInfo GetTrack(int i) => i < items.Count ? items[i] : new EntryInfo(Command.TEXTITEM, "NONE");
 
-        public void addTrack(Command type, string descr)
+        public void AddTrack(Command type, string descr)
         {
             items.Add(new EntryInfo(type, descr));
-            showHideScrollBar();
+            ShowHideScrollBar();
             Invalidate();
         }
 
-        public void removeTrack(int _index)
+        public void RemoveTrack(int _index)
         {
             if (_index == items.IndexOf(selectedTextEntry))
             {
@@ -99,11 +108,11 @@ namespace BAPSPresenter2
             {
                 LoadedIndex -= 1;
             }
-            showHideScrollBar();
+            ShowHideScrollBar();
             Invalidate();
         }
 
-        public void moveTrack(int oldIndex, int newIndex)
+        public void MoveTrack(int oldIndex, int newIndex)
         {
             var temp = items[oldIndex];
             items.RemoveAt(oldIndex);
@@ -125,17 +134,17 @@ namespace BAPSPresenter2
             Invalidate();
         }
 
-        public void clearTrackList()
+        public void ClearTrackList()
         {
             items.Clear();
             selectedIndex = -1;
             pendingLoadRequest = false;
             selectedTextEntry = null;
-            showHideScrollBar();
+            ShowHideScrollBar();
             Invalidate();
         }
 
-        public void clearPendingLoadRequest() => pendingLoadRequest = false;
+        public void ClearPendingLoadRequest() => pendingLoadRequest = false;
 
         /** What index did the mouse last click over (for use in the context menu **/
         public int LastIndexClicked { get; set; }
@@ -232,107 +241,22 @@ namespace BAPSPresenter2
                 gOffScreen.SmoothingMode = SmoothingMode.AntiAlias;
                 var rect = ClientRectangle;
                 rect.Width -= 2;
-                rect.Height = ((items.Count < scroll.Value + DrawCount) ? items.Count : scroll.Value + DrawCount);
+                rect.Height = (items.Count < scroll.Value + DrawCount) ? items.Count : scroll.Value + DrawCount;
                 gOffScreen.FillRectangle(SystemBrushes.Window, rect);
                 rect.Y = rect.Height;
                 rect.Height = ClientRectangle.Height - rect.Height;
-                if (rect.Height > 0)
+                if (rect.Height > 0) gOffScreen.FillRectangle(SystemBrushes.Window, rect);
+                int loadedIndex = GetLoadedIndex();
+
+                for (int n = scroll.Value, itemTop = 0; n < ((items.Count < scroll.Value + DrawCount) ? items.Count : scroll.Value + DrawCount); n++, itemTop += ItemHeight)
                 {
-                    gOffScreen.FillRectangle(SystemBrushes.Window, rect);
-                }
-                int itemTop = 0;
-
-                // The index to be shown as loaded
-                int loadedIndex = selectedIndex;
-                if (selectedIndex == fromIndex)
-                {
-                    loadedIndex = hoverIndex;
-                }
-                else if (fromIndex < selectedIndex &&
-                         hoverIndex >= selectedIndex)
-                {
-                    loadedIndex = selectedIndex - 1;
-                }
-                else if (fromIndex > selectedIndex &&
-                         hoverIndex <= selectedIndex)
-                {
-                    loadedIndex = selectedIndex + 1;
-                }
-
-                // Draw the fonts in the list.
-                for (int n = scroll.Value; n < ((items.Count < scroll.Value + DrawCount) ? items.Count : scroll.Value + DrawCount); n++)
-                {
-                    var rect2 = new Rectangle(0,
-                                                      itemTop,
-                                                      // If the scroll bar is visible, subtract the scrollbar width
-                                                      // otherwise subtract 2 for the width of the rectangle
-                                                      ClientSize.Width - (scroll.Visible ? scroll.Width : 1) - 1, ItemHeight);
-                    Brush brush;
-                    Brush textbrush;
-                    if (n == loadedIndex)
-                    {
-                        brush = SystemBrushes.Highlight;
-                        textbrush = SystemBrushes.HighlightText;
-                        gOffScreen.FillRectangle(brush, rect2);
-                    }
-                    else
-                    {
-                        textbrush = SystemBrushes.ControlText;
-                    }
-
-                    /** Which index do we display here **/
-                    int indexToShow = n;
-                    if (n == hoverIndex)
-                    {
-                        indexToShow = fromIndex;
-                    }
-                    else if (fromIndex <= n && hoverIndex >= n)
-                    {
-                        indexToShow = n + 1;
-                    }
-                    else if (fromIndex >= n && hoverIndex < n)
-                    {
-                        indexToShow = n - 1;
-                    }
-                    switch (items[indexToShow].type)
-                    {
-                        case Command.FILEITEM:
-                            gOffScreen.FillEllipse(Brushes.SteelBlue, 4, itemTop + 4, 8, 8);
-                            break;
-
-                        case Command.LIBRARYITEM:
-                            gOffScreen.FillEllipse(Brushes.LimeGreen, 4, itemTop + 4, 8, 8);
-                            break;
-
-                        case Command.TEXTITEM:
-                            if (items[indexToShow].isSelectedTextItem)
-                            {
-                                gOffScreen.FillRectangle(Brushes.Lavender, rect2);
-                            }
-                            gOffScreen.DrawString("T", Font, Brushes.Blue, 4.0f, itemTop + 1.0f);
-                            break;
-                    }
-
-                    // Draw the item
-                    gOffScreen.DrawString(items[indexToShow].ToString(), Font, textbrush, new Rectangle(18, itemTop, ClientRectangle.Width - 20, ItemHeight), new StringFormat(StringFormatFlags.NoWrap));
-                    rect2.Height -= 1;
-                    rect2.Width -= 1;
-                    // if drawing the loaded index or the index we are hovering over
-                    if (n == loadedIndex || hoverIndex == n)
-                    {
-                        gOffScreen.DrawRectangle(Pens.Black, rect2);
-                    }
-
-                    itemTop += ItemHeight;
+                    DrawItem(gOffScreen, itemTop, loadedIndex, n);
                 }
                 rect = ClientRectangle;
                 rect.Height -= 3;
 
-                rect.Width -= (scroll.Visible) ? 2 : 3;
-                if (scroll.Visible)
-                {
-                    rect.Width -= scroll.Width;
-                }
+                rect.Width -= scroll.Visible ? 2 : 3;
+                if (scroll.Visible) rect.Width -= scroll.Width;
                 // if we are adding to this control
                 if (addTo)
                 {
@@ -349,35 +273,105 @@ namespace BAPSPresenter2
             }
         }
 
+        private int GetLoadedIndex()
+        {
+            if (selectedIndex == fromIndex) return hoverIndex;
+            if (fromIndex < selectedIndex && hoverIndex >= selectedIndex) return selectedIndex - 1;
+            if (fromIndex > selectedIndex && hoverIndex <= selectedIndex) return selectedIndex + 1;
+            return selectedIndex;
+        }
+
+        private int GetIndexToShow(int n)
+        {
+            if (n == hoverIndex) return fromIndex;
+            if (fromIndex <= n && hoverIndex >= n) return n + 1;
+            if (fromIndex >= n && hoverIndex < n) return n - 1;
+            return n;
+        }
+
+        private void DrawItem(Graphics gOffScreen, int itemTop, int loadedIndex, int n)
+        {
+            var rect2 = new Rectangle(0,
+                                      itemTop,
+                                      // If the scroll bar is visible, subtract the scrollbar width
+                                      // otherwise subtract 2 for the width of the rectangle
+                                      ClientSize.Width - (scroll.Visible ? scroll.Width : 1) - 1, ItemHeight);
+            Brush textbrush;
+            if (n == loadedIndex)
+            {
+                var brush = SystemBrushes.Highlight;
+                textbrush = SystemBrushes.HighlightText;
+                gOffScreen.FillRectangle(brush, rect2);
+            }
+            else
+            {
+                textbrush = SystemBrushes.ControlText;
+            }
+            int indexToShow = GetIndexToShow(n);
+            var item = items[indexToShow];
+            if (item.isSelectedTextItem)
+            {
+                gOffScreen.FillRectangle(Brushes.Lavender, rect2);
+            }
+            DrawTypeIcon(gOffScreen, itemTop, item);
+
+            // Draw the item
+            gOffScreen.DrawString(item.ToString(), Font, textbrush, new Rectangle(18, itemTop, ClientRectangle.Width - 20, ItemHeight), new StringFormat(StringFormatFlags.NoWrap));
+            rect2.Height -= 1;
+            rect2.Width -= 1;
+            // if drawing the loaded index or the index we are hovering over
+            if (n == loadedIndex || hoverIndex == n)
+            {
+                gOffScreen.DrawRectangle(Pens.Black, rect2);
+            }
+        }
+
+        private void DrawTypeIcon(Graphics gOffScreen, int itemTop, EntryInfo item)
+        {
+            switch (item.type)
+            {
+                case Command.FILEITEM:
+                    gOffScreen.FillEllipse(Brushes.SteelBlue, 4, itemTop + 4, 8, 8);
+                    break;
+
+                case Command.LIBRARYITEM:
+                    gOffScreen.FillEllipse(Brushes.LimeGreen, 4, itemTop + 4, 8, 8);
+                    break;
+
+                case Command.TEXTITEM:
+                    gOffScreen.DrawString("T", Font, Brushes.Blue, 4.0f, itemTop + 1.0f);
+                    break;
+            }
+        }
+
         protected override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseDown(e);
             Focus();
-            LastIndexClicked = indexFromY(e.Y);
+            LastIndexClicked = IndexFromY(e.Y);
             if (e.Button != MouseButtons.Left) return;
             var pt = new Point(e.X, e.Y);
-            //Retrieve the item at the specified location within the ListBox.
-            int index = indexFromY(e.Y);
+            int index = IndexFromY(e.Y);
+            if (index >= 0) StartDragAndDrop(index);
+        }
 
-            // Starts a drag-and-drop operation.
-            if (index >= 0)
+        private void StartDragAndDrop(int index)
+        {
+            var tldd = new TrackListDragDrop(index, Channel);
+            savedFromIndex = index;
+            var result = DoDragDrop(tldd, DragDropEffects.Move | DragDropEffects.Copy);
+            if (result == DragDropEffects.Move)
             {
-                var tldd = new TrackListDragDrop(index, Channel);
-                savedFromIndex = index;
-                var result = DoDragDrop(tldd, DragDropEffects.Move | DragDropEffects.Copy);
-                if (result == DragDropEffects.Move)
+                if (!tldd.moved && index != selectedIndex && Channel == tldd.toChannel)
                 {
-                    if (!tldd.moved && index != selectedIndex && Channel == tldd.toChannel)
-                    {
-                        RequestChange(this, new RequestChangeEventArgs(Channel, ChangeType.SELECTEDINDEX, index));
-                        Invalidate();
-                    }
+                    RequestChange(this, new RequestChangeEventArgs(Channel, ChangeType.SELECTEDINDEX, index));
+                    Invalidate();
                 }
-                hoverIndex = -1;
-                fromIndex = -1;
-                savedFromIndex = -1;
-                Invalidate();
             }
+            hoverIndex = -1;
+            fromIndex = -1;
+            savedFromIndex = -1;
+            Invalidate();
         }
 
         protected override void OnMouseWheel(MouseEventArgs e)
@@ -420,7 +414,7 @@ namespace BAPSPresenter2
         protected override void OnDragDrop(DragEventArgs e)
         {
             base.OnDragDrop(e);
-            int index = indexFromY(PointToClient(new Point(e.X, e.Y)).Y);
+            int index = IndexFromY(PointToClient(new Point(e.X, e.Y)).Y);
             if (e.Data.GetDataPresent(typeof(TrackListDragDrop)))
             {
                 var tldd = (TrackListDragDrop)e.Data.GetData(typeof(TrackListDragDrop));
@@ -478,7 +472,7 @@ namespace BAPSPresenter2
                 {
                     fromIndex = savedFromIndex;
                     int yValue = PointToClient(new Point(e.X, e.Y)).Y;
-                    int hi = indexFromY(yValue);
+                    int hi = IndexFromY(yValue);
                     if (hi != fromIndex)
                     {
                         tldd.moved = true;
@@ -560,40 +554,40 @@ namespace BAPSPresenter2
             switch (keyData)
             {
                 case Keys.Down:
-                    newSelectedIndex = findAudioItem(LoadedIndex + 1, false);
+                    newSelectedIndex = FindAudioItem(LoadedIndex + 1, false);
                     retVal = true;
                     break;
 
                 case Keys.Up:
-                    newSelectedIndex = findAudioItem(LoadedIndex - 1, true);
+                    newSelectedIndex = FindAudioItem(LoadedIndex - 1, true);
                     retVal = true;
                     break;
 
                 case Keys.PageDown:
-                    newSelectedIndex = findAudioItem(LoadedIndex + DrawCount, false);
+                    newSelectedIndex = FindAudioItem(LoadedIndex + DrawCount, false);
                     if (newSelectedIndex == -1)
                     {
-                        newSelectedIndex = findAudioItem(items.Count - 1, true);
+                        newSelectedIndex = FindAudioItem(items.Count - 1, true);
                     }
                     retVal = true;
                     break;
 
                 case Keys.PageUp:
-                    newSelectedIndex = findAudioItem(LoadedIndex - DrawCount, true);
+                    newSelectedIndex = FindAudioItem(LoadedIndex - DrawCount, true);
                     if (newSelectedIndex == -1)
                     {
-                        newSelectedIndex = findAudioItem(0, false);
+                        newSelectedIndex = FindAudioItem(0, false);
                     }
                     retVal = true;
                     break;
 
                 case Keys.Home:
-                    newSelectedIndex = findAudioItem(0, false);
+                    newSelectedIndex = FindAudioItem(0, false);
                     retVal = true;
                     break;
 
                 case Keys.End:
-                    newSelectedIndex = findAudioItem(items.Count - 1, true);
+                    newSelectedIndex = FindAudioItem(items.Count - 1, true);
                     retVal = true;
                     break;
             }
@@ -617,7 +611,6 @@ namespace BAPSPresenter2
 
         protected override void OnPaintBackground(PaintEventArgs e)
         {
-            base.OnPaintBackground(e);
             e.Graphics.DrawRectangle(Pens.LightGray, 0, 0, ClientSize.Width - 1, ClientSize.Height - 1);
         }
 
@@ -627,43 +620,44 @@ namespace BAPSPresenter2
                                            0,
                                            SCROLL_WIDTH,
                                            ClientSize.Height);
-            showHideScrollBar();
+            ShowHideScrollBar();
             Invalidate();
             base.OnResize(e);
         }
 
-        private void showHideScrollBar()
+        private void ShowHideScrollBar()
         {
             var viewableItemCount = ClientSize.Height / ItemHeight;
-
-            // Determine if scrollbars are needed
-            if (items.Count > viewableItemCount)
-            {
-                scroll.Visible = true;
-                offScreen = new Bitmap(ClientSize.Width - SCROLL_WIDTH - 1, ClientSize.Height - 2);
-            }
-            else
-            {
-                scroll.Visible = false;
-                scroll.Value = 0;
-                int w = ClientSize.Width - 1;
-                if (w <= 0) w = 1;
-                offScreen = new Bitmap(w, ClientSize.Height - 2);
-            }
+            if (items.Count > viewableItemCount) ShowScrollbar(); else HideScrollbar();
             scroll.Maximum = (items.Count - 14 > 0) ? items.Count - 14 : items.Count;
         }
 
-        private int indexFromY(int y)
+        private void ShowScrollbar()
+        {
+            scroll.Visible = true;
+            offScreen = new Bitmap(ClientSize.Width - SCROLL_WIDTH - 1, ClientSize.Height - 2);
+        }
+
+        private void HideScrollbar()
+        {
+            scroll.Visible = false;
+            scroll.Value = 0;
+            int w = ClientSize.Width - 1;
+            if (w <= 0) w = 1;
+            offScreen = new Bitmap(w, ClientSize.Height - 2);
+        }
+
+        private int IndexFromY(int y)
         {
             int index = scroll.Value + (y / ItemHeight);
             return index >= items.Count ? -1 : index;
         }
 
-        private int findAudioItem(int startIndex, bool goingUp)
+        private int FindAudioItem(int startIndex, bool goingUp)
         {
             int addMe = 1;
             if (goingUp) addMe = -1;
-            for (; ((goingUp) ? -1 : startIndex) < ((goingUp) ? startIndex : items.Count); startIndex += addMe)
+            for (; (goingUp ? -1 : startIndex) < (goingUp ? startIndex : items.Count); startIndex += addMe)
             {
                 if (items[startIndex].type != Command.TEXTITEM)
                 {

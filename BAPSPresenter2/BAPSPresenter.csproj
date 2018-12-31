@@ -89,7 +89,6 @@
     <Compile Include="BAPSDirectory.Designer.cs">
       <DependentUpon>BAPSDirectory.cs</DependentUpon>
     </Compile>
-    <Compile Include="ChangeType.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="ConfigOptions.cs" />
     <Compile Include="Dialogs\Config.cs">

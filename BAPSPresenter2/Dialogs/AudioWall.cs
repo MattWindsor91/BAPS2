@@ -58,7 +58,7 @@ namespace BAPSPresenter2
             int walli = 0;
             for (int i = 0; i < tl.TrackCount && walli < 20; i++)
             {
-                var ei = tl.getTrack(i);
+                var ei = tl.GetTrack(i);
                 if (ei.type != Command.TEXTITEM)
                 {
                     buttons[walli].Text = ei.description;

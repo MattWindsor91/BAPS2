@@ -185,19 +185,19 @@ namespace BAPSPresenter2
         internal void AddTrack(uint index, uint type, string description)
         {
             /** Add an item to the end of the list ( only method currently supported by server ) **/
-            trackList.addTrack((Command)type, description);
+            trackList.AddTrack((Command)type, description);
         }
 
         internal void MoveTrack(uint oldIndex, uint newIndex)
         {
-            trackList.moveTrack((int)oldIndex, (int)newIndex);
+            trackList.MoveTrack((int)oldIndex, (int)newIndex);
         }
 
-        internal void RemoveTrack(uint index) => trackList.removeTrack((int)index);
+        internal void RemoveTrack(uint index) => trackList.RemoveTrack((int)index);
 
         internal void CleanPlaylist()
         {
-            trackList.clearTrackList();
+            trackList.ClearTrackList();
             cds.running = false;
         }
 
@@ -222,12 +222,12 @@ namespace BAPSPresenter2
         private void playButton_Click(object sender, EventArgs e) => RequestOp(Command.PLAY);
         private void pauseButton_Click(object sender, EventArgs e)
         {
-            trackList.clearPendingLoadRequest();
+            trackList.ClearPendingLoadRequest();
             RequestOp(Command.PAUSE);
         }
         private void stopButton_Click(object sender, EventArgs e)
         {
-            trackList.clearPendingLoadRequest();
+            trackList.ClearPendingLoadRequest();
             RequestOp(Command.STOP);
         }
 
