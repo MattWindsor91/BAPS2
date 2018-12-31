@@ -32,7 +32,7 @@
             this.layoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.loadedText = new System.Windows.Forms.Label();
             this.trackTime = new BAPSFormControls.TrackTime();
-            this.trackList = new BAPSPresenter.TrackList();
+            this.trackList = new TrackList();
             this.trackListContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.resetChannelStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
@@ -137,7 +137,7 @@
             this.trackList.Size = new System.Drawing.Size(366, 477);
             this.trackList.TabIndex = 11;
             this.trackList.Text = "trackList";
-            this.trackList.RequestChange += new BAPSPresenter.RequestChangeEventHandler(this.TrackList_RequestChange);
+            this.trackList.RequestChange += new RequestChangeEventHandler(this.TrackList_RequestChange);
             // 
             // trackListContextMenuStrip
             // 
@@ -335,7 +335,7 @@
         #endregion
 
         private System.Windows.Forms.TableLayoutPanel layoutPanel;
-        private BAPSPresenter.TrackList trackList;
+        private TrackList trackList;
         private System.Windows.Forms.Button playButton;
         private System.Windows.Forms.Button pauseButton;
         private System.Windows.Forms.Button stopButton;

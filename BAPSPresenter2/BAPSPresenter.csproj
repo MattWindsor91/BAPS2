@@ -141,6 +141,10 @@
       <DependentUpon>Main.cs</DependentUpon>
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="TrackList.cs" />
+    <Compile Include="TrackList.Designer.cs">
+      <DependentUpon>TrackList.cs</DependentUpon>
+    </Compile>
     <Compile Include="Utils.cs" />
     <Compile Include="PositionRequestChange.cs" />
     <Compile Include="Program.cs" />

@@ -59,7 +59,7 @@ namespace BAPSPresenter2
             for (int i = 0; i < tl.TrackCount && walli < 20; i++)
             {
                 var ei = tl.getTrack(i);
-                if (ei.type != (int)Command.TEXTITEM)
+                if (ei.type != Command.TEXTITEM)
                 {
                     buttons[walli].Text = ei.description;
                     buttons[walli].Tag = i;

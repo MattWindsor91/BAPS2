@@ -1,6 +1,6 @@
 ﻿namespace BAPSPresenter2
 {
-    internal enum Command : ushort
+    public enum Command : ushort
     {
         /**
          * MASKS

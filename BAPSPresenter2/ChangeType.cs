@@ -2,7 +2,7 @@
 
 namespace BAPSPresenter2
 {
-    enum ChangeType
+    public enum ChangeType
     {
         SELECTEDINDEX,
         MOVEINDEX,

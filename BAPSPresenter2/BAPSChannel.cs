@@ -23,7 +23,7 @@ namespace BAPSPresenter2
             {
                 if (0 <= _channelID) throw new InvalidOperationException("Can't set a channel ID multiple times");
                 _channelID = value;
-                trackList.Channel = value;
+                trackList.Channel = (ushort)value;
                 trackTime.Channel = value;
                 if (0 <= _channelID) SetupTimers();
             }
@@ -185,7 +185,7 @@ namespace BAPSPresenter2
         internal void AddTrack(uint index, uint type, string description)
         {
             /** Add an item to the end of the list ( only method currently supported by server ) **/
-            trackList.addTrack((int)type, description);
+            trackList.addTrack((Command)type, description);
         }
 
         internal void MoveTrack(uint oldIndex, uint newIndex)
