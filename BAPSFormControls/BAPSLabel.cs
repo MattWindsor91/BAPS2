@@ -15,6 +15,8 @@ namespace BAPSFormControls
             get => isHighlighted;
             set
             {
+                if (isHighlighted == value) return;
+
                 isHighlighted = value;
                 HighlightChanged();
             }
@@ -26,6 +28,8 @@ namespace BAPSFormControls
             get => highlightColor;
             set
             {
+                if (highlightColor == value) return;
+
                 highlightColor = value;
                 HighlightChanged();
             }
@@ -36,6 +40,7 @@ namespace BAPSFormControls
             get => base.Text;
             set
             {
+                if (base.Text == value) return;
                 base.Text = value;
                 prepareGraphics();
                 Invalidate();
@@ -48,6 +53,8 @@ namespace BAPSFormControls
             get => infoText;
             set
             {
+                if (infoText == value) return;
+
                 infoText = value;
                 prepareGraphics();
                 Invalidate();
