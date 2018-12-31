@@ -162,24 +162,32 @@ namespace BAPSPresenter2
 
         private void OpenAboutDialog()
         {
-            about = new Dialogs.About(this);
-            msgQueue.Enqueue(new ActionMessage((ushort)(Command.SYSTEM | Command.VERSION)));
-            about.ShowDialog();
+            using (about = new Dialogs.About())
+            {
+                about.KeyDownForward += BAPSPresenterMain_KeyDown;
+                msgQueue.Enqueue(new ActionMessage((ushort)(Command.SYSTEM | Command.VERSION)));
+                about.ShowDialog();
+            }
             about = null;
         }
 
         private void OpenConfigDialog()
         {
-            configDialog = new Dialogs.Config(this, msgQueue);
-            configDialog.ShowDialog();
-            configDialog.Dispose();
+            using (configDialog = new Dialogs.Config(msgQueue))
+            {
+                configDialog.KeyDownForward += BAPSPresenterMain_KeyDown;
+                configDialog.ShowDialog();
+            }
             configDialog = null;
         }
 
         private void OpenLocalConfigDialog()
         {
-            var ccd = new Dialogs.LocalConfig(this);
-            ccd.ShowDialog();
+            using (var ccd = new Dialogs.LocalConfig())
+            {
+                ccd.KeyDownForward += BAPSPresenterMain_KeyDown;
+                ccd.ShowDialog();
+            }
             /** Enable or disable the timers depending on the config setting **/
             bool enableTimers = string.Compare(ConfigManager.getConfigValueString("EnableTimers", "Yes"), "Yes") == 0;
             EnableTimerControls(enableTimers);

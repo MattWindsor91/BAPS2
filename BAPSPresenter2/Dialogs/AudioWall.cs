@@ -8,9 +8,13 @@ namespace BAPSPresenter2
 {
     public partial class AudioWall : Form
     {
-        public AudioWall(Main main, System.Collections.Queue msgQueue, TrackList tl)
+        /// <summary>
+        /// Forwards key-down events that aren't handled by this dialog.
+        /// </summary>
+        public event KeyEventHandler KeyDownForward;
+
+        public AudioWall(System.Collections.Queue msgQueue, TrackList tl)
         {
-            this.main = main;
             this.msgQueue = msgQueue;
             this.tl = tl;
 
@@ -118,34 +122,38 @@ namespace BAPSPresenter2
 
         void AudioWall_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Control && e.Alt && e.KeyCode == Keys.W)
+            if (e.KeyData == KeyShortcuts.AlterWindow)
             {
-                /** Ctrl+Alt+W Alter Window **/
-                if (WindowState == FormWindowState.Normal)
-                {
-                    var bounds = Screen.GetWorkingArea(this);
-                    bounds.X = 0;
-                    bounds.Y = 0;
-                    MaximizedBounds = bounds;
-                    MaximumSize = bounds.Size;
-                    FormBorderStyle = FormBorderStyle.None;
-                    WindowState = FormWindowState.Maximized;
-                }
-                else
-                {
-                    FormBorderStyle = FormBorderStyle.FixedSingle;
-                    WindowState = FormWindowState.Normal;
-                }
+                AlterWindow();
+                e.Handled = true;
+                return;
+            }
+
+            KeyDownForward?.Invoke(sender, e);
+        }
+
+        private void AlterWindow()
+        {
+            /** Ctrl+Alt+W Alter Window **/
+            if (WindowState == FormWindowState.Normal)
+            {
+                var bounds = Screen.GetWorkingArea(this);
+                bounds.X = 0;
+                bounds.Y = 0;
+                MaximizedBounds = bounds;
+                MaximumSize = bounds.Size;
+                FormBorderStyle = FormBorderStyle.None;
+                WindowState = FormWindowState.Maximized;
             }
             else
             {
-                Invoke((KeyEventHandler)main.BAPSPresenterMain_KeyDown, sender, e);
+                FormBorderStyle = FormBorderStyle.FixedSingle;
+                WindowState = FormWindowState.Normal;
             }
         }
 
         #endregion Events
 
-        Main main = null;
         System.Collections.Queue msgQueue = null;
         private TrackList tl = null;
 

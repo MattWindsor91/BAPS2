@@ -6,14 +6,12 @@ namespace BAPSPresenter2.Dialogs
     public partial class Text : Form
     {
         /// <summary>
-        /// A handle to the main window.
+        /// Forwards key-down events that aren't handled by this dialog.
         /// </summary>
-        Main main = null;
+        public event KeyEventHandler KeyDownForward;
 
-        public Text(Main main, string text)
+        public Text(string text)
         {
-            this.main = main;
-
             InitializeComponent();
 
             Text = "News Stories / Long Links";
@@ -73,7 +71,7 @@ namespace BAPSPresenter2.Dialogs
 
         private void TextDialog_KeyDown(object sender, KeyEventArgs e)
         {
-            main.Invoke((KeyEventHandler)main.BAPSPresenterMain_KeyDown, sender, e);
+            KeyDownForward?.Invoke(sender, e);
         }
 
         #endregion Events

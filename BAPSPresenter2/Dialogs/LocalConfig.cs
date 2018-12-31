@@ -6,14 +6,12 @@ namespace BAPSPresenter2.Dialogs
     public partial class LocalConfig : Form
     {
         /// <summary>
-        /// A handle to the main window.
+        /// Forwards key-down events that aren't handled by this dialog.
         /// </summary>
-        private Main main;
+        public event KeyEventHandler KeyDownForward;
 
-        public LocalConfig(Main main)
+        public LocalConfig()
         {
-            this.main = main;
-
             InitializeComponent();
 
             serverText.Text = ConfigManager.getConfigValueString("ServerAddress", "127.0.0.1");
@@ -46,7 +44,7 @@ namespace BAPSPresenter2.Dialogs
         private void LocalConfigDialog_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyData == KeyShortcuts.LocalConfig) return;
-            main.Invoke((KeyEventHandler)main.BAPSPresenterMain_KeyDown, sender, e);
+            KeyDownForward?.Invoke(sender, e);
         }
     }
 }

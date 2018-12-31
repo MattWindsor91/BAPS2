@@ -6,13 +6,15 @@ namespace BAPSPresenter2.Dialogs
 {
     partial class About : Form
     {
-        private Main main;
+        /// <summary>
+        /// Forwards key-down events that aren't handled by this dialog.
+        /// </summary>
+        public event KeyEventHandler KeyDownForward;
 
-        public About(Main main)
+        public About()
         {
             InitializeComponent();
 
-            this.main = main;
             Text = string.Format("About {0}", AssemblyTitle);
 
             Version vers = Assembly.GetExecutingAssembly().GetName().Version;
@@ -115,7 +117,7 @@ namespace BAPSPresenter2.Dialogs
         private void AboutDialog_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyData == KeyShortcuts.About) return;
-            main.Invoke((KeyEventHandler)main.BAPSPresenterMain_KeyDown, sender, e);
+            KeyDownForward?.Invoke(sender, e);
         }
     }
 }

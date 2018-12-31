@@ -8,7 +8,10 @@ namespace BAPSPresenter2.Dialogs
 {
     public partial class Config : Form
     {
-        private Main main;
+        /// <summary>
+        /// Forwards key-down events that aren't handled by this dialog.
+        /// </summary>
+        public event KeyEventHandler KeyDownForward;
 
         /// <summary>
         /// optionid to optioninfo lookup.
@@ -34,9 +37,8 @@ namespace BAPSPresenter2.Dialogs
 
         private System.Collections.Queue msgQueue = null;
 
-        public Config(Main main, System.Collections.Queue msgQueue)
+        public Config(System.Collections.Queue msgQueue)
         {
-            this.main = main;
             this.msgQueue = msgQueue;
 
             InitializeComponent();
@@ -589,7 +591,7 @@ namespace BAPSPresenter2.Dialogs
         private void ConfigDialog_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyData == KeyShortcuts.Config) return;
-            main.Invoke((KeyEventHandler)main.BAPSPresenterMain_KeyDown, sender, e);
+            KeyDownForward?.Invoke(sender, e);
         }
 
         private void cancelButton_Click(object sender, EventArgs e)

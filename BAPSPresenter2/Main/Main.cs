@@ -170,7 +170,8 @@ namespace BAPSPresenter2
             countdownTimer.Tick += countdownTick;
             countdownTimer.Start();
 
-            textDialog = new Dialogs.Text(this, "Write on me");
+            textDialog = new Dialogs.Text("Write on me");
+            textDialog.KeyDownForward += BAPSPresenterMain_KeyDown;
 
             ConfigCache.initConfigCache();
             /** Create a message queue for sending commands to the server **/
@@ -738,7 +739,8 @@ namespace BAPSPresenter2
         {
             if (audioWall == null || !audioWall.Visible)
             {
-                audioWall = new AudioWall(this, msgQueue, tl);
+                audioWall = new AudioWall(msgQueue, tl);
+                audioWall.KeyDownForward += BAPSPresenterMain_KeyDown;
                 audioWall.Show();
             }
             else
