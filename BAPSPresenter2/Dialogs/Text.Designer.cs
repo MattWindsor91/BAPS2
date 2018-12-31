@@ -1,8 +1,8 @@
 ﻿using System.Windows.Forms;
 
-namespace BAPSPresenter2
+namespace BAPSPresenter2.Dialogs
 {
-    partial class TextDialog
+    partial class Text
     {
         /// <summary>
         /// Required designer variable.

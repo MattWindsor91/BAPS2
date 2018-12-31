@@ -10,28 +10,28 @@ namespace BAPSPresenter2
         {
             if (ChannelOutOfBounds(channel)) return;
             bapsChannels[channel].AddTrack(index, type, description);
-            refreshAudioWall();
+            RefreshAudioWall();
         }
 
         private void moveItemTo(ushort channel, uint oldIndex, uint newIndex)
         {
             if (ChannelOutOfBounds(channel)) return;
             bapsChannels[channel].MoveTrack(oldIndex, newIndex);
-            refreshAudioWall();
+            RefreshAudioWall();
         }
 
         private void deleteItem(ushort channel, uint index)
         {
             if (ChannelOutOfBounds(channel)) return;
             bapsChannels[channel].RemoveTrack(index);
-            refreshAudioWall();
+            RefreshAudioWall();
         }
 
         private void cleanPlaylist(ushort channel)
         {
             if (ChannelOutOfBounds(channel)) return;
             bapsChannels[channel].CleanPlaylist();
-            refreshAudioWall();
+            RefreshAudioWall();
         }
     }
 }

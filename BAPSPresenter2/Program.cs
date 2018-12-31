@@ -17,7 +17,7 @@ namespace BAPSPresenter2
             var main = new Main();
             Application.Run(main);
 
-            bool crashed = main.hasCrashed;
+            bool crashed = main.HasCrashed;
             Application.Exit();
             if (crashed)
             {

@@ -1,8 +1,8 @@
 ﻿using System.Windows.Forms;
 
-namespace BAPSPresenter2
+namespace BAPSPresenter2.Dialogs
 {
-    public partial class LoginDialog : Form
+    public partial class Login : Form
     {
         /** If this is the first time we have attempted to connect or if
 			the user has altered the server details, the connection must be
@@ -34,7 +34,7 @@ namespace BAPSPresenter2
         **/
         int loginAttempt = 0;
 
-        public LoginDialog()
+        public Login()
         {
             InitializeComponent();
 

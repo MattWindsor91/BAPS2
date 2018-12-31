@@ -1,17 +1,12 @@
-﻿using System;
-using System.ComponentModel;
-using System.Collections;
-using System.Windows.Forms;
-using System.Data;
-using System.Drawing;
+﻿using System.Windows.Forms;
 
-namespace BAPSPresenter2
+namespace BAPSPresenter2.Dialogs
 {
     /**
         The LoginDialog is the entry point of the Client Application and deals with
         obtaining server connection details and login details from the client
     **/
-    partial class LoginDialog
+    partial class Login
     {
         /// <summary>
         /// Required designer variable.

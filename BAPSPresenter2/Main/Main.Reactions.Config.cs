@@ -156,7 +156,7 @@ namespace BAPSPresenter2
                     break;
                 default:
                     {
-                        sendQuit("Invalid type received in processConfigSetting", false);
+                        SendQuit("Invalid type received in processConfigSetting", false);
                     }
                     break;
             }

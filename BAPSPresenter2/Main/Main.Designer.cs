@@ -63,8 +63,8 @@ namespace BAPSPresenter2
         Dialogs.Config configDialog = null;
         LoadShowDialog loadShowDialog = null;
         SecurityDialog securityDialog = null;
-        AboutDialog about = null;
-        TextDialog textDialog = null;
+        Dialogs.About about = null;
+        Dialogs.Text textDialog = null;
         AudioWall audioWall = null;
 
         private Timer countdownTimer;

@@ -65,11 +65,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Dialogs\AboutDialog.cs">
+    <Compile Include="Dialogs\About.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Dialogs\AboutDialog.Designer.cs">
-      <DependentUpon>AboutDialog.cs</DependentUpon>
+    <Compile Include="Dialogs\About.Designer.cs">
+      <DependentUpon>About.cs</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\AudioWall.cs">
       <SubType>Form</SubType>
@@ -97,17 +97,17 @@
       <DependentUpon>Config.cs</DependentUpon>
     </Compile>
     <Compile Include="KeyShortcuts.cs" />
-    <Compile Include="Dialogs\LocalConfigDialog.cs">
+    <Compile Include="Dialogs\LocalConfig.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Dialogs\LocalConfigDialog.Designer.cs">
-      <DependentUpon>LocalConfigDialog.cs</DependentUpon>
+    <Compile Include="Dialogs\LocalConfig.Designer.cs">
+      <DependentUpon>LocalConfig.cs</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\LoginDialog.cs">
+    <Compile Include="Dialogs\Login.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Dialogs\LoginDialog.Designer.cs">
-      <DependentUpon>LoginDialog.cs</DependentUpon>
+    <Compile Include="Dialogs\Login.Designer.cs">
+      <DependentUpon>Login.cs</DependentUpon>
     </Compile>
     <Compile Include="Main\Main.cs">
       <SubType>Form</SubType>
@@ -146,15 +146,15 @@
     <Compile Include="Utils.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Dialogs\TextDialog.cs">
+    <Compile Include="Dialogs\Text.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Dialogs\TextDialog.Designer.cs">
-      <DependentUpon>TextDialog.cs</DependentUpon>
+    <Compile Include="Dialogs\Text.Designer.cs">
+      <DependentUpon>Text.cs</DependentUpon>
     </Compile>
     <Compile Include="TimelineChange.cs" />
-    <EmbeddedResource Include="Dialogs\AboutDialog.resx">
-      <DependentUpon>AboutDialog.cs</DependentUpon>
+    <EmbeddedResource Include="Dialogs\About.resx">
+      <DependentUpon>About.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\AudioWall.resx">
       <DependentUpon>AudioWall.cs</DependentUpon>
@@ -165,11 +165,11 @@
     <EmbeddedResource Include="BAPSDirectory.resx">
       <DependentUpon>BAPSDirectory.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Dialogs\LocalConfigDialog.resx">
-      <DependentUpon>LocalConfigDialog.cs</DependentUpon>
+    <EmbeddedResource Include="Dialogs\LocalConfig.resx">
+      <DependentUpon>LocalConfig.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Dialogs\LoginDialog.resx">
-      <DependentUpon>LoginDialog.cs</DependentUpon>
+    <EmbeddedResource Include="Dialogs\Login.resx">
+      <DependentUpon>Login.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Main\Main.resx">
       <DependentUpon>Main.cs</DependentUpon>
@@ -184,8 +184,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="Dialogs\TextDialog.resx">
-      <DependentUpon>TextDialog.cs</DependentUpon>
+    <EmbeddedResource Include="Dialogs\Text.resx">
+      <DependentUpon>Text.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

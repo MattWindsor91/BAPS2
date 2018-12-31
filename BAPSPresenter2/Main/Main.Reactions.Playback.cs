@@ -39,7 +39,7 @@ namespace BAPSPresenter2
         {
             if (ChannelOutOfBounds(channelID)) return;
             bapsChannels[channelID].ShowLoadedItem(index, itemType, description);
-            refreshAudioWall();
+            RefreshAudioWall();
         }
 
         private void showDuration(ushort channelID, uint value)

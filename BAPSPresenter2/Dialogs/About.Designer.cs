@@ -1,6 +1,6 @@
-﻿namespace BAPSPresenter2
+﻿namespace BAPSPresenter2.Dialogs
 {
-    partial class AboutDialog
+    partial class About
     {
         /// <summary>
         /// Required designer variable.

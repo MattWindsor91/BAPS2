@@ -14,7 +14,7 @@ namespace BAPSPresenter2
         **/
         private bool dead = false;
         // Accessor for the crashed variable.
-        public bool hasCrashed { get; private set; } = false;
+        public bool HasCrashed { get; private set; } = false;
 
         /** A handle for the connection to the server **/
         private ClientSocket clientSocket;
@@ -43,7 +43,7 @@ namespace BAPSPresenter2
         {
             ConfigManager.initConfigManager();
 
-            LoginDialog login = new LoginDialog();
+            var login = new Dialogs.Login();
             /** This flag defines success of the login procedure
                 (along with the implicit knowledge that the server is ready)
             **/
@@ -122,7 +122,7 @@ namespace BAPSPresenter2
                     wasServerError = false;
                 }
                 /** Encrypt the password **/
-                var securedPassword = md5sum(string.Concat(randomSecurityString, md5sum(login.Password)));
+                var securedPassword = Md5sum(string.Concat(randomSecurityString, Md5sum(login.Password)));
                 /** Send LOGIN command **/
                 clientSocket.send((ushort)(Command.SYSTEM | Command.LOGIN | 0));
                 /** Send correct command length **/
@@ -160,31 +160,8 @@ namespace BAPSPresenter2
             /** Do the form initialization **/
             InitializeComponent();
 
-            /** Array initialisation so that controls can be found by channel
-                number at runtime
-            **/
-            bapsChannels = new BAPSChannel[3] { bapsChannel1, bapsChannel2, bapsChannel3 };
-            for (ushort i = 0; i < bapsChannels.Length; i++)
-            {
-                var bc = bapsChannels[i];
-                // Channels get their IDs from the designer.
-                Debug.Assert(bc.ChannelID == i, "Mismatch between channel IDs and array positions");
-                // This is needed to make sure the lambdas below capture copies of the channel;
-                // otherwise, they'll all get the value of 'i' at the end of the loop.
-                ushort c = i;
-                bc.TrackListRequestChange += (e, x) => Invoke((Action<ushort, RequestChangeEventArgs>)TrackList_RequestChange, c, x);
-                bc.OpRequest += (e, x) => Invoke((Action<ChannelOperationLookup>)ChannelOperation_Click, x);
-                bc.PositionRequestChange += (e, pos) => Invoke((PositionRequestChangeEventHandler)HandlePositionChanged, e, pos);
-                bc.TimelineChanged += (e, pos) => Invoke((TimelineChangeEventHandler)TimelineChanged, e, pos);
-                bc.TrackBarMoved += (e, x) => Invoke((Action<ushort, uint>)TrackBar_Scroll, c, x);
-                //bc.TrackListContextMenuStripItemClicked += (e, x) => Invoke((ToolStripItemClickedEventHandler)trackListContextMenuStrip_ItemClicked, e, x);
-            }
-
-            bapsDirectories = new BAPSDirectory[3] { bapsDirectory1, bapsDirectory2, bapsDirectory3 };
-            foreach (var dir in bapsDirectories)
-            {
-                dir.RefreshRequest += RefreshDirectory;
-            }
+            SetupChannels();
+            SetupDirectories();
 
             countdownTimer = new Timer
             {
@@ -193,7 +170,7 @@ namespace BAPSPresenter2
             countdownTimer.Tick += countdownTick;
             countdownTimer.Start();
 
-            textDialog = new TextDialog(this, "Write on me");
+            textDialog = new Dialogs.Text(this, "Write on me");
 
             ConfigCache.initConfigCache();
             /** Create a message queue for sending commands to the server **/
@@ -213,7 +190,7 @@ namespace BAPSPresenter2
 
             /** Enable or disable the timers depending on the config setting, enable on default when no registry config value set. **/
             var enableTimers = string.Compare(ConfigManager.getConfigValueString("EnableTimers", "Yes"), "Yes") == 0;
-            enableTimerControls(enableTimers);
+            EnableTimerControls(enableTimers);
 
             /** Start the receive thread so we are ready for the autoupdate messages **/
             receiverThread = new System.Threading.Thread(ReceiverFunc);
@@ -223,6 +200,30 @@ namespace BAPSPresenter2
             **/
             senderThread = new System.Threading.Thread(SenderFunc);
             senderThread.Start();
+        }
+
+        private void SetupDirectories()
+        {
+            bapsDirectories = new BAPSDirectory[3] { bapsDirectory1, bapsDirectory2, bapsDirectory3 };
+            foreach (var dir in bapsDirectories)
+            {
+                dir.RefreshRequest += RefreshDirectory;
+            }
+        }
+
+        private void SetupChannels()
+        {
+            bapsChannels = new BAPSChannel[3] { bapsChannel1, bapsChannel2, bapsChannel3 };
+            foreach (var bc in bapsChannels)
+            {
+                Debug.Assert(0 <= bc.ChannelID, "Channel ID hasn't been set---check the channels' properties in the designer");
+
+                bc.TrackListRequestChange += (e, x) => Invoke((RequestChangeEventHandler)TrackList_RequestChange, e, x);
+                bc.OpRequest += (e, x) => Invoke((Action<ChannelOperationLookup>)ChannelOperation_Click, x);
+                bc.PositionRequestChange += (e, pos) => Invoke((PositionRequestChangeEventHandler)HandlePositionChanged, e, pos);
+                bc.TimelineChanged += (e, pos) => Invoke((TimelineChangeEventHandler)TimelineChanged, e, pos);
+                //bc.TrackListContextMenuStripItemClicked += (e, x) => Invoke((ToolStripItemClickedEventHandler)trackListContextMenuStrip_ItemClicked, e, x);
+            }
         }
 
         /** Loop to wait for a command and then process it correctly **/
@@ -235,7 +236,7 @@ namespace BAPSPresenter2
         }
 
         /** Generate an md5 sum of the raw argument **/
-        private string md5sum(string raw)
+        private string Md5sum(string raw)
         {
             var md5serv = System.Security.Cryptography.MD5.Create();
             var stringbuff = new System.Text.StringBuilder();
@@ -250,7 +251,7 @@ namespace BAPSPresenter2
         }
 
         /** Enable or disable the timer controls **/
-        private void enableTimerControls(bool shouldEnable)
+        private void EnableTimerControls(bool shouldEnable)
         {
             timersEnabled = shouldEnable;
             foreach (var chan in bapsChannels) chan.EnableTimerControls(shouldEnable);
@@ -258,7 +259,7 @@ namespace BAPSPresenter2
         }
 
         /** Notify AudioWall to Update **/
-        private void refreshAudioWall()
+        private void RefreshAudioWall()
         {
             if (audioWall?.Visible ?? false)
             {
@@ -267,15 +268,15 @@ namespace BAPSPresenter2
         }
 
         /** Function to async send the notify of a Comms Error / allow a way to restart the client. **/
-        private void sendQuit(string description, bool silent)
+        private void SendQuit(string description, bool silent)
         {
-            if (hasCrashed) return;
+            if (HasCrashed) return;
 
-            _ = BeginInvoke((Action<string, bool>)quit, description, silent);
+            _ = BeginInvoke((Action<string, bool>)Quit, description, silent);
         }
 
         /** Function to notify of a Comms Error **/
-        private void quit(string description, bool silent)
+        private void Quit(string description, bool silent)
         {
             /** On Communications errors this is called to notify the user **/
             /** Only current option is to die **/
@@ -285,26 +286,23 @@ namespace BAPSPresenter2
                 MessageBox.Show(string.Concat(description, "\nClick OK to restart the Presenter Interface.\nPlease notify support that an error occurred."), "System error:", MessageBoxButtons.OK);
                 logError(description);
             }
-            hasCrashed = true;
+            HasCrashed = true;
             Close();
         }
 
         /** Function to open write and close a log file -- FOR EMERGENCIES ONLY **/
         private void logError(string errorMessage)
         {
-            System.IO.StreamWriter stream = null;
             try
             {
-                stream = new System.IO.StreamWriter("bapserror.log", true);
-                stream.Write(errorMessage);
+                using (var stream = new System.IO.StreamWriter("bapserror.log", true))
+                {
+                    stream.Write(errorMessage);
+                }
             }
             catch (Exception)
             {
                 MessageBox.Show(string.Concat("Unable to write log file, Please write down the following information:\n", errorMessage), "Log file error", MessageBoxButtons.OK);
-            }
-            finally
-            {
-                stream?.Close();
             }
         }
 
@@ -389,7 +387,7 @@ namespace BAPSPresenter2
                         default:
                             {
                                 /** ERROR **/
-                                sendQuit("Received unknown command, possibly a malformed PLAYBACK.\n", false);
+                                SendQuit("Received unknown command, possibly a malformed PLAYBACK.\n", false);
                             }
                             break;
                     }
@@ -435,7 +433,7 @@ namespace BAPSPresenter2
                         default:
                             {
                                 /** ERROR **/
-                                sendQuit("Received unknown command, possibly a malformed PLAYLIST.\n", false);
+                                SendQuit("Received unknown command, possibly a malformed PLAYLIST.\n", false);
                             }
                             break;
                     }
@@ -499,7 +497,7 @@ namespace BAPSPresenter2
                         default:
                             {
                                 /** ERROR **/
-                                sendQuit("Received unknown command, possibly a malformed DATABASE.\n", false);
+                                SendQuit("Received unknown command, possibly a malformed DATABASE.\n", false);
                             }
                             break;
                     }
@@ -623,7 +621,7 @@ namespace BAPSPresenter2
                         default:
                             {
                                 /** ERROR **/
-                                sendQuit("Received unknown command, possibly a malformed CONFIG.\n", false);
+                                SendQuit("Received unknown command, possibly a malformed CONFIG.\n", false);
                             }
                             break;
                     }
@@ -692,13 +690,13 @@ namespace BAPSPresenter2
                             {
                                 //The server should send an int representing if this is an expected quit (0) or an exception error (1)."
                                 bool expected = clientSocket.receiveI() == 0;
-                                sendQuit("The Server is shutting down/restarting.\n", expected);
+                                SendQuit("The Server is shutting down/restarting.\n", expected);
                             }
                             break;
                         default:
                             {
                                 /** ERROR **/
-                                sendQuit("Received unknown command, possibly a malformed SYSTEM.\n", false);
+                                SendQuit("Received unknown command, possibly a malformed SYSTEM.\n", false);
                             }
                             break;
                     }
@@ -706,7 +704,7 @@ namespace BAPSPresenter2
                 default:
                     {
                         /** ERROR **/
-                        sendQuit("Received unknown command.\n", false);
+                        SendQuit("Received unknown command.\n", false);
                     }
                     break;
             }
@@ -746,7 +744,7 @@ namespace BAPSPresenter2
             else
             {
                 audioWall.setChannel(tl);
-                refreshAudioWall();
+                RefreshAudioWall();
             }
         }
     }

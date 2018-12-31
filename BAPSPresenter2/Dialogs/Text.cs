@@ -1,16 +1,16 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
 
-namespace BAPSPresenter2
+namespace BAPSPresenter2.Dialogs
 {
-    public partial class TextDialog : Form
+    public partial class Text : Form
     {
         /// <summary>
         /// A handle to the main window.
         /// </summary>
         Main main = null;
 
-        public TextDialog(Main main, string text)
+        public Text(Main main, string text)
         {
             this.main = main;
 

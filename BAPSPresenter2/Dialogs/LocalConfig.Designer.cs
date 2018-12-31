@@ -1,8 +1,8 @@
 ﻿using System.Windows.Forms;
 
-namespace BAPSPresenter2
+namespace BAPSPresenter2.Dialogs
 {
-    partial class LocalConfigDialog
+    partial class LocalConfig
     {
         /// <summary>
         /// Required designer variable.

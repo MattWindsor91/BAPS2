@@ -2,13 +2,13 @@
 using System.Reflection;
 using System.Windows.Forms;
 
-namespace BAPSPresenter2
+namespace BAPSPresenter2.Dialogs
 {
-    partial class AboutDialog : Form
+    partial class About : Form
     {
         private Main main;
 
-        public AboutDialog(Main main)
+        public About(Main main)
         {
             InitializeComponent();
 

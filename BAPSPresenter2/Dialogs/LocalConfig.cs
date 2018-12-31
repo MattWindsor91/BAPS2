@@ -1,23 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace BAPSPresenter2
+namespace BAPSPresenter2.Dialogs
 {
-    public partial class LocalConfigDialog : Form
+    public partial class LocalConfig : Form
     {
         /// <summary>
         /// A handle to the main window.
         /// </summary>
         private Main main;
 
-        public LocalConfigDialog(Main main)
+        public LocalConfig(Main main)
         {
             this.main = main;
 

@@ -117,43 +117,16 @@ namespace BAPSPresenter2
                     }
                     break;
                 case KeyShortcuts.AlterWindow:
-                    {
-                        if (WindowState == FormWindowState.Normal)
-                        {
-                            System.Drawing.Rectangle bounds = Screen.GetWorkingArea(this);
-                            bounds.X = 0;
-                            bounds.Y = 0;
-                            MaximizedBounds = bounds;
-                            MaximumSize = bounds.Size;
-                            FormBorderStyle = FormBorderStyle.None;
-                            WindowState = FormWindowState.Maximized;
-                        }
-                        else
-                        {
-                            FormBorderStyle = FormBorderStyle.FixedSingle;
-                            WindowState = FormWindowState.Normal;
-                        }
-                        e.Handled = true;
-                    }
+                    AlterWindow();
+                    e.Handled = true;
                     break;
                 case KeyShortcuts.LocalConfig:
-                    {
-                        LocalConfigDialog ccd = new LocalConfigDialog(this);
-                        ccd.ShowDialog();
-                        /** Enable or disable the timers depending on the config setting **/
-                        bool enableTimers = string.Compare(ConfigManager.getConfigValueString("EnableTimers", "Yes"), "Yes") == 0;
-                        enableTimerControls(enableTimers);
-                        e.Handled = true;
-                    }
+                    OpenLocalConfigDialog();
+                    e.Handled = true;
                     break;
                 case KeyShortcuts.Config:
-                    {
-                        configDialog = new Dialogs.Config(this, msgQueue);
-                        configDialog.ShowDialog();
-                        configDialog.Dispose();
-                        configDialog = null;
-                        e.Handled = true;
-                    }
+                    OpenConfigDialog();
+                    e.Handled = true;
                     break;
                 case KeyShortcuts.Security:
                     {
@@ -170,35 +143,16 @@ namespace BAPSPresenter2
                     }
                     break;
                 case KeyShortcuts.TextMaximised:
+                    ToggleTextDialog(shouldMaximize: true);
+                    e.Handled = true;
+                    break;
                 case KeyShortcuts.Text:
-                    {
-                        bool wasOpen = true;
-                        if (!textDialog.Visible)
-                        {
-                            wasOpen = false;
-                            textDialog.Show();
-                            textDialog.Invoke((Action<string>)textDialog.updateText, MainTextDisplay.Text);
-                        }
-                        if (e.Shift)
-                        {
-                            textDialog.Invoke((Action)textDialog.toggleMaximize);
-                        }
-                        else if (wasOpen)
-                        {
-                            textDialog.Hide();
-                        }
-                        e.Handled = true;
-                    }
+                    ToggleTextDialog(shouldMaximize: false);
+                    e.Handled = true;
                     break;
                 case KeyShortcuts.About:
-                    {
-                        // TODO(@MattWindsor91): port these
-                        about = new AboutDialog(this);
-                        msgQueue.Enqueue(new ActionMessage((ushort)(Command.SYSTEM | Command.VERSION)));
-                        about.ShowDialog();
-                        about = null;
-                        e.Handled = true;
-                    }
+                    OpenAboutDialog();
+                    e.Handled = true;
                     break;
                 default:
                     /** Ignore all other keys **/
@@ -206,13 +160,67 @@ namespace BAPSPresenter2
             }
         }
 
-        private void TrackBar_Scroll(ushort channel, uint value)
+        private void OpenAboutDialog()
         {
-            /** Update the server with the new value the user has selected **/
-            Command cmd = Command.PLAYBACK | Command.POSITION;
-            cmd |= ((Command)channel) & (Command)0x3f;
-            /** The scrollbar value is the new setting **/
-            msgQueue.Enqueue(new ActionMessageU32int((ushort)cmd, value));
+            about = new Dialogs.About(this);
+            msgQueue.Enqueue(new ActionMessage((ushort)(Command.SYSTEM | Command.VERSION)));
+            about.ShowDialog();
+            about = null;
+        }
+
+        private void OpenConfigDialog()
+        {
+            configDialog = new Dialogs.Config(this, msgQueue);
+            configDialog.ShowDialog();
+            configDialog.Dispose();
+            configDialog = null;
+        }
+
+        private void OpenLocalConfigDialog()
+        {
+            var ccd = new Dialogs.LocalConfig(this);
+            ccd.ShowDialog();
+            /** Enable or disable the timers depending on the config setting **/
+            bool enableTimers = string.Compare(ConfigManager.getConfigValueString("EnableTimers", "Yes"), "Yes") == 0;
+            EnableTimerControls(enableTimers);
+        }
+
+        private void ToggleTextDialog(bool shouldMaximize)
+        {
+            bool wasOpen = true;
+            if (!textDialog.Visible)
+            {
+                wasOpen = false;
+                textDialog.Show();
+                textDialog.Invoke((Action<string>)textDialog.updateText, MainTextDisplay.Text);
+            }
+            if (shouldMaximize)
+            {
+                textDialog.Invoke((Action)textDialog.toggleMaximize);
+            }
+            else if (wasOpen)
+            {
+                textDialog.Hide();
+            }
+        }
+
+        private void AlterWindow()
+        {
+            if (WindowState == FormWindowState.Normal)
+            {
+                System.Drawing.Rectangle bounds = Screen.GetWorkingArea(this);
+                bounds.X = 0;
+                bounds.Y = 0;
+                MaximizedBounds = bounds;
+                MaximumSize = bounds.Size;
+                FormBorderStyle = FormBorderStyle.None;
+                WindowState = FormWindowState.Maximized;
+            }
+            else
+            {
+                FormBorderStyle = FormBorderStyle.FixedSingle;
+                WindowState = FormWindowState.Normal;
+            }
         }
 
         private void RefreshDirectory(object sender, ushort channel)
@@ -262,7 +270,7 @@ namespace BAPSPresenter2
             msgQueue.Enqueue(new ActionMessage((ushort)cmd));
         }
 
-        internal void TrackList_RequestChange(ushort channelID, RequestChangeEventArgs e)
+        internal void TrackList_RequestChange(object sender, RequestChangeEventArgs e)
         {
             switch (e.ct)
             {
@@ -270,7 +278,7 @@ namespace BAPSPresenter2
                     {
                         // This won't be an impossible load---they're filtered out in BAPSChannel.
                         var cmd = Command.PLAYBACK | Command.LOAD;
-                        cmd |= (Command)(channelID & 0x3f);
+                        cmd |= (Command)(e.channel & 0x3f);
                         /** Get the selected index as above **/
                         var intArg = (uint)e.index;
                         msgQueue.Enqueue(new ActionMessageU32int((ushort)cmd, intArg));
