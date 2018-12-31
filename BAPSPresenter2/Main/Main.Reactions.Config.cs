@@ -149,10 +149,10 @@ namespace BAPSPresenter2
             {
                 case ConfigType.INT:
                 case ConfigType.CHOICE:
-                    valueInt = clientSocket.receiveI();
+                    valueInt = clientSocket.ReceiveI();
                     break;
                 case ConfigType.STR:
-                    valueStr = clientSocket.receiveS();
+                    valueStr = clientSocket.ReceiveS();
                     break;
                 default:
                     {

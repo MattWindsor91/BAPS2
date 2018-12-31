@@ -35,9 +35,9 @@ namespace BAPSPresenter2.Dialogs
         /// </summary>
         public System.Threading.Mutex closeMutex = new System.Threading.Mutex();
 
-        private System.Collections.Queue msgQueue = null;
+        private System.Collections.Concurrent.BlockingCollection<BAPSCommon.Message> msgQueue = null;
 
-        public Config(System.Collections.Queue msgQueue)
+        public Config(System.Collections.Concurrent.BlockingCollection<BAPSCommon.Message> msgQueue)
         {
             this.msgQueue = msgQueue;
 
@@ -105,7 +105,7 @@ namespace BAPSPresenter2.Dialogs
             if ((ConfigType)option.getType() == ConfigType.CHOICE)
             {
                 var cmd = Command.CONFIG | Command.GETOPTIONCHOICES;
-                msgQueue.Enqueue(new ActionMessageU32int((ushort)cmd, (uint)option.getOptionid()));
+                msgQueue.Add(new BAPSCommon.Message(cmd).Add((uint)option.getOptionid()));
             }
         }
 
@@ -506,7 +506,7 @@ namespace BAPSPresenter2.Dialogs
             if (!(optionCountSet && (numberOfOptions == 0))) return;
             if (options.Values.Any(op => !op.isValid())) return;
             Command cmd = Command.CONFIG | Command.GETCONFIGSETTINGS;
-            msgQueue.Enqueue(new ActionMessage((ushort)cmd));
+            msgQueue.Add(new BAPSCommon.Message(cmd));
             optionCountSet = false;
         }
 
@@ -540,14 +540,14 @@ namespace BAPSPresenter2.Dialogs
                         {
                             case ConfigType.STR:
                                 {
-                                    msgQueue.Enqueue(new ActionMessageU32intU32intString((ushort)cmd, (uint)coi.getOptionid(), (uint)coi.getType(), coi.getValueStr(j)));
+                                    msgQueue.Add(new BAPSCommon.Message(cmd).Add((uint)coi.getOptionid()).Add((uint)coi.getType()).Add(coi.getValueStr(j)));
                                 }
                                 break;
 
                             case ConfigType.INT:
                             case ConfigType.CHOICE:
                                 {
-                                    msgQueue.Enqueue(new ActionMessageU32intU32intU32int((ushort)cmd, (uint)coi.getOptionid(), (uint)coi.getType(), (uint)coi.getValueInt(j)));
+                                    msgQueue.Add(new BAPSCommon.Message(cmd).Add((uint)coi.getOptionid()).Add((uint)coi.getType()).Add((uint)coi.getValueInt(j)));
                                 }
                                 break;
 
@@ -563,14 +563,14 @@ namespace BAPSPresenter2.Dialogs
                     {
                         case ConfigType.STR:
                             {
-                                msgQueue.Enqueue(new ActionMessageU32intU32intString((ushort)cmd, (uint)coi.getOptionid(), (uint)coi.getType(), coi.getValueStr()));
+                                msgQueue.Add(new BAPSCommon.Message(cmd).Add((uint)coi.getOptionid()).Add((uint)coi.getType()).Add(coi.getValueStr()));
                             }
                             break;
 
                         case ConfigType.INT:
                         case ConfigType.CHOICE:
                             {
-                                msgQueue.Enqueue(new ActionMessageU32intU32intU32int((ushort)cmd, (uint)coi.getOptionid(), (uint)coi.getType(), (uint)coi.getValueInt()));
+                                msgQueue.Add(new BAPSCommon.Message(cmd).Add((uint)coi.getOptionid()).Add((uint)coi.getType()).Add(coi.getValueInt()));
                             }
                             break;
 
@@ -585,7 +585,7 @@ namespace BAPSPresenter2.Dialogs
         {
             restartButton.Enabled = false;
             Command cmd = Command.SYSTEM | Command.QUIT;
-            msgQueue.Enqueue(new ActionMessage((ushort)cmd));
+            msgQueue.Add(new BAPSCommon.Message(cmd));
         }
 
         private void ConfigDialog_KeyDown(object sender, KeyEventArgs e)
@@ -604,7 +604,7 @@ namespace BAPSPresenter2.Dialogs
         private void ConfigDialog_Load(object sender, EventArgs e)
         {
             Command cmd = Command.CONFIG | Command.GETOPTIONS;
-            msgQueue.Enqueue(new ActionMessage((ushort)cmd));
+            msgQueue.Add(new BAPSCommon.Message(cmd));
         }
 
         #endregion Event handlers

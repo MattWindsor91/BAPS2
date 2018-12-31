@@ -13,7 +13,7 @@ namespace BAPSPresenter2
         /// </summary>
         public event KeyEventHandler KeyDownForward;
 
-        public AudioWall(System.Collections.Queue msgQueue, TrackList tl)
+        public AudioWall(System.Collections.Concurrent.BlockingCollection<BAPSCommon.Message> msgQueue, TrackList tl)
         {
             this.msgQueue = msgQueue;
             this.tl = tl;
@@ -114,10 +114,10 @@ namespace BAPSPresenter2
             if (!bb.Highlighted)
             {
                 var lcmd = Command.PLAYBACK | Command.LOAD | (Command)tl.Channel;
-                msgQueue.Enqueue(new ActionMessageU32int((ushort)lcmd, index));
+                msgQueue.Add(new BAPSCommon.Message(lcmd).Add(index));
             }
             var pcmd = Command.PLAYBACK | Command.PLAY | (Command)tl.Channel;
-            msgQueue.Enqueue(new ActionMessage((ushort)pcmd));
+            msgQueue.Add(new BAPSCommon.Message(pcmd));
         }
 
         void AudioWall_KeyDown(object sender, KeyEventArgs e)
@@ -154,7 +154,7 @@ namespace BAPSPresenter2
 
         #endregion Events
 
-        System.Collections.Queue msgQueue = null;
+        System.Collections.Concurrent.BlockingCollection<BAPSCommon.Message> msgQueue = null;
         private TrackList tl = null;
 
         private BAPSFormControls.BAPSButton[] buttons = null;

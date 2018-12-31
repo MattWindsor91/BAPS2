@@ -22,7 +22,7 @@ namespace BAPSPresenter2
             {
                 /** When we die it is only fair to tell the server **/
                 var cmd = Command.SYSTEM | Command.END;
-                msgQueue.Enqueue(new ActionMessageString((ushort)cmd, "Normal Termination"));
+                msgQueue.Add(new BAPSCommon.Message(cmd).Add("Normal Termination"));
                 /** Wait 500ms for the command to be sent **/
                 int timeout = 500;
                 while (msgQueue.Count > 0 && timeout > 0)

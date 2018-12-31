@@ -17,7 +17,7 @@ namespace BAPSPresenter2
         public bool HasCrashed { get; private set; } = false;
 
         /** A handle for the connection to the server **/
-        private ClientSocket clientSocket;
+        private BAPSCommon.ClientSocket clientSocket;
 
         /** The current user **/
         private string username;
@@ -33,8 +33,8 @@ namespace BAPSPresenter2
         /** Whether or not the timers are enabled **/
         private bool timersEnabled = true;
 
-        /** The outgoing message queue (Should only have ActionMessage objects)**/
-        private System.Collections.Queue msgQueue;
+        /** The outgoing message queue **/
+        private System.Collections.Concurrent.BlockingCollection<BAPSCommon.Message> msgQueue;
 
         private bool ChannelOutOfBounds(ushort channel) => 3 <= channel;
         private bool DirectoryOutOfBounds(ushort directory) => 3 <= directory;
@@ -81,7 +81,7 @@ namespace BAPSPresenter2
                     try
                     {
                         /** Attempt to make a connection to the specified server **/
-                        clientSocket = new ClientSocket(login.Server, login.Port);
+                        clientSocket = new BAPSCommon.ClientSocket(login.Server, login.Port);
                     }
                     catch (Exception e)
                     {
@@ -96,15 +96,15 @@ namespace BAPSPresenter2
                         that does not follow the 'command' 'command-length' 'argument1'...
                         structure
                     **/
-                    var greeting = clientSocket.receiveS();
+                    var greeting = clientSocket.ReceiveS();
                     /** Let the server know we are a binary client **/
-                    clientSocket.send((ushort)(Command.SYSTEM | Command.SETBINARYMODE));
+                    clientSocket.Send(Command.SYSTEM | Command.SETBINARYMODE);
                     /** Specify the length of the command **/
-                    clientSocket.send((uint)0);
+                    clientSocket.Send(0U);
                     /** Receive what should be the SEED command **/
-                    Command seedCmd = (Command)clientSocket.receiveC();
+                    var seedCmd = clientSocket.ReceiveC();
                     /** Receive the length of the seed command **/
-                    clientSocket.receiveI();
+                    clientSocket.ReceiveI();
                     /** Verify the server is sending what we expect **/
                     if ((seedCmd & (Command.GROUPMASK | Command.SYSTEM_OPMASK)) != (Command.SYSTEM | Command.SEED))
                     {
@@ -116,7 +116,7 @@ namespace BAPSPresenter2
                     else
                     {
                         /** Receive the SEED **/
-                        randomSecurityString = clientSocket.receiveS();
+                        randomSecurityString = clientSocket.ReceiveS();
                     }
                     /** Clear any server error **/
                     wasServerError = false;
@@ -124,15 +124,15 @@ namespace BAPSPresenter2
                 /** Encrypt the password **/
                 var securedPassword = Md5sum(string.Concat(randomSecurityString, Md5sum(login.Password)));
                 /** Send LOGIN command **/
-                clientSocket.send((ushort)(Command.SYSTEM | Command.LOGIN | 0));
+                clientSocket.Send(Command.SYSTEM | Command.LOGIN | 0);
                 /** Send correct command length **/
-                clientSocket.send((uint)(login.Username.Length + securedPassword.Length));
+                clientSocket.Send((uint)(login.Username.Length + securedPassword.Length));
                 /** Send username **/
-                clientSocket.send(login.Username);
+                clientSocket.Send(login.Username);
                 /** Send encrypted password **/
-                clientSocket.send(securedPassword);
+                clientSocket.Send(securedPassword);
                 /** Receive what should be the login result **/
-                var authResult = (Command)clientSocket.receiveC();
+                var authResult = clientSocket.ReceiveC();
                 /** Verify it is what we expected **/
                 if ((authResult & (Command.GROUPMASK | Command.SYSTEM_OPMASK)) != (Command.SYSTEM | Command.LOGINRESULT))
                 {
@@ -144,9 +144,9 @@ namespace BAPSPresenter2
                 else
                 {
                     /** Receive the result command length **/
-                    clientSocket.receiveI();
+                    clientSocket.ReceiveI();
                     /** Receive the description of the result code **/
-                    var description = clientSocket.receiveS();
+                    var description = clientSocket.ReceiveS();
                     /** Check the value for '0' meaning success **/
                     authenticated = (authResult & Command.SYSTEM_VALUEMASK) == 0;
                     if (!authenticated)
@@ -175,18 +175,16 @@ namespace BAPSPresenter2
 
             ConfigCache.initConfigCache();
             /** Create a message queue for sending commands to the server **/
-            msgQueue = new System.Collections.Queue();
-            /** It needs to be synchronized so that enqueue and dequeue are atomic **/
-            msgQueue = System.Collections.Queue.Synchronized(msgQueue);
+            msgQueue = new System.Collections.Concurrent.BlockingCollection<BAPSCommon.Message>(new System.Collections.Concurrent.ConcurrentQueue<BAPSCommon.Message>());
             /** Add the autoupdate message onto the queue (chat(2) and general(1)) **/
             /** Add the autoupdate message onto the queue (chat(2) and general(1)) **/
             Command cmd = Command.SYSTEM | Command.AUTOUPDATE | (Command)2 | (Command)1;
-            msgQueue.Enqueue(new ActionMessage((ushort)cmd));
+            msgQueue.Add(new BAPSCommon.Message(cmd));
             for (int i = 0; i < 3; i++)
             {
                 /** Add the refresh folder onto the queue **/
                 cmd = Command.SYSTEM | Command.LISTFILES | (Command)i;
-                msgQueue.Enqueue(new ActionMessage((ushort)cmd));
+                msgQueue.Add(new BAPSCommon.Message(cmd));
             }
 
             /** Enable or disable the timers depending on the config setting, enable on default when no registry config value set. **/
@@ -219,10 +217,10 @@ namespace BAPSPresenter2
             {
                 Debug.Assert(0 <= bc.ChannelID, "Channel ID hasn't been set---check the channels' properties in the designer");
 
-                bc.TrackListRequestChange += (e, x) => Invoke((RequestChangeEventHandler)TrackList_RequestChange, e, x);
-                bc.OpRequest += (e, x) => Invoke((Action<ChannelOperationLookup>)ChannelOperation_Click, x);
-                bc.PositionRequestChange += (e, pos) => Invoke((PositionRequestChangeEventHandler)HandlePositionChanged, e, pos);
-                bc.TimelineChanged += (e, pos) => Invoke((TimelineChangeEventHandler)TimelineChanged, e, pos);
+                bc.TrackListRequestChange += TrackList_RequestChange;
+                bc.OpRequest += ChannelOperation_Click;
+                bc.PositionRequestChange += HandlePositionChanged;
+                bc.TimelineChanged += TimelineChanged;
                 //bc.TrackListContextMenuStripItemClicked += (e, x) => Invoke((ToolStripItemClickedEventHandler)trackListContextMenuStrip_ItemClicked, e, x);
             }
         }
@@ -232,7 +230,7 @@ namespace BAPSPresenter2
         {
             while (!dead)
             {
-                DecodeCommand((Command)clientSocket.receiveC());
+                DecodeCommand(clientSocket.ReceiveC());
             }
         }
 
@@ -310,7 +308,7 @@ namespace BAPSPresenter2
         /** Helper function to do command decoding **/
         private void DecodeCommand(Command cmdReceived)
         {
-            _ /* length */ = clientSocket.receiveI();
+            _ /* length */ = clientSocket.ReceiveI();
             switch (cmdReceived & Command.GROUPMASK)
             {
                 case Command.PLAYBACK:
@@ -328,27 +326,27 @@ namespace BAPSPresenter2
                         case Command.POSITION:
                             {
                                 var channel = cmdReceived & Command.PLAYBACK_CHANNELMASK;
-                                var position = clientSocket.receiveI();
+                                var position = clientSocket.ReceiveI();
                                 Invoke((Action<ushort, uint>)showPosition, channel, position);
                             }
                             break;
                         case Command.VOLUME:
                             {
-                                _ = clientSocket.receiveF();
+                                _ = clientSocket.ReceiveF();
                             }
                             break;
                         case Command.LOAD:
                             {
                                 var channel = cmdReceived & Command.PLAYLIST_CHANNELMASK;
-                                var index = clientSocket.receiveI();
-                                var type = (Command)clientSocket.receiveI();
-                                var description = clientSocket.receiveS();
+                                var index = clientSocket.ReceiveI();
+                                var type = (Command)clientSocket.ReceiveI();
+                                var description = clientSocket.ReceiveS();
                                 switch (type)
                                 {
                                     case Command.FILEITEM:
                                     case Command.LIBRARYITEM:
                                         {
-                                            var duration = clientSocket.receiveI();
+                                            var duration = clientSocket.ReceiveI();
                                             Invoke((Action<ushort, uint>)showDuration, channel, duration);
                                             Invoke((Action<ushort, uint>)showPosition, channel, 0U);
                                         }
@@ -360,7 +358,7 @@ namespace BAPSPresenter2
                                         break;
                                     case Command.TEXTITEM:
                                         {
-                                            var text = clientSocket.receiveS();
+                                            var text = clientSocket.ReceiveS();
                                             Invoke((Action<ushort, uint, string, string>)showText, channel, index, description, text);
                                         }
                                         break;
@@ -374,14 +372,14 @@ namespace BAPSPresenter2
                         case Command.CUEPOSITION:
                             {
                                 var channel = cmdReceived.Channel();
-                                var cuePosition = clientSocket.receiveI();
+                                var cuePosition = clientSocket.ReceiveI();
                                 Invoke((Action<ushort, uint>)showCuePosition, channel, cuePosition);
                             }
                             break;
                         case Command.INTROPOSITION:
                             {
                                 var channel = cmdReceived.Channel();
-                                var introPosition = clientSocket.receiveI();
+                                var introPosition = clientSocket.ReceiveI();
                                 Invoke((Action<ushort, uint>)showIntroPosition, channel, introPosition);
                             }
                             break;
@@ -400,28 +398,28 @@ namespace BAPSPresenter2
                             if (cmdReceived.HasFlag(Command.PLAYLIST_MODEMASK))
                             {
                                 var channel = cmdReceived.Channel();
-                                var index = clientSocket.receiveI();
-                                var type = clientSocket.receiveI();
-                                var description = clientSocket.receiveS();
+                                var index = clientSocket.ReceiveI();
+                                var type = clientSocket.ReceiveI();
+                                var description = clientSocket.ReceiveS();
                                 Invoke((Action<ushort, uint, uint, string>)addItem, channel, index, type, description);
                             }
                             else
                             {
-                                _ = clientSocket.receiveI();
+                                _ = clientSocket.ReceiveI();
                             }
                             break;
                         case Command.MOVEITEMTO:
                             {
                                 var channel = cmdReceived.Channel();
-                                var indexFrom = clientSocket.receiveI();
-                                var indexTo = clientSocket.receiveI();
+                                var indexFrom = clientSocket.ReceiveI();
+                                var indexTo = clientSocket.ReceiveI();
                                 Invoke((Action<ushort, uint, uint>)moveItemTo, channel, indexFrom, indexTo);
                             }
                             break;
                         case Command.DELETEITEM:
                             {
                                 var channel = cmdReceived.Channel();
-                                var index = clientSocket.receiveI();
+                                var index = clientSocket.ReceiveI();
                                 Invoke((Action<ushort, uint>)deleteItem, channel, index);
                             }
                             break;
@@ -447,53 +445,53 @@ namespace BAPSPresenter2
                                 if (cmdReceived.HasFlag(Command.DATABASE_MODEMASK))
                                 {
                                     var dirtyStatus = (ushort)(cmdReceived & Command.DATABASE_VALUEMASK);
-                                    var resultid = clientSocket.receiveI();
-                                    var description = clientSocket.receiveS();
+                                    var resultid = clientSocket.ReceiveI();
+                                    var description = clientSocket.ReceiveS();
                                     addLibraryResult(resultid, dirtyStatus, description);
                                 }
                                 else
                                 {
-                                    var count = clientSocket.receiveI();
+                                    var count = clientSocket.ReceiveI();
                                     setLibraryResultCount((int)count);
                                 }
                             }
                             break;
                         case Command.LIBRARYERROR:
                             {
-                                var description = clientSocket.receiveS();
+                                var description = clientSocket.ReceiveS();
                                 notifyLibraryError((ushort) (cmdReceived & Command.DATABASE_VALUEMASK), description);
                             }
                             break;
                         case Command.SHOW:
                             if (cmdReceived.HasFlag(Command.DATABASE_MODEMASK))
                             {
-                                var showid = clientSocket.receiveI();
-                                var description = clientSocket.receiveS();
+                                var showid = clientSocket.ReceiveI();
+                                var description = clientSocket.ReceiveS();
                                 addShowResult(showid, description);
                             }
                             else
                             {
-                                var count = clientSocket.receiveI();
+                                var count = clientSocket.ReceiveI();
                                 setShowResultCount((int)count);
                             }
                             break;
                         case Command.LISTING:
                             if (cmdReceived.HasFlag(Command.DATABASE_MODEMASK))
                             {
-                                var listingid = clientSocket.receiveI();
-                                var channel = clientSocket.receiveI();
-                                var description = clientSocket.receiveS();
+                                var listingid = clientSocket.ReceiveI();
+                                var channel = clientSocket.ReceiveI();
+                                var description = clientSocket.ReceiveS();
                                 addListingResult(listingid, channel, description);
                             }
                             else
                             {
-                                var count = clientSocket.receiveI();
+                                var count = clientSocket.ReceiveI();
                                 setListingResultCount((int) count);
                             }
                             break;
                         case Command.BAPSDBERROR:
                             /** There is an error code in the command **/
-                            notifyLoadShowError((ushort) (cmdReceived & Command.DATABASE_VALUEMASK), clientSocket.receiveS());
+                            notifyLoadShowError((ushort) (cmdReceived & Command.DATABASE_VALUEMASK), clientSocket.ReceiveS());
                             break;
                         default:
                             {
@@ -510,14 +508,14 @@ namespace BAPSPresenter2
                             {
                                 if (cmdReceived.HasFlag(Command.CONFIG_MODEMASK))
                                 {
-                                    var optionid = clientSocket.receiveI();
-                                    var description = clientSocket.receiveS();
-                                    var type = clientSocket.receiveI();
+                                    var optionid = clientSocket.ReceiveI();
+                                    var description = clientSocket.ReceiveS();
+                                    var type = clientSocket.ReceiveI();
                                     processOption(cmdReceived, optionid, description, type);
                                 }
                                 else
                                 {
-                                    var count = clientSocket.receiveI();
+                                    var count = clientSocket.ReceiveI();
                                     processOptionCount(count);
                                 }
                             }
@@ -526,15 +524,15 @@ namespace BAPSPresenter2
                             {
                                 if (cmdReceived.HasFlag(Command.CONFIG_MODEMASK))
                                 {
-                                    var optionid = clientSocket.receiveI();
-                                    var choiceIndex = clientSocket.receiveI();
-                                    var choiceDescription = clientSocket.receiveS();
+                                    var optionid = clientSocket.ReceiveI();
+                                    var choiceIndex = clientSocket.ReceiveI();
+                                    var choiceDescription = clientSocket.ReceiveS();
                                     processChoice(optionid, choiceIndex, choiceDescription);
                                 }
                                 else
                                 {
-                                    var optionid = clientSocket.receiveI();
-                                    var count = clientSocket.receiveI();
+                                    var optionid = clientSocket.ReceiveI();
+                                    var count = clientSocket.ReceiveI();
                                     processChoiceCount(optionid, (int)count);
                                 }
                             }
@@ -543,27 +541,27 @@ namespace BAPSPresenter2
                             {
                                 if (cmdReceived.HasFlag(Command.CONFIG_MODEMASK))
                                 {
-                                    var optionid = clientSocket.receiveI();
-                                    var type = clientSocket.receiveI();
+                                    var optionid = clientSocket.ReceiveI();
+                                    var type = clientSocket.ReceiveI();
                                     processConfigSetting(cmdReceived, optionid, (ConfigType)type);
                                 }
                                 else
                                 {
-                                    _ = clientSocket.receiveI();
+                                    _ = clientSocket.ReceiveI();
                                 }
                             }
                             break;
                         case Command.CONFIGRESULT:
                             {
-                                var optionid = clientSocket.receiveI();
-                                var result = clientSocket.receiveI();
+                                var optionid = clientSocket.ReceiveI();
+                                var result = clientSocket.ReceiveI();
                                 processConfigResult(cmdReceived, optionid, (ConfigResult)result);
                             }
                             break;
                         case Command.CONFIGERROR:
                             {
                                 var errorCode = cmdReceived & Command.CONFIG_VALUEMASK;
-                                var description = clientSocket.receiveS();
+                                var description = clientSocket.ReceiveS();
                                 processConfigError((uint)errorCode, description);
                             }
                             break;
@@ -571,13 +569,13 @@ namespace BAPSPresenter2
                             {
                                 if (cmdReceived.HasFlag(Command.CONFIG_MODEMASK))
                                 {
-                                    var username = clientSocket.receiveS();
-                                    var permissions = clientSocket.receiveI();
+                                    var username = clientSocket.ReceiveS();
+                                    var permissions = clientSocket.ReceiveI();
                                     processUserInfo(username, permissions);
                                 }
                                 else
                                 {
-                                    var count = clientSocket.receiveI();
+                                    var count = clientSocket.ReceiveI();
                                     processUserCount(count);
                                 }
                             }
@@ -586,13 +584,13 @@ namespace BAPSPresenter2
                             {
                                 if (cmdReceived.HasFlag(Command.CONFIG_MODEMASK))
                                 {
-                                    var permissionCode = clientSocket.receiveI();
-                                    var description = clientSocket.receiveS();
+                                    var permissionCode = clientSocket.ReceiveI();
+                                    var description = clientSocket.ReceiveS();
                                     processPermissionInfo(permissionCode, description);
                                 }
                                 else
                                 {
-                                    var count = clientSocket.receiveI();
+                                    var count = clientSocket.ReceiveI();
                                     processPermissionCount(count);
                                 }
                             }
@@ -600,7 +598,7 @@ namespace BAPSPresenter2
                         case Command.USERRESULT:
                             {
                                 var resultCode = cmdReceived & Command.CONFIG_VALUEMASK;
-                                var description = clientSocket.receiveS();
+                                var description = clientSocket.ReceiveS();
                                 processUserResult((uint)resultCode, description);
                             }
                             break;
@@ -608,13 +606,13 @@ namespace BAPSPresenter2
                             {
                                 if (cmdReceived.HasFlag(Command.CONFIG_MODEMASK))
                                 {
-                                    var ipaddress = clientSocket.receiveS();
-                                    var mask = clientSocket.receiveI();
+                                    var ipaddress = clientSocket.ReceiveS();
+                                    var mask = clientSocket.ReceiveI();
                                     processIPRestriction(cmdReceived, ipaddress, mask);
                                 }
                                 else
                                 {
-                                    var count = clientSocket.receiveI();
+                                    var count = clientSocket.ReceiveI();
                                     processIPRestrictionCount(cmdReceived, count);
                                 }
                             }
@@ -631,48 +629,48 @@ namespace BAPSPresenter2
                     switch (cmdReceived & Command.SYSTEM_OPMASK)
                     {
                         case Command.SENDLOGMESSAGE:
-                            clientSocket.receiveS();
+                            clientSocket.ReceiveS();
                             break;
                         case Command.FILENAME:
                             if (cmdReceived.HasFlag(Command.SYSTEM_MODEMASK))
                             {
                                 var directoryIndex = cmdReceived & Command.SYSTEM_VALUEMASK;
-                                var index = clientSocket.receiveI();
-                                var description = clientSocket.receiveS();
+                                var index = clientSocket.ReceiveI();
+                                var description = clientSocket.ReceiveS();
                                 Invoke((Action<ushort, uint, string>)addFileToDirectoryList, directoryIndex, index, description);
                             }
                             else
                             {
                                 var directoryIndex = cmdReceived & Command.SYSTEM_VALUEMASK;
-                                _ = clientSocket.receiveI();
-                                var niceDirectoryName = clientSocket.receiveS();
+                                _ = clientSocket.ReceiveI();
+                                var niceDirectoryName = clientSocket.ReceiveS();
                                 Invoke((Action<ushort, string>)clearFiles, directoryIndex, niceDirectoryName);
                             }
                             break;
                         case Command.VERSION:
                             {
-                                var version = clientSocket.receiveS();
-                                var date = clientSocket.receiveS();
-                                var time = clientSocket.receiveS();
-                                var author = clientSocket.receiveS();
+                                var version = clientSocket.ReceiveS();
+                                var date = clientSocket.ReceiveS();
+                                var time = clientSocket.ReceiveS();
+                                var author = clientSocket.ReceiveS();
                                 displayVersion(version, date, time, author);
                             }
                             break;
                         case Command.FEEDBACK:
                             {
-                                _ = clientSocket.receiveI();
+                                _ = clientSocket.ReceiveI();
                             }
                             break;
                         case Command.SENDMESSAGE:
                             {
-                                _ = clientSocket.receiveS();
-                                _ = clientSocket.receiveS();
-                                _ = clientSocket.receiveS();
+                                _ = clientSocket.ReceiveS();
+                                _ = clientSocket.ReceiveS();
+                                _ = clientSocket.ReceiveS();
                             }
                             break;
                         case Command.CLIENTCHANGE:
                             {
-                                _ = clientSocket.receiveS();
+                                _ = clientSocket.ReceiveS();
                             }
                             break;
                         case Command.SCROLLTEXT:
@@ -690,7 +688,7 @@ namespace BAPSPresenter2
                         case Command.QUIT:
                             {
                                 //The server should send an int representing if this is an expected quit (0) or an exception error (1)."
-                                bool expected = clientSocket.receiveI() == 0;
+                                bool expected = clientSocket.ReceiveI() == 0;
                                 SendQuit("The Server is shutting down/restarting.\n", expected);
                             }
                             break;
@@ -715,23 +713,11 @@ namespace BAPSPresenter2
         /** Loop to watch for an outgoing message on the queue and send it **/
         private void SenderFunc()
         {
-            ActionMessage currentMessage = null;
             /** Drop out if something goes horribly wrong elsewhere **/
             while (!dead)
             {
-                /** Grab a message if there is one **/
-                if (msgQueue.Count > 0)
-                {
-                    currentMessage = (ActionMessage)msgQueue.Dequeue();
-                    currentMessage.sendMsg(clientSocket);
-                    /** Don't sleep if we have just processed a message, it is
-                        likely there will be another
-                    **/
-                }
-                else
-                {
-                    System.Threading.Thread.Sleep(1);
-                }
+                var msg = msgQueue.Take();
+                msg.Send(clientSocket);
             }
         }
 
