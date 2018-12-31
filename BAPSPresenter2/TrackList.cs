@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace BAPSPresenter2
 {
-    public struct TrackListDragDrop
+    public class TrackListDragDrop
     {
         public int fromIndex;
         public ushort fromChannel;
@@ -64,7 +64,10 @@ namespace BAPSPresenter2
 
     public partial class TrackList : Control
     {
-        public System.Collections.Generic.List<EntryInfo> items = new System.Collections.Generic.List<EntryInfo>();
+        private System.Collections.Generic.List<EntryInfo> items = new System.Collections.Generic.List<EntryInfo>();
+
+        public bool IsTextItemAt(int index) =>
+            getTrack(index).type == Command.TEXTITEM;
 
         public EntryInfo getTrack(int i) => i < items.Count ? items[i] : new EntryInfo(Command.TEXTITEM, "NONE");
 
@@ -500,7 +503,7 @@ namespace BAPSPresenter2
                     if (hi != hoverIndex)
                     {
                         hoverIndex = hi;
-                        this.Invalidate();
+                        Invalidate();
                     }
                     addTo = false;
                 }
@@ -625,6 +628,7 @@ namespace BAPSPresenter2
                                            SCROLL_WIDTH,
                                            ClientSize.Height);
             showHideScrollBar();
+            Invalidate();
             base.OnResize(e);
         }
 

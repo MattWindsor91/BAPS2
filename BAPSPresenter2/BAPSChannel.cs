@@ -340,18 +340,13 @@ namespace BAPSPresenter2
 
         #region Track list events
 
-        private bool IsTextItemAt(int index) =>
-            (Command)trackList.items[index].type == Command.TEXTITEM;
-
         private bool IsLoadPossible(int index) =>
-            IsTextItemAt(index) || playButton.Enabled;
+            trackList.IsTextItemAt(index) || playButton.Enabled;
 
         private void TrackList_RequestChange(object o, RequestChangeEventArgs e)
         {
-            Debug.Assert(e.channel == ChannelID, "Unexpected channel ID", "Expected {0}, but this RequestChange came from {1}", ChannelID, e.channel);
-
             // Don't propagate impossible loads outside the channel.
-            if ((ChangeType)e.ct == ChangeType.SELECTEDINDEX)
+            if (e.ct == ChangeType.SELECTEDINDEX)
             {
                 if (!IsLoadPossible(e.index))
                 {
