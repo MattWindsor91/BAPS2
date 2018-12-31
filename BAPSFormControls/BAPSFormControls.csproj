@@ -107,6 +107,12 @@
     <Compile Include="Utils.cs" />
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BAPSCommon\BAPSCommon.csproj">
+      <Project>{701B4F5C-600A-4EB2-82AE-BA11EA8160A7}</Project>
+      <Name>BAPSCommon</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

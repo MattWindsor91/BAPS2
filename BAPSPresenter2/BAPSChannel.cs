@@ -1,4 +1,5 @@
-﻿using BAPSPresenter;
+﻿using BAPSCommon;
+using BAPSPresenter;
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
@@ -309,31 +310,11 @@ namespace BAPSPresenter2
 
         #region Position movement events
 
-        private void OnPositionRequestChange(PositionType type, int requestedValue)
-        {
-            var id = ChannelID;
-            if (id < 0) return;
-            PositionRequestChange?.Invoke(this, new PositionRequestChange((ushort)id, type, requestedValue));
-        }
-
-
-        private void OnPositionChanged(object sender, EventArgs e)
+        private void OnPositionChanged(object sender, PositionRequestChangeEventArgs e)
         {
             Debug.Assert(sender == trackTime, "Got position change request from unexpected place");
-            OnPositionRequestChange(PositionType.Position, trackTime.Position);
-        }
-
-        private void OnCuePositionChanged(object sender, EventArgs e)
-        {
-            Debug.Assert(sender == trackTime, "Got position change request from unexpected place");
-            OnPositionRequestChange(PositionType.Cue, trackTime.CuePosition);
-        }
-
-        private void OnIntroPositionChanged(object sender, EventArgs e)
-        {
-            Debug.Assert(sender == trackTime, "Got position change request from unexpected place");
-            OnPositionRequestChange(PositionType.Intro, trackTime.IntroPosition);
-
+            Debug.Assert(e.ChannelID == ChannelID, "Got position change request for unexpected channel");
+            PositionRequestChange?.Invoke(this, e);
         }
 
         #endregion Position movement events

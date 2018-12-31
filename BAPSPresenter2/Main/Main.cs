@@ -1,4 +1,5 @@
-﻿using BAPSPresenter; // Legacy
+﻿using BAPSCommon;
+using BAPSPresenter; // Legacy
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;

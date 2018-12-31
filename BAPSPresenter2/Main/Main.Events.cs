@@ -1,4 +1,5 @@
-﻿using BAPSPresenter;
+﻿using BAPSCommon;
+using BAPSPresenter;
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
@@ -26,7 +27,7 @@ namespace BAPSPresenter2
         }
 
         /** functions to receive events from the custom TrackTime class */
-        private void HandlePositionChanged(object sender, PositionRequestChange e)
+        private void HandlePositionChanged(object sender, PositionRequestChangeEventArgs e)
         {
             var cmd = Command.PLAYBACK | e.ChangeType.AsCommand() | (Command)e.ChannelID;
             msgQueue.Enqueue(new ActionMessageU32int((ushort)cmd, (uint)e.Value));
@@ -263,7 +264,7 @@ namespace BAPSPresenter2
 
         internal void TrackList_RequestChange(ushort channelID, RequestChangeEventArgs e)
         {
-            switch ((ChangeType)e.ct)
+            switch (e.ct)
             {
                 case ChangeType.SELECTEDINDEX:
                     {

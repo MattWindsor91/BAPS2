@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BAPSCommon;
+using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
@@ -15,11 +16,7 @@ namespace BAPSFormControls
 
     public partial class TrackTime : Control
     {
-        public event EventHandler PositionChanged;
-
-        public event EventHandler IntroPositionChanged;
-
-        public event EventHandler CuePositionChanged;
+        public event PositionRequestChangeEventHandler PositionChanged;
 
         private const int BASE_Y_LINE = 44;
         private const int BASE_Y_INTRO_ARROW = 8;
@@ -252,11 +249,16 @@ namespace BAPSFormControls
             }
         }
 
+        private void SetPositionAndNotify(int newPosition)
+        {
+            position = newPosition;
+            PositionChanged.Invoke(this, new PositionRequestChangeEventArgs((ushort)Channel, PositionType.Position, position));
+        }
+
         private void HandlePositionDrag(int newPosition)
         {
             if (position == newPosition) return;
-            position = Math.Max(newPosition, cuePosition);
-            PositionChanged(this, EventArgs.Empty);
+            SetPositionAndNotify(Math.Max(newPosition, cuePosition));
         }
 
         private void HandleCueDrag(int newPosition)
@@ -264,20 +266,16 @@ namespace BAPSFormControls
             if (cuePosition == newPosition) return;
 
             cuePosition = newPosition;
-            CuePositionChanged(this, EventArgs.Empty);
+            PositionChanged.Invoke(this, new PositionRequestChangeEventArgs((ushort)Channel, PositionType.Cue, cuePosition));
 
-            if (cuePosition > position)
-            {
-                position = cuePosition;
-                PositionChanged(this, EventArgs.Empty);
-            }
+            if (cuePosition > position) SetPositionAndNotify(cuePosition);
         }
 
         private void HandleIntroDrag(int newPosition)
         {
             if (introPosition == newPosition) return;
             introPosition = newPosition;
-            IntroPositionChanged(this, EventArgs.Empty);
+            PositionChanged.Invoke(this, new PositionRequestChangeEventArgs((ushort)Channel, PositionType.Intro, introPosition));
         }
 
         private void OnPossibleMouseOver(MouseEventArgs e)

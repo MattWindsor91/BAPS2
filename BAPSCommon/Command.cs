@@ -1,4 +1,4 @@
-﻿namespace BAPSPresenter2
+﻿namespace BAPSCommon
 {
     public enum Command : ushort
     {
@@ -213,8 +213,17 @@
         QUIT = 15 << 8, //(no args)
     }
 
-    internal static class CommandExtensions
+    public static class CommandExtensions
     {
-        internal static ushort Channel(this Command cmd) => (ushort)(cmd & Command.PLAYBACK_CHANNELMASK);
+        /// <summary>
+        /// Returns the channel component of a BAPSnet command.
+        /// <para>
+        /// This doesn't perform any validation on the command to see whether it actually
+        /// has a channel component---for commands without one, the result is undefined.
+        /// </para>
+        /// </summary>
+        /// <param name="cmd">The command to mask-off.</param>
+        /// <returns>The channel component</returns>
+        public static ushort Channel(this Command cmd) => (ushort)(cmd & Command.PLAYBACK_CHANNELMASK);
     }
 }

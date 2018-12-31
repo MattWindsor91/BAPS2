@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BAPSPresenter2
+namespace BAPSCommon
 {
     /// <summary>
     /// Enumeration of the various positions that a channel's track-line represents.
@@ -14,7 +14,7 @@ namespace BAPSPresenter2
 
     public static class PositionTypeExtensions
     {
-        internal static Command AsCommand(this PositionType pt)
+        public static Command AsCommand(this PositionType pt)
         {
             switch (pt)
             {
@@ -34,7 +34,7 @@ namespace BAPSPresenter2
     /// An event argument bundle used to tell the main presenter that a channel
     /// has received a position change request from the user.
     /// </summary>
-    public class PositionRequestChange : EventArgs
+    public class PositionRequestChangeEventArgs : EventArgs
     {
         /// <summary>
         /// The ID of the channel from where the request originates.
@@ -51,7 +51,7 @@ namespace BAPSPresenter2
         /// </summary>
         public int Value { get; }
 
-        public PositionRequestChange(ushort channelID, PositionType type, int newValue) : base()
+        public PositionRequestChangeEventArgs(ushort channelID, PositionType type, int newValue) : base()
         {
             ChannelID = channelID;
             ChangeType = type;
@@ -64,5 +64,5 @@ namespace BAPSPresenter2
     /// </summary>
     /// <param name="sender">The sender of the event (usually a channel).</param>
     /// <param name="e">The event details.</param>
-    public delegate void PositionRequestChangeEventHandler(object sender, PositionRequestChange e);
+    public delegate void PositionRequestChangeEventHandler(object sender, PositionRequestChangeEventArgs e);
 }

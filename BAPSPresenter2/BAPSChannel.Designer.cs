@@ -117,9 +117,7 @@
             this.trackTime.Size = new System.Drawing.Size(366, 72);
             this.trackTime.TabIndex = 227;
             this.trackTime.Text = "trackTime0";
-            this.trackTime.CuePositionChanged += new System.EventHandler(this.OnCuePositionChanged);
-            this.trackTime.IntroPositionChanged += new System.EventHandler(this.OnIntroPositionChanged);
-            this.trackTime.PositionChanged += new System.EventHandler(this.OnPositionChanged);
+            this.trackTime.PositionChanged += new BAPSCommon.PositionRequestChangeEventHandler(this.OnPositionChanged);
             // 
             // trackList
             // 
