@@ -399,30 +399,7 @@ namespace BAPSPresenter2
         {
             if (playButton.Enabled && cds.running)
             {
-                var dt = DateTime.Now;
-                if (!cds.startAt)
-                {
-                    dt = dt.AddMilliseconds(trackTime.Duration - trackTime.CuePosition);
-                }
-                int millisecsPastHour = (((dt.Minute * 60) + dt.Second) * 1000) + dt.Millisecond;
-                int value = cds.theTime * 1000;
-                if (value < millisecsPastHour)
-                {
-                    value += 3600000;
-                }
-                value -= millisecsPastHour;
-                int valuesecs = value / 1000;
-                /** WORK NEEDED: This allows 5 seconds grace in case of heavy system load
-                    *               It would be better if there were guaranteed start if it didnt kick in.
-                    **/
-                if (valuesecs > 3595)
-                {
-                    cds.running = false;
-                    RequestOp(Command.PLAY);
-                }
-                length.Text = string.Concat((valuesecs / 60).ToString("00"), ":", (valuesecs % 60).ToString("00"));
-
-                RequestTimelineChange(TimelineChangeType.Start, value);
+                UpdateRunningCountdown();
             }
             else
             {
@@ -430,15 +407,34 @@ namespace BAPSPresenter2
                 RequestTimelineChange(TimelineChangeType.Start, -1);
                 length.Text = "--:--";
             }
-            if (cds.startAt)
+        }
+
+        private void UpdateRunningCountdown()
+        {
+            var dt = DateTime.Now;
+            if (!cds.startAt)
             {
-                length.InfoText = "Start At: ";
+                dt = dt.AddMilliseconds(trackTime.Duration - trackTime.CuePosition);
             }
-            else
+            int millisecsPastHour = (((dt.Minute * 60) + dt.Second) * 1000) + dt.Millisecond;
+            int value = cds.theTime * 1000;
+            if (value < millisecsPastHour)
             {
-                length.InfoText = "End At: ";
+                value += 3600000;
             }
-            length.InfoText = string.Concat(length.InfoText, (cds.theTime / 60).ToString("00"), ":", (cds.theTime % 60).ToString("00"));
+            value -= millisecsPastHour;
+            int valuesecs = value / 1000;
+            /** WORK NEEDED: This allows 5 seconds grace in case of heavy system load
+                *               It would be better if there were guaranteed start if it didnt kick in.
+                **/
+            if (valuesecs > 3595)
+            {
+                cds.running = false;
+                RequestOp(Command.PLAY);
+            }
+            length.Text = string.Concat((valuesecs / 60).ToString("00"), ":", (valuesecs % 60).ToString("00"));
+
+            RequestTimelineChange(TimelineChangeType.Start, value);
         }
 
         internal void UpdateCountDown(int theTime)

@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -6,8 +7,11 @@ namespace BAPSFormControls
 {
     public partial class BAPSLabel : UserControl
     {
-        private System.Drawing.Drawing2D.LinearGradientBrush backBrush = new System.Drawing.Drawing2D.LinearGradientBrush(new Rectangle(0, 0, 10, 10), Color.Tan, Color.Snow, System.Drawing.Drawing2D.LinearGradientMode.Vertical);
-        private Bitmap offScreen = new Bitmap(1, 1);
+        public Font InfoFont
+        {
+            get => infoTextLabel.Font;
+            set => infoTextLabel.Font = value;
+        }
 
         private bool isHighlighted = false;
         public bool Highlighted
@@ -35,106 +39,45 @@ namespace BAPSFormControls
             }
         }
 
+        [EditorBrowsable(EditorBrowsableState.Always)]
+        [Browsable(true)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+        [Bindable(true)]
         public override string Text
         {
-            get => base.Text;
-            set
-            {
-                if (base.Text == value) return;
-                base.Text = value;
-                prepareGraphics();
-                Invalidate();
-            }
+            get => mainTextLabel.Text;
+            set => mainTextLabel.Text = value;
         }
 
-        private string infoText = "";
         public string InfoText
         {
-            get => infoText;
-            set
-            {
-                if (infoText == value) return;
-
-                infoText = value;
-                prepareGraphics();
-                Invalidate();
-            }
+            get => infoTextLabel.Text;
+            set => infoTextLabel.Text = value;
         }
 
         public BAPSLabel()
         {
-            SetStyle(ControlStyles.UserPaint | ControlStyles.SupportsTransparentBackColor, true);
-            DoubleBuffered = true;
-            TabStop = false;
-            backBrush = new System.Drawing.Drawing2D.LinearGradientBrush(new Rectangle(0, 0, 10, 10), Color.Tan, Color.Snow, System.Drawing.Drawing2D.LinearGradientMode.Vertical);
             InitializeComponent();
-        }
 
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            base.OnPaint(e);
-            e.Graphics.DrawImage(offScreen, 0, 0);
-            var sf = new StringFormat
-            {
-                Alignment = StringAlignment.Center,
-                LineAlignment = StringAlignment.Center
-            };
-            var rect = ClientRectangle;
-            if (string.Compare(infoText, "") != 0)
-            {
-                var font = new Font(Font.FontFamily, 8, FontStyle.Regular, GraphicsUnit.Point);
-                e.Graphics.DrawString(infoText, font, new SolidBrush(ForeColor), 5.0f, 1.0f);
-                // have info text to display
-                rect.Y += 12;
-                rect.Height -= 12;
-            }
-
-            e.Graphics.DrawString(Text, Font, new SolidBrush(ForeColor), rect, sf);
-        }
-
-        protected override void OnResize(EventArgs e)
-        {
-            base.OnResize(e);
-            UpdateBackBrush();
-	        offScreen = new Bitmap(ClientSize.Width, ClientSize.Height);
-	        prepareGraphics();
-        }
-
-        private bool NoClientRectangle => ClientRectangle.Width <= 0 || ClientRectangle.Height <= 0;
-
-        private void UpdateBackBrush()
-        {
-            backBrush = new System.Drawing.Drawing2D.LinearGradientBrush(ClientRectangle,
-                        isHighlighted ? highlightColor : Color.Snow,
-                        Color.AntiqueWhite,
-                        System.Drawing.Drawing2D.LinearGradientMode.Vertical);
-            backBrush.SetBlendTriangularShape(0.5f);
-        }
-
-        private void prepareGraphics()
-        {
-            if (NoClientRectangle) return;
-
-            var gOffScreen = Graphics.FromImage(offScreen);
-
-            int curveWidth = (ClientRectangle.Height > 30) ? 20 : ClientRectangle.Height / 2;
-            gOffScreen.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-            var gp = new System.Drawing.Drawing2D.GraphicsPath();
-            gp.AddArc(ClientRectangle.Width - (curveWidth + 1), 0, curveWidth, curveWidth, 270, 90);
-            gp.AddArc(ClientRectangle.Width - (curveWidth + 1), ClientRectangle.Height - (curveWidth + 1), curveWidth, curveWidth, 0, 90);
-            gp.AddArc(0, ClientRectangle.Height - (curveWidth + 1), curveWidth, curveWidth, 90, 90);
-            gp.AddArc(0, 0, curveWidth, curveWidth, 180, 90);
-            gp.CloseFigure();
-            gOffScreen.FillPath(backBrush, gp);
-            gOffScreen.DrawPath(Pens.LightGray, gp);
+            DoubleBuffered = true;
         }
 
         private void HighlightChanged()
         {
-            if (NoClientRectangle) return;
-            UpdateBackBrush();
-            prepareGraphics();
-            Invalidate();
+            BackColor = isHighlighted ? highlightColor : SystemColors.Control;
+        }
+
+        /// <summary>
+        /// Event handler for child controls' mouse-down events, forwarding them
+        /// to the parent control's mouse-down handler with translated locations.
+        /// </summary>
+        /// <param name="sender">The original sender.</param>
+        /// <param name="e">The original mouse event.</param>
+        private void ChildControl_MouseDown(object sender, MouseEventArgs e)
+        {
+            var s = (Control)sender;
+            var e2 = new MouseEventArgs(e.Button, e.Clicks, e.X + s.Location.X, e.Y + s.Location.Y, e.Delta);
+            OnMouseDown(e2);
         }
     }
 }
