@@ -83,8 +83,8 @@ namespace BAPSFormControls
         private TrackTimeMovingType movingItem = TrackTimeMovingType.NONE;
 
         private Brush backBrush = SystemBrushes.Control;
-        private Brush cueBrush = Brushes.Crimson;
-        private Brush introBrush = Brushes.ForestGreen;
+        private Brush cueBrush = new SolidBrush(Color.FromArgb(127, Color.Crimson));
+        private Brush introBrush = new SolidBrush(Color.FromArgb(127, Color.ForestGreen));
 
         private ToolTip tooltip;
 
