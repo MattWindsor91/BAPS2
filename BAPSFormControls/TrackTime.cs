@@ -32,8 +32,8 @@ namespace BAPSFormControls
             get => duration;
             set
             {
+                if (value == duration) return;
                 duration = value;
-                division = ClientRectangle.Width / (float)duration;
                 Invalidate();
             }
         }
@@ -45,6 +45,7 @@ namespace BAPSFormControls
             get => position;
             set
             {
+                if (position == duration) return;
                 position = value;
                 Invalidate();
             }
@@ -57,6 +58,7 @@ namespace BAPSFormControls
             get => cuePosition;
             set
             {
+                if (cuePosition == duration) return;
                 cuePosition = value;
                 Invalidate();
             }
@@ -74,10 +76,11 @@ namespace BAPSFormControls
             }
         }
 
+        private float Division => ClientRectangle.Width / (float)duration;
+
         private int introPosition = 0;
 
         private TrackTimeMovingType movingItem = TrackTimeMovingType.NONE;
-        private float division = 0.0f;
 
         private Brush backBrush = SystemBrushes.Control;
         private Brush cueBrush = Brushes.Crimson;
@@ -88,15 +91,14 @@ namespace BAPSFormControls
         public TrackTime()
         {
             InitializeComponent();
-
             SetStyle(ControlStyles.UserPaint |
                      ControlStyles.AllPaintingInWmPaint |
-                     ControlStyles.DoubleBuffer |
                      ControlStyles.Selectable |
                      ControlStyles.StandardClick |
                      ControlStyles.SupportsTransparentBackColor |
                      ControlStyles.UserMouse,
                      true);
+            DoubleBuffered = true;
             tooltip = new ToolTip
             {
                 // Set up the delays for the ToolTip.
@@ -106,6 +108,12 @@ namespace BAPSFormControls
                 // Force the ToolTip text to be displayed whether or not the form is active.
                 ShowAlways = true
             };
+        }
+
+        protected override void OnResize(EventArgs e)
+        {
+            base.OnResize(e);
+            Invalidate();
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -129,10 +137,10 @@ namespace BAPSFormControls
         {
             if (x < 0) return 0;
             if (ClientRectangle.Width <= x) return duration;
-            return (int)(x / division);
+            return (int)(x / Division);
         }
 
-        private int PosToX(int position) => (int)(division * position);
+        private int PosToX(int position) => (int)(Division * position);
 
         private void DrawSecondaryPosition(PaintEventArgs e, Brush brush, int position, int arrowY)
         {

@@ -1,5 +1,6 @@
 ﻿using BAPSCommon;
 using System;
+using System.Linq;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
@@ -22,22 +23,76 @@ namespace BAPSPresenter2
         }
     }
 
-    public class EntryInfo
+    public abstract class EntryInfo
     {
-        public Command type;
-        public string description;
-        public bool isSelectedTextItem;
+        public string Description { get; private set; }
 
-        public EntryInfo(Command _type, string _description)
+        public EntryInfo(string description)
         {
-            type = _type;
-            description = _description;
-            isSelectedTextItem = false;
+            Description = description;
         }
 
-        public void ClearSelection() => isSelectedTextItem = false;
+        public abstract bool IsAudioItem { get; }
+        public abstract bool IsTextItem { get; }
+        public abstract bool IsFromLibrary { get; }
 
-        public override string ToString() => description;
+        public override string ToString() => Description;
+    }
+
+    public class TextEntryInfo : EntryInfo
+    {
+        public TextEntryInfo(string description) : base(description) { }
+
+        public override bool IsAudioItem => false;
+        public override bool IsTextItem => true;
+        public override bool IsFromLibrary => false;
+    }
+
+    public class FileEntryInfo : EntryInfo
+    {
+        public FileEntryInfo(string description) : base(description) { }
+
+        public override bool IsAudioItem => true;
+        public override bool IsTextItem => false;
+        public override bool IsFromLibrary => false;
+    }
+
+    public class LibraryEntryInfo : EntryInfo
+    {
+        public LibraryEntryInfo(string description) : base(description) { }
+
+        public override bool IsAudioItem => true;
+        public override bool IsTextItem => false;
+        public override bool IsFromLibrary => true;
+    }
+
+    public class NullEntryInfo : EntryInfo
+    {
+        public NullEntryInfo() : base("NONE") { }
+
+        public override bool IsAudioItem => false;
+        public override bool IsTextItem => false;
+        public override bool IsFromLibrary => false;
+    }
+
+    public static class EntryInfoExtensions
+    {
+        public static void DrawTypeIcon(this EntryInfo ei, Control parent, Graphics gOffScreen, int itemTop)
+        {
+            if (ei.IsTextItem)
+            {
+                gOffScreen.DrawString("T", parent.Font, Brushes.Blue, 4.0f, itemTop + 1.0f);
+                return;
+            }
+
+            if (ei.IsAudioItem)
+            {
+                gOffScreen.FillEllipse(ei.IsFromLibrary ? Brushes.LimeGreen : Brushes.Blue, 4, itemTop + 4, 8, 8);
+                return;
+            }
+
+            gOffScreen.DrawString("?", parent.Font, Brushes.Black, 4.0f, itemTop + 1.0f);
+        }
     }
 
     public class RequestChangeEventArgs : EventArgs
@@ -74,16 +129,32 @@ namespace BAPSPresenter2
 
     public partial class TrackList : Control
     {
+        private NullEntryInfo nullEntry = new NullEntryInfo();
+
         private System.Collections.Generic.List<EntryInfo> items = new System.Collections.Generic.List<EntryInfo>();
 
-        public bool IsTextItemAt(int index) =>
-            GetTrack(index).type == Command.TEXTITEM;
+        public bool IsTextItemAt(int index) => GetTrack(index).IsTextItem;
 
-        public EntryInfo GetTrack(int i) => i < items.Count ? items[i] : new EntryInfo(Command.TEXTITEM, "NONE");
+        public EntryInfo GetTrack(int i) => items.ElementAtOrDefault(i) ?? nullEntry;
+
+        private EntryInfo MakeEntryInfo(Command type, string descr)
+        {
+            switch (type)
+            {
+                case Command.FILEITEM:
+                    return new FileEntryInfo(descr);
+                case Command.TEXTITEM:
+                    return new TextEntryInfo(descr);
+                case Command.LIBRARYITEM:
+                    return new LibraryEntryInfo(descr);
+                default:
+                    return new NullEntryInfo();
+            }
+        }
 
         public void AddTrack(Command type, string descr)
         {
-            items.Add(new EntryInfo(type, descr));
+            items.Add(MakeEntryInfo(type, descr));
             ShowHideScrollBar();
             Invalidate();
         }
@@ -158,7 +229,8 @@ namespace BAPSPresenter2
             get => selectedIndex;
             set
             {
-                if (value < items.Count && value >= 0 && items[value].type != Command.TEXTITEM)
+                var item = GetTrack(value);
+                if (item.IsAudioItem)
                 {
                     selectedIndex = value;
                     pendingLoadRequest = false;
@@ -172,13 +244,8 @@ namespace BAPSPresenter2
         {
             set
             {
-                selectedTextEntry?.ClearSelection();
-                if (value < items.Count && value >= 0 &&
-                (items[value].type == Command.TEXTITEM))
-                {
-                    selectedTextEntry = items[value];
-                    items[value].isSelectedTextItem = true;
-                }
+                var item = GetTrack(value);
+                if (item.IsTextItem) selectedTextEntry = item;
                 Invalidate();
             }
         }
@@ -213,6 +280,7 @@ namespace BAPSPresenter2
                      ControlStyles.StandardClick |
                      ControlStyles.UserMouse,
                      true);
+            DoubleBuffered = true;
 
             scroll = new VScrollBar
             {
@@ -237,6 +305,7 @@ namespace BAPSPresenter2
             // The base class contains a bitmap, offScreen, for constructing
             // the control and is rendered when all items are populated.
             // This technique prevents flicker.
+            if (offScreen == null) return;
             using (var gOffScreen = Graphics.FromImage(offScreen))
             {
                 gOffScreen.SmoothingMode = SmoothingMode.AntiAlias;
@@ -310,11 +379,8 @@ namespace BAPSPresenter2
             }
             int indexToShow = GetIndexToShow(n);
             var item = items[indexToShow];
-            if (item.isSelectedTextItem)
-            {
-                gOffScreen.FillRectangle(Brushes.Lavender, rect2);
-            }
-            DrawTypeIcon(gOffScreen, itemTop, item);
+            if (ReferenceEquals(item, selectedTextEntry)) gOffScreen.FillRectangle(Brushes.Lavender, rect2);
+            item.DrawTypeIcon(this, gOffScreen, itemTop);
 
             // Draw the item
             gOffScreen.DrawString(item.ToString(), Font, textbrush, new Rectangle(18, itemTop, ClientRectangle.Width - 20, ItemHeight), new StringFormat(StringFormatFlags.NoWrap));
@@ -324,24 +390,6 @@ namespace BAPSPresenter2
             if (n == loadedIndex || hoverIndex == n)
             {
                 gOffScreen.DrawRectangle(Pens.Black, rect2);
-            }
-        }
-
-        private void DrawTypeIcon(Graphics gOffScreen, int itemTop, EntryInfo item)
-        {
-            switch (item.type)
-            {
-                case Command.FILEITEM:
-                    gOffScreen.FillEllipse(Brushes.SteelBlue, 4, itemTop + 4, 8, 8);
-                    break;
-
-                case Command.LIBRARYITEM:
-                    gOffScreen.FillEllipse(Brushes.LimeGreen, 4, itemTop + 4, 8, 8);
-                    break;
-
-                case Command.TEXTITEM:
-                    gOffScreen.DrawString("T", Font, Brushes.Blue, 4.0f, itemTop + 1.0f);
-                    break;
             }
         }
 
@@ -629,23 +677,34 @@ namespace BAPSPresenter2
         private void ShowHideScrollBar()
         {
             var viewableItemCount = ClientSize.Height / ItemHeight;
-            if (items.Count > viewableItemCount) ShowScrollbar(); else HideScrollbar();
+
+            scroll.Visible = items.Count > viewableItemCount;
+            if (!scroll.Visible) scroll.Value = 0;
             scroll.Maximum = (items.Count - 14 > 0) ? items.Count - 14 : items.Count;
+
+            offScreen = SetupOffscreen();
+        }
+
+        private Bitmap SetupOffscreen()
+        {
+            var w = ClientSize.Width - (scroll.Visible ? SCROLL_WIDTH : 0) - 1;
+            var h = ClientSize.Height - 2;
+
+            bool visible = 0 < w && 0 < h;
+            if (!visible) return null;
+
+            return new Bitmap(w, h);
         }
 
         private void ShowScrollbar()
         {
             scroll.Visible = true;
-            offScreen = new Bitmap(ClientSize.Width - SCROLL_WIDTH - 1, ClientSize.Height - 2);
         }
 
         private void HideScrollbar()
         {
             scroll.Visible = false;
             scroll.Value = 0;
-            int w = ClientSize.Width - 1;
-            if (w <= 0) w = 1;
-            offScreen = new Bitmap(w, ClientSize.Height - 2);
         }
 
         private int IndexFromY(int y)
@@ -660,10 +719,7 @@ namespace BAPSPresenter2
             if (goingUp) addMe = -1;
             for (; (goingUp ? -1 : startIndex) < (goingUp ? startIndex : items.Count); startIndex += addMe)
             {
-                if (items[startIndex].type != Command.TEXTITEM)
-                {
-                    return startIndex;
-                }
+                if (items[startIndex].IsAudioItem) return startIndex;
             }
             return -1;
         }

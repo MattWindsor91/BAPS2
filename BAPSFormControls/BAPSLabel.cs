@@ -63,7 +63,8 @@ namespace BAPSFormControls
 
         public BAPSLabel()
         {
-            SetStyle(ControlStyles.UserPaint | ControlStyles.SupportsTransparentBackColor | ControlStyles.OptimizedDoubleBuffer, true);
+            SetStyle(ControlStyles.UserPaint | ControlStyles.SupportsTransparentBackColor, true);
+            DoubleBuffered = true;
             TabStop = false;
             backBrush = new System.Drawing.Drawing2D.LinearGradientBrush(new Rectangle(0, 0, 10, 10), Color.Tan, Color.Snow, System.Drawing.Drawing2D.LinearGradientMode.Vertical);
             InitializeComponent();

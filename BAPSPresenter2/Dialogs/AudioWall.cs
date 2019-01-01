@@ -1,6 +1,6 @@
 ﻿using BAPSCommon;
-using BAPSPresenter;
 using System;
+using System.Linq;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -61,24 +61,16 @@ namespace BAPSPresenter2
         {
             Text = string.Concat("Audio Wall for Channel ", tl.Channel.ToString());
             int walli = 0;
+
             for (int i = 0; i < tl.TrackCount && walli < 20; i++)
             {
                 var ei = tl.GetTrack(i);
-                if (ei.type != Command.TEXTITEM)
-                {
-                    buttons[walli].Text = ei.description;
-                    buttons[walli].Tag = i;
-                    buttons[walli].Enabled = true;
-                    if (i == tl.LoadedIndex)
-                    {
-                        buttons[walli].Highlighted = true;
-                    }
-                    else
-                    {
-                        buttons[walli].Highlighted = false;
-                    }
-                    walli++;
-                }
+                if (!ei.IsAudioItem) continue;
+                buttons[walli].Text = ei.Description;
+                buttons[walli].Tag = i;
+                buttons[walli].Enabled = true;
+                buttons[walli].Highlighted = i == tl.LoadedIndex;
+                walli++;
             }
             for (; walli < 20; walli++)
             {
