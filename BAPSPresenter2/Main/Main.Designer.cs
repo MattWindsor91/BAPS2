@@ -62,7 +62,7 @@ namespace BAPSPresenter2
         RecordLibrarySearch recordLibrarySearch = null;
         Dialogs.Config configDialog = null;
         LoadShowDialog loadShowDialog = null;
-        SecurityDialog securityDialog = null;
+        Dialogs.Security securityDialog = null;
         Dialogs.About about = null;
         Dialogs.Text textDialog = null;
         AudioWall audioWall = null;

@@ -279,56 +279,104 @@ namespace BAPSPresenter2
 
         private void processConfigError(uint errorCode, string description)
         {
-            if (securityDialog == null) return;
-            securityDialog.Invoke((Action<object, string>)securityDialog.receiveConfigError, errorCode, description);
+            var s = securityDialog;
+            if (s == null) return;
+            if (s.IsDisposed || !s.IsHandleCreated) return;
+            if (s.InvokeRequired)
+            {
+                s.Invoke((Action<uint, string>)s.receiveConfigError, errorCode, description);
+            }
+            else s.receiveConfigError(errorCode, description);
         }
 
         private void processUserInfo(string username, uint permissions)
         {
-            if (securityDialog == null) return;
-            securityDialog.Invoke((Action<string, object>)securityDialog.receiveUserInfo, username, permissions);
+            var s = securityDialog;
+            if (s == null) return;
+            if (s.IsDisposed || !s.IsHandleCreated) return;
+            if (s.InvokeRequired)
+            {
+                s.Invoke((Action<string, uint>)s.receiveUserInfo, username, permissions);
+            }
+            else s.receiveUserInfo(username, permissions);
         }
 
         private void processUserCount(uint userCount)
         {
-            if (securityDialog == null) return;
-            securityDialog.Invoke((Action<object>)securityDialog.receiveUserCount, userCount);
+            var s = securityDialog;
+            if (s == null) return;
+            if (s.IsDisposed || !s.IsHandleCreated) return;
+            if (s.InvokeRequired)
+            {
+                s.Invoke((Action<uint>)s.receiveUserCount, userCount);
+            }
+            else s.receiveUserCount(userCount);
         }
 
         private void processUserResult(uint resultCode, string description)
         {
-            if (securityDialog == null) return;
-            securityDialog.Invoke((Action<object, string>)securityDialog.receiveUserResult, resultCode, description);
+            var s = securityDialog;
+            if (s == null) return;
+            if (s.IsDisposed || !s.IsHandleCreated) return;
+            if (s.InvokeRequired)
+            {
+                s.Invoke((Action<uint, string>)s.receiveUserResult, resultCode, description);
+            }
+            else s.receiveUserResult(resultCode, description);
         }
 
         private void processPermissionInfo(uint permissionCode, string description)
         {
-            if (securityDialog == null) return;
-            securityDialog.Invoke((Action<object, string>)securityDialog.receivePermissionInfo, permissionCode, description);
+            var s = securityDialog;
+            if (s == null) return;
+            if (s.IsDisposed || !s.IsHandleCreated) return;
+            if (s.InvokeRequired)
+            {
+                s.Invoke((Action<uint, string>)s.receivePermissionInfo, permissionCode, description);
+            }
+            else s.receivePermissionInfo(permissionCode, description);
         }
 
         private void processPermissionCount(uint permissionCount)
         {
-            if (securityDialog == null) return;
-            securityDialog.Invoke((Action<object>)securityDialog.receivePermissionCount, permissionCount);
+            var s = securityDialog;
+            if (s == null) return;
+            if (s.IsDisposed || !s.IsHandleCreated) return;
+            if (s.InvokeRequired)
+            {
+                s.Invoke((Action<uint>)s.receivePermissionCount, permissionCount);
+            }
+            else s.receivePermissionCount(permissionCount);
         }
 
         private void processIPRestrictionCount(Command cmd, uint count)
         {
-            if (securityDialog == null) return;
+            var s = securityDialog;
+            if (s == null) return;
+            if (s.IsDisposed || !s.IsHandleCreated) return;
             var target = cmd.HasFlag(Command.CONFIG_USEVALUEMASK)
-                ? (Action<object>)securityDialog.receiveIPDenyCount
-                : securityDialog.receiveIPAllowCount;
-            securityDialog.Invoke(target, count);
+                ? (Action<uint>)s.receiveIPDenyCount
+                : s.receiveIPAllowCount;
+            if (s.InvokeRequired)
+            {
+                s.Invoke(target, count);
+            }
+            else target(count);
         }
 
         private void processIPRestriction(Command cmd, string ipaddress, uint mask)
         {
-            if (securityDialog == null) return;
+            var s = securityDialog;
+            if (s == null) return;
+            if (s.IsDisposed || !s.IsHandleCreated) return;
             var target = cmd.HasFlag(Command.CONFIG_USEVALUEMASK)
-                ? (Action<string, object>)securityDialog.receiveIPDeny
-                : securityDialog.receiveIPAllow;
-            securityDialog.Invoke(target, ipaddress, mask);
+                ? (Action<string, uint>)s.receiveIPDeny
+                : s.receiveIPAllow;
+            if (s.InvokeRequired)
+            {
+                s.Invoke(target, ipaddress, mask);
+            }
+            else target(ipaddress, mask);
         }
     }
 }

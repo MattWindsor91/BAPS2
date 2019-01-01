@@ -129,18 +129,8 @@ namespace BAPSPresenter2
                     e.Handled = true;
                     break;
                 case KeyShortcuts.Security:
-                    {
-                        // TODO(@MattWindsor91): port these
-#if false
-                        securityDialog = new SecurityDialog(this, msgQueue);
-                        Command cmd = Command.CONFIG | Command.GETPERMISSIONS;
-                        msgQueue.Add(new ActionMessage(cmd));
-                        securityDialog.ShowDialog();
-                        delete securityDialog;
-                        securityDialog = nullptr;
-#endif
-                        e.Handled = true;
-                    }
+                    OpenSecurityDialog();
+                    e.Handled = true;
                     break;
                 case KeyShortcuts.TextMaximised:
                     ToggleTextDialog(shouldMaximize: true);
@@ -158,6 +148,17 @@ namespace BAPSPresenter2
                     /** Ignore all other keys **/
                     break;
             }
+        }
+
+        private void OpenSecurityDialog()
+        {
+            using (securityDialog = new Dialogs.Security(msgQueue))
+            {
+                securityDialog.KeyDownForward += BAPSPresenterMain_KeyDown;
+                msgQueue.Add(new BAPSCommon.Message(Command.CONFIG | Command.GETPERMISSIONS));
+                securityDialog.ShowDialog();
+            }
+            securityDialog = null;
         }
 
         private void OpenAboutDialog()
