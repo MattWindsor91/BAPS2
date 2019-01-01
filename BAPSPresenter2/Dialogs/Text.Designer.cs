@@ -37,7 +37,7 @@ namespace BAPSPresenter2.Dialogs
             // 
             this.textText.BackColor = System.Drawing.SystemColors.Window;
             this.textText.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textText.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textText.Font = new System.Drawing.Font("Segoe UI", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textText.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.textText.Location = new System.Drawing.Point(0, 0);
             this.textText.Multiline = true;

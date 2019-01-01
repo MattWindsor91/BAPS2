@@ -203,7 +203,7 @@ namespace BAPSPresenter2.Dialogs
             // 
             // loginButton
             // 
-            this.loginButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.loginButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.loginButton.Location = new System.Drawing.Point(84, 3);
             this.loginButton.Name = "loginButton";
             this.loginButton.Size = new System.Drawing.Size(75, 23);
@@ -215,7 +215,7 @@ namespace BAPSPresenter2.Dialogs
             // cancelButton
             // 
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.cancelButton.Location = new System.Drawing.Point(3, 3);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 23);
@@ -227,7 +227,7 @@ namespace BAPSPresenter2.Dialogs
             // serverText
             // 
             this.serverText.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.serverText.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.serverText.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.serverText.FormattingEnabled = true;
             this.serverText.Items.AddRange(new object[] {
             "localhost",
@@ -291,7 +291,7 @@ namespace BAPSPresenter2.Dialogs
             this.ClientSize = new System.Drawing.Size(219, 143);
             this.ControlBox = false;
             this.Controls.Add(this.tableLayoutPanel1);
-            this.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = global::BAPSPresenter2.Properties.Resources.Icon;
             this.MaximizeBox = false;

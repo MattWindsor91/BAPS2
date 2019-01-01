@@ -48,7 +48,7 @@
             // 
             // RefreshButton
             // 
-            this.RefreshButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.RefreshButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.RefreshButton.Location = new System.Drawing.Point(0, 0);
             this.RefreshButton.Margin = new System.Windows.Forms.Padding(0);
             this.RefreshButton.Name = "RefreshButton";
@@ -58,11 +58,10 @@
             // 
             // Listing
             // 
-            this.Listing.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.Listing.Location = new System.Drawing.Point(0, 23);
             this.Listing.Margin = new System.Windows.Forms.Padding(0);
             this.Listing.Name = "Listing";
-            this.Listing.Size = new System.Drawing.Size(234, 132);
+            this.Listing.Size = new System.Drawing.Size(234, 121);
             this.Listing.TabIndex = 221;
             this.Listing.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Listing_MouseDown);
             // 

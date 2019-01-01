@@ -113,8 +113,8 @@ namespace BAPSPresenter2
             // 
             // loadShowButton
             // 
-            this.loadShowButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.loadShowButton.Font = new System.Drawing.Font("Tahoma", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.loadShowButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.loadShowButton.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.loadShowButton.Location = new System.Drawing.Point(3, 3);
             this.loadShowButton.Name = "loadShowButton";
             this.loadShowButton.Size = new System.Drawing.Size(114, 64);
@@ -124,8 +124,8 @@ namespace BAPSPresenter2
             // 
             // bapsButton1
             // 
-            this.bapsButton1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.bapsButton1.Font = new System.Drawing.Font("Tahoma", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.bapsButton1.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.bapsButton1.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.bapsButton1.Location = new System.Drawing.Point(123, 3);
             this.bapsButton1.Name = "bapsButton1";
             this.bapsButton1.Size = new System.Drawing.Size(114, 64);
@@ -137,7 +137,7 @@ namespace BAPSPresenter2
             // 
             this.tableLayoutPanel1.SetColumnSpan(this.timeLine, 4);
             this.timeLine.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.timeLine.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.timeLine.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.timeLine.Location = new System.Drawing.Point(3, 583);
             this.timeLine.Name = "timeLine";
             this.timeLine.Size = new System.Drawing.Size(1354, 52);
@@ -194,7 +194,7 @@ namespace BAPSPresenter2
             this.MainTextDisplay.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.tableLayoutPanel1.SetColumnSpan(this.MainTextDisplay, 4);
             this.MainTextDisplay.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.MainTextDisplay.Font = new System.Drawing.Font("Tahoma", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.MainTextDisplay.Font = new System.Drawing.Font("Segoe UI", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MainTextDisplay.Location = new System.Drawing.Point(3, 641);
             this.MainTextDisplay.Multiline = true;
             this.MainTextDisplay.Name = "MainTextDisplay";
@@ -280,7 +280,7 @@ namespace BAPSPresenter2
             this.ClientSize = new System.Drawing.Size(1360, 737);
             this.ControlBox = false;
             this.Controls.Add(this.tableLayoutPanel1);
-            this.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = global::BAPSPresenter2.Properties.Resources.Icon;
             this.KeyPreview = true;
             this.MinimizeBox = false;

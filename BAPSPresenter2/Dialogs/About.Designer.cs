@@ -197,7 +197,7 @@
             this.headerTitle.AutoSize = true;
             this.headerTitle.BackColor = System.Drawing.Color.Transparent;
             this.mainLayout.SetColumnSpan(this.headerTitle, 2);
-            this.headerTitle.Font = new System.Drawing.Font("Tahoma", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.headerTitle.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.headerTitle.Location = new System.Drawing.Point(158, 3);
             this.headerTitle.Margin = new System.Windows.Forms.Padding(3);
             this.headerTitle.Name = "headerTitle";

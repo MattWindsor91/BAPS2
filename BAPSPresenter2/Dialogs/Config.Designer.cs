@@ -58,7 +58,7 @@
             // cancelButton
             // 
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.cancelButton.Location = new System.Drawing.Point(336, 320);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(88, 24);
@@ -69,7 +69,7 @@
             // saveButton
             // 
             this.saveButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.saveButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.saveButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.saveButton.Location = new System.Drawing.Point(232, 320);
             this.saveButton.Name = "saveButton";
             this.saveButton.Size = new System.Drawing.Size(88, 24);
@@ -80,7 +80,7 @@
             // restartButton
             // 
             this.restartButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.restartButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.restartButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.restartButton.Location = new System.Drawing.Point(150, 320);
             this.restartButton.Name = "restartButton";
             this.restartButton.Size = new System.Drawing.Size(88, 24);
@@ -103,7 +103,7 @@
             this.Controls.Add(this.saveButton);
             this.Controls.Add(this.restartButton);
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Font = (new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
+            this.Font = (new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
                 0));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = global::BAPSPresenter2.Properties.Resources.Icon;

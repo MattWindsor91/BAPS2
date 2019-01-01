@@ -74,7 +74,7 @@
             // 
             // addToAllowButton
             // 
-            this.addToAllowButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.addToAllowButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.addToAllowButton.Location = new System.Drawing.Point(288, 294);
             this.addToAllowButton.Name = "addToAllowButton";
             this.addToAllowButton.Size = new System.Drawing.Size(80, 22);
@@ -91,7 +91,7 @@
             // 
             // label1
             // 
-            this.label1.Font = (new System.Drawing.Font("Microsoft Sans Serif", 12, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point,
+            this.label1.Font = (new System.Drawing.Font("Segoe UI", 12, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point,
                 0));
             this.label1.Location = new System.Drawing.Point(12, 8);
             this.label1.Name = "label1";
@@ -131,7 +131,7 @@
             // 
             // selectedUserLabel
             // 
-            this.selectedUserLabel.Font = (new System.Drawing.Font("Tahoma", 15, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
+            this.selectedUserLabel.Font = (new System.Drawing.Font("Segoe UI", 15, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
                 0));
             this.selectedUserLabel.Location = new System.Drawing.Point(280, 16);
             this.selectedUserLabel.Name = "selectedUserLabel";
@@ -149,8 +149,8 @@
             // 
             // grantButton
             // 
-            this.grantButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.grantButton.Font = (new System.Drawing.Font("Tahoma", 8.25f, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
+            this.grantButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.grantButton.Font = (new System.Drawing.Font("Segoe UI", 8.25f, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
                 0));
             this.grantButton.Location = new System.Drawing.Point(448, 150);
             this.grantButton.Name = "grantButton";
@@ -161,7 +161,7 @@
             // 
             // label2
             // 
-            this.label2.Font = (new System.Drawing.Font("Microsoft Sans Serif", 12, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point,
+            this.label2.Font = (new System.Drawing.Font("Segoe UI", 12, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point,
                 0));
             this.label2.Location = new System.Drawing.Point(284, 8);
             this.label2.Name = "label2";
@@ -178,7 +178,7 @@
             // 
             // addToDenyButton
             // 
-            this.addToDenyButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.addToDenyButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.addToDenyButton.Location = new System.Drawing.Point(288, 322);
             this.addToDenyButton.Name = "addToDenyButton";
             this.addToDenyButton.Size = new System.Drawing.Size(80, 22);
@@ -188,7 +188,7 @@
             // 
             // removeFromAllowButton
             // 
-            this.removeFromAllowButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.removeFromAllowButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.removeFromAllowButton.Location = new System.Drawing.Point(374, 294);
             this.removeFromAllowButton.Name = "removeFromAllowButton";
             this.removeFromAllowButton.Size = new System.Drawing.Size(112, 22);
@@ -216,7 +216,7 @@
             // 
             // removeFromDenyButton
             // 
-            this.removeFromDenyButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.removeFromDenyButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.removeFromDenyButton.Location = new System.Drawing.Point(374, 322);
             this.removeFromDenyButton.Name = "removeFromDenyButton";
             this.removeFromDenyButton.Size = new System.Drawing.Size(112, 22);
@@ -253,8 +253,8 @@
             // 
             // refreshButton
             // 
-            this.refreshButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.refreshButton.Font = (new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
+            this.refreshButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.refreshButton.Font = (new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
                 0));
             this.refreshButton.Location = new System.Drawing.Point(448, 8);
             this.refreshButton.Name = "refreshButton";
@@ -265,8 +265,8 @@
             // 
             // deleteUserButton
             // 
-            this.deleteUserButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.deleteUserButton.Font = (new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
+            this.deleteUserButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.deleteUserButton.Font = (new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
                 0));
             this.deleteUserButton.Location = new System.Drawing.Point(448, 36);
             this.deleteUserButton.Name = "deleteUserButton";
@@ -303,7 +303,7 @@
             // 
             // selectedUserLabelLabel
             // 
-            this.selectedUserLabelLabel.Font = (new System.Drawing.Font("Tahoma", 15, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
+            this.selectedUserLabelLabel.Font = (new System.Drawing.Font("Segoe UI", 15, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
                 0));
             this.selectedUserLabelLabel.Location = new System.Drawing.Point(216, 16);
             this.selectedUserLabelLabel.Name = "selectedUserLabelLabel";
@@ -329,8 +329,8 @@
             // 
             // addUserButton
             // 
-            this.addUserButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.addUserButton.Font = (new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
+            this.addUserButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.addUserButton.Font = (new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
                 0));
             this.addUserButton.Location = new System.Drawing.Point(416, 27);
             this.addUserButton.Name = "addUserButton";
@@ -394,8 +394,8 @@
             // 
             // setPasswordButton
             // 
-            this.setPasswordButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.setPasswordButton.Font = (new System.Drawing.Font("Tahoma", 8.25f, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
+            this.setPasswordButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.setPasswordButton.Font = (new System.Drawing.Font("Segoe UI", 8.25f, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
                 0));
             this.setPasswordButton.Location = new System.Drawing.Point(424, 256);
             this.setPasswordButton.Name = "setPasswordButton";
@@ -433,7 +433,7 @@
             // 
             // selectUserLabel
             // 
-            this.selectUserLabel.Font = (new System.Drawing.Font("Microsoft Sans Serif", 10, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
+            this.selectUserLabel.Font = (new System.Drawing.Font("Segoe UI", 10, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
                 0));
             this.selectUserLabel.Location = new System.Drawing.Point(16, 8);
             this.selectUserLabel.Name = "selectUserLabel";
@@ -443,8 +443,8 @@
             // 
             // revokeButton
             // 
-            this.revokeButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.revokeButton.Font = (new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
+            this.revokeButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.revokeButton.Font = (new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
                 0));
             this.revokeButton.Location = new System.Drawing.Point(448, 126);
             this.revokeButton.Name = "revokeButton";
@@ -455,11 +455,11 @@
             // 
             // securityPageControl
             // 
-            this.securityPageControl.Appearance = System.Windows.Forms.TabAppearance.FlatButtons;
+            this.securityPageControl.Appearance = System.Windows.Forms.TabAppearance.Normal;
             this.securityPageControl.Controls.Add(this.userManagerPage);
             this.securityPageControl.Controls.Add(this.connectionManagerPage);
             this.securityPageControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.securityPageControl.Font = (new System.Drawing.Font("Tahoma", 8.25f, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
+            this.securityPageControl.Font = (new System.Drawing.Font("Segoe UI", 8.25f, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
                 0));
             this.securityPageControl.Location = new System.Drawing.Point(0, 0);
             this.securityPageControl.Name = "securityPageControl";

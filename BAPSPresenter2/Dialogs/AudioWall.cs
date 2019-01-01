@@ -31,7 +31,7 @@ namespace BAPSPresenter2
                     {
                         BackColor = Color.Transparent,
                         DialogResult = DialogResult.None,
-                        Font = new Font("Microsoft Sans Serif", 14.25f, FontStyle.Regular, GraphicsUnit.Point,
+                        Font = new Font("Segoe UI", 14.25f, FontStyle.Regular, GraphicsUnit.Point,
                         0),
                         HighlightColor = Color.Red,
                         Highlighted = false,
