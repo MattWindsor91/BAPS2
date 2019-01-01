@@ -49,6 +49,7 @@
             // RefreshButton
             // 
             this.RefreshButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.RefreshButton.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.RefreshButton.Location = new System.Drawing.Point(0, 0);
             this.RefreshButton.Margin = new System.Windows.Forms.Padding(0);
             this.RefreshButton.Name = "RefreshButton";
@@ -58,6 +59,7 @@
             // 
             // Listing
             // 
+            this.Listing.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Listing.Location = new System.Drawing.Point(0, 23);
             this.Listing.Margin = new System.Windows.Forms.Padding(0);
             this.Listing.Name = "Listing";

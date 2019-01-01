@@ -203,11 +203,16 @@ namespace BAPSPresenter2
 
         private void SetupDirectories()
         {
-            bapsDirectories = new BAPSDirectory[3] { bapsDirectory1, bapsDirectory2, bapsDirectory3 };
-            foreach (var dir in bapsDirectories)
+            bapsDirectories = new BAPSDirectory[3];
+            for (var i = 0; i < bapsDirectories.Length; i++)
             {
-                dir.RefreshRequest += RefreshDirectory;
+                bapsDirectories[i] = new BAPSDirectory()
+                {
+                    DirectoryID = i
+                };
+                bapsDirectories[i].RefreshRequest += RefreshDirectory;
             }
+            directoryFlow.Controls.AddRange(bapsDirectories);
         }
 
         private void SetupChannels()
