@@ -24,7 +24,7 @@ namespace BAPSPresenter2
                     break;
                 case Command.STOP:
                     chan.ShowStop();
-                    timeLine.Lock(channelID);
+                    timeLine.Unlock(channelID);
                     break;
             }
         }

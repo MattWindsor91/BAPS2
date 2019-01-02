@@ -1,21 +1,14 @@
 ﻿using System;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace BAPSFormControls
 {
     public partial class TimeLine : Control
     {
-        private enum TimeLineMoveStatus
-        {
-            TIMELINE_MOVE_CHAN0 = 0,
-            TIMELINE_MOVE_CHAN1 = 1,
-            TIMELINE_MOVE_CHAN2 = 2,
-            TIMELINE_MOVE_NONE
-        };
-
         public class TimeLineEventArgs : EventArgs
-    	{
+        {
             public int channel;
             public int startTime;
 
@@ -25,9 +18,10 @@ namespace BAPSFormControls
                 startTime = _startTime;
             }
         }
+
         public delegate void TimeLineEventHandler(object sender, TimeLineEventArgs e);
 
-		public TimeLine() : base()
+        public TimeLine() : base()
         {
             InitializeComponent();
             SetStyle(ControlStyles.UserPaint |
@@ -36,101 +30,43 @@ namespace BAPSFormControls
                      ControlStyles.SupportsTransparentBackColor,
                      true);
             TabStop = false;
-            trackDuration = new int[3];
-            trackDuration[0] = 0;
-            trackDuration[1] = 0;
-            trackDuration[2] = 0;
 
-            trackPosition = new int[3];
-            trackPosition[0] = 0;
-            trackPosition[1] = 0;
-            trackPosition[2] = 0;
-
-            startTime = new int[3];
-            startTime[0] = -1;
-            startTime[1] = -1;
-            startTime[2] = -1;
-
-            trackDurationCache = new int[3];
-            trackDurationCache[0] = 0;
-            trackDurationCache[1] = 0;
-            trackDurationCache[2] = 0;
-
-            trackPositionCache = new int[3];
-            trackPositionCache[0] = 0;
-            trackPositionCache[1] = 0;
-            trackPositionCache[2] = 0;
-
-            startTimeCache = new int[3];
-            startTimeCache[0] = -1;
-            startTimeCache[1] = -1;
-            startTimeCache[2] = -1;
-
-            moveOffset = new int[3];
-            moveOffset[0] = 0;
-            moveOffset[1] = 0;
-            moveOffset[2] = 0;
-
-            locked = new bool[3];
-            locked[0] = false;
-            locked[1] = false;
-            locked[2] = false;
-
-            moveStatus = TimeLineMoveStatus.TIMELINE_MOVE_NONE;
-            startMoveAtX = 0;
-
-            boundingBox = new Rectangle[3];
-            boundingBox[0] = new Rectangle(0, 0, 0, 0);
-            boundingBox[1] = new Rectangle(0, 0, 0, 0);
-            boundingBox[2] = new Rectangle(0, 0, 0, 0);
-
+            channelLines = new ChannelLine[3];
+            for (var i = 0; i < channelLines.Length; i++)
+            {
+                channelLines[i] = new ChannelLine(i);
+                channelLines[i].StartTimeChanged += OnStartTimeChanged;
+            }
 
             cachedTime = DateTime.Now;
-
-            dragEnabled = true;
 
             Font = new Font("Segoe UI", 8, FontStyle.Regular, GraphicsUnit.Point, 0);
         }
 
-        public void UpdateDuration(int channel, int duration)
-        {
-            trackDurationCache[channel] = duration;
-            if (moveStatus == TimeLineMoveStatus.TIMELINE_MOVE_NONE)
-            {
-                trackDuration[channel] = duration;
-            }
-        }
-        public void UpdatePosition(int channel, int position)
-        {
-            trackPositionCache[channel] = position;
-            if (moveStatus == TimeLineMoveStatus.TIMELINE_MOVE_NONE)
-            {
-                trackPosition[channel] = position;
-            }
-        }
-        public void UpdateStartTime(int channel, int newStartTime)
-        {
-            startTimeCache[channel] = newStartTime;
-            if (moveStatus == TimeLineMoveStatus.TIMELINE_MOVE_NONE)
-            {
-                startTime[channel] = newStartTime;
-            }
-        }
+        private ChannelLine ChannelAt(int index) => channelLines.ElementAtOrDefault(index);
+
+        public void UpdateDuration(int channel, int duration) => ChannelAt(channel)?.SetDuration(duration, IsDragging);
+
+        public void UpdatePosition(int channel, int position) => ChannelAt(channel)?.SetPosition(position, IsDragging);
+
+        public void UpdateStartTime(int channel, int newStartTime) => ChannelAt(channel)?.SetStartTime(newStartTime, IsDragging);
 
         public bool DragEnabled
         {
-	        set
-		    {
+            set
+            {
                 dragEnabled = value;
-                UpdateStartTime(0, 0);
-                UpdateStartTime(1, 0);
-                UpdateStartTime(2, 0);
+                for (int i = 0; i < channelLines.Length; i++) UpdateStartTime(i, 0);
             }
         }
 
         public event TimeLineEventHandler StartTimeChanged;
 
-	    protected override void OnPaint(PaintEventArgs e)
+        public static int ToTimelineWidth(int rw) => rw / 1_000 * thirtySecondPixels / 30;
+
+        public static int OfTimelineWidth(int tw) => tw * 30_000 / thirtySecondPixels;
+
+        protected override void OnPaint(PaintEventArgs e)
         {
             const int drawStartPosition = 20;
             var sf = new StringFormat
@@ -139,45 +75,9 @@ namespace BAPSFormControls
                 LineAlignment = StringAlignment.Center
             };
             var dt = cachedTime;
-            for (int i = 0; i < 3; i++)
+            foreach (var (cl, i) in channelLines.Select((cl, i) => (cl, i)))
             {
-                var rect = new Rectangle(2, (i * 11) - 2, 10, 14);
-                e.Graphics.DrawString((i + 1).ToString(), Font, Brushes.Black, rect);
-                int width = (((trackDuration[i] - (locked[i] ? trackPosition[i] : 0)) / 1000) * thirtySecondPixels) / 30;
-                int startOffset = 0;
-                int timeOffset = 0;
-                if (startTime[i] != -1)
-                {
-                    startOffset = ((startTime[i] / 1000) * thirtySecondPixels) / 30;
-                    timeOffset = startTime[i];
-                }
-                if (startOffset + moveOffset[i] < 0)
-                {
-                    moveOffset[i] = -startOffset;
-                    startOffset = 0;
-                }
-                else
-                {
-                    startOffset += moveOffset[i];
-                }
-                timeOffset += (moveOffset[i] * 30000) / thirtySecondPixels;
-                rect = new Rectangle(drawStartPosition + 40 + startOffset, i * 11, width, 8);
-                boundingBox[i] = rect;
-                e.Graphics.FillRectangle((locked[i]) ? runningColour : stoppedColour, rect);
-                int starttextx = rect.X - 50;
-                rect.X += rect.Width + 1;
-                rect.Y -= 2;
-                rect.Height += 4;
-                rect.Width = 50;
-                if (width != 0)
-                {
-                    e.Graphics.DrawString(dt.AddMilliseconds(timeOffset + trackDuration[i] - (locked[i] ? trackPosition[i] : 0)).ToString("T"), this.Font, Brushes.Black, rect);
-                }
-                if (timeOffset != 0)
-                {
-                    rect.X = starttextx;
-                    e.Graphics.DrawString(dt.AddMilliseconds(timeOffset).ToString("T"), this.Font, Brushes.Black, rect);
-                }
+                PaintChannel(e, drawStartPosition, dt, cl, i);
             }
 
             e.Graphics.DrawLine(Pens.Black, 0, 33, ClientRectangle.Width, 33);
@@ -193,88 +93,173 @@ namespace BAPSFormControls
             }
         }
 
+        private void PaintChannel(PaintEventArgs e, int drawStartPosition, DateTime dt, ChannelLine cl, int i)
+        {
+            var rect = new Rectangle(2, (i * 11) - 2, 10, 14);
+            e.Graphics.DrawString((i + 1).ToString(), Font, Brushes.Black, rect);
+            var widthRaw = cl.Duration - (cl.locked ? cl.Position : 0);
+            int width = ToTimelineWidth(widthRaw);
+            int startOffset = 0;
+            int timeOffset = 0;
+            if (cl.StartTime != -1)
+            {
+                startOffset = ToTimelineWidth(cl.StartTime);
+                timeOffset = cl.StartTime;
+            }
+            if (startOffset + cl.moveOffset < 0)
+            {
+                cl.moveOffset = -startOffset;
+                startOffset = 0;
+            }
+            else
+            {
+                startOffset += cl.moveOffset;
+            }
+            timeOffset += OfTimelineWidth(cl.moveOffset);
+            rect = new Rectangle(drawStartPosition + 40 + startOffset, i * 11, width, 8);
+            cl.boundingBox = rect;
+            e.Graphics.FillRectangle(cl.locked ? runningColour : stoppedColour, rect);
+            int starttextx = rect.X - 50;
+            rect.X += rect.Width + 1;
+            rect.Y -= 2;
+            rect.Height += 4;
+            rect.Width = 50;
+            if (width != 0) DrawTime(e.Graphics, rect, dt.AddMilliseconds(timeOffset + widthRaw));
+            if (timeOffset != 0)
+            {
+                rect.X = starttextx;
+                DrawTime(e.Graphics, rect, dt.AddMilliseconds(timeOffset));
+            }
+        }
+
+        private void DrawTime(Graphics g, Rectangle rect, DateTime time)
+        {
+            g.DrawString(time.ToLongTimeString(), Font, Brushes.Black, rect);
+        }
+
         protected override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseDown(e);
             if (!dragEnabled) return;
             Cursor.Current = Cursors.Default;
-            for (int i = 0; i < 3; i++)
-            {
-                if (boundingBox[i].Contains(e.X, e.Y) && !locked[i])
-                {
-                    moveStatus = (TimeLineMoveStatus)i;
-                    startMoveAtX = e.X;
-                Cursor.Current = Cursors.SizeWE;
-                    break;
-                }
-            }
+
+            currentlyMovingChannel = channelLines.First(cl => cl.IsDraggable(e.X, e.Y));
+            if (currentlyMovingChannel != null) startMoveAtX = e.X;
         }
 
-	    protected override void OnMouseMove(MouseEventArgs e)
+        protected override void OnMouseMove(MouseEventArgs e)
         {
             base.OnMouseMove(e);
-            if (moveStatus != TimeLineMoveStatus.TIMELINE_MOVE_NONE && e.Button == MouseButtons.Left)
-            {
-                moveOffset[(int)moveStatus] = e.X - startMoveAtX;
-                Invalidate();
-            }
-        }
-
-	    protected override void OnMouseUp(MouseEventArgs e)
-        {
-            base.OnMouseUp(e);
-            if (moveStatus != TimeLineMoveStatus.TIMELINE_MOVE_NONE)
-            {
-                startTime[(int)moveStatus] = startTime[(int)moveStatus] + (moveOffset[(int)moveStatus] * 30000) / thirtySecondPixels;
-                startTimeCache[(int)moveStatus] = startTime[(int)moveStatus];
-                if (startTime[(int)moveStatus] > 0)
-                {
-                    StartTimeChanged(this, new TimeLineEventArgs((int)moveStatus, (((cachedTime.Minute * 60) + cachedTime.Second) * 1000) +
-                                                                                cachedTime.Millisecond +
-                                                                                startTime[(int)moveStatus]));
-                }
-            }
-            moveStatus = TimeLineMoveStatus.TIMELINE_MOVE_NONE;
-            for (int i = 0; i < 3; i++)
-            {
-                trackDuration[i] = trackDurationCache[i];
-                trackPosition[i] = trackPositionCache[i];
-                startTime[i] = startTimeCache[i];
-                moveOffset[i] = 0;
-            }
+            Cursor.Current = GetLineHoverCursor(e);
+            if (currentlyMovingChannel == null || e.Button != MouseButtons.Left) return;
+            currentlyMovingChannel.moveOffset = e.X - startMoveAtX;
             Invalidate();
         }
 
-    	public void Tick()
+        private Cursor GetLineHoverCursor(MouseEventArgs e)
         {
-            if (moveStatus == TimeLineMoveStatus.TIMELINE_MOVE_NONE)
+            var isOverDraggable = channelLines.Any(cl => cl.IsDraggable(e.X, e.Y));
+            return isOverDraggable ? Cursors.SizeWE : Cursors.Default;
+        }
+
+        protected override void OnMouseUp(MouseEventArgs e)
+        {
+            base.OnMouseUp(e);
+            currentlyMovingChannel?.StopDragging(cachedTime);
+            currentlyMovingChannel = null;
+            foreach (var cl in channelLines) cl.CopyCaches();
+            Invalidate();
+        }
+
+        public void Tick()
+        {
+            if (IsDragging) return;
+            cachedTime = DateTime.Now;
+            Invalidate();
+        }
+
+        private bool IsDragging => currentlyMovingChannel != null;
+
+        public bool Lock(ushort channelID) => channelLines[channelID].locked = true;
+
+        public bool Unlock(ushort channelID) => channelLines[channelID].locked = false;
+
+        private class ChannelLine
+        {
+            public int channelID;
+
+            public bool locked = false;
+
+            public int Duration { get; private set; } = 0;
+            public int Position { get; private set; } = 0;
+            public int StartTime { get; private set; } = -1;
+
+            private int trackDurationCache = 0;
+            private int trackPositionCache = 0;
+            private int startTimeCache = -1;
+            public int moveOffset = 0;
+            public Rectangle boundingBox = new Rectangle();
+
+            public ChannelLine(int channelID)
             {
-                cachedTime = DateTime.Now;
-                Invalidate();
+                this.channelID = channelID;
+            }
+
+            public void SetDuration(int value, bool isDragging)
+            {
+                trackDurationCache = value;
+                if (!isDragging) Duration = value;
+            }
+
+            public void SetPosition(int value, bool isDragging)
+            {
+                trackPositionCache = value;
+                if (!isDragging) Position = value;
+            }
+
+            public void SetStartTime(int value, bool isDragging)
+            {
+                startTimeCache = value;
+                if (!isDragging) StartTime = value;
+            }
+
+            public event TimeLineEventHandler StartTimeChanged;
+
+            public void CopyCaches()
+            {
+                Duration = trackDurationCache;
+                Position = trackPositionCache;
+                StartTime = startTimeCache;
+                moveOffset = 0;
+            }
+
+            public bool IsDraggable(int x, int y) => boundingBox.Contains(x, y) && !locked;
+
+            public void StopDragging(DateTime cachedTime)
+            {
+                StartTime += OfTimelineWidth(moveOffset);
+                startTimeCache = StartTime;
+                if (0 < StartTime)
+                {
+                    var cachedTimeMsecs = cachedTime.TimeOfDay.Ticks / TimeSpan.TicksPerMillisecond;
+                    var absoluteStartTime = (int)Math.Min(int.MaxValue, StartTime + cachedTimeMsecs);
+                    StartTimeChanged?.Invoke(this, new TimeLineEventArgs(channelID, absoluteStartTime));
+                }
             }
         }
 
-        public bool Lock(ushort channelID) => locked[channelID] = true;
-        public bool Unlock(ushort channelID) => locked[channelID] = false;
+        private ChannelLine[] channelLines;
 
-        private bool[] locked;
-        private bool dragEnabled = true;
-        private int[] trackDuration;
-		private int[] trackPosition;
-		private int[] startTime;
-		private int[] trackDurationCache;
-		private int[] trackPositionCache;
-		private int[] startTimeCache;
-		private int[] moveOffset;
-		private Rectangle[] boundingBox;
-		private DateTime cachedTime;
-
+        private DateTime cachedTime;
 
         private Brush stoppedColour = Brushes.DeepSkyBlue;
         private Brush runningColour = Brushes.Orchid;
 
-		private TimeLineMoveStatus moveStatus;
+        private bool dragEnabled = true;
+        private ChannelLine currentlyMovingChannel = null;
         private int startMoveAtX;
         private const int thirtySecondPixels = 60;
+
+        public void OnStartTimeChanged(object sender, TimeLineEventArgs e) => StartTimeChanged?.Invoke(sender, e);
     }
 }
