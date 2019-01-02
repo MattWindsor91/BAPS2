@@ -71,7 +71,7 @@ namespace BAPSPresenter2
 
         private ToolStripSeparator toolStripSeparator4;
         private ToolStripMenuItem showAudioWallToolStripMenuItem;
-        private TimeLine timeLine;
+        private BAPSFormControls.TimeLine timeLine;
         private Button loadShowButton;
         private Button bapsButton1;
 
@@ -87,7 +87,7 @@ namespace BAPSPresenter2
             this.showAudioWallToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadShowButton = new System.Windows.Forms.Button();
             this.bapsButton1 = new System.Windows.Forms.Button();
-            this.timeLine = new BAPSPresenter.TimeLine();
+            this.timeLine = new BAPSFormControls.TimeLine();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.bapsChannel3 = new BAPSPresenter2.BAPSChannel();
             this.MainTextDisplay = new System.Windows.Forms.TextBox();
@@ -143,7 +143,7 @@ namespace BAPSPresenter2
             this.timeLine.TabIndex = 214;
             this.timeLine.TabStop = false;
             this.timeLine.Text = "timeLine1";
-            this.timeLine.StartTimeChanged += new BAPSPresenter.TimeLineEventHandler(this.timeLine_StartTimeChanged);
+            this.timeLine.StartTimeChanged += new BAPSFormControls.TimeLine.TimeLineEventHandler(this.timeLine_StartTimeChanged);
             // 
             // tableLayoutPanel1
             // 

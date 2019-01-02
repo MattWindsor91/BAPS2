@@ -383,10 +383,10 @@ namespace BAPSPresenter2
             {
                 foreach (var chan in bapsChannels) chan.CountdownTick();
             }
-            timeLine.tick();
+            timeLine.Tick();
         }
 
-        private void timeLine_StartTimeChanged(object sender, TimeLineEventArgs e)
+        private void timeLine_StartTimeChanged(object sender, BAPSFormControls.TimeLine.TimeLineEventArgs e)
         {
             if (!timersEnabled) return;
             bapsChannels[e.channel].UpdateCountDown(e.startTime / 1000 % 3600);

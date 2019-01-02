@@ -16,15 +16,15 @@ namespace BAPSPresenter2
             {
                 case Command.PLAY:
                     chan.ShowPlay();
-                    timeLine.locked[channelID] = true;
+                    timeLine.Lock(channelID);
                     break;
                 case Command.PAUSE:
                     chan.ShowPause();
-                    timeLine.locked[channelID] = false;
+                    timeLine.Unlock(channelID);
                     break;
                 case Command.STOP:
                     chan.ShowStop();
-                    timeLine.locked[channelID] = false;
+                    timeLine.Lock(channelID);
                     break;
             }
         }

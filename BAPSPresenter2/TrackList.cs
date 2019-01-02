@@ -7,126 +7,6 @@ using System.Windows.Forms;
 
 namespace BAPSPresenter2
 {
-    public class TrackListDragDrop
-    {
-        public int fromIndex;
-        public ushort fromChannel;
-        public ushort toChannel;
-        public bool moved;
-
-        public TrackListDragDrop(int _fromIndex, ushort _fromChannel)
-        {
-            fromChannel = _fromChannel;
-            toChannel = _fromChannel;
-            fromIndex = _fromIndex;
-            moved = false;
-        }
-    }
-
-    public abstract class EntryInfo
-    {
-        public string Description { get; private set; }
-
-        public EntryInfo(string description)
-        {
-            Description = description;
-        }
-
-        public abstract bool IsAudioItem { get; }
-        public abstract bool IsTextItem { get; }
-        public abstract bool IsFromLibrary { get; }
-
-        public override string ToString() => Description;
-    }
-
-    public class TextEntryInfo : EntryInfo
-    {
-        public TextEntryInfo(string description) : base(description) { }
-
-        public override bool IsAudioItem => false;
-        public override bool IsTextItem => true;
-        public override bool IsFromLibrary => false;
-    }
-
-    public class FileEntryInfo : EntryInfo
-    {
-        public FileEntryInfo(string description) : base(description) { }
-
-        public override bool IsAudioItem => true;
-        public override bool IsTextItem => false;
-        public override bool IsFromLibrary => false;
-    }
-
-    public class LibraryEntryInfo : EntryInfo
-    {
-        public LibraryEntryInfo(string description) : base(description) { }
-
-        public override bool IsAudioItem => true;
-        public override bool IsTextItem => false;
-        public override bool IsFromLibrary => true;
-    }
-
-    public class NullEntryInfo : EntryInfo
-    {
-        public NullEntryInfo() : base("NONE") { }
-
-        public override bool IsAudioItem => false;
-        public override bool IsTextItem => false;
-        public override bool IsFromLibrary => false;
-    }
-
-    public static class EntryInfoExtensions
-    {
-        public static void DrawTypeIcon(this EntryInfo ei, Control parent, Graphics gOffScreen, int itemTop)
-        {
-            if (ei.IsTextItem)
-            {
-                gOffScreen.DrawString("T", parent.Font, Brushes.Blue, 4.0f, itemTop + 1.0f);
-                return;
-            }
-
-            if (ei.IsAudioItem)
-            {
-                gOffScreen.FillEllipse(ei.IsFromLibrary ? Brushes.LimeGreen : Brushes.Blue, 4, itemTop + 4, 8, 8);
-                return;
-            }
-
-            gOffScreen.DrawString("?", parent.Font, Brushes.Black, 4.0f, itemTop + 1.0f);
-        }
-    }
-
-    public class RequestChangeEventArgs : EventArgs
-    {
-        public ChangeType ct;
-        public int index;
-        public int index2;
-        public ushort channel;
-
-        public RequestChangeEventArgs(ushort _channel, ChangeType _ct, int _index, int _index2)
-            : base()
-        {
-            ct = _ct;
-            index = _index;
-            index2 = _index2;
-            channel = _channel;
-        }
-
-        public RequestChangeEventArgs(ushort _channel, ChangeType _ct, int _index)
-            : this(_channel, _ct, _index, default)
-        { }
-    }
-
-    public delegate void RequestChangeEventHandler(object sender, RequestChangeEventArgs e);
-
-    public enum ChangeType
-    {
-        SELECTEDINDEX,
-        MOVEINDEX,
-        DELETEINDEX,
-        ADD,
-        COPY
-    };
-
     public partial class TrackList : Control
     {
         private NullEntryInfo nullEntry = new NullEntryInfo();
@@ -739,4 +619,125 @@ namespace BAPSPresenter2
         private Bitmap offScreen;
         private VScrollBar scroll;
     }
+
+    public class TrackListDragDrop
+    {
+        public int fromIndex;
+        public ushort fromChannel;
+        public ushort toChannel;
+        public bool moved;
+
+        public TrackListDragDrop(int _fromIndex, ushort _fromChannel)
+        {
+            fromChannel = _fromChannel;
+            toChannel = _fromChannel;
+            fromIndex = _fromIndex;
+            moved = false;
+        }
+    }
+
+    public abstract class EntryInfo
+    {
+        public string Description { get; private set; }
+
+        public EntryInfo(string description)
+        {
+            Description = description;
+        }
+
+        public abstract bool IsAudioItem { get; }
+        public abstract bool IsTextItem { get; }
+        public abstract bool IsFromLibrary { get; }
+
+        public override string ToString() => Description;
+    }
+
+    public class TextEntryInfo : EntryInfo
+    {
+        public TextEntryInfo(string description) : base(description) { }
+
+        public override bool IsAudioItem => false;
+        public override bool IsTextItem => true;
+        public override bool IsFromLibrary => false;
+    }
+
+    public class FileEntryInfo : EntryInfo
+    {
+        public FileEntryInfo(string description) : base(description) { }
+
+        public override bool IsAudioItem => true;
+        public override bool IsTextItem => false;
+        public override bool IsFromLibrary => false;
+    }
+
+    public class LibraryEntryInfo : EntryInfo
+    {
+        public LibraryEntryInfo(string description) : base(description) { }
+
+        public override bool IsAudioItem => true;
+        public override bool IsTextItem => false;
+        public override bool IsFromLibrary => true;
+    }
+
+    public class NullEntryInfo : EntryInfo
+    {
+        public NullEntryInfo() : base("NONE") { }
+
+        public override bool IsAudioItem => false;
+        public override bool IsTextItem => false;
+        public override bool IsFromLibrary => false;
+    }
+
+    public static class EntryInfoExtensions
+    {
+        public static void DrawTypeIcon(this EntryInfo ei, Control parent, Graphics gOffScreen, int itemTop)
+        {
+            if (ei.IsTextItem)
+            {
+                gOffScreen.DrawString("T", parent.Font, Brushes.Blue, 4.0f, itemTop + 1.0f);
+                return;
+            }
+
+            if (ei.IsAudioItem)
+            {
+                gOffScreen.FillEllipse(ei.IsFromLibrary ? Brushes.LimeGreen : Brushes.Blue, 4, itemTop + 4, 8, 8);
+                return;
+            }
+
+            gOffScreen.DrawString("?", parent.Font, Brushes.Black, 4.0f, itemTop + 1.0f);
+        }
+    }
+
+    public class RequestChangeEventArgs : EventArgs
+    {
+        public ChangeType ct;
+        public int index;
+        public int index2;
+        public ushort channel;
+
+        public RequestChangeEventArgs(ushort _channel, ChangeType _ct, int _index, int _index2)
+            : base()
+        {
+            ct = _ct;
+            index = _index;
+            index2 = _index2;
+            channel = _channel;
+        }
+
+        public RequestChangeEventArgs(ushort _channel, ChangeType _ct, int _index)
+            : this(_channel, _ct, _index, default)
+        { }
+    }
+
+    public delegate void RequestChangeEventHandler(object sender, RequestChangeEventArgs e);
+
+    public enum ChangeType
+    {
+        SELECTEDINDEX,
+        MOVEINDEX,
+        DELETEINDEX,
+        ADD,
+        COPY
+    };
+
 }
