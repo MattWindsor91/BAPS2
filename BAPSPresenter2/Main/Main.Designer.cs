@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using BAPSCommon;
 using BAPSPresenter;
 
@@ -23,30 +22,22 @@ namespace BAPSPresenter2
                 /** When we die it is only fair to tell the server **/
                 var cmd = Command.SYSTEM | Command.END;
                 msgQueue.Add(new BAPSCommon.Message(cmd).Add("Normal Termination"));
-                /** Wait 500ms for the command to be sent **/
-                int timeout = 500;
-                while (msgQueue.Count > 0 && timeout > 0)
-                {
-                    System.Threading.Thread.Sleep(1);
-                    timeout--;
-                }
             }
             /** Notify the send/receive threads they should die **/
-            dead = true;
+            dead.CancelAfter(500);
             /** Empty the config cache **/
             ConfigCache.closeConfigCache();
             /** Force the receive thread to abort FIRST so that we cant receive
                 any messages that need automatic responses **/
-            if (receiverThread != null)
+            if (receiverTask != null)
             {
-                receiverThread.Abort();
-                receiverThread.Join();
+                receiverTask.Wait();
+                receiverTask.Dispose();
             }
-            /** Force the sender thread to die (should be dead already) **/
-            if (senderThread != null)
+            if (senderTask != null)
             {
-                senderThread.Abort();
-                senderThread.Join();
+                senderTask.Wait();
+                senderTask.Dispose();
             }
             /** Close the connection properly **/
             clientSocket?.Dispose();

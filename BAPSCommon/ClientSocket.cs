@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 
 namespace BAPSCommon
 {
@@ -13,11 +14,14 @@ namespace BAPSCommon
     /// </summary>
     public class ClientSocket : IDisposable
     {
-        public ClientSocket(string host, int port)
+        private CancellationToken send_tok;
+        private CancellationToken recv_tok;
+
+        public ClientSocket(string host, int port, CancellationToken send_tok = default, CancellationToken recv_tok = default)
         {
-            clientSocket = new Socket(AddressFamily.InterNetwork,
-                                      SocketType.Stream,
-                                      ProtocolType.Tcp);
+            this.send_tok = send_tok;
+            this.recv_tok = recv_tok;
+
             clientSocket.Connect(new IPEndPoint(IPAddress.Parse(host), port));
             /** All sockets are non blocking due to lack of preemption on windows **/
             clientSocket.Blocking = false;
@@ -131,6 +135,8 @@ namespace BAPSCommon
             /** If sending no data then return immediately, else wait until it is all sent **/
             for (int index = 0; index < bytes.Length; index += nsent)
             {
+                send_tok.ThrowIfCancellationRequested();
+
                 /**
                  *  Manage exceptions and maintain a count of the bytes sent and therefore the position
                  *  in the byte array
@@ -146,15 +152,9 @@ namespace BAPSCommon
                     /** We are flooding the connection this is bad
                      *  WORK NEEDED: possible implementation of lossy sends for non vital data
                     **/
-                    System.Threading.Thread.Sleep(1);
+                    Thread.Sleep(1);
                 }
             }
-        }
-
-        public static void EndSend(IAsyncResult ar)
-        {
-            var ns = (Socket)ar.AsyncState;
-            ns.EndSend(ar);
         }
 
         private const int MAX_RECEIVE_BUFFER = 512;
@@ -166,15 +166,14 @@ namespace BAPSCommon
         {
             if (MAX_RECEIVE_BUFFER < count) throw new ArgumentOutOfRangeException("count");
 
-            //var sock = tcpClient.Client;
-
             int nread = 0;
             for (int offset = 0; offset < count; offset += nread)
             {
+                recv_tok.ThrowIfCancellationRequested();
+
                 try
                 {
                     nread = clientSocket.Receive(rxBytes, offset, count - offset, SocketFlags.None);
-                    if (nread == 0) throw new SocketException();
                 } catch (SocketException e)
                 {
                     if (e.SocketErrorCode != SocketError.WouldBlock) throw e;
@@ -188,11 +187,25 @@ namespace BAPSCommon
         /// <summary>
         /// The low level socket connection
         /// </summary>
-        private Socket clientSocket;
-        //private TcpClient tcpClient;
+        private Socket clientSocket =
+            new Socket(AddressFamily.InterNetwork,
+                                      SocketType.Stream,
+                                      ProtocolType.Tcp);
         /// <summary>
         /// The receive buffer
         /// </summary>
 		private readonly byte[] rxBytes = new byte[MAX_RECEIVE_BUFFER];
+
+        public void ShutdownReceive()
+        {
+            if (!IsValid) return;
+            clientSocket.Shutdown(SocketShutdown.Receive);
+        }
+
+        public void ShutdownSend()
+        {
+            if (!IsValid) return;
+            clientSocket.Shutdown(SocketShutdown.Send);
+        }
     }
 }

@@ -2,6 +2,7 @@
 using BAPSPresenter; // Legacy
 using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace BAPSPresenter2
@@ -12,7 +13,8 @@ namespace BAPSPresenter2
             in the case of the receive loop, the flag will not take effect
             until data is received, so an abort message is still required
         **/
-        private bool dead = false;
+        private System.Threading.CancellationTokenSource dead = new System.Threading.CancellationTokenSource();
+
         // Accessor for the crashed variable.
         public bool HasCrashed { get; private set; } = false;
 
@@ -25,10 +27,8 @@ namespace BAPSPresenter2
         private BAPSChannel[] bapsChannels;
         private BAPSDirectory[] bapsDirectories;
 
-        /** The sender thread **/
-        private System.Threading.Thread senderThread;
-        /** The receiver thread **/
-        private System.Threading.Thread receiverThread;
+        private Task senderTask;
+        private Task receiverTask;
  
         /** Whether or not the timers are enabled **/
         private bool timersEnabled = true;
@@ -127,7 +127,7 @@ namespace BAPSPresenter2
             try
             {
                 /** Attempt to make a connection to the specified server **/
-                clientSocket = new BAPSCommon.ClientSocket(server, port);
+                clientSocket = new BAPSCommon.ClientSocket(server, port, dead.Token, dead.Token);
             }
             catch (Exception e)
             {
@@ -226,14 +226,9 @@ namespace BAPSPresenter2
             var enableTimers = string.Compare(ConfigManager.getConfigValueString("EnableTimers", "Yes"), "Yes") == 0;
             EnableTimerControls(enableTimers);
 
-            /** Start the receive thread so we are ready for the autoupdate messages **/
-            receiverThread = new System.Threading.Thread(ReceiverFunc);
-            receiverThread.Start();
-            /** Start the sender thread last so that everything is ready for the autoupdate
-                message to be sent and acted upon by the server
-            **/
-            senderThread = new System.Threading.Thread(SenderFunc);
-            senderThread.Start();
+            var tf = new TaskFactory(dead.Token, TaskCreationOptions.LongRunning, TaskContinuationOptions.None, TaskScheduler.Current);
+            receiverTask = tf.StartNew(ReceiverFunc);
+            senderTask = tf.StartNew(SenderFunc);
         }
 
         private void SetupDirectories()
@@ -268,9 +263,19 @@ namespace BAPSPresenter2
         /** Loop to wait for a command and then process it correctly **/
         private void ReceiverFunc()
         {
-            while (!dead)
+            var tok = dead.Token;
+            try
             {
-                DecodeCommand(clientSocket.ReceiveC());
+                while (true)
+                {
+                    tok.ThrowIfCancellationRequested();
+                    var cmd = clientSocket.ReceiveC();
+                    DecodeCommand(cmd);
+                }
+            }
+            finally
+            {
+                clientSocket.ShutdownReceive();
             }
         }
 
@@ -319,7 +324,7 @@ namespace BAPSPresenter2
         {
             /** On Communications errors this is called to notify the user **/
             /** Only current option is to die **/
-            dead = true;
+            dead.Cancel();
             if (!silent)
             {
                 MessageBox.Show(string.Concat(description, "\nClick OK to restart the Presenter Interface.\nPlease notify support that an error occurred."), "System error:", MessageBoxButtons.OK);
@@ -753,11 +758,19 @@ namespace BAPSPresenter2
         /** Loop to watch for an outgoing message on the queue and send it **/
         private void SenderFunc()
         {
-            /** Drop out if something goes horribly wrong elsewhere **/
-            while (!dead)
+            var tok = dead.Token;
+            try
             {
-                var msg = msgQueue.Take();
-                msg.Send(clientSocket);
+                while (true)
+                {
+                    tok.ThrowIfCancellationRequested();
+                    var msg = msgQueue.Take(tok);
+                    msg.Send(clientSocket);
+                }
+            }
+            finally
+            {
+                clientSocket.ShutdownSend();
             }
         }
 
