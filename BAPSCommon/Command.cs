@@ -1,45 +1,55 @@
 ﻿namespace BAPSCommon
 {
+    public enum CommandGroup : ushort
+    {
+        Playback = 0,
+        Playlist = 1,
+        BText    = 2,
+        Database = 3,
+        Config   = 5,
+        System   = 7,
+    }
+
     public enum Command : ushort
     {
         /**
          * MASKS
          **/
-        GROUPMASK = 0xE000,
-        PLAYBACK_OPMASK = 0x1F80,
-        PLAYBACK_MODEMASK = 0x40,
-        PLAYBACK_CHANNELMASK = 0x3F,
-        PLAYLIST_OPMASK = 0x1F80,
-        PLAYLIST_MODEMASK = 0x40,
-        PLAYLIST_CHANNELMASK = 0x3F,
-        TEXT_OPMASK = 0x1C00,
-        DATABASE_OPMASK = 0x1F00,
-        DATABASE_MODEMASK = 0x80,
-        DATABASE_VALUEMASK = 0x7F,
-        CONFIG_OPMASK = 0x1F00,
-        CONFIG_MODEMASK = 0x80,
-        CONFIG_USEVALUEMASK = 0x40,
-        CONFIG_VALUEMASK = 0x3F,
-        SYSTEM_OPMASK = 0x1F00,
-        SYSTEM_MODEMASK = 0x80,
-        SYSTEM_VALUEMASK = 0x7F,
+        GROUPMASK            = 0b11100000_00000000, // 14th bit onwards, hence shift is 13
+        PLAYBACK_OPMASK      = 0b00011111_10000000,
+        PLAYBACK_MODEMASK    = 0b00000000_01000000,
+        PLAYBACK_CHANNELMASK = 0b00000000_00111111,
+        PLAYLIST_OPMASK      = 0b00011111_10000000,
+        PLAYLIST_MODEMASK    = 0b00000000_01000000,
+        PLAYLIST_CHANNELMASK = 0b00000000_00111111,
+        TEXT_OPMASK          = 0b00011100_00000000,
+        DATABASE_OPMASK      = 0b00011111_00000000,
+        DATABASE_MODEMASK    = 0b00000000_10000000,
+        DATABASE_VALUEMASK   = 0b00000000_01111111,
+        CONFIG_OPMASK        = 0b00011111_00000000,
+        CONFIG_MODEMASK      = 0b00000000_10000000,
+        CONFIG_USEVALUEMASK  = 0b00000000_01000000,
+        CONFIG_VALUEMASK     = 0b00000000_00111111,
+        SYSTEM_OPMASK        = 0b00011111_00000000,
+        SYSTEM_MODEMASK      = 0b00000000_10000000,
+        SYSTEM_VALUEMASK     = 0b00000000_01111111,
 
         /**
          * Operation categories
          **/
-        PLAYBACK = 0 << 13,
-        PLAYLIST = 1 << 13,
-        BTEXT = 2 << 13,
-        DATABASE = 3 << 13,
-        CONFIG = 5 << 13,
-        SYSTEM = 7 << 13,
+        PLAYBACK = CommandGroup.Playback << 13,
+        PLAYLIST = CommandGroup.Playlist << 13,
+        BTEXT    = CommandGroup.BText    << 13,
+        DATABASE = CommandGroup.Database << 13,
+        CONFIG   = CommandGroup.Config   << 13,
+        SYSTEM   = CommandGroup.System   << 13,
 
         /**
          * Playback
          **/
-        PLAY = 0 << 7,    //C-
-        STOP = 1 << 7,    //C-
-        PAUSE = 2 << 7,   //C-
+        PLAY     = 0 << 7,    //C-
+        STOP     = 1 << 7,    //C-
+        PAUSE    = 2 << 7,   //C-
         POSITION = 3 << 7,  //SC-[0](set) u32int timeposition
 
         //C -[1](get)
@@ -215,6 +225,8 @@
 
     public static class CommandExtensions
     {
+        public static CommandGroup Group(this Command cmd) => (CommandGroup)(((uint) (cmd & Command.GROUPMASK)) >> 13);
+
         /// <summary>
         /// Returns the channel component of a BAPSnet command.
         /// <para>
@@ -225,5 +237,9 @@
         /// <param name="cmd">The command to mask-off.</param>
         /// <returns>The channel component</returns>
         public static ushort Channel(this Command cmd) => (ushort)(cmd & Command.PLAYBACK_CHANNELMASK);
+
+        public static byte DatabaseValue(this Command cmd) => (byte)(cmd & Command.DATABASE_VALUEMASK);
+        public static byte ConfigValue(this Command cmd) => (byte)(cmd & Command.CONFIG_VALUEMASK);
+        public static byte SystemValue(this Command cmd) => (byte)(cmd & Command.SYSTEM_VALUEMASK);
     }
 }

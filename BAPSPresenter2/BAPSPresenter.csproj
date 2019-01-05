@@ -91,7 +91,6 @@
     <Compile Include="BAPSDirectory.Designer.cs">
       <DependentUpon>BAPSDirectory.cs</DependentUpon>
     </Compile>
-    <Compile Include="ConfigOptions.cs" />
     <Compile Include="Dialogs\Config.cs">
       <SubType>Form</SubType>
     </Compile>

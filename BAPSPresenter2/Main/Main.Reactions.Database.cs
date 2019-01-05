@@ -1,11 +1,40 @@
 ﻿// This used to be BAPSPresenterMainReactions_database.cpp.
 
+using BAPSCommon;
 using System;
 
 namespace BAPSPresenter2
 {
     partial class Main
     {
+        private void SetupDatabaseReactions(Receiver r)
+        {
+            r.LibraryResult += (sender, e) =>
+            {
+                if (InvokeRequired)
+                {
+                    Invoke((Action<uint, int, string>)addLibraryResult, e.resultID, (int)e.dirtyStatus, e.description);
+                }
+                else addLibraryResult(e.resultID, e.dirtyStatus, e.description);
+            };
+            r.ShowResult += (sender, e) =>
+            {
+                if (InvokeRequired)
+                {
+                    Invoke((Action<uint, string>)addShowResult, e.showID, e.description);
+                }
+                else addShowResult(e.showID, e.description);
+            };
+            r.ListingResult += (sender, e) =>
+            {
+                if (InvokeRequired)
+                {
+                    Invoke((Action<uint, uint, string>)addListingResult, e.listingID, e.channelID, e.description);
+                }
+                else addListingResult(e.listingID, e.channelID, e.description);
+            };
+        }
+
         /** Just pass all the data through to the child form (if present) **/
 
         private void addLibraryResult(uint index, int dirtyStatus, string result)

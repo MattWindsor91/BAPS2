@@ -1,7 +1,7 @@
 ﻿// This reflects Common/ConfigDialog.h.
 // It *should* be kept in sync with it until one can be deprecated in favour of the other.
 
-namespace BAPSPresenter2
+namespace BAPSCommon
 {
     // The options rendered in the config menu depend on this ordering.
     // Afaik these can be reordered to change the order they appear in the config menu.
@@ -66,7 +66,7 @@ namespace BAPSPresenter2
         NOPERMISSION
     };
 
-    static class ConfigResultText
+    public static class ConfigResultText
     {
         public static string[] text =
         {"Success",

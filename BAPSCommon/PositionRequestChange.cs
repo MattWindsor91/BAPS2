@@ -9,7 +9,7 @@ namespace BAPSCommon
     {
         Position,
         Cue,
-        Intro
+        Intro,
     }
 
     public static class PositionTypeExtensions
@@ -26,6 +26,21 @@ namespace BAPSCommon
                     return Command.INTROPOSITION;
                 default:
                     throw new ArgumentOutOfRangeException("this", pt, "Not a valid position type");
+            }
+        }
+
+        public static PositionType AsPositionType(this Command c)
+        {
+            switch (c & Command.PLAYBACK_OPMASK)
+            {
+                case Command.POSITION:
+                    return PositionType.Position;
+                case Command.CUEPOSITION:
+                    return PositionType.Cue;
+                case Command.INTROPOSITION:
+                    return PositionType.Intro;
+                default:
+                    throw new ArgumentOutOfRangeException("this", c, "Command is not a valid position type");
             }
         }
     }

@@ -1,13 +1,72 @@
-﻿// This used to be BAPSPresenterMainReactions_player.cpp.
+﻿// This used to be BAPSPresenterMainReactions_playback.cpp.
 
 using System;
 using BAPSCommon;
-using BAPSPresenter;
 
 namespace BAPSPresenter2
 {
     partial class Main
     {
+        private void SetupPlaybackReactions(Receiver r)
+        {
+            r.ChannelOperation += (sender, e) =>
+            {
+                if (InvokeRequired)
+                {
+                    Invoke((Action<ushort, Command>)showChannelOperation, e.channelID, e.op);
+                }
+                else showChannelOperation(e.channelID, e.op);
+            };
+            r.Position += (sender, e) =>
+            {
+                if (InvokeRequired)
+                {
+                    Invoke((Action<ushort, PositionType, uint>)ShowPositionWithType, e.channelID, e.type, e.position);
+                }
+                else ShowPositionWithType(e.channelID, e.type, e.position);
+            };
+            r.Duration += (sender, e) =>
+            {
+                if (InvokeRequired)
+                {
+                    Invoke((Action<ushort, uint>)showDuration, e.channelID, e.duration);
+                }
+                else showDuration(e.channelID, e.duration);
+            };
+            r.LoadedItem += (sender, e) =>
+            {
+                if (InvokeRequired)
+                {
+                    Invoke((Action<ushort, uint, Command, string>)showLoadedItem, e.channelID, e.index, e.type, e.description);
+                }
+                else showLoadedItem(e.channelID, e.index, e.type, e.description);
+            };
+            r.TextItem += (sender, e) =>
+            {
+                if (InvokeRequired)
+                {
+                    Invoke((Action<ushort, uint, string, string>)showText, e.ChannelID, e.index, e.description, e.text);
+                }
+                else showText(e.ChannelID, e.index, e.description, e.text);
+            };
+        }
+
+        private void ShowPositionWithType(ushort channelID, PositionType type, uint position)
+        {
+            switch (type)
+            {
+                case PositionType.Cue:
+                    showCuePosition(channelID, position);
+                    break;
+                case PositionType.Intro:
+                    showIntroPosition(channelID, position);
+                    break;
+                case PositionType.Position:
+                    showPosition(channelID, position);
+                    break;
+            }
+        }
+
         private void showChannelOperation(ushort channelID, Command operation)
         {
             if (ChannelOutOfBounds(channelID)) return;

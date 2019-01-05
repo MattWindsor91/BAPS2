@@ -1,5 +1,4 @@
 ﻿using BAPSCommon;
-using BAPSPresenter;
 using System;
 using System.Linq; // for collection queries
 using System.Windows.Forms;
@@ -320,7 +319,7 @@ namespace BAPSPresenter2.Dialogs
                             {
                                 /** Choice types are stored as integers as well because we refer to the choice index not the value **/
                                 dt.Columns.Add(option.getDescription(), typeof(int));
-                                var cbc = new DataGridComboBoxColumn
+                                var cbc = new BAPSPresenter.DataGridComboBoxColumn
                                 {
                                     HeaderText = option.getDescription(),
                                     MappingName = option.getDescription(),
@@ -447,7 +446,7 @@ namespace BAPSPresenter2.Dialogs
             options[optionid].setResult(res == ConfigResult.SUCCESS);
             if (res != ConfigResult.SUCCESS)
             {
-                statusLabel.Text = string.Concat("Failed to set: ", options[optionid].getDescription(), ". Error: ", ConfigResultText.text[(int)res]);
+                statusLabel.Text = string.Concat("Failed to set: ", options[optionid].getDescription(), ". Error: ", BAPSCommon.ConfigResultText.text[(int)res]);
             }
             var allReceived = options.Values.All(op => op.hasReceivedResult());
             if (!allReceived) return;

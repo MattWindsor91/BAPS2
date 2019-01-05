@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 using BAPSCommon;
 using BAPSPresenter;
 
@@ -31,12 +32,25 @@ namespace BAPSPresenter2
                 any messages that need automatic responses **/
             if (receiverTask != null)
             {
-                receiverTask.Wait();
+                try
+                {
+                    receiverTask.Wait();
+                }
+                catch (AggregateException a)
+                {
+                    a.Handle(e => e is OperationCanceledException);
+                }
                 receiverTask.Dispose();
             }
             if (senderTask != null)
             {
-                senderTask.Wait();
+                try
+                {
+                    senderTask.Wait();
+                } catch (AggregateException a)
+                {
+                    a.Handle(e => e is OperationCanceledException);
+                }
                 senderTask.Dispose();
             }
             /** Close the connection properly **/

@@ -28,6 +28,7 @@ namespace BAPSPresenter2
         private BAPSDirectory[] bapsDirectories;
 
         private Task senderTask;
+        private Receiver receiver;
         private Task receiverTask;
  
         /** Whether or not the timers are enabled **/
@@ -227,7 +228,11 @@ namespace BAPSPresenter2
             EnableTimerControls(enableTimers);
 
             var tf = new TaskFactory(dead.Token, TaskCreationOptions.LongRunning, TaskContinuationOptions.None, TaskScheduler.Current);
-            receiverTask = tf.StartNew(ReceiverFunc);
+
+            receiver = new Receiver(clientSocket, dead.Token);
+            SetupReactions(receiver);
+
+            receiverTask = tf.StartNew(receiver.Run);
             senderTask = tf.StartNew(SenderFunc);
         }
 
@@ -257,25 +262,6 @@ namespace BAPSPresenter2
                 bc.PositionRequestChange += HandlePositionChanged;
                 bc.TimelineChanged += TimelineChanged;
                 //bc.TrackListContextMenuStripItemClicked += (e, x) => Invoke((ToolStripItemClickedEventHandler)trackListContextMenuStrip_ItemClicked, e, x);
-            }
-        }
-
-        /** Loop to wait for a command and then process it correctly **/
-        private void ReceiverFunc()
-        {
-            var tok = dead.Token;
-            try
-            {
-                while (true)
-                {
-                    tok.ThrowIfCancellationRequested();
-                    var cmd = clientSocket.ReceiveC();
-                    DecodeCommand(cmd);
-                }
-            }
-            finally
-            {
-                clientSocket.ShutdownReceive();
             }
         }
 
@@ -350,410 +336,107 @@ namespace BAPSPresenter2
             }
         }
 
-        /** Helper function to do command decoding **/
-        private void DecodeCommand(Command cmdReceived)
+        private void SetupReactions(Receiver r)
         {
-            _ /* length */ = clientSocket.ReceiveI();
-            switch (cmdReceived & Command.GROUPMASK)
+            SetupPlaybackReactions(r);
+            SetupPlaylistReactions(r);
+            SetupDatabaseReactions(r);
+            SetupConfigReactions(r);
+            SetupSystemReactions(r);
+            SetupGeneralReactions(r);
+        }
+
+        private void SetupGeneralReactions(Receiver r)
+        {
+            r.IncomingCount += (sender, e) =>
             {
-                case Command.PLAYBACK:
-                    var op = cmdReceived & Command.PLAYBACK_OPMASK;
-                    switch (op)
-                    {
-                        case Command.PLAY:
-                        case Command.PAUSE:
-                        case Command.STOP:
-                            {
-                                var channel = cmdReceived & Command.PLAYBACK_CHANNELMASK;
-                                Invoke((Action<ushort, Command>)showChannelOperation, channel, op);
-                            }
-                            break;
-                        case Command.POSITION:
-                            {
-                                var channel = cmdReceived & Command.PLAYBACK_CHANNELMASK;
-                                var position = clientSocket.ReceiveI();
-                                Invoke((Action<ushort, uint>)showPosition, channel, position);
-                            }
-                            break;
-                        case Command.VOLUME:
-                            {
-                                _ = clientSocket.ReceiveF();
-                            }
-                            break;
-                        case Command.LOAD:
-                            {
-                                var channel = cmdReceived & Command.PLAYLIST_CHANNELMASK;
-                                var index = clientSocket.ReceiveI();
-                                var type = (Command)clientSocket.ReceiveI();
-                                var description = clientSocket.ReceiveS();
-                                switch (type)
-                                {
-                                    case Command.FILEITEM:
-                                    case Command.LIBRARYITEM:
-                                        {
-                                            var duration = clientSocket.ReceiveI();
-                                            Invoke((Action<ushort, uint>)showDuration, channel, duration);
-                                            Invoke((Action<ushort, uint>)showPosition, channel, 0U);
-                                        }
-                                        goto case Command.VOIDITEM;
-                                    case Command.VOIDITEM:
-                                        {
-                                            Invoke((Action<ushort, uint, Command, string>)showLoadedItem, channel, index, type, description);
-                                        }
-                                        break;
-                                    case Command.TEXTITEM:
-                                        {
-                                            var text = clientSocket.ReceiveS();
-                                            Invoke((Action<ushort, uint, string, string>)showText, channel, index, description, text);
-                                        }
-                                        break;
-                                    default:
-                                        Invoke((Action<ushort, uint>)showDuration, channel, 0U);
-                                        Invoke((Action<ushort, uint>)showPosition, channel, 0U);
-                                        break;
-                                }
-                            }
-                            break;
-                        case Command.CUEPOSITION:
-                            {
-                                var channel = cmdReceived.Channel();
-                                var cuePosition = clientSocket.ReceiveI();
-                                Invoke((Action<ushort, uint>)showCuePosition, channel, cuePosition);
-                            }
-                            break;
-                        case Command.INTROPOSITION:
-                            {
-                                var channel = cmdReceived.Channel();
-                                var introPosition = clientSocket.ReceiveI();
-                                Invoke((Action<ushort, uint>)showIntroPosition, channel, introPosition);
-                            }
-                            break;
-                        default:
-                            {
-                                /** ERROR **/
-                                SendQuit("Received unknown command, possibly a malformed PLAYBACK.\n", false);
-                            }
-                            break;
-                    }
+                if (InvokeRequired)
+                {
+                    Invoke((Receiver.CountEventHandler)HandleCount, sender, e);
+                }
+                else HandleCount(sender, e);
+            };
+            r.Error += (sender, e) =>
+            {
+                if (InvokeRequired)
+                {
+                    Invoke((Receiver.ErrorEventHandler)HandleError, sender, e);
+                }
+                else HandleError(sender, e);
+            };
+            r.UnknownCommand += (sender, e) =>
+            {
+                if (InvokeRequired)
+                {
+                    Invoke((Action<Command, string>)HandleUnknownCommand, e.command, e.description);
+                }
+                else HandleUnknownCommand(e.command, e.description);
+            };
+        }
+
+        private void HandleCount(object sender, Receiver.CountEventArgs e)
+        {
+            switch (e.Type)
+            {
+                case Receiver.CountType.ConfigChoice:
+                    processChoiceCount(e.Extra, (int)e.Count);
                     break;
-                case Command.PLAYLIST:
-                    switch (cmdReceived & Command.PLAYLIST_OPMASK)
-                    {
-                        case Command.ITEM:
-                            if (cmdReceived.HasFlag(Command.PLAYLIST_MODEMASK))
-                            {
-                                var channel = cmdReceived.Channel();
-                                var index = clientSocket.ReceiveI();
-                                var type = clientSocket.ReceiveI();
-                                var description = clientSocket.ReceiveS();
-                                Invoke((Action<ushort, uint, uint, string>)addItem, channel, index, type, description);
-                            }
-                            else
-                            {
-                                _ = clientSocket.ReceiveI();
-                            }
-                            break;
-                        case Command.MOVEITEMTO:
-                            {
-                                var channel = cmdReceived.Channel();
-                                var indexFrom = clientSocket.ReceiveI();
-                                var indexTo = clientSocket.ReceiveI();
-                                Invoke((Action<ushort, uint, uint>)moveItemTo, channel, indexFrom, indexTo);
-                            }
-                            break;
-                        case Command.DELETEITEM:
-                            {
-                                var channel = cmdReceived.Channel();
-                                var index = clientSocket.ReceiveI();
-                                Invoke((Action<ushort, uint>)deleteItem, channel, index);
-                            }
-                            break;
-                        case Command.RESETPLAYLIST:
-                            {
-                                var channel = cmdReceived.Channel();
-                                Invoke((Action<ushort>)cleanPlaylist, channel);
-                            }
-                            break;
-                        default:
-                            {
-                                /** ERROR **/
-                                SendQuit("Received unknown command, possibly a malformed PLAYLIST.\n", false);
-                            }
-                            break;
-                    }
+                case Receiver.CountType.ConfigOption:
+                    processOptionCount(e.Count);
                     break;
-                case Command.DATABASE:
-                    switch (cmdReceived & Command.DATABASE_OPMASK)
-                    {
-                        case Command.LIBRARYRESULT:
-                            {
-                                if (cmdReceived.HasFlag(Command.DATABASE_MODEMASK))
-                                {
-                                    var dirtyStatus = (ushort)(cmdReceived & Command.DATABASE_VALUEMASK);
-                                    var resultid = clientSocket.ReceiveI();
-                                    var description = clientSocket.ReceiveS();
-                                    addLibraryResult(resultid, dirtyStatus, description);
-                                }
-                                else
-                                {
-                                    var count = clientSocket.ReceiveI();
-                                    setLibraryResultCount((int)count);
-                                }
-                            }
-                            break;
-                        case Command.LIBRARYERROR:
-                            {
-                                var description = clientSocket.ReceiveS();
-                                notifyLibraryError((ushort) (cmdReceived & Command.DATABASE_VALUEMASK), description);
-                            }
-                            break;
-                        case Command.SHOW:
-                            if (cmdReceived.HasFlag(Command.DATABASE_MODEMASK))
-                            {
-                                var showid = clientSocket.ReceiveI();
-                                var description = clientSocket.ReceiveS();
-                                addShowResult(showid, description);
-                            }
-                            else
-                            {
-                                var count = clientSocket.ReceiveI();
-                                setShowResultCount((int)count);
-                            }
-                            break;
-                        case Command.LISTING:
-                            if (cmdReceived.HasFlag(Command.DATABASE_MODEMASK))
-                            {
-                                var listingid = clientSocket.ReceiveI();
-                                var channel = clientSocket.ReceiveI();
-                                var description = clientSocket.ReceiveS();
-                                addListingResult(listingid, channel, description);
-                            }
-                            else
-                            {
-                                var count = clientSocket.ReceiveI();
-                                setListingResultCount((int) count);
-                            }
-                            break;
-                        case Command.BAPSDBERROR:
-                            /** There is an error code in the command **/
-                            notifyLoadShowError((ushort) (cmdReceived & Command.DATABASE_VALUEMASK), clientSocket.ReceiveS());
-                            break;
-                        default:
-                            {
-                                /** ERROR **/
-                                SendQuit("Received unknown command, possibly a malformed DATABASE.\n", false);
-                            }
-                            break;
-                    }
+                case Receiver.CountType.IPRestriction:
                     break;
-                case Command.CONFIG:
-                    switch (cmdReceived & Command.CONFIG_OPMASK)
-                    {
-                        case Command.OPTION:
-                            {
-                                if (cmdReceived.HasFlag(Command.CONFIG_MODEMASK))
-                                {
-                                    var optionid = clientSocket.ReceiveI();
-                                    var description = clientSocket.ReceiveS();
-                                    var type = clientSocket.ReceiveI();
-                                    processOption(cmdReceived, optionid, description, type);
-                                }
-                                else
-                                {
-                                    var count = clientSocket.ReceiveI();
-                                    processOptionCount(count);
-                                }
-                            }
-                            break;
-                        case Command.OPTIONCHOICE:
-                            {
-                                if (cmdReceived.HasFlag(Command.CONFIG_MODEMASK))
-                                {
-                                    var optionid = clientSocket.ReceiveI();
-                                    var choiceIndex = clientSocket.ReceiveI();
-                                    var choiceDescription = clientSocket.ReceiveS();
-                                    processChoice(optionid, choiceIndex, choiceDescription);
-                                }
-                                else
-                                {
-                                    var optionid = clientSocket.ReceiveI();
-                                    var count = clientSocket.ReceiveI();
-                                    processChoiceCount(optionid, (int)count);
-                                }
-                            }
-                            break;
-                        case Command.CONFIGSETTING:
-                            {
-                                if (cmdReceived.HasFlag(Command.CONFIG_MODEMASK))
-                                {
-                                    var optionid = clientSocket.ReceiveI();
-                                    var type = clientSocket.ReceiveI();
-                                    processConfigSetting(cmdReceived, optionid, (ConfigType)type);
-                                }
-                                else
-                                {
-                                    _ = clientSocket.ReceiveI();
-                                }
-                            }
-                            break;
-                        case Command.CONFIGRESULT:
-                            {
-                                var optionid = clientSocket.ReceiveI();
-                                var result = clientSocket.ReceiveI();
-                                processConfigResult(cmdReceived, optionid, (ConfigResult)result);
-                            }
-                            break;
-                        case Command.CONFIGERROR:
-                            {
-                                var errorCode = cmdReceived & Command.CONFIG_VALUEMASK;
-                                var description = clientSocket.ReceiveS();
-                                processConfigError((uint)errorCode, description);
-                            }
-                            break;
-                        case Command.USER:
-                            {
-                                if (cmdReceived.HasFlag(Command.CONFIG_MODEMASK))
-                                {
-                                    var username = clientSocket.ReceiveS();
-                                    var permissions = clientSocket.ReceiveI();
-                                    processUserInfo(username, permissions);
-                                }
-                                else
-                                {
-                                    var count = clientSocket.ReceiveI();
-                                    processUserCount(count);
-                                }
-                            }
-                            break;
-                        case Command.PERMISSION:
-                            {
-                                if (cmdReceived.HasFlag(Command.CONFIG_MODEMASK))
-                                {
-                                    var permissionCode = clientSocket.ReceiveI();
-                                    var description = clientSocket.ReceiveS();
-                                    processPermissionInfo(permissionCode, description);
-                                }
-                                else
-                                {
-                                    var count = clientSocket.ReceiveI();
-                                    processPermissionCount(count);
-                                }
-                            }
-                            break;
-                        case Command.USERRESULT:
-                            {
-                                var resultCode = cmdReceived & Command.CONFIG_VALUEMASK;
-                                var description = clientSocket.ReceiveS();
-                                processUserResult((uint)resultCode, description);
-                            }
-                            break;
-                        case Command.IPRESTRICTION:
-                            {
-                                if (cmdReceived.HasFlag(Command.CONFIG_MODEMASK))
-                                {
-                                    var ipaddress = clientSocket.ReceiveS();
-                                    var mask = clientSocket.ReceiveI();
-                                    processIPRestriction(cmdReceived, ipaddress, mask);
-                                }
-                                else
-                                {
-                                    var count = clientSocket.ReceiveI();
-                                    processIPRestrictionCount(cmdReceived, count);
-                                }
-                            }
-                            break;
-                        default:
-                            {
-                                /** ERROR **/
-                                SendQuit("Received unknown command, possibly a malformed CONFIG.\n", false);
-                            }
-                            break;
-                    }
+                case Receiver.CountType.LibraryItem:
+                    setLibraryResultCount((int)e.Count);
                     break;
-                case Command.SYSTEM:
-                    switch (cmdReceived & Command.SYSTEM_OPMASK)
-                    {
-                        case Command.SENDLOGMESSAGE:
-                            clientSocket.ReceiveS();
-                            break;
-                        case Command.FILENAME:
-                            if (cmdReceived.HasFlag(Command.SYSTEM_MODEMASK))
-                            {
-                                var directoryIndex = cmdReceived & Command.SYSTEM_VALUEMASK;
-                                var index = clientSocket.ReceiveI();
-                                var description = clientSocket.ReceiveS();
-                                Invoke((Action<ushort, uint, string>)addFileToDirectoryList, directoryIndex, index, description);
-                            }
-                            else
-                            {
-                                var directoryIndex = cmdReceived & Command.SYSTEM_VALUEMASK;
-                                _ = clientSocket.ReceiveI();
-                                var niceDirectoryName = clientSocket.ReceiveS();
-                                Invoke((Action<ushort, string>)clearFiles, directoryIndex, niceDirectoryName);
-                            }
-                            break;
-                        case Command.VERSION:
-                            {
-                                var version = clientSocket.ReceiveS();
-                                var date = clientSocket.ReceiveS();
-                                var time = clientSocket.ReceiveS();
-                                var author = clientSocket.ReceiveS();
-                                displayVersion(version, date, time, author);
-                            }
-                            break;
-                        case Command.FEEDBACK:
-                            {
-                                _ = clientSocket.ReceiveI();
-                            }
-                            break;
-                        case Command.SENDMESSAGE:
-                            {
-                                _ = clientSocket.ReceiveS();
-                                _ = clientSocket.ReceiveS();
-                                _ = clientSocket.ReceiveS();
-                            }
-                            break;
-                        case Command.CLIENTCHANGE:
-                            {
-                                _ = clientSocket.ReceiveS();
-                            }
-                            break;
-                        case Command.SCROLLTEXT:
-                            {
-                                var updown = cmdReceived & Command.SYSTEM_VALUEMASK;
-                                Invoke((Action<int>)textDialog.scroll, (int)updown);
-                            }
-                            break;
-                        case Command.TEXTSIZE:
-                            {
-                                var updown = cmdReceived & Command.SYSTEM_VALUEMASK;
-                                Invoke((Action<int>)textDialog.textSize, (int)updown);
-                            }
-                            break;
-                        case Command.QUIT:
-                            {
-                                //The server should send an int representing if this is an expected quit (0) or an exception error (1)."
-                                bool expected = clientSocket.ReceiveI() == 0;
-                                SendQuit("The Server is shutting down/restarting.\n", expected);
-                            }
-                            break;
-                        default:
-                            {
-                                /** ERROR **/
-                                SendQuit("Received unknown command, possibly a malformed SYSTEM.\n", false);
-                            }
-                            break;
-                    }
+                case Receiver.CountType.Listing:
+                    setListingResultCount((int)e.Count);
+                    break;
+                case Receiver.CountType.Permission:
+                    processPermissionCount(e.Count);
+                    break;
+                case Receiver.CountType.Show:
+                    setShowResultCount((int)e.Count);
+                    break;
+                case Receiver.CountType.User:
+                    processUserCount(e.Count);
                     break;
                 default:
-                    {
-                        /** ERROR **/
-                        SendQuit("Received unknown command.\n", false);
-                    }
+#if DEBUG
+                    throw new ArgumentOutOfRangeException("e.Type", e.Type, "Unsupported count type");
+#else
                     break;
+#endif
             }
-
         }
+
+        private void HandleError(object sender, Receiver.ErrorEventArgs e)
+        {
+            switch (e.Type)
+            {
+                case Receiver.ErrorType.Library:
+                    notifyLibraryError(e.Code, e.Description);
+                    break;
+                case Receiver.ErrorType.BapsDB:
+                    notifyLoadShowError(e.Code, e.Description);
+                    break;
+                case Receiver.ErrorType.Config:
+                    processConfigError(e.Code, e.Description);
+                    break;
+                default:
+#if DEBUG
+                    throw new ArgumentOutOfRangeException("e.Type", e.Type, "Unsupported error type");
+#else
+                    break;
+#endif
+            }
+        }
+
+        private void HandleUnknownCommand(Command command, string description)
+        {
+            SendQuit($"Received unknown command: {description}\n", false);
+        }
+
 
         /** Loop to watch for an outgoing message on the queue and send it **/
         private void SenderFunc()

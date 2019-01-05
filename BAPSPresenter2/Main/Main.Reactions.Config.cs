@@ -8,6 +8,74 @@ namespace BAPSPresenter2
 {
     partial class Main
     {
+        private void SetupConfigReactions(Receiver r)
+        {
+            r.ConfigOption += (sender, e) =>
+            {
+                if (InvokeRequired)
+                {
+                    Invoke((Action<Command, uint, string, uint>)processOption, e.cmdReceived, e.optionID, e.description, e.type);
+                }
+                else processOption(e.cmdReceived, e.optionID, e.description, e.type);
+            };
+            r.ConfigChoice += (sender, e) =>
+            {
+                if (InvokeRequired)
+                {
+                    Invoke((Action<uint, uint, string>)processChoice, e.optionID, e.choiceIndex, e.choiceDescription);
+                }
+                else processChoice(e.optionID, e.choiceIndex, e.choiceDescription);
+            };
+            r.ConfigSetting += (sender, e) =>
+            {
+                if (InvokeRequired)
+                {
+                    Invoke((Action<Command, uint, ConfigType>)processConfigSetting, e.cmdReceived, e.optionID, e.type);
+                }
+                else processConfigSetting(e.cmdReceived, e.optionID, e.type);
+            };
+            r.ConfigResult += (sender, e) =>
+            {
+                if (InvokeRequired)
+                {
+                    Invoke((Action<Command, uint, ConfigResult>)processConfigResult, e.cmdReceived, e.optionID, e.result);
+                }
+                else processConfigResult(e.cmdReceived, e.optionID, e.result);
+            };
+            r.User += (sender, e) =>
+            {
+                if (InvokeRequired)
+                {
+                    Invoke((Action<string, uint>)processUserInfo, e.username, e.permissions);
+                }
+                else processUserInfo(e.username, e.permissions);
+            };
+            r.Permission += (sender, e) =>
+            {
+                if (InvokeRequired)
+                {
+                    Invoke((Action<uint, string>)processPermissionInfo, e.permissionCode, e.description);
+                }
+                else processPermissionInfo(e.permissionCode, e.description);
+            };
+            r.UserResult += (sender, e) =>
+            {
+                if (InvokeRequired)
+                {
+                    Invoke((Action<uint, string>)processUserResult, e.resultCode, e.description);
+                }
+                else processUserResult(e.resultCode, e.description);
+            };
+            r.IPRestriction += (sender, e) =>
+            {
+                if (InvokeRequired)
+                {
+                    Invoke((Action<Command, string, uint>)processIPRestriction, e.cmdReceived, e.ipAddress, e.mask);
+                }
+                else processIPRestriction(e.cmdReceived, e.ipAddress, e.mask);
+            };
+        }
+
         /** All these functions firstly retrieve all the data the command needs and then (if possible)
 	        update the configDialog... exceptions to the rule exist... read on
         **/
