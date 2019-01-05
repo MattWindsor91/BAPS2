@@ -94,12 +94,12 @@ namespace BAPSPresenter2
             this.bapsButton1 = new System.Windows.Forms.Button();
             this.timeLine = new BAPSFormControls.TimeLine();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.directoryFlow = new System.Windows.Forms.FlowLayoutPanel();
             this.bapsChannel3 = new BAPSPresenter2.BAPSChannel();
             this.MainTextDisplay = new System.Windows.Forms.TextBox();
             this.bapsChannel2 = new BAPSPresenter2.BAPSChannel();
             this.bapsChannel1 = new BAPSPresenter2.BAPSChannel();
             this.topButtonsPanel = new System.Windows.Forms.FlowLayoutPanel();
-            this.directoryFlow = new System.Windows.Forms.FlowLayoutPanel();
             this.tableLayoutPanel1.SuspendLayout();
             this.topButtonsPanel.SuspendLayout();
             this.SuspendLayout();
@@ -177,6 +177,15 @@ namespace BAPSPresenter2
             this.tableLayoutPanel1.Size = new System.Drawing.Size(1360, 737);
             this.tableLayoutPanel1.TabIndex = 228;
             // 
+            // directoryFlow
+            // 
+            this.directoryFlow.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.directoryFlow.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.directoryFlow.Location = new System.Drawing.Point(3, 79);
+            this.directoryFlow.Name = "directoryFlow";
+            this.directoryFlow.Size = new System.Drawing.Size(240, 498);
+            this.directoryFlow.TabIndex = 229;
+            // 
             // bapsChannel3
             // 
             this.bapsChannel3.AutoSize = true;
@@ -239,15 +248,6 @@ namespace BAPSPresenter2
             this.topButtonsPanel.Size = new System.Drawing.Size(240, 70);
             this.topButtonsPanel.TabIndex = 229;
             this.topButtonsPanel.WrapContents = false;
-            // 
-            // directoryFlow
-            // 
-            this.directoryFlow.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.directoryFlow.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.directoryFlow.Location = new System.Drawing.Point(3, 79);
-            this.directoryFlow.Name = "directoryFlow";
-            this.directoryFlow.Size = new System.Drawing.Size(240, 498);
-            this.directoryFlow.TabIndex = 229;
             // 
             // Main
             // 
