@@ -63,136 +63,38 @@ namespace BAPSPresenter2
 
         private bool Authenticate()
         {
-            var login = new Dialogs.Login();
-            /** This flag defines success of the login procedure
-                (along with the implicit knowledge that the server is ready)
-            **/
-            var authenticated = false;
-            /** If a server error occurs we set this flag so that the connection is
-                attempted again
-            **/
-            var wasServerError = false;
-            /** Each session with a server has a security string used to encrypt secrets **/
-            string randomSecurityString = "";
-            /** Keep looping until we authenticate, throw an exception or exit forcefully **/
-            while (!authenticated)
+            using (var login = new Dialogs.Login())
             {
-                /** If we cancel login we can assume we wish to abort as there is nothing
-                    else to do
-                **/
-                if (login.ShowDialog() == DialogResult.Cancel) return false;
-                /** If either the server or port have been changed since last attempt
-                    we need to reconnect.
-                **/
-                if (login.needsToConnect() || wasServerError)
-                {
-                    randomSecurityString = MakeNewConnection(login.Server, login.Port);
-                    if (randomSecurityString == null)
+                var auth = new Authenticator(
+                    () =>
                     {
-                        wasServerError = true;
-                        continue;
-                    }
-                }
-                var securedPassword = Md5sum(string.Concat(randomSecurityString, Md5sum(login.Password)));
+                        if (login.ShowDialog() == DialogResult.Cancel)
+                            return new Authenticator.Response { IsGivingUp = true };
 
-                (authenticated, wasServerError) = TryLogin(login.Username, securedPassword);
-            }
+                        return new Authenticator.Response
+                        {
+                            IsGivingUp = false,
+                            Username = login.Username,
+                            Password = login.Password,
+                            Server = login.Server,
+                            Port = login.Port
+                        };
+                    },
+                    dead.Token
+                );
+                auth.ServerError += (sender, errorMessage) =>
+                {
+                    MessageBox.Show(errorMessage, "Server error:", MessageBoxButtons.OK);
+                    logError(errorMessage);
+                };
+                auth.UserError += (sender, ErrorMessage) =>
+                {
+                    MessageBox.Show(ErrorMessage, "Login error:", MessageBoxButtons.OK);
+                };
 
-            username = login.Username;
-            return true;
-        }
-
-        /// <summary>
-        /// Makes a new bapsnet connection to the given server and port.
-        /// <para>
-        /// On success, the new connection is placed in <see cref="clientSocket"/>.
-        /// </para>
-        /// </summary>
-        /// <param name="server">The server host to connect to.</param>
-        /// <param name="port">The port to connect to.</param>
-        /// <returns>
-        /// The seed to use for encrypting the password when logging
-        /// into the server.  If null, there was a connection failure.
-        /// </returns>
-        private string MakeNewConnection(string server, int port)
-        {
-            try
-            {
-                /** Destroy old connection (if present) **/
-                clientSocket?.Dispose();
+                clientSocket = auth.Run();
+                return clientSocket != null;
             }
-            catch (Exception)
-            {
-                /** Do nothing **/
-            }
-            try
-            {
-                /** Attempt to make a connection to the specified server **/
-                clientSocket = new BAPSCommon.ClientSocket(server, port, dead.Token, dead.Token);
-            }
-            catch (Exception e)
-            {
-                /** If an error occurs just give the exception message and start again **/
-                var errorMessage = string.Concat("System Error:\n", e.Message, "\nStack Trace:\n", e.StackTrace);
-                MessageBox.Show(errorMessage, "Server error:", MessageBoxButtons.OK);
-                logError(errorMessage);
-                return null;
-            }
-            /** Receive the greeting string, this is the only communication
-                that does not follow the 'command' 'command-length' 'argument1'...
-                structure
-            **/
-            var greeting = clientSocket.ReceiveS();
-            /** Let the server know we are a binary client **/
-            clientSocket.Send(Command.SYSTEM | Command.SETBINARYMODE);
-            /** Specify the length of the command **/
-            clientSocket.Send(0U);
-            /** Receive what should be the SEED command **/
-            var seedCmd = clientSocket.ReceiveC();
-            /** Receive the length of the seed command **/
-            clientSocket.ReceiveI();
-            /** Verify the server is sending what we expect **/
-            if ((seedCmd & (Command.GROUPMASK | Command.SYSTEM_OPMASK)) != (Command.SYSTEM | Command.SEED))
-            {
-                MessageBox.Show("Server login procedure is not compatible with this client.", "Server error:", MessageBoxButtons.OK);
-                /** Notify a server error so a reconnect is attempted **/
-                return null;
-            }
-
-            /** Receive the SEED **/
-            var randomSecurityString = clientSocket.ReceiveS();
-            return randomSecurityString;
-        }
-
-        private (bool authenticated, bool wasServerError) TryLogin(string username, string password)
-        {
-            clientSocket.Send(Command.SYSTEM | Command.LOGIN | 0);
-            clientSocket.Send((uint)(username.Length + password.Length));
-            clientSocket.Send(username);
-            clientSocket.Send(password);
-
-            var authResult = clientSocket.ReceiveC();
-            /** Verify it is what we expected **/
-            if ((authResult & (Command.GROUPMASK | Command.SYSTEM_OPMASK)) != (Command.SYSTEM | Command.LOGINRESULT))
-            {
-                MessageBox.Show("Server login procedure is not compatible with this client.", "Server error:", MessageBoxButtons.OK);
-                /** This is a server error as the server is incompatible with this client **/
-                return (authenticated: false, wasServerError: true);
-            }
-
-            /** Receive the result command length **/
-            clientSocket.ReceiveI();
-            /** Receive the description of the result code **/
-            var description = clientSocket.ReceiveS();
-            /** Check the value for '0' meaning success **/
-            var authenticated = (authResult & Command.SYSTEM_VALUEMASK) == 0;
-            if (!authenticated)
-            {
-                /** Tell the client of any failure **/
-                MessageBox.Show(description, "Login error:", MessageBoxButtons.OK);
-            }
-
-            return (authenticated, wasServerError: false);
         }
 
         private void Setup()
@@ -263,21 +165,6 @@ namespace BAPSPresenter2
                 bc.TimelineChanged += TimelineChanged;
                 //bc.TrackListContextMenuStripItemClicked += (e, x) => Invoke((ToolStripItemClickedEventHandler)trackListContextMenuStrip_ItemClicked, e, x);
             }
-        }
-
-        /** Generate an md5 sum of the raw argument **/
-        private string Md5sum(string raw)
-        {
-            var md5serv = System.Security.Cryptography.MD5.Create();
-            var stringbuff = new System.Text.StringBuilder();
-            var buffer = System.Text.Encoding.ASCII.GetBytes(raw);
-            var hash = md5serv.ComputeHash(buffer);
-
-            foreach (var h in hash)
-            {
-                stringbuff.Append(h.ToString("x2"));
-            }
-            return stringbuff.ToString();
         }
 
         /** Enable or disable the timer controls **/
