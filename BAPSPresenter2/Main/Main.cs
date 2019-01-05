@@ -39,10 +39,29 @@ namespace BAPSPresenter2
         private bool ChannelOutOfBounds(ushort channel) => 3 <= channel;
         private bool DirectoryOutOfBounds(ushort directory) => 3 <= directory;
 
-        public Main()
+        public Main() : base()
         {
+            InitializeComponent();
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
             ConfigManager.initConfigManager();
 
+            var authenticated = Authenticate();
+            if (!authenticated)
+            {
+                Close();
+                return;
+            }
+
+            Setup();
+        }
+
+        private bool Authenticate()
+        {
             var login = new Dialogs.Login();
             /** This flag defines success of the login procedure
                 (along with the implicit knowledge that the server is ready)
@@ -60,106 +79,123 @@ namespace BAPSPresenter2
                 /** If we cancel login we can assume we wish to abort as there is nothing
                     else to do
                 **/
-                if (login.ShowDialog() == DialogResult.Cancel)
-                {
-                    Process.GetCurrentProcess().Kill();
-                }
+                if (login.ShowDialog() == DialogResult.Cancel) return false;
                 /** If either the server or port have been changed since last attempt
                     we need to reconnect.
                 **/
                 if (login.needsToConnect() || wasServerError)
                 {
-                    try
+                    randomSecurityString = MakeNewConnection(login.Server, login.Port);
+                    if (randomSecurityString == null)
                     {
-                        /** Destroy old connection (if present) **/
-                        clientSocket?.Dispose();
-                    }
-                    catch (Exception)
-                    {
-                        /** Do nothing **/
-                    }
-                    try
-                    {
-                        /** Attempt to make a connection to the specified server **/
-                        clientSocket = new BAPSCommon.ClientSocket(login.Server, login.Port);
-                    }
-                    catch (Exception e)
-                    {
-                        /** If an error occurs just give the exception message and start again **/
-                        var errorMessage = string.Concat("System Error:\n", e.Message, "\nStack Trace:\n", e.StackTrace);
-                        MessageBox.Show(errorMessage, "Server error:", MessageBoxButtons.OK);
-                        logError(errorMessage);
                         wasServerError = true;
                         continue;
                     }
-                    /** Receive the greeting string, this is the only communication
-                        that does not follow the 'command' 'command-length' 'argument1'...
-                        structure
-                    **/
-                    var greeting = clientSocket.ReceiveS();
-                    /** Let the server know we are a binary client **/
-                    clientSocket.Send(Command.SYSTEM | Command.SETBINARYMODE);
-                    /** Specify the length of the command **/
-                    clientSocket.Send(0U);
-                    /** Receive what should be the SEED command **/
-                    var seedCmd = clientSocket.ReceiveC();
-                    /** Receive the length of the seed command **/
-                    clientSocket.ReceiveI();
-                    /** Verify the server is sending what we expect **/
-                    if ((seedCmd & (Command.GROUPMASK | Command.SYSTEM_OPMASK)) != (Command.SYSTEM | Command.SEED))
-                    {
-                        MessageBox.Show("Server login procedure is not compatible with this client.", "Server error:", MessageBoxButtons.OK);
-                        /** Notify a server error so a reconnect is attempted **/
-                        wasServerError = true;
-                        continue;
-                    }
-                    else
-                    {
-                        /** Receive the SEED **/
-                        randomSecurityString = clientSocket.ReceiveS();
-                    }
-                    /** Clear any server error **/
-                    wasServerError = false;
                 }
-                /** Encrypt the password **/
                 var securedPassword = Md5sum(string.Concat(randomSecurityString, Md5sum(login.Password)));
-                /** Send LOGIN command **/
-                clientSocket.Send(Command.SYSTEM | Command.LOGIN | 0);
-                /** Send correct command length **/
-                clientSocket.Send((uint)(login.Username.Length + securedPassword.Length));
-                /** Send username **/
-                clientSocket.Send(login.Username);
-                /** Send encrypted password **/
-                clientSocket.Send(securedPassword);
-                /** Receive what should be the login result **/
-                var authResult = clientSocket.ReceiveC();
-                /** Verify it is what we expected **/
-                if ((authResult & (Command.GROUPMASK | Command.SYSTEM_OPMASK)) != (Command.SYSTEM | Command.LOGINRESULT))
-                {
-                    MessageBox.Show("Server login procedure is not compatible with this client.", "Server error:", MessageBoxButtons.OK);
-                    /** This is a server error as the server is incompatible with this client **/
-                    wasServerError = true;
-                    continue;
-                }
-                else
-                {
-                    /** Receive the result command length **/
-                    clientSocket.ReceiveI();
-                    /** Receive the description of the result code **/
-                    var description = clientSocket.ReceiveS();
-                    /** Check the value for '0' meaning success **/
-                    authenticated = (authResult & Command.SYSTEM_VALUEMASK) == 0;
-                    if (!authenticated)
-                    {
-                        /** Tell the client of any failure **/
-                        MessageBox.Show(description, "Login error:", MessageBoxButtons.OK);
-                    }
-                }
-            }
-            username = login.Username;
-            /** Do the form initialization **/
-            InitializeComponent();
 
+                (authenticated, wasServerError) = TryLogin(login.Username, securedPassword);
+            }
+
+            username = login.Username;
+            return true;
+        }
+
+        /// <summary>
+        /// Makes a new bapsnet connection to the given server and port.
+        /// <para>
+        /// On success, the new connection is placed in <see cref="clientSocket"/>.
+        /// </para>
+        /// </summary>
+        /// <param name="server">The server host to connect to.</param>
+        /// <param name="port">The port to connect to.</param>
+        /// <returns>
+        /// The seed to use for encrypting the password when logging
+        /// into the server.  If null, there was a connection failure.
+        /// </returns>
+        private string MakeNewConnection(string server, int port)
+        {
+            try
+            {
+                /** Destroy old connection (if present) **/
+                clientSocket?.Dispose();
+            }
+            catch (Exception)
+            {
+                /** Do nothing **/
+            }
+            try
+            {
+                /** Attempt to make a connection to the specified server **/
+                clientSocket = new BAPSCommon.ClientSocket(server, port);
+            }
+            catch (Exception e)
+            {
+                /** If an error occurs just give the exception message and start again **/
+                var errorMessage = string.Concat("System Error:\n", e.Message, "\nStack Trace:\n", e.StackTrace);
+                MessageBox.Show(errorMessage, "Server error:", MessageBoxButtons.OK);
+                logError(errorMessage);
+                return null;
+            }
+            /** Receive the greeting string, this is the only communication
+                that does not follow the 'command' 'command-length' 'argument1'...
+                structure
+            **/
+            var greeting = clientSocket.ReceiveS();
+            /** Let the server know we are a binary client **/
+            clientSocket.Send(Command.SYSTEM | Command.SETBINARYMODE);
+            /** Specify the length of the command **/
+            clientSocket.Send(0U);
+            /** Receive what should be the SEED command **/
+            var seedCmd = clientSocket.ReceiveC();
+            /** Receive the length of the seed command **/
+            clientSocket.ReceiveI();
+            /** Verify the server is sending what we expect **/
+            if ((seedCmd & (Command.GROUPMASK | Command.SYSTEM_OPMASK)) != (Command.SYSTEM | Command.SEED))
+            {
+                MessageBox.Show("Server login procedure is not compatible with this client.", "Server error:", MessageBoxButtons.OK);
+                /** Notify a server error so a reconnect is attempted **/
+                return null;
+            }
+
+            /** Receive the SEED **/
+            var randomSecurityString = clientSocket.ReceiveS();
+            return randomSecurityString;
+        }
+
+        private (bool authenticated, bool wasServerError) TryLogin(string username, string password)
+        {
+            clientSocket.Send(Command.SYSTEM | Command.LOGIN | 0);
+            clientSocket.Send((uint)(username.Length + password.Length));
+            clientSocket.Send(username);
+            clientSocket.Send(password);
+
+            var authResult = clientSocket.ReceiveC();
+            /** Verify it is what we expected **/
+            if ((authResult & (Command.GROUPMASK | Command.SYSTEM_OPMASK)) != (Command.SYSTEM | Command.LOGINRESULT))
+            {
+                MessageBox.Show("Server login procedure is not compatible with this client.", "Server error:", MessageBoxButtons.OK);
+                /** This is a server error as the server is incompatible with this client **/
+                return (authenticated: false, wasServerError: true);
+            }
+
+            /** Receive the result command length **/
+            clientSocket.ReceiveI();
+            /** Receive the description of the result code **/
+            var description = clientSocket.ReceiveS();
+            /** Check the value for '0' meaning success **/
+            var authenticated = (authResult & Command.SYSTEM_VALUEMASK) == 0;
+            if (!authenticated)
+            {
+                /** Tell the client of any failure **/
+                MessageBox.Show(description, "Login error:", MessageBoxButtons.OK);
+            }
+
+            return (authenticated, wasServerError: false);
+        }
+
+        private void Setup()
+        {
             SetupChannels();
             SetupDirectories();
 
@@ -176,7 +212,6 @@ namespace BAPSPresenter2
             ConfigCache.initConfigCache();
             /** Create a message queue for sending commands to the server **/
             msgQueue = new System.Collections.Concurrent.BlockingCollection<BAPSCommon.Message>(new System.Collections.Concurrent.ConcurrentQueue<BAPSCommon.Message>());
-            /** Add the autoupdate message onto the queue (chat(2) and general(1)) **/
             /** Add the autoupdate message onto the queue (chat(2) and general(1)) **/
             Command cmd = Command.SYSTEM | Command.AUTOUPDATE | (Command)2 | (Command)1;
             msgQueue.Add(new BAPSCommon.Message(cmd));
