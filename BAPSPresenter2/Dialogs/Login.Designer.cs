@@ -128,7 +128,7 @@ namespace BAPSPresenter2.Dialogs
             // passwordLabel
             // 
             this.passwordLabel.BackColor = System.Drawing.Color.Transparent;
-            this.passwordLabel.Location = new System.Drawing.Point(3, 30);
+            this.passwordLabel.Location = new System.Drawing.Point(3, 31);
             this.passwordLabel.Margin = new System.Windows.Forms.Padding(3);
             this.passwordLabel.Name = "passwordLabel";
             this.passwordLabel.Size = new System.Drawing.Size(64, 16);
@@ -140,10 +140,10 @@ namespace BAPSPresenter2.Dialogs
             this.passwordText.BackColor = System.Drawing.SystemColors.Window;
             this.passwordText.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.passwordText.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.passwordText.Location = new System.Drawing.Point(73, 30);
+            this.passwordText.Location = new System.Drawing.Point(73, 31);
             this.passwordText.Name = "passwordText";
             this.passwordText.PasswordChar = '*';
-            this.passwordText.Size = new System.Drawing.Size(133, 21);
+            this.passwordText.Size = new System.Drawing.Size(133, 22);
             this.passwordText.TabIndex = 1;
             this.passwordText.UseSystemPasswordChar = true;
             this.passwordText.Enter += new System.EventHandler(this.Textbox_Enter);
@@ -155,7 +155,7 @@ namespace BAPSPresenter2.Dialogs
             this.usernameText.Dock = System.Windows.Forms.DockStyle.Fill;
             this.usernameText.Location = new System.Drawing.Point(73, 3);
             this.usernameText.Name = "usernameText";
-            this.usernameText.Size = new System.Drawing.Size(133, 21);
+            this.usernameText.Size = new System.Drawing.Size(133, 22);
             this.usernameText.TabIndex = 0;
             this.usernameText.Enter += new System.EventHandler(this.Textbox_Enter);
             // 
@@ -172,7 +172,7 @@ namespace BAPSPresenter2.Dialogs
             // portLabel
             // 
             this.portLabel.BackColor = System.Drawing.Color.Transparent;
-            this.portLabel.Location = new System.Drawing.Point(3, 84);
+            this.portLabel.Location = new System.Drawing.Point(3, 86);
             this.portLabel.Margin = new System.Windows.Forms.Padding(3);
             this.portLabel.Name = "portLabel";
             this.portLabel.Size = new System.Drawing.Size(64, 18);
@@ -182,7 +182,7 @@ namespace BAPSPresenter2.Dialogs
             // label1
             // 
             this.label1.BackColor = System.Drawing.Color.Transparent;
-            this.label1.Location = new System.Drawing.Point(3, 57);
+            this.label1.Location = new System.Drawing.Point(3, 59);
             this.label1.Margin = new System.Windows.Forms.Padding(3);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(64, 18);
@@ -194,9 +194,9 @@ namespace BAPSPresenter2.Dialogs
             this.portText.BackColor = System.Drawing.SystemColors.Window;
             this.portText.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.portText.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.portText.Location = new System.Drawing.Point(73, 84);
+            this.portText.Location = new System.Drawing.Point(73, 86);
             this.portText.Name = "portText";
-            this.portText.Size = new System.Drawing.Size(133, 21);
+            this.portText.Size = new System.Drawing.Size(133, 22);
             this.portText.TabIndex = 7;
             this.portText.TextChanged += new System.EventHandler(this.connectionText_TextChanged);
             this.portText.Enter += new System.EventHandler(this.Textbox_Enter);
@@ -234,7 +234,7 @@ namespace BAPSPresenter2.Dialogs
             "studio1",
             "studio2",
             "production"});
-            this.serverText.Location = new System.Drawing.Point(73, 57);
+            this.serverText.Location = new System.Drawing.Point(73, 59);
             this.serverText.Name = "serverText";
             this.serverText.Size = new System.Drawing.Size(133, 21);
             this.serverText.TabIndex = 20;
@@ -274,12 +274,12 @@ namespace BAPSPresenter2.Dialogs
             this.tableLayoutPanel1.SetColumnSpan(this.flowLayoutPanel1, 2);
             this.flowLayoutPanel1.Controls.Add(this.cancelButton);
             this.flowLayoutPanel1.Controls.Add(this.loginButton);
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(44, 111);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(44, 114);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(162, 29);
             this.flowLayoutPanel1.TabIndex = 22;
             // 
-            // LoginDialog
+            // Login
             // 
             this.AcceptButton = this.loginButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -296,7 +296,7 @@ namespace BAPSPresenter2.Dialogs
             this.Icon = global::BAPSPresenter2.Properties.Resources.Icon;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "LoginDialog";
+            this.Name = "Login";
             this.Padding = new System.Windows.Forms.Padding(5);
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "BAPS Presenter: Please Login";
