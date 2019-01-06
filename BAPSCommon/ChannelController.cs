@@ -14,7 +14,7 @@ namespace BAPSCommon
     /// </summary>
     public class ChannelController
     {
-        private ushort _channelID;
+        private readonly ushort _channelID;
         private BlockingCollection<Message> _msgQueue;
 
         public ChannelController(ushort channelID, BlockingCollection<Message> msgQueue)

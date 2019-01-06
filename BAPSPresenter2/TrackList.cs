@@ -17,24 +17,9 @@ namespace BAPSPresenter2
 
         public EntryInfo GetTrack(int i) => items.ElementAtOrDefault(i) ?? nullEntry;
 
-        private EntryInfo MakeEntryInfo(Command type, string descr)
+        public void AddTrack(EntryInfo entry)
         {
-            switch (type)
-            {
-                case Command.FILEITEM:
-                    return new FileEntryInfo(descr);
-                case Command.TEXTITEM:
-                    return new TextEntryInfo(descr);
-                case Command.LIBRARYITEM:
-                    return new LibraryEntryInfo(descr);
-                default:
-                    return new NullEntryInfo();
-            }
-        }
-
-        public void AddTrack(Command type, string descr)
-        {
-            items.Add(MakeEntryInfo(type, descr));
+            items.Add(entry);
             ShowHideScrollBar();
             Invalidate();
         }
@@ -634,58 +619,6 @@ namespace BAPSPresenter2
             fromIndex = _fromIndex;
             moved = false;
         }
-    }
-
-    public abstract class EntryInfo
-    {
-        public string Description { get; private set; }
-
-        public EntryInfo(string description)
-        {
-            Description = description;
-        }
-
-        public abstract bool IsAudioItem { get; }
-        public abstract bool IsTextItem { get; }
-        public abstract bool IsFromLibrary { get; }
-
-        public override string ToString() => Description;
-    }
-
-    public class TextEntryInfo : EntryInfo
-    {
-        public TextEntryInfo(string description) : base(description) { }
-
-        public override bool IsAudioItem => false;
-        public override bool IsTextItem => true;
-        public override bool IsFromLibrary => false;
-    }
-
-    public class FileEntryInfo : EntryInfo
-    {
-        public FileEntryInfo(string description) : base(description) { }
-
-        public override bool IsAudioItem => true;
-        public override bool IsTextItem => false;
-        public override bool IsFromLibrary => false;
-    }
-
-    public class LibraryEntryInfo : EntryInfo
-    {
-        public LibraryEntryInfo(string description) : base(description) { }
-
-        public override bool IsAudioItem => true;
-        public override bool IsTextItem => false;
-        public override bool IsFromLibrary => true;
-    }
-
-    public class NullEntryInfo : EntryInfo
-    {
-        public NullEntryInfo() : base("NONE") { }
-
-        public override bool IsAudioItem => false;
-        public override bool IsTextItem => false;
-        public override bool IsFromLibrary => false;
     }
 
     public static class EntryInfoExtensions

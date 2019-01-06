@@ -37,17 +37,17 @@ namespace BAPSPresenter2
             {
                 if (InvokeRequired)
                 {
-                    Invoke((Action<ushort, uint, Command, string>)showLoadedItem, e.channelID, e.index, e.type, e.description);
+                    Invoke((Action<ushort, uint, EntryInfo>)showLoadedItem, e.channelID, e.index, e.entry);
                 }
-                else showLoadedItem(e.channelID, e.index, e.type, e.description);
+                else showLoadedItem(e.channelID, e.index, e.entry);
             };
             r.TextItem += (sender, e) =>
             {
                 if (InvokeRequired)
                 {
-                    Invoke((Action<ushort, uint, string, string>)showText, e.ChannelID, e.index, e.description, e.text);
+                    Invoke((Action<ushort, uint, TextEntryInfo>)showText, e.ChannelID, e.index, e.entry);
                 }
-                else showText(e.ChannelID, e.index, e.description, e.text);
+                else showText(e.ChannelID, e.index, e.entry);
             };
         }
 
@@ -94,10 +94,10 @@ namespace BAPSPresenter2
             bapsChannels[channelID].DisplayedPosition = (int)value;
         }
 
-        private void showLoadedItem(ushort channelID, uint index, Command itemType, string description)
+        private void showLoadedItem(ushort channelID, uint index, EntryInfo entry)
         {
             if (ChannelOutOfBounds(channelID)) return;
-            bapsChannels[channelID].ShowLoadedItem(index, itemType, description);
+            bapsChannels[channelID].ShowLoadedItem(index, entry);
             RefreshAudioWall();
         }
 
@@ -107,15 +107,15 @@ namespace BAPSPresenter2
             bapsChannels[channelID].DisplayedDuration = (int)value;
         }
 
-        private void showText(ushort channel, uint index, string description, string text)
+        private void showText(ushort channel, uint index, TextEntryInfo entry)
         {
             if (ChannelOutOfBounds(channel)) return;
             foreach (var chan in bapsChannels) chan.LoadedTextIndex = -1;
             bapsChannels[channel].LoadedTextIndex = (int)index;
-            MainTextDisplay.Text = text;
+            MainTextDisplay.Text = entry.Text;
             if (textDialog?.Visible ?? false)
             {
-                textDialog.Invoke((Action<string>)textDialog.updateText, text);
+                textDialog.Invoke((Action<string>)textDialog.updateText, entry.Text);
             }
         }
 

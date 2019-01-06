@@ -75,18 +75,18 @@ namespace BAPSCommon
         public event EventHandler<(ushort channelID, uint duration)> Duration;
         private void OnDuration(ushort channelID, uint duration) => Duration?.Invoke(this, (channelID, duration));
 
-        public event EventHandler<(ushort channelID, uint index, Command type, string description)> LoadedItem;
-        private void OnLoadedItem(ushort channelID, uint index, Command type, string description) => LoadedItem?.Invoke(this, (channelID, index, type, description));
+        public event EventHandler<(ushort channelID, uint index, EntryInfo entry)> LoadedItem;
+        private void OnLoadedItem(ushort channelID, uint index, EntryInfo entry) => LoadedItem?.Invoke(this, (channelID, index, entry));
 
-        public event EventHandler<(ushort ChannelID, uint index, string description, string text)> TextItem;
-        private void OnTextItem(ushort channelID, uint index, string description, string text) => TextItem?.Invoke(this, (channelID, index, description, text));
+        public event EventHandler<(ushort ChannelID, uint index, TextEntryInfo entry)> TextItem;
+        private void OnTextItem(ushort channelID, uint index, TextEntryInfo entry) => TextItem?.Invoke(this, (channelID, index, entry));
 
         #endregion Playback events
 
         #region Playlist events
 
-        public event EventHandler<(ushort channelID, uint index, uint type, string description)> ItemAdd;
-        private void OnItemAdd(ushort channelID, uint index, uint type, string description) => ItemAdd?.Invoke(this, (channelID, index, type, description));
+        public event EventHandler<(ushort channelID, uint index, EntryInfo entry)> ItemAdd;
+        private void OnItemAdd(ushort channelID, uint index, EntryInfo entry) => ItemAdd?.Invoke(this, (channelID, index, entry));
 
         public event EventHandler<(ushort channelID, uint indexFrom, uint indexTo)> ItemMove;
         private void OnItemMove(ushort channelID, uint indexFrom, uint indexTo) => ItemMove?.Invoke(this, (channelID, indexFrom, indexTo));
@@ -239,13 +239,15 @@ namespace BAPSCommon
                                 goto case Command.VOIDITEM;
                             case Command.VOIDITEM:
                                 {
-                                    OnLoadedItem(channelID, index, type, description);
+                                    var entry = EntryInfoFactory.Create(type, description);
+                                    OnLoadedItem(channelID, index, entry);
                                 }
                                 break;
                             case Command.TEXTITEM:
                                 {
                                     var text = _cs.ReceiveS();
-                                    OnTextItem(channelID, index, description, text);
+                                    var entry = new TextEntryInfo(description, text);
+                                    OnTextItem(channelID, index, entry);
                                 }
                                 break;
                             default:
@@ -280,7 +282,8 @@ namespace BAPSCommon
                         var index = _cs.ReceiveI();
                         var type = _cs.ReceiveI();
                         var description = _cs.ReceiveS();
-                        OnItemAdd(channelID, index, type, description);
+                        var entry = EntryInfoFactory.Create((Command)type, description);
+                        OnItemAdd(channelID, index, entry);
                     }
                     else
                     {

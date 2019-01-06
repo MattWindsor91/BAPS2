@@ -13,9 +13,9 @@ namespace BAPSPresenter2
             {
                 if (InvokeRequired)
                 {
-                    Invoke((Action<ushort, uint, uint, string>)addItem, e.channelID, e.index, e.type, e.description);
+                    Invoke((Action<ushort, uint, EntryInfo>)addItem, e.channelID, e.index, e.entry);
                 }
-                else addItem(e.channelID, e.index, e.type, e.description);
+                else addItem(e.channelID, e.index, e.entry);
             };
             r.ItemMove += (sender, e) =>
             {
@@ -43,10 +43,10 @@ namespace BAPSPresenter2
             };
         }
 
-        private void addItem(ushort channel, uint index, uint type, string description)
+        private void addItem(ushort channel, uint index, EntryInfo entry)
         {
             if (ChannelOutOfBounds(channel)) return;
-            bapsChannels[channel].AddTrack(index, type, description);
+            bapsChannels[channel].AddTrack(index, entry);
             RefreshAudioWall();
         }
 

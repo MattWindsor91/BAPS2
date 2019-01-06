@@ -203,14 +203,24 @@ namespace BAPSPresenterNG
             IsStopped = e.op == Command.STOP;
         }
 
-        private void HandleTextItem(object sender, (ushort channelID, uint index, string description, string text) e)
+        private void HandleTextItem(object sender, (ushort channelID, uint index, TextEntryInfo entry) e)
         {
         }
 
-        private void HandleLoadedItem(object sender, (ushort channelID, uint index, Command type, string description) e)
+        private void HandleLoadedItem(object sender, (ushort channelID, uint index, EntryInfo entry) e)
         {
             if (ChannelID != e.channelID) return;
-            LoadedTrackName = e.description;
+
+            var entry = e.entry;
+            LoadedTrackName = entry.Description;
+
+            if (!entry.IsAudioItem && !entry.IsTextItem)
+            {
+                Position = 0;
+                Duration = 0;
+                CuePosition = 0;
+                IntroPosition = 0;
+            }
         }
     }
 }

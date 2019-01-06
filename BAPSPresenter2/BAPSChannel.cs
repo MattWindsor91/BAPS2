@@ -3,6 +3,7 @@ using BAPSPresenter;
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
+using EntryInfo = BAPSCommon.EntryInfo;
 
 namespace BAPSPresenter2
 {
@@ -163,12 +164,12 @@ namespace BAPSPresenter2
             }
         }
 
-        internal void ShowLoadedItem(uint index, Command itemType, string description)
+        internal void ShowLoadedItem(uint index, EntryInfo entry)
         {
             trackList.LoadedIndex = (int)index;
-            loadedText.Text = description;
+            loadedText.Text = entry.Description;
             cds.running = false;
-            if (itemType == Command.VOIDITEM)
+            if (!entry.IsAudioItem && !entry.IsTextItem)
             {
                 trackTime.Position = 0;
                 RequestTimelineChange(TimelineChangeType.Position, 0);
@@ -183,10 +184,10 @@ namespace BAPSPresenter2
             }
         }
 
-        internal void AddTrack(uint index, uint type, string description)
+        internal void AddTrack(uint index, EntryInfo entry)
         {
             /** Add an item to the end of the list ( only method currently supported by server ) **/
-            trackList.AddTrack((Command)type, description);
+            trackList.AddTrack(entry);
         }
 
         internal void MoveTrack(uint oldIndex, uint newIndex)
