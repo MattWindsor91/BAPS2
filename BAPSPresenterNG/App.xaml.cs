@@ -59,14 +59,10 @@ namespace BAPSPresenterNG
 
         private void ReceiverCreated(object sender, Receiver e)
         {
-            SetupPlaybackReactions(e);
-        }
-
-        private void SetupPlaybackReactions(Receiver e)
-        {
             foreach (var channel in _main.ViewModel.Channels)
             {
                 channel.SetupPlaybackReactions(e);
+                channel.SetupPlaylistReactions(e);
             }
         }
 

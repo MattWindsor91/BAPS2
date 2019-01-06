@@ -40,5 +40,12 @@ namespace BAPSCommon
             var cmd = Command.PLAYBACK | Command.STOP | (Command)_channelID;
             _msgQueue.Add(new Message(cmd));
         }
+
+        public void Select(uint index)
+        {
+            var cmd = Command.PLAYBACK | Command.LOAD;
+            cmd |= (Command)(_channelID & 0x3f);
+            _msgQueue.Add(new Message(cmd).Add(index));
+        }
     }
 }

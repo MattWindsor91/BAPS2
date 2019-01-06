@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using BAPSCommon;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
-using BAPSCommon;
 
 namespace BAPSPresenterNG
 {
@@ -23,6 +19,11 @@ namespace BAPSPresenterNG
         }
 
         public ChannelController Controller { get; set; }
+
+        /// <summary>
+        /// The track list.
+        /// </summary>
+        public ObservableCollection<EntryInfo> TrackList { get; } = new ObservableCollection<EntryInfo>();
 
         public bool IsPlaying
         {
@@ -75,7 +76,15 @@ namespace BAPSPresenterNG
                 OnPropertyChanged(nameof(Remaining));
             }
         }
+
         private uint _duration = 0;
+
+        public EntryInfo TrackAt(int index) =>
+            TrackList[index] ?? new NullEntryInfo();
+
+        public bool IsLoadPossible(int uindex) =>
+            TrackAt(uindex).IsTextItem || !IsPlaying;
+
 
         /// <summary>
         /// The position of the currently loaded item (if any), in milliseconds.
@@ -143,33 +152,75 @@ namespace BAPSPresenterNG
         }
         private uint _startTime = 0;
 
-        /// <summary>
-        /// The name of the currently loaded item (if any).
-        /// </summary>
-        public string LoadedTrackName
+        public int SelectedItemIndex
         {
-            get => _loadedTrackName;
+            get => _selectedItemIndex;
             set
             {
-                if (_loadedTrackName == value) return;
-                _loadedTrackName = value;
-                OnPropertyChanged(nameof(LoadedTrackName));
+                if (_selectedItemIndex == value) return;
+                _selectedItemIndex = value;
+                OnPropertyChanged(nameof(SelectedItemIndex));
             }
         }
-        private string _loadedTrackName = "NONE";
+        private int _selectedItemIndex = -1;
+
+        /// <summary>
+        /// The currently loaded item (if any).
+        /// </summary>
+        public EntryInfo LoadedTrack
+        {
+            get => _loadedTrack;
+            set
+            {
+                if (_loadedTrack == value) return;
+                _loadedTrack = value;
+                OnPropertyChanged(nameof(LoadedTrack));
+            }
+        }
+        private EntryInfo _loadedTrack = null;
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
         internal void SetupPlaybackReactions(Receiver r)
         {
-            var myID = ChannelID;
-
             r.ChannelOperation += HandleChannelOperation;
-            r.LoadedItem += HandleLoadedItem;
-            r.TextItem += HandleTextItem;
             r.Position += HandlePosition;
             r.Duration += HandleDuration;
+            r.LoadedItem += HandleLoadedItem;
+            r.TextItem += HandleTextItem;
+        }
+
+        internal void SetupPlaylistReactions(Receiver r)
+        {
+            r.ItemAdd += HandleItemAdd;
+            r.ItemMove += HandleItemMove;
+            r.ItemDelete += HandleItemDelete;
+            r.ResetPlaylist += HandleResetPlaylist;
+        }
+
+        private void HandleItemAdd(object sender, (ushort channelID, uint index, EntryInfo entry) e)
+        {
+            if (ChannelID != e.channelID) return;
+            TrackList.Add(e.entry);
+        }
+
+        private void HandleItemMove(object sender, (ushort channelID, uint indexFrom, uint indexTo) e)
+        {
+            if (ChannelID != e.channelID) return;
+            TrackList.Move((int)e.indexFrom, (int)e.indexTo);
+        }
+
+        private void HandleItemDelete(object sender, (ushort channelID, uint index) e)
+        {
+            if (ChannelID != e.channelID) return;
+            TrackList.RemoveAt((int)e.index);
+        }
+
+        private void HandleResetPlaylist(object sender, ushort e)
+        {
+            if (ChannelID != e) return;
+            TrackList.Clear();
         }
 
         private void HandleDuration(object sender, (ushort channelID, uint duration) e)
@@ -212,7 +263,8 @@ namespace BAPSPresenterNG
             if (ChannelID != e.channelID) return;
 
             var entry = e.entry;
-            LoadedTrackName = entry.Description;
+            LoadedTrack = entry;
+            SelectedItemIndex = (int)e.index;
 
             if (!entry.IsAudioItem && !entry.IsTextItem)
             {

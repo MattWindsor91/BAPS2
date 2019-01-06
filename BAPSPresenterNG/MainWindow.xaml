@@ -7,6 +7,25 @@
         mc:Ignorable="d"
         Title="BAPS Presenter" Height="768" Width="1024"
         DataContext="{Binding ViewModel, RelativeSource={RelativeSource Self}}">
+    <Window.InputBindings>
+        <!-- F1-3 control the first channel, if it exists -->
+        <KeyBinding Key="F1" Command="MediaCommands.Play" CommandParameter="0"/>
+        <KeyBinding Key="F2" Command="MediaCommands.Pause" CommandParameter="0"/>
+        <KeyBinding Key="F3" Command="MediaCommands.Stop" CommandParameter="0"/>
+        <!-- F5-7 control the second channel, if it exists -->
+        <KeyBinding Key="F5" Command="MediaCommands.Play" CommandParameter="1"/>
+        <KeyBinding Key="F6" Command="MediaCommands.Pause" CommandParameter="1"/>
+        <KeyBinding Key="F7" Command="MediaCommands.Stop" CommandParameter="1"/>
+        <!-- F9-11 control the third channel, if it exists -->
+        <KeyBinding Key="F9" Command="MediaCommands.Play" CommandParameter="2"/>
+        <KeyBinding Key="F10" Command="MediaCommands.Pause" CommandParameter="2"/>
+        <KeyBinding Key="F11" Command="MediaCommands.Stop" CommandParameter="2"/>
+    </Window.InputBindings>
+    <Window.CommandBindings>
+        <CommandBinding Command="MediaCommands.Play" CanExecute="PlayShortcut_CanExecute" Executed="PlayShortcut_Executed"/>
+        <CommandBinding Command="MediaCommands.Pause" CanExecute="PauseShortcut_CanExecute" Executed="PauseShortcut_Executed"/>
+        <CommandBinding Command="MediaCommands.Stop" CanExecute="StopShortcut_CanExecute" Executed="StopShortcut_Executed"/>
+    </Window.CommandBindings>
     <DockPanel>
         <TextBox DockPanel.Dock="Bottom" Name="textBox" MinHeight="72pt" Text="{Binding Text, Mode=TwoWay}"/>
         <TextBox DockPanel.Dock="Bottom" Name="timeLine"/>
@@ -27,9 +46,12 @@
                 </Button>
             </Grid>
         </StackPanel>
-        <ListView Name="channelList" ItemsSource="{Binding Channels}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+        <ListView Name="channelList"
+                  ItemsSource="{Binding Channels}"
+                  HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
+                    <Setter Property="Focusable" Value="False" />
                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                     <Setter Property="VerticalContentAlignment" Value="Stretch" />
                 </Style>

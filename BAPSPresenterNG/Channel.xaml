@@ -53,8 +53,11 @@
                >
             <TextBlock FontSize="14pt">Channel <TextBlock Text="{Binding ChannelID, Converter={StaticResource ChannelIDConverter}}" /></TextBlock>
         </Label>
-        <ListBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Name="trackList">
-        </ListBox>
+        <ListBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Name="trackList"
+                 ItemsSource="{Binding TrackList,UpdateSourceTrigger=PropertyChanged}"
+                 
+                 SelectionChanged="TrackList_SelectionChanged" SelectedIndex="{Binding SelectedItemIndex, Mode=OneWay}"
+                 />
         <Border Grid.Row="2" Grid.Column="0" Name="playButtonBorder">
             <Border.Style>
                 <Style BasedOn="{StaticResource TransportButtonBorderStyle}" TargetType="{x:Type Border}">
@@ -115,7 +118,7 @@
                        FontSize="14pt"
                        Padding="4pt"
                        FontFamily="Consolas"
-                       Text="{Binding LoadedTrackName, FallbackValue=UNKNOWN}">
+                       Text="{Binding LoadedTrack, FallbackValue=UNKNOWN, TargetNullValue=NONE}">
             </TextBlock>
         </Border>
         <Border Grid.Row="4" Grid.Column="0" Style="{StaticResource PositionDisplayBorder}">
