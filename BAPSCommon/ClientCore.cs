@@ -33,6 +33,13 @@ namespace BAPSCommon
         }
 
         /// <summary>
+        /// Event raised just before authentication.
+        /// Subscribe to this to install any event handlers needed for the authenticator.
+        /// </summary>
+        public event EventHandler<Authenticator> AboutToAuthenticate;
+        private void OnAboutToAuthenticate() => AboutToAuthenticate?.Invoke(this, _auth);
+
+        /// <summary>
         /// Event raised when the <see cref="ClientCore"/> has just authenticated.
         /// </summary>
         public event EventHandler Authenticated;
@@ -51,6 +58,8 @@ namespace BAPSCommon
         /// <returns>Whether the client successfully launched.</returns>
         public bool Launch()
         {
+            OnAboutToAuthenticate();
+
             var authenticated = Authenticate();
             if (!authenticated) return false;
             OnAuthenticated();

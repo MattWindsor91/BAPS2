@@ -52,6 +52,19 @@ namespace BAPSPresenter2
             }
         }
 
+        private void SetupAuthErrorReactions(object sender, Authenticator auth)
+        {
+            auth.ServerError += (s, errorMessage) =>
+            {
+                MessageBox.Show(errorMessage, "Server error:", MessageBoxButtons.OK);
+                //logError(errorMessage);
+            };
+            auth.UserError += (s, ErrorMessage) =>
+            {
+                MessageBox.Show(ErrorMessage, "Login error:", MessageBoxButtons.OK);
+            };
+        }
+
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -59,6 +72,7 @@ namespace BAPSPresenter2
             ConfigManager.initConfigManager();
 
             core = new ClientCore(LoginCallback);
+            core.AboutToAuthenticate += SetupAuthErrorReactions;
             core.Authenticated += Setup;
             core.ReceiverCreated += SetupReactions;
             var launched = core.Launch();
