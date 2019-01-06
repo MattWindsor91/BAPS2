@@ -6,10 +6,21 @@
              xmlns:local="clr-namespace:BAPSPresenterNG"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Width="360">
+    <UserControl.CommandBindings>
+        <CommandBinding Command="MediaCommands.Play" CanExecute="PlayCommand_CanExecute" Executed="PlayCommand_Executed" />
+        <CommandBinding Command="MediaCommands.Pause" CanExecute="PauseCommand_CanExecute" Executed="PauseCommand_Executed" />
+        <CommandBinding Command="MediaCommands.Stop" CanExecute="StopCommand_CanExecute" Executed="StopCommand_Executed" />
+    </UserControl.CommandBindings>
     <UserControl.Resources>
         <local:ChannelIDConverter x:Key="ChannelIDConverter" />
+        <local:MsecToPositionStringConverter x:Key="MsecToPositionStringConverter" />
         <Style x:Key="TransportButtonStyle" TargetType="{x:Type Button}">
             <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
+        </Style>
+        <Style x:Key="TransportButtonBorderStyle" TargetType="{x:Type Border}">
+            <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"/>
+            <Setter Property="BorderThickness" Value="2pt"/>
+            <Setter Property="Margin" Value="1pt"/>
         </Style>
         <Style x:Key="PositionDisplayBorder" TargetType="{x:Type Border}">
             <Setter Property="BorderBrush" Value="Black"/>
@@ -18,6 +29,9 @@
             <Setter Property="CornerRadius" Value="5"/>
             <Setter Property="Background" Value="LightSteelBlue"/>
         </Style>
+        <SolidColorBrush x:Key="PlayBrush" Color="#FF8AE234"></SolidColorBrush>
+        <SolidColorBrush x:Key="PauseBrush" Color="#FFFCE94F"></SolidColorBrush>
+        <SolidColorBrush x:Key="StopBrush" Color="#FFEF2929"></SolidColorBrush>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -41,45 +55,54 @@
         </Label>
         <ListBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Name="trackList">
         </ListBox>
-        <Button Name="playButton" Grid.Row="2" Grid.Column="0">
-            <Button.Style>
-                <Style TargetType="{x:Type Button}" BasedOn="{StaticResource TransportButtonStyle}">
-                    <Setter Property="IsEnabled" Value="True" />
+        <Border Grid.Row="2" Grid.Column="0" Name="playButtonBorder">
+            <Border.Style>
+                <Style BasedOn="{StaticResource TransportButtonBorderStyle}" TargetType="{x:Type Border}">
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding Path=IsPlaying}" Value="true">
-                            <Setter Property="Background" Value="ForestGreen" />
-                            <Setter Property="IsEnabled" Value="False" />
+                            <Setter Property="BorderBrush" Value="{StaticResource PlayBrush}" />
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
-            </Button.Style>
-            Play
-        </Button>
-        <Button Name="pauseButton" Grid.Row="2" Grid.Column="1">
-            <Button.Style>
-                <Style TargetType="{x:Type Button}" BasedOn="{StaticResource TransportButtonStyle}">
+            </Border.Style>
+            <Button Name="playButton"
+                    Command="MediaCommands.Play"
+                    Style="{StaticResource TransportButtonStyle}">
+                Play
+            </Button>
+        </Border>
+        <Border Grid.Row="2" Grid.Column="1" Name="pauseButtonBorder">
+            <Border.Style>
+                <Style BasedOn="{StaticResource TransportButtonBorderStyle}" TargetType="{x:Type Border}">
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding Path=IsPaused}" Value="true">
-                            <Setter Property="Background" Value="Goldenrod" />
+                            <Setter Property="BorderBrush" Value="{StaticResource PauseBrush}" />
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
-            </Button.Style>
-            Pause
-        </Button>
-        <Button Name="stopButton" Grid.Row="2" Grid.Column="2">
-            <Button.Style>
-                <Style TargetType="{x:Type Button}" BasedOn="{StaticResource TransportButtonStyle}">
-                    <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
+            </Border.Style>
+            <Button Name="pauseButton"
+                    Command="MediaCommands.Pause"
+                    Style="{StaticResource TransportButtonStyle}">
+                Pause
+            </Button>
+        </Border>
+        <Border Grid.Row="2" Grid.Column="2" Name="stopButtonBorder">
+            <Border.Style>
+                <Style BasedOn="{StaticResource TransportButtonBorderStyle}" TargetType="{x:Type Border}">
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding Path=IsStopped}" Value="true">
-                            <Setter Property="Background" Value="Firebrick" />
+                            <Setter Property="BorderBrush" Value="{StaticResource StopBrush}" />
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
-            </Button.Style>
-            Stop
-        </Button>
+            </Border.Style>
+            <Button Name="stopButton"
+                    Command="MediaCommands.Stop"
+                    Style="{StaticResource TransportButtonStyle}">
+                Stop
+            </Button>
+        </Border>
         <Border Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3"
                 BorderThickness="1pt" Background="DarkSlateBlue" BorderBrush="Black">
             <TextBlock Name="trackName"
@@ -96,13 +119,17 @@
             </TextBlock>
         </Border>
         <Border Grid.Row="4" Grid.Column="0" Style="{StaticResource PositionDisplayBorder}">
-            <local:PositionDisplay x:Name="elapsedPd" SubText="Elapsed"/>
+            <local:PositionDisplay x:Name="elapsedPd" SubText="Elapsed"
+                                   MainText="{Binding Position, Converter={StaticResource MsecToPositionStringConverter}}"/>
         </Border>
         <Border Grid.Row="4" Grid.Column="1" Style="{StaticResource PositionDisplayBorder}">
-            <local:PositionDisplay x:Name="remainingPd" SubText="Remaining"/>
+            <local:PositionDisplay x:Name="remainingPd" SubText="Remaining"
+                                   MainText="{Binding Remaining, Converter={StaticResource MsecToPositionStringConverter}}"/>
         </Border>
         <Border Grid.Row="4" Grid.Column="2" Style="{StaticResource PositionDisplayBorder}">
-            <local:PositionDisplay x:Name="startPd" SubText="Start at:"/>
+            <local:PositionDisplay x:Name="startPd"
+                                   SubText="Start at:"
+                                   MainText="{Binding StartTime, Converter={StaticResource MsecToPositionStringConverter}}"/>
         </Border>
     </Grid>
 </UserControl>

@@ -1,17 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
+﻿using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace BAPSPresenterNG
 {
@@ -23,6 +11,40 @@ namespace BAPSPresenterNG
         public Channel()
         {
             InitializeComponent();
+        }
+
+        private void PlayCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            if (!(DataContext is ChannelViewModel viewModel)) return;
+            e.CanExecute = !viewModel.IsPlaying;
+        }
+
+        private void PauseCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void StopCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void PlayCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (!(DataContext is ChannelViewModel viewModel)) return;
+            viewModel.Controller?.Play();
+        }
+
+        private void PauseCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (!(DataContext is ChannelViewModel viewModel)) return;
+            viewModel.Controller?.Pause();
+        }
+
+        private void StopCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (!(DataContext is ChannelViewModel viewModel)) return;
+            viewModel.Controller?.Stop();
         }
     }
 }
