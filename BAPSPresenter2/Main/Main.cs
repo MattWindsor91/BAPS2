@@ -18,31 +18,38 @@ namespace BAPSPresenter2
         // Accessor for the crashed variable.
         public bool HasCrashed { get; private set; } = false;
 
-        /** A handle for the connection to the server **/
-        private BAPSCommon.ClientSocket clientSocket;
-
-        /** The current user **/
-        private string username;
-
         private BAPSChannel[] bapsChannels;
         private BAPSDirectory[] bapsDirectories;
 
-        private Task senderTask;
-        private Receiver receiver;
-        private Task receiverTask;
+        private ClientCore core;
  
         /** Whether or not the timers are enabled **/
         private bool timersEnabled = true;
 
-        /** The outgoing message queue **/
-        private System.Collections.Concurrent.BlockingCollection<BAPSCommon.Message> msgQueue;
-
-        private bool ChannelOutOfBounds(ushort channel) => 3 <= channel;
-        private bool DirectoryOutOfBounds(ushort directory) => 3 <= directory;
+        private bool ChannelOutOfBounds(ushort channel) => bapsChannels.Length <= channel;
+        private bool DirectoryOutOfBounds(ushort directory) => bapsDirectories.Length <= directory;
 
         public Main() : base()
         {
             InitializeComponent();
+        }
+
+        private Authenticator.Response LoginCallback()
+        {
+            using (var login = new Dialogs.Login())
+            {
+                if (login.ShowDialog() == DialogResult.Cancel)
+                    return new Authenticator.Response { IsGivingUp = true };
+
+                return new Authenticator.Response
+                {
+                    IsGivingUp = false,
+                    Username = login.Username,
+                    Password = login.Password,
+                    Server = login.Server,
+                    Port = login.Port
+                };
+            }
         }
 
         protected override void OnLoad(EventArgs e)
@@ -51,53 +58,18 @@ namespace BAPSPresenter2
 
             ConfigManager.initConfigManager();
 
-            var authenticated = Authenticate();
-            if (!authenticated)
+            core = new ClientCore(LoginCallback);
+            core.Authenticated += Setup;
+            core.ReceiverCreated += SetupReactions;
+            var launched = core.Launch();
+            if (!launched)
             {
                 Close();
                 return;
             }
-
-            Setup();
         }
 
-        private bool Authenticate()
-        {
-            using (var login = new Dialogs.Login())
-            {
-                var auth = new Authenticator(
-                    () =>
-                    {
-                        if (login.ShowDialog() == DialogResult.Cancel)
-                            return new Authenticator.Response { IsGivingUp = true };
-
-                        return new Authenticator.Response
-                        {
-                            IsGivingUp = false,
-                            Username = login.Username,
-                            Password = login.Password,
-                            Server = login.Server,
-                            Port = login.Port
-                        };
-                    },
-                    dead.Token
-                );
-                auth.ServerError += (sender, errorMessage) =>
-                {
-                    MessageBox.Show(errorMessage, "Server error:", MessageBoxButtons.OK);
-                    logError(errorMessage);
-                };
-                auth.UserError += (sender, ErrorMessage) =>
-                {
-                    MessageBox.Show(ErrorMessage, "Login error:", MessageBoxButtons.OK);
-                };
-
-                clientSocket = auth.Run();
-                return clientSocket != null;
-            }
-        }
-
-        private void Setup()
+        private void Setup(object sender, EventArgs e)
         {
             SetupChannels();
             SetupDirectories();
@@ -113,29 +85,10 @@ namespace BAPSPresenter2
             textDialog.KeyDownForward += BAPSPresenterMain_KeyDown;
 
             ConfigCache.initConfigCache();
-            /** Create a message queue for sending commands to the server **/
-            msgQueue = new System.Collections.Concurrent.BlockingCollection<BAPSCommon.Message>(new System.Collections.Concurrent.ConcurrentQueue<BAPSCommon.Message>());
-            /** Add the autoupdate message onto the queue (chat(2) and general(1)) **/
-            Command cmd = Command.SYSTEM | Command.AUTOUPDATE | (Command)2 | (Command)1;
-            msgQueue.Add(new BAPSCommon.Message(cmd));
-            for (int i = 0; i < 3; i++)
-            {
-                /** Add the refresh folder onto the queue **/
-                cmd = Command.SYSTEM | Command.LISTFILES | (Command)i;
-                msgQueue.Add(new BAPSCommon.Message(cmd));
-            }
 
             /** Enable or disable the timers depending on the config setting, enable on default when no registry config value set. **/
             var enableTimers = string.Compare(ConfigManager.getConfigValueString("EnableTimers", "Yes"), "Yes") == 0;
             EnableTimerControls(enableTimers);
-
-            var tf = new TaskFactory(dead.Token, TaskCreationOptions.LongRunning, TaskContinuationOptions.None, TaskScheduler.Current);
-
-            receiver = new Receiver(clientSocket, dead.Token);
-            SetupReactions(receiver);
-
-            receiverTask = tf.StartNew(receiver.Run);
-            senderTask = tf.StartNew(SenderFunc);
         }
 
         private void SetupDirectories()
@@ -223,7 +176,7 @@ namespace BAPSPresenter2
             }
         }
 
-        private void SetupReactions(Receiver r)
+        private void SetupReactions(object sender, Receiver r)
         {
             SetupPlaybackReactions(r);
             SetupPlaylistReactions(r);
@@ -328,27 +281,14 @@ namespace BAPSPresenter2
         /** Loop to watch for an outgoing message on the queue and send it **/
         private void SenderFunc()
         {
-            var tok = dead.Token;
-            try
-            {
-                while (true)
-                {
-                    tok.ThrowIfCancellationRequested();
-                    var msg = msgQueue.Take(tok);
-                    msg.Send(clientSocket);
-                }
-            }
-            finally
-            {
-                clientSocket.ShutdownSend();
-            }
+
         }
 
         public void OpenAudioWall(TrackList tl)
         {
             if (audioWall == null || !audioWall.Visible)
             {
-                audioWall = new AudioWall(msgQueue, tl);
+                audioWall = new AudioWall(core.SendQueue, tl);
                 audioWall.KeyDownForward += BAPSPresenterMain_KeyDown;
                 audioWall.Show();
             }

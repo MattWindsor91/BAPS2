@@ -30,7 +30,7 @@ namespace BAPSPresenter2
         private void HandlePositionChanged(object sender, PositionRequestChangeEventArgs e)
         {
             var cmd = Command.PLAYBACK | e.ChangeType.AsCommand() | (Command)e.ChannelID;
-            msgQueue.Add(new BAPSCommon.Message(cmd).Add((uint)e.Value));
+            core.SendQueue.Add(new BAPSCommon.Message(cmd).Add((uint)e.Value));
         }
 
         /** functions to receive context menu events **/
@@ -40,7 +40,7 @@ namespace BAPSPresenter2
             var cm = (ContextMenu)mi.Parent;
             var tl = (TrackList)cm.SourceControl;
             var cmd = Command.PLAYLIST | Command.RESETPLAYLIST | (Command)tl.Channel;
-            msgQueue.Add(new BAPSCommon.Message(cmd));
+            core.SendQueue.Add(new BAPSCommon.Message(cmd));
         }
 
         /** ### DESIGNER PRIVATE EVENT HANDLERS ### **/
@@ -53,17 +53,17 @@ namespace BAPSPresenter2
                 /** Keys F1-F4 are for channel 0 **/
                 case Keys.F1: /** F1 play **/
                     cmd = Command.PLAYBACK | Command.PLAY | 0;
-                    msgQueue.Add(new BAPSCommon.Message(cmd));
+                    core.SendQueue.Add(new BAPSCommon.Message(cmd));
                     e.Handled = true;
                     break;
                 case Keys.F2: /** F2 Pause **/
                     cmd = Command.PLAYBACK | Command.PAUSE | 0;
-                    msgQueue.Add(new BAPSCommon.Message(cmd));
+                    core.SendQueue.Add(new BAPSCommon.Message(cmd));
                     e.Handled = true;
                     break;
                 case Keys.F3: /** F3 Stop **/
                     cmd = Command.PLAYBACK | Command.STOP | 0;
-                    msgQueue.Add(new BAPSCommon.Message(cmd));
+                    core.SendQueue.Add(new BAPSCommon.Message(cmd));
                     e.Handled = true;
                     break;
                 case Keys.F4 | Keys.Alt:
@@ -75,34 +75,34 @@ namespace BAPSPresenter2
                 /** Keys F5-F8 are for channel 1 **/
                 case Keys.F5: /** F5 Play **/
                     cmd = Command.PLAYBACK | Command.PLAY | (Command)1;
-                    msgQueue.Add(new BAPSCommon.Message(cmd));
+                    core.SendQueue.Add(new BAPSCommon.Message(cmd));
                     e.Handled = true;
                     break;
                 case Keys.F6: /** F6 Pause **/
                     cmd = Command.PLAYBACK | Command.PAUSE | (Command)1;
-                    msgQueue.Add(new BAPSCommon.Message(cmd));
+                    core.SendQueue.Add(new BAPSCommon.Message(cmd));
                     e.Handled = true;
                     break;
                 case Keys.F7: /** F7 Stop **/
                     cmd = Command.PLAYBACK | Command.STOP | (Command)1;
-                    msgQueue.Add(new BAPSCommon.Message(cmd));
+                    core.SendQueue.Add(new BAPSCommon.Message(cmd));
                     e.Handled = true;
                     break;
 
                 /** Keys F9-F12 are for channel 2 **/
                 case Keys.F9: /** F9 Play **/
                     cmd = Command.PLAYBACK | Command.PLAY | (Command)2;
-                    msgQueue.Add(new BAPSCommon.Message(cmd));
+                    core.SendQueue.Add(new BAPSCommon.Message(cmd));
                     e.Handled = true;
                     break;
                 case Keys.F10: /** F10 Pause **/
                     cmd = Command.PLAYBACK | Command.PAUSE | (Command)2;
-                    msgQueue.Add(new BAPSCommon.Message(cmd));
+                    core.SendQueue.Add(new BAPSCommon.Message(cmd));
                     e.Handled = true;
                     break;
                 case Keys.F11: /** F11 Stop **/
                     cmd = Command.PLAYBACK | Command.STOP | (Command)2;
-                    msgQueue.Add(new BAPSCommon.Message(cmd));
+                    core.SendQueue.Add(new BAPSCommon.Message(cmd));
                     e.Handled = true;
                     break;
                 /** Other keyboard Commands **/
@@ -152,10 +152,10 @@ namespace BAPSPresenter2
 
         private void OpenSecurityDialog()
         {
-            using (securityDialog = new Dialogs.Security(msgQueue))
+            using (securityDialog = new Dialogs.Security(core.SendQueue))
             {
                 securityDialog.KeyDownForward += BAPSPresenterMain_KeyDown;
-                msgQueue.Add(new BAPSCommon.Message(Command.CONFIG | Command.GETPERMISSIONS));
+                core.SendQueue.Add(new BAPSCommon.Message(Command.CONFIG | Command.GETPERMISSIONS));
                 securityDialog.ShowDialog();
             }
             securityDialog = null;
@@ -166,7 +166,7 @@ namespace BAPSPresenter2
             using (about = new Dialogs.About())
             {
                 about.KeyDownForward += BAPSPresenterMain_KeyDown;
-                msgQueue.Add(new BAPSCommon.Message(Command.SYSTEM | Command.VERSION));
+                core.SendQueue.Add(new BAPSCommon.Message(Command.SYSTEM | Command.VERSION));
                 about.ShowDialog();
             }
             about = null;
@@ -174,7 +174,7 @@ namespace BAPSPresenter2
 
         private void OpenConfigDialog()
         {
-            using (configDialog = new Dialogs.Config(msgQueue))
+            using (configDialog = new Dialogs.Config(core.SendQueue))
             {
                 configDialog.KeyDownForward += BAPSPresenterMain_KeyDown;
                 configDialog.ShowDialog();
@@ -236,14 +236,14 @@ namespace BAPSPresenter2
         {
             var cmd = Command.SYSTEM | Command.LISTFILES;
             cmd |= (Command)channel & (Command)0x3f;
-            msgQueue.Add(new BAPSCommon.Message(cmd));
+            core.SendQueue.Add(new BAPSCommon.Message(cmd));
         }
 
         private void SearchRecordLib_Click(object sender, EventArgs e)
         {
 #if false // TODO(@MattWindsor91): port this
 	        /** We have a handle stored in the class so that data can be passed to the object **/
-	        recordLibrarySearch = new RecordLibrarySearch(this, msgQueue);
+	        recordLibrarySearch = new RecordLibrarySearch(this, core.SendQueue);
 	        recordLibrarySearch.ShowDialog();
 	        /** Always get rid of it again **/
 	        recordLibrarySearch.Dispose();
@@ -255,7 +255,7 @@ namespace BAPSPresenter2
         {
 #if false // TODO(@MattWindsor91): port this
             /** Handle stored for same reason as record library **/
-            loadShowDialog = new LoadShowDialog(this, msgQueue);
+            loadShowDialog = new LoadShowDialog(this, core.SendQueue);
             loadShowDialog.ShowDialog();
             loadShowDialog = null;
 #endif
@@ -276,7 +276,7 @@ namespace BAPSPresenter2
         private void ChannelOperation_Click(object sender, ChannelOperationLookup col)
         {
             var cmd = Command.PLAYBACK | (Command)col.co | (Command)(col.channel & 0x3f);
-            msgQueue.Add(new BAPSCommon.Message(cmd));
+            core.SendQueue.Add(new BAPSCommon.Message(cmd));
         }
 
         internal void TrackList_RequestChange(object sender, RequestChangeEventArgs e)
@@ -288,31 +288,31 @@ namespace BAPSPresenter2
                         // This won't be an impossible load---they're filtered out in BAPSChannel.
                         var cmd = Command.PLAYBACK | Command.LOAD;
                         cmd |= (Command)(e.channel & 0x3f);
-                        msgQueue.Add(new BAPSCommon.Message(cmd).Add((uint)e.index));
+                        core.SendQueue.Add(new BAPSCommon.Message(cmd).Add((uint)e.index));
                     }
                     break;
                 case ChangeType.MOVEINDEX:
                     {
                         var cmd = Command.PLAYLIST | (Command)(e.channel & 0x3f) | Command.MOVEITEMTO;
-                        msgQueue.Add(new BAPSCommon.Message(cmd).Add((uint)e.index).Add((uint)e.index2));
+                        core.SendQueue.Add(new BAPSCommon.Message(cmd).Add((uint)e.index).Add((uint)e.index2));
                     }
                     break;
                 case ChangeType.DELETEINDEX:
                     {
                         var cmd = Command.PLAYLIST | (Command)(e.channel & 0x3f) | Command.DELETEITEM;
-                        msgQueue.Add(new BAPSCommon.Message(cmd).Add((uint)e.index));
+                        core.SendQueue.Add(new BAPSCommon.Message(cmd).Add((uint)e.index));
                     }
                     break;
                 case ChangeType.ADD:
                     {
                         var cmd = Command.PLAYLIST | Command.ADDITEM | (Command)(e.channel & 0x3f);
-                        msgQueue.Add(new BAPSCommon.Message(cmd).Add((uint)Command.FILEITEM).Add((uint)e.index).Add(bapsDirectories[e.index].TrackAt(e.index2)));
+                        core.SendQueue.Add(new BAPSCommon.Message(cmd).Add((uint)Command.FILEITEM).Add((uint)e.index).Add(bapsDirectories[e.index].TrackAt(e.index2)));
                     }
                     break;
                 case ChangeType.COPY:
                     {
                         var cmd = Command.PLAYLIST | Command.COPYITEM | (Command)(e.channel & 0x3f);
-                        msgQueue.Add(new BAPSCommon.Message(cmd).Add((uint)e.index).Add((uint)e.index2));
+                        core.SendQueue.Add(new BAPSCommon.Message(cmd).Add((uint)e.index).Add((uint)e.index2));
                     }
                     break;
             }
@@ -333,7 +333,7 @@ namespace BAPSPresenter2
                 {
                     newSetting = "No";
                 }
-                msgQueue.Add(new BAPSCommon.Message(cmd).Add(, (uint)oci.optionid, (uint)oci.type, (uint)(int)oci.choiceList[newSetting]));
+                core.SendQueue.Add(new BAPSCommon.Message(cmd).Add(, (uint)oci.optionid, (uint)oci.type, (uint)(int)oci.choiceList[newSetting]));
             }
             else if (e.ClickedItem == BAPSChannelplayOnLoadToolStripMenuItem)
             {
@@ -343,32 +343,32 @@ namespace BAPSPresenter2
                 {
                     newSetting = "No";
                 }
-                msgQueue.Add(new BAPSCommon.Message(cmd).Add(, (uint)oci.optionid, (uint)oci.type, (uint)(int)oci.choiceList[newSetting]));
+                core.SendQueue.Add(new BAPSCommon.Message(cmd).Add(, (uint)oci.optionid, (uint)oci.type, (uint)(int)oci.choiceList[newSetting]));
             }
             else if (e.ClickedItem == repeatNoneToolStripMenuItem && !repeatNoneToolStripMenuItem.Checked)
             {
                 var oci = ConfigCache.getOption("Repeat");
-                msgQueue.Add(new BAPSCommon.Message(cmd).Add(, (uint)oci.optionid, (uint)oci.type, (uint)(int)oci.choiceList["No repeat"]));
+                core.SendQueue.Add(new BAPSCommon.Message(cmd).Add(, (uint)oci.optionid, (uint)oci.type, (uint)(int)oci.choiceList["No repeat"]));
             }
             else if (e.ClickedItem == repeatOneToolStripMenuItem && !repeatOneToolStripMenuItem.Checked)
             {
                 var oci = ConfigCache.getOption("Repeat");
-                msgQueue.Add(new BAPSCommon.Message(cmd).Add(, (uint)oci.optionid, (uint)oci.type, (uint)(int)oci.choiceList["Repeat one"]));
+                core.SendQueue.Add(new BAPSCommon.Message(cmd).Add(, (uint)oci.optionid, (uint)oci.type, (uint)(int)oci.choiceList["Repeat one"]));
             }
             else if (e.ClickedItem == repeatAllToolStripMenuItem && !repeatAllToolStripMenuItem.Checked)
             {
                 var oci = ConfigCache.getOption("Repeat");
-                msgQueue.Add(new BAPSCommon.Message(cmd).Add(, (uint)oci.optionid, (uint)oci.type, (uint)(int)oci.choiceList["Repeat all"]));
+                core.SendQueue.Add(new BAPSCommon.Message(cmd).Add(, (uint)oci.optionid, (uint)oci.type, (uint)(int)oci.choiceList["Repeat all"]));
             }
             else if (e.ClickedItem == deleteItemToolStripMenuItem)
             {
                 cmd = Command.PLAYLIST | Command.DELETEITEM | (Command)tl.Channel;
-                msgQueue.Add(new BAPSCommon.Message(cmd).Add(, (uint)tl.LastIndexClicked));
+                core.SendQueue.Add(new BAPSCommon.Message(cmd).Add(, (uint)tl.LastIndexClicked));
             }
             else if (e.ClickedItem == resetChannelStripMenuItem)
             {
                 cmd = Command.PLAYLIST | Command.RESETPLAYLIST | (Command)tl.Channel;
-                msgQueue.Add(new BAPSCommon.Message(cmd));
+                core.SendQueue.Add(new BAPSCommon.Message(cmd));
             }
             else if (e.ClickedItem == showAudioWallToolStripMenuItem)
             {

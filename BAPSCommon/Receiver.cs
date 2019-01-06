@@ -120,8 +120,8 @@ namespace BAPSCommon
         public event EventHandler<(uint optionID, uint choiceIndex, string choiceDescription)> ConfigChoice;
         private void OnConfigChoice(uint optionID, uint choiceIndex, string choiceDescription) => ConfigChoice?.Invoke(this, (optionID, choiceIndex, choiceDescription));
 
-        public event EventHandler<(Command cmdReceived, uint optionID, ConfigType type)> ConfigSetting;
-        private void OnConfigSetting(Command cmdReceived, uint optionID, ConfigType type) => ConfigSetting?.Invoke(this, (cmdReceived, optionID, type));
+        public event EventHandler<(uint optionID, ConfigType type, object value, int index)> ConfigSetting;
+        private void OnConfigSetting(uint optionID, ConfigType type, object value, int index) => ConfigSetting?.Invoke(this, (optionID, type, value, index));
 
         public event EventHandler<(Command cmdReceived, uint optionID, ConfigResult result)> ConfigResult;
         private void OnConfigResult(Command cmdReceived, uint optionID, ConfigResult result) => ConfigResult?.Invoke(this, (cmdReceived, optionID, result));
@@ -399,7 +399,7 @@ namespace BAPSCommon
                         {
                             var optionID = _cs.ReceiveI();
                             var type = _cs.ReceiveI();
-                            OnConfigSetting(cmdReceived, optionID, (ConfigType)type);
+                            DecodeConfigSetting(cmdReceived, optionID, (ConfigType)type);
                         }
                         else
                         {
@@ -461,6 +461,33 @@ namespace BAPSCommon
                     OnUnknownCommand(cmdReceived, "possibly a malformed CONFIG");
                     break;
             }
+        }
+
+        private void DecodeConfigSetting(Command cmdReceived, uint optionID, ConfigType type)
+        {
+            object value = null;
+            /** Determine what the final argument is going to be and retrieve it **/
+            switch (type)
+            {
+                case ConfigType.INT:
+                case ConfigType.CHOICE:
+                    value = (int)_cs.ReceiveI();
+                    break;
+                case ConfigType.STR:
+                    value = _cs.ReceiveS();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("type", type, "Invalid type received");
+            }
+
+            /** Use index=-1 to represent a non indexed setting **/
+            int index = -1;
+            if (cmdReceived.HasFlag(Command.CONFIG_USEVALUEMASK))
+            {
+                index = cmdReceived.ConfigValue();
+            }
+
+            OnConfigSetting(optionID, type, value, index);
         }
 
         private void DecodeSystemCommand(Command cmdReceived)

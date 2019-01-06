@@ -30,9 +30,9 @@ namespace BAPSPresenter2
             {
                 if (InvokeRequired)
                 {
-                    Invoke((Action<Command, uint, ConfigType>)processConfigSetting, e.cmdReceived, e.optionID, e.type);
+                    Invoke((Action<uint, ConfigType, object, int>)processConfigSetting, e.optionID, e.type, e.value, e.index);
                 }
-                else processConfigSetting(e.cmdReceived, e.optionID, e.type);
+                else processConfigSetting(e.optionID, e.type, e.value, e.index);
             };
             r.ConfigResult += (sender, e) =>
             {
@@ -208,42 +208,19 @@ namespace BAPSPresenter2
             }
         }
 
-        private void processConfigSetting(Command cmdReceived, uint optionid, ConfigType type)
+        private void processConfigSetting(uint optionid, ConfigType type, object value, int index)
         {
-            uint valueInt = 0;
-            string valueStr = null;
-            /** Determine what the final argument is going to be and retrieve it **/
-            switch (type)
-            {
-                case ConfigType.INT:
-                case ConfigType.CHOICE:
-                    valueInt = clientSocket.ReceiveI();
-                    break;
-                case ConfigType.STR:
-                    valueStr = clientSocket.ReceiveS();
-                    break;
-                default:
-                    {
-                        SendQuit("Invalid type received in processConfigSetting", false);
-                    }
-                    break;
-            }
-
+            var hasIndex = 0 <= index;
             /** Cache this setting **/
-            /** Use index=-1 to represent a non indexed setting **/
-            int index = -1;
-            if (cmdReceived.HasFlag(Command.CONFIG_USEVALUEMASK))
-            {
-                index = (int)(cmdReceived & Command.CONFIG_VALUEMASK);
-            }
+
             switch (type)
             {
                 case ConfigType.INT:
                 case ConfigType.CHOICE:
-                    ConfigCache.addOptionValue((int)optionid, index, (int)valueInt);
+                    ConfigCache.addOptionValue((int)optionid, index, (int)value);
                     break;
                 case ConfigType.STR:
-                    ConfigCache.addOptionValue((int)optionid, index, valueStr);
+                    ConfigCache.addOptionValue((int)optionid, index, (string)value);
                     break;
             }
             /** 
@@ -268,7 +245,7 @@ namespace BAPSPresenter2
                         /** If the value mask is used it means that the setting is for an indexed
                             option and the specified index is in the value
                         **/
-                        if (cmdReceived.HasFlag(Command.CONFIG_USEVALUEMASK))
+                        if (hasIndex)
                         {
                             switch (type)
                             {
@@ -278,12 +255,12 @@ namespace BAPSPresenter2
                                         /** Box it up and send it off, choices can be treated as
                                             just ints because that is the underlying datatype
                                         **/
-                                        configDialog.Invoke((Action<uint, int, int>)configDialog.setValue, optionid, index, (int)valueInt);
+                                        configDialog.Invoke((Action<uint, int, int>)configDialog.setValue, optionid, index, (int)value);
                                     }
                                     break;
                                 case ConfigType.STR:
                                     {
-                                        configDialog.Invoke((Action<uint, int, string>)configDialog.setValue, optionid, index, valueStr);
+                                        configDialog.Invoke((Action<uint, int, string>)configDialog.setValue, optionid, index, (string)value);
                                     }
                                     break;
                             }
@@ -296,12 +273,12 @@ namespace BAPSPresenter2
                                 case ConfigType.INT:
                                 case ConfigType.CHOICE:
                                     {
-                                        configDialog.Invoke((Action<uint, int>)configDialog.setValue, optionid, (int)valueInt);
+                                        configDialog.Invoke((Action<uint, int>)configDialog.setValue, optionid, (int)value);
                                     }
                                     break;
                                 case ConfigType.STR:
                                     {
-                                        configDialog.Invoke((Action<uint, string>)configDialog.setValue, optionid, valueStr);
+                                        configDialog.Invoke((Action<uint, string>)configDialog.setValue, optionid, (string)value);
                                     }
                                     break;
                             }
