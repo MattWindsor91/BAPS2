@@ -1,4 +1,4 @@
-﻿<Window x:Class="BAPSPresenterNG.Window1"
+﻿<Window x:Class="BAPSPresenterNG.Login"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -9,10 +9,10 @@
         ResizeMode="CanResizeWithGrip"
         ShowInTaskbar="False"
         WindowStartupLocation="CenterOwner"       
-        >
+        DataContext="{Binding ViewModel, RelativeSource={RelativeSource Self}}">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Name="labelCol" />
+            <ColumnDefinition Name="labelCol" Width="Auto" />
             <ColumnDefinition Name="controlCol" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -20,22 +20,26 @@
             <RowDefinition Name="passwordRow" />
             <RowDefinition Name="serverRow" />
             <RowDefinition Name="portRow" />
-            <RowDefinition Name="buttonRow" />
+            <RowDefinition Name="buttonRow" Height="Auto" />
         </Grid.RowDefinitions>
         
         <Label Grid.Row="0"  Grid.Column="0" Name="usernameLbl">Username:</Label>
-        <TextBox Grid.Row="0" Grid.Column="1" Name="usernameTxt"></TextBox>
+        <TextBox Grid.Row="0" Grid.Column="1" Margin="3pt"
+                 Name="usernameTxt" Text="{Binding Username, Mode=TwoWay}"/>
         <Label Grid.Row="1" Grid.Column="0" Name="passwordLbl">Password:</Label>
-        <PasswordBox Grid.Row="1" Grid.Column="1" Name="passwordTxt"></PasswordBox>
+        <PasswordBox Grid.Row="1" Grid.Column="1" Margin="3pt"
+                     Name="passwordTxt"/>
         <Label Grid.Row="2" Grid.Column="0" Name="serverLbl">Server:</Label>
-        <TextBox Grid.Row="2" Grid.Column="1" Name="serverTxt"></TextBox>
+        <TextBox Grid.Row="2" Grid.Column="1" Name="serverTxt" Margin="3pt"
+                 Text="{Binding Server, Mode=TwoWay}"></TextBox>
         <Label Grid.Row="3" Grid.Column="0" Name="portLbl">Port:</Label>
-        <TextBox Grid.Row="3" Grid.Column="1" Name="portTxt"></TextBox>
+        <TextBox Grid.Row="3" Grid.Column="1" Name="portTxt" Margin="3pt"
+                 Text="{Binding Port, Mode=TwoWay}"></TextBox>
         
         <StackPanel Name="buttonPanel" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"
                     Orientation="Horizontal" FlowDirection="RightToLeft">
-            <Button Name="loginBtn" IsDefault="True">Login</Button>
-            <Button Name="cancelBtn" IsCancel="True">Cancel</Button>
+            <Button Name="loginBtn" Margin="3pt" MinWidth="42pt" IsDefault="True" Click="LoginBtn_Click">Login</Button>
+            <Button Name="cancelBtn" Margin="3pt" MinWidth="42pt" IsCancel="True">Cancel</Button>
         </StackPanel>
     </Grid>
 </Window>

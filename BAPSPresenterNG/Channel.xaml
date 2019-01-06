@@ -1,0 +1,108 @@
+﻿<UserControl x:Class="BAPSPresenterNG.Channel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:BAPSPresenterNG"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800" Width="360">
+    <UserControl.Resources>
+        <local:ChannelIDConverter x:Key="ChannelIDConverter" />
+        <Style x:Key="TransportButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
+        </Style>
+        <Style x:Key="PositionDisplayBorder" TargetType="{x:Type Border}">
+            <Setter Property="BorderBrush" Value="Black"/>
+            <Setter Property="BorderThickness" Value="1pt"/>
+            <Setter Property="Margin" Value="2pt"/>
+            <Setter Property="CornerRadius" Value="5"/>
+            <Setter Property="Background" Value="LightSteelBlue"/>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Name="nameRow" Height="Auto" />
+            <RowDefinition Name="trackListRow"/>
+            <RowDefinition Name="transportRow" MinHeight="32pt" Height="Auto" />
+            <RowDefinition Name="trackDisplayRow" Height="Auto" />
+            <RowDefinition Name="trackLineRow" Height="Auto" />
+            <RowDefinition Name="positionRow" Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Name="nameLbl"
+               Background="DarkSlateBlue"
+               Foreground="White"
+               >
+            <TextBlock FontSize="14pt">Channel <TextBlock Text="{Binding ChannelID, Converter={StaticResource ChannelIDConverter}}" /></TextBlock>
+        </Label>
+        <ListBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Name="trackList">
+        </ListBox>
+        <Button Name="playButton" Grid.Row="2" Grid.Column="0">
+            <Button.Style>
+                <Style TargetType="{x:Type Button}" BasedOn="{StaticResource TransportButtonStyle}">
+                    <Setter Property="IsEnabled" Value="True" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Path=IsPlaying}" Value="true">
+                            <Setter Property="Background" Value="ForestGreen" />
+                            <Setter Property="IsEnabled" Value="False" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+            Play
+        </Button>
+        <Button Name="pauseButton" Grid.Row="2" Grid.Column="1">
+            <Button.Style>
+                <Style TargetType="{x:Type Button}" BasedOn="{StaticResource TransportButtonStyle}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Path=IsPaused}" Value="true">
+                            <Setter Property="Background" Value="Goldenrod" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+            Pause
+        </Button>
+        <Button Name="stopButton" Grid.Row="2" Grid.Column="2">
+            <Button.Style>
+                <Style TargetType="{x:Type Button}" BasedOn="{StaticResource TransportButtonStyle}">
+                    <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Path=IsStopped}" Value="true">
+                            <Setter Property="Background" Value="Firebrick" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+            Stop
+        </Button>
+        <Border Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3"
+                BorderThickness="1pt" Background="DarkSlateBlue" BorderBrush="Black">
+            <TextBlock Name="trackName"
+                       Foreground="AliceBlue"
+                       TextTrimming="CharacterEllipsis"
+                       Height="24pt"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch"
+                       TextAlignment="Center"
+                       FontSize="14pt"
+                       Padding="4pt"
+                       FontFamily="Consolas"
+                       Text="{Binding LoadedTrackName, FallbackValue=UNKNOWN}">
+            </TextBlock>
+        </Border>
+        <Border Grid.Row="4" Grid.Column="0" Style="{StaticResource PositionDisplayBorder}">
+            <local:PositionDisplay x:Name="elapsedPd" SubText="Elapsed"/>
+        </Border>
+        <Border Grid.Row="4" Grid.Column="1" Style="{StaticResource PositionDisplayBorder}">
+            <local:PositionDisplay x:Name="remainingPd" SubText="Remaining"/>
+        </Border>
+        <Border Grid.Row="4" Grid.Column="2" Style="{StaticResource PositionDisplayBorder}">
+            <local:PositionDisplay x:Name="startPd" SubText="Start at:"/>
+        </Border>
+    </Grid>
+</UserControl>

@@ -10,26 +10,19 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace BAPSPresenterNG
 {
     /// <summary>
-    /// Interaction logic for Login.xaml
+    /// Interaction logic for Channel.xaml
     /// </summary>
-    public partial class Login : Window
+    public partial class Channel : UserControl
     {
-        public LoginViewModel ViewModel { get; set; } = new LoginViewModel();
-
-        public Login()
+        public Channel()
         {
             InitializeComponent();
-        }
-
-        private void LoginBtn_Click(object sender, RoutedEventArgs e)
-        {
-            DialogResult = true;
-            Close();
         }
     }
 }

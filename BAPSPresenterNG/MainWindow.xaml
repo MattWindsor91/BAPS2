@@ -5,8 +5,47 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BAPSPresenterNG"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        Title="BAPS Presenter" Height="768" Width="1024"
+        DataContext="{Binding ViewModel, RelativeSource={RelativeSource Self}}">
+    <DockPanel>
+        <TextBox DockPanel.Dock="Bottom" Name="textBox" MinHeight="72pt" Text="{Binding Text, Mode=TwoWay}"/>
+        <TextBox DockPanel.Dock="Bottom" Name="timeLine"/>
+        <StackPanel DockPanel.Dock="Left" Name="directoryPanel">
+            <Grid Name="libraryButtons">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" MinWidth="42pt"/>
+                    <ColumnDefinition Width="*" MinWidth="42pt"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="42pt"/>
+                </Grid.RowDefinitions>
+                <Button Grid.Row="0" Grid.Column="0">
+                    <TextBlock TextAlignment="Center">Load<LineBreak/>Show</TextBlock>
+                </Button>
+                <Button Grid.Row="0" Grid.Column="1">
+                    <TextBlock TextAlignment="Center">Search<LineBreak/>Library</TextBlock>
+                </Button>
+            </Grid>
+        </StackPanel>
+        <ListView Name="channelList" ItemsSource="{Binding Channels}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                </Style>
+            </ListView.ItemContainerStyle>
+
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <VirtualizingStackPanel IsItemsHost="True" Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <local:Channel />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </DockPanel>
 </Window>

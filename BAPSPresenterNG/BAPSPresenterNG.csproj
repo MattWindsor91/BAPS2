@@ -55,9 +55,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Channel.xaml.cs">
+      <DependentUpon>Channel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ChannelIDConverter.cs" />
+    <Compile Include="ChannelViewModel.cs" />
     <Compile Include="Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
     </Compile>
+    <Page Include="Channel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -66,6 +75,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="LoginViewModel.cs" />
+    <Compile Include="MainViewModel.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -74,8 +85,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="PositionDisplay.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PositionDisplay.xaml.cs">
+      <DependentUpon>PositionDisplay.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -100,6 +118,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BAPSCommon\BAPSCommon.csproj">
+      <Project>{701b4f5c-600a-4eb2-82ae-ba11ea8160a7}</Project>
+      <Name>BAPSCommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BAPSPresenter\BAPSPresenter.vcxproj">
+      <Project>{46fd9397-dd3b-456a-9d95-504d60f6a9b5}</Project>
+      <Name>BAPSPresenterLegacy</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

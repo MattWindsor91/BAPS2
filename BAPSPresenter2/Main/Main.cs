@@ -57,7 +57,7 @@ namespace BAPSPresenter2
             auth.ServerError += (s, errorMessage) =>
             {
                 MessageBox.Show(errorMessage, "Server error:", MessageBoxButtons.OK);
-                //logError(errorMessage);
+                logError(errorMessage);
             };
             auth.UserError += (s, ErrorMessage) =>
             {
