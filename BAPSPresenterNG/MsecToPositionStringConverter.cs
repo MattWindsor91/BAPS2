@@ -14,7 +14,7 @@ namespace BAPSPresenterNG
         {
             /** WORK NEEDED: fix me **/
             var mtemp = (minutes < 10) ? $"0{minutes}" : minutes.ToString();
-            var stemp = (seconds < 10) ? $"0{minutes}" : seconds.ToString();
+            var stemp = (seconds < 10) ? $"0{seconds}" : seconds.ToString();
             return $"{hours}:{mtemp}:{stemp}";
         }
 

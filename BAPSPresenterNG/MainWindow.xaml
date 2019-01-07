@@ -3,31 +3,45 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:local="clr-namespace:BAPSPresenterNG"
         mc:Ignorable="d"
         Title="BAPS Presenter" Height="768" Width="1024"
-        DataContext="{Binding ViewModel, RelativeSource={RelativeSource Self}}">
+        DataContext="{Binding Main, Source={StaticResource Locator}}">
+    <Window.Resources>
+        <!-- We need these seemingly redundant resources to encode the channel
+             IDs used in the input bindings below as `ushort`s, not strings.
+        
+             We could, instead, make the commands take strings and parse them
+             in the command handlers.  Both seem ugly, so here we are. -->
+        <sys:UInt16 x:Key="Chan0">0</sys:UInt16>
+        <sys:UInt16 x:Key="Chan1">1</sys:UInt16>
+        <sys:UInt16 x:Key="Chan2">2</sys:UInt16>
+        <!-- Styles -->
+        <Style x:Key="MainTextBoxStyle" TargetType="{x:Type TextBox}">
+            <Setter Property="FontSize" Value="18pt" />
+        </Style>
+    </Window.Resources>
     <Window.InputBindings>
         <!-- F1-3 control the first channel, if it exists -->
-        <KeyBinding Key="F1" Command="MediaCommands.Play" CommandParameter="0"/>
-        <KeyBinding Key="F2" Command="MediaCommands.Pause" CommandParameter="0"/>
-        <KeyBinding Key="F3" Command="MediaCommands.Stop" CommandParameter="0"/>
+        <KeyBinding Key="F1" Command="{Binding ForwardPlayCommand}" CommandParameter="{StaticResource Chan0}"/>
+        <KeyBinding Key="F2" Command="{Binding ForwardPauseCommand}" CommandParameter="{StaticResource Chan0}"/>
+        <KeyBinding Key="F3" Command="{Binding ForwardStopCommand}" CommandParameter="{StaticResource Chan0}"/>
         <!-- F5-7 control the second channel, if it exists -->
-        <KeyBinding Key="F5" Command="MediaCommands.Play" CommandParameter="1"/>
-        <KeyBinding Key="F6" Command="MediaCommands.Pause" CommandParameter="1"/>
-        <KeyBinding Key="F7" Command="MediaCommands.Stop" CommandParameter="1"/>
+        <KeyBinding Key="F5" Command="{Binding ForwardPlayCommand}" CommandParameter="{StaticResource Chan1}"/>
+        <KeyBinding Key="F6" Command="{Binding ForwardPauseCommand}" CommandParameter="{StaticResource Chan1}"/>
+        <KeyBinding Key="F7" Command="{Binding ForwardStopCommand}" CommandParameter="{StaticResource Chan1}"/>
         <!-- F9-11 control the third channel, if it exists -->
-        <KeyBinding Key="F9" Command="MediaCommands.Play" CommandParameter="2"/>
-        <KeyBinding Key="F10" Command="MediaCommands.Pause" CommandParameter="2"/>
-        <KeyBinding Key="F11" Command="MediaCommands.Stop" CommandParameter="2"/>
+        <KeyBinding Key="F9" Command="{Binding ForwardPlayCommand}" CommandParameter="{StaticResource Chan2}"/>
+        <KeyBinding Key="F10" Command="{Binding ForwardPauseCommand}" CommandParameter="{StaticResource Chan2}"/>
+        <KeyBinding Key="F11" Command="{Binding ForwardStopCommand}" CommandParameter="{StaticResource Chan2}"/>
     </Window.InputBindings>
-    <Window.CommandBindings>
-        <CommandBinding Command="MediaCommands.Play" CanExecute="PlayShortcut_CanExecute" Executed="PlayShortcut_Executed"/>
-        <CommandBinding Command="MediaCommands.Pause" CanExecute="PauseShortcut_CanExecute" Executed="PauseShortcut_Executed"/>
-        <CommandBinding Command="MediaCommands.Stop" CanExecute="StopShortcut_CanExecute" Executed="StopShortcut_Executed"/>
-    </Window.CommandBindings>
     <DockPanel>
-        <TextBox DockPanel.Dock="Bottom" Name="textBox" MinHeight="72pt" Text="{Binding Text, Mode=TwoWay}"/>
+        <!-- Order is significant here: the text box and timeline should take
+             up all of the window width. -->
+        <TextBox DockPanel.Dock="Bottom" Name="textBox" MinHeight="72pt"
+                 Style="{StaticResource MainTextBoxStyle}"
+                 Text="{Binding Text, Mode=TwoWay}"/>
         <TextBox DockPanel.Dock="Bottom" Name="timeLine"/>
         <StackPanel DockPanel.Dock="Left" Name="directoryPanel">
             <Grid Name="libraryButtons">

@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using GalaSoft.MvvmLight;
 
-namespace BAPSPresenterNG
+namespace BAPSPresenterNG.ViewModel
 {
-    public class LoginViewModel : INotifyPropertyChanged
+    public class LoginViewModel : ViewModelBase
     {
         public string Username
         {
@@ -15,7 +10,7 @@ namespace BAPSPresenterNG
             set {
                 if (_username == value) return;
                 _username = value;
-                OnPropertyChanged(nameof(Username));
+                RaisePropertyChanged(nameof(Username));
             }
         }
         private string _username;
@@ -27,7 +22,7 @@ namespace BAPSPresenterNG
             {
                 if (_server == value) return;
                 _server = value;
-                OnPropertyChanged(nameof(Server));
+                RaisePropertyChanged(nameof(Server));
             }
         }
         private string _server;
@@ -39,7 +34,7 @@ namespace BAPSPresenterNG
             {
                 if (_port == value) return;
                 _port = value;
-                OnPropertyChanged(nameof(Port));
+                RaisePropertyChanged(nameof(Port));
             }
         }
         private int _port;
@@ -55,8 +50,5 @@ namespace BAPSPresenterNG
 
             ConfigManager.getConfigValueString("ServerAddress", "1350");
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

@@ -70,7 +70,7 @@ namespace BAPSPresenterNG
         {
             for (ushort i = 0; i < 3; i++)
             {
-                var channel = new ChannelViewModel(i)
+                var channel = new ViewModel.ChannelViewModel(i)
                 {
                     Controller = new ChannelController(i, _core.SendQueue)
                 };

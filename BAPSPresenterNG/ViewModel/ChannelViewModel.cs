@@ -1,15 +1,15 @@
 ﻿using BAPSCommon;
-using System;
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Windows.Input;
 
-namespace BAPSPresenterNG
+namespace BAPSPresenterNG.ViewModel
 {
     /// <summary>
     /// The view model for a channel.
     /// </summary>
-    public class ChannelViewModel : INotifyPropertyChanged
+    public class ChannelViewModel : ViewModelBase
     {
         public ushort ChannelID { get; }
 
@@ -25,6 +25,14 @@ namespace BAPSPresenterNG
         /// </summary>
         public ObservableCollection<EntryInfo> TrackList { get; } = new ObservableCollection<EntryInfo>();
 
+        /// <summary>
+        /// Whether this channel is playing, according to the server.
+        /// <para>
+        /// This property should only be set when the server state
+        /// changes.  When the user requests the channel to play, send
+        /// <see cref="PlayCommand"/>.
+        /// </para>
+        /// </summary>
         public bool IsPlaying
         {
             get => _isPlaying;
@@ -33,11 +41,29 @@ namespace BAPSPresenterNG
                 if (_isPlaying == value) return;
                 _isPlaying = value;
                 CommandManager.InvalidateRequerySuggested();
-                OnPropertyChanged(nameof(IsPlaying));
+                RaisePropertyChanged(nameof(IsPlaying));
             }
         }
+
         private bool _isPlaying = false;
 
+        /// <summary>
+        /// A command that, when fired, asks the server to start playing
+        /// on this channel.
+        /// </summary>
+        public RelayCommand PlayCommand => _playCommand
+            ?? (_playCommand = new RelayCommand(
+                execute: Controller.Play,
+                canExecute: () => !IsPlaying));
+        private RelayCommand _playCommand;
+
+        /// <summary>
+        /// Whether this channel is paused, according to the server.
+        /// <para>
+        /// This property should only be set when the server state
+        /// changes.  When the user requests the channel to play, send
+        /// <see cref="PauseCommand"/>.
+        /// </para>
         public bool IsPaused
         {
             get => _isPaused;
@@ -45,11 +71,29 @@ namespace BAPSPresenterNG
             {
                 if (_isPaused == value) return;
                 _isPaused = value;
-                OnPropertyChanged(nameof(IsPaused));
+                RaisePropertyChanged(nameof(IsPaused));
             }
         }
+
         private bool _isPaused = false;
 
+        /// <summary>
+        /// A command that, when fired, asks the server to pause
+        /// this channel.
+        /// </summary>
+        public RelayCommand PauseCommand => _pauseCommand
+            ?? (_pauseCommand = new RelayCommand(
+                execute: Controller.Pause));
+        private RelayCommand _pauseCommand;
+
+        /// <summary>
+        /// Whether this channel is stopped, according to the server.
+        /// <para>
+        /// This property should only be set when the server state
+        /// changes.  When the user requests the channel to play, send
+        /// <see cref="PauseCommand"/>.
+        /// </para>
+        /// </summary>
         public bool IsStopped
         {
             get => _isStopped;
@@ -57,10 +101,20 @@ namespace BAPSPresenterNG
             {
                 if (_isStopped == value) return;
                 _isStopped = value;
-                OnPropertyChanged(nameof(IsStopped));
+                RaisePropertyChanged(nameof(IsStopped));
             }
         }
+
         private bool _isStopped = false;
+
+        /// <summary>
+        /// A command that, when fired, asks the server to stop
+        /// this channel.
+        /// </summary>
+        public RelayCommand StopCommand => _stopCommand
+            ?? (_stopCommand = new RelayCommand(
+                execute: Controller.Stop));
+        private RelayCommand _stopCommand;
 
         /// <summary>
         /// The duration of the currently loaded item (if any), in milliseconds.
@@ -72,8 +126,8 @@ namespace BAPSPresenterNG
             {
                 if (_duration == value) return;
                 _duration = value;
-                OnPropertyChanged(nameof(Duration));
-                OnPropertyChanged(nameof(Remaining));
+                RaisePropertyChanged(nameof(Duration));
+                RaisePropertyChanged(nameof(Remaining));
             }
         }
 
@@ -85,7 +139,6 @@ namespace BAPSPresenterNG
         public bool IsLoadPossible(int uindex) =>
             TrackAt(uindex).IsTextItem || !IsPlaying;
 
-
         /// <summary>
         /// The position of the currently loaded item (if any), in milliseconds.
         /// </summary>
@@ -96,10 +149,11 @@ namespace BAPSPresenterNG
             {
                 if (_position == value) return;
                 _position = value;
-                OnPropertyChanged(nameof(Position));
-                OnPropertyChanged(nameof(Remaining));
+                RaisePropertyChanged(nameof(Position));
+                RaisePropertyChanged(nameof(Remaining));
             }
         }
+
         private uint _position = 0;
 
         /// <summary>
@@ -117,9 +171,10 @@ namespace BAPSPresenterNG
             {
                 if (_cuePosition == value) return;
                 _cuePosition = value;
-                OnPropertyChanged(nameof(CuePosition));
+                RaisePropertyChanged(nameof(CuePosition));
             }
         }
+
         private uint _cuePosition = 0;
 
         /// <summary>
@@ -132,9 +187,10 @@ namespace BAPSPresenterNG
             {
                 if (_introPosition == value) return;
                 _introPosition = value;
-                OnPropertyChanged(nameof(IntroPosition));
+                RaisePropertyChanged(nameof(IntroPosition));
             }
         }
+
         private uint _introPosition = 0;
 
         /// <summary>
@@ -147,9 +203,10 @@ namespace BAPSPresenterNG
             {
                 if (_startTime == value) return;
                 _startTime = value;
-                OnPropertyChanged(nameof(StartTime));
+                RaisePropertyChanged(nameof(StartTime));
             }
         }
+
         private uint _startTime = 0;
 
         public int SelectedItemIndex
@@ -159,9 +216,10 @@ namespace BAPSPresenterNG
             {
                 if (_selectedItemIndex == value) return;
                 _selectedItemIndex = value;
-                OnPropertyChanged(nameof(SelectedItemIndex));
+                RaisePropertyChanged(nameof(SelectedItemIndex));
             }
         }
+
         private int _selectedItemIndex = -1;
 
         /// <summary>
@@ -174,13 +232,11 @@ namespace BAPSPresenterNG
             {
                 if (_loadedTrack == value) return;
                 _loadedTrack = value;
-                OnPropertyChanged(nameof(LoadedTrack));
+                RaisePropertyChanged(nameof(LoadedTrack));
             }
         }
-        private EntryInfo _loadedTrack = null;
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        private EntryInfo _loadedTrack = null;
 
         internal void SetupPlaybackReactions(Receiver r)
         {
@@ -237,9 +293,11 @@ namespace BAPSPresenterNG
                 case PositionType.Position:
                     Position = e.position;
                     break;
+
                 case PositionType.Cue:
                     CuePosition = e.position;
                     break;
+
                 case PositionType.Intro:
                     IntroPosition = e.position;
                     break;

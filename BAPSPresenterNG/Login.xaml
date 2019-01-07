@@ -9,7 +9,7 @@
         ResizeMode="CanResizeWithGrip"
         ShowInTaskbar="False"
         WindowStartupLocation="CenterOwner"       
-        DataContext="{Binding ViewModel, RelativeSource={RelativeSource Self}}">
+        DataContext="{Binding Login, Source={StaticResource Locator}}">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Name="labelCol" Width="Auto" />

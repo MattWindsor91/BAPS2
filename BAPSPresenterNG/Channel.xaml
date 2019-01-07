@@ -2,20 +2,34 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:local="clr-namespace:BAPSPresenterNG"
+             xmlns:fa="http://schemas.fontawesome.io/icons/"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Width="360">
-    <UserControl.CommandBindings>
-        <CommandBinding Command="MediaCommands.Play" CanExecute="PlayCommand_CanExecute" Executed="PlayCommand_Executed" />
-        <CommandBinding Command="MediaCommands.Pause" CanExecute="PauseCommand_CanExecute" Executed="PauseCommand_Executed" />
-        <CommandBinding Command="MediaCommands.Stop" CanExecute="StopCommand_CanExecute" Executed="StopCommand_Executed" />
-    </UserControl.CommandBindings>
     <UserControl.Resources>
         <local:ChannelIDConverter x:Key="ChannelIDConverter" />
         <local:MsecToPositionStringConverter x:Key="MsecToPositionStringConverter" />
+        <local:EntryTypeToIconConverter x:Key="EntryTypeToIconConverter" />
+        <GridLength x:Key="ChannelBarHeightGrid">32</GridLength>
+        <sys:Double x:Key="ChannelBarHeight">32</sys:Double>
+        <!-- Tango colours (for now) -->
+        <SolidColorBrush x:Key="PlayBrush" Color="#FF8AE234"></SolidColorBrush>
+        <SolidColorBrush x:Key="PauseBrush" Color="#FFFCE94F"></SolidColorBrush>
+        <SolidColorBrush x:Key="StopBrush" Color="#FFEF2929"></SolidColorBrush>
+        <SolidColorBrush x:Key="ChannelLegendFgBrush" Color="#FFEEEEEC"></SolidColorBrush>
+        <SolidColorBrush x:Key="ChannelLegendBgBrush" Color="#FF2E3436"></SolidColorBrush>
+        <SolidColorBrush x:Key="PositionLegendFgBrush" Color="#FFEEEEEC"></SolidColorBrush>
+        <SolidColorBrush x:Key="PositionDisplayBgBrush" Color="#FFD3D7CF"></SolidColorBrush>
+        <SolidColorBrush x:Key="NameFgBrush" Color="#FFEEEEEC"></SolidColorBrush>
+        <SolidColorBrush x:Key="NameBgBrush" Color="#FF204A87"></SolidColorBrush>
+        <!-- Styles -->
         <Style x:Key="TransportButtonStyle" TargetType="{x:Type Button}">
             <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
+            <Setter Property="Height" Value="32pt"/>
+            <Setter Property="Padding" Value="4pt"/>
+            <Setter Property="MinWidth" Value="32pt"/>
         </Style>
         <Style x:Key="TransportButtonBorderStyle" TargetType="{x:Type Border}">
             <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"/>
@@ -27,15 +41,17 @@
             <Setter Property="BorderThickness" Value="1pt"/>
             <Setter Property="Margin" Value="2pt"/>
             <Setter Property="CornerRadius" Value="5"/>
-            <Setter Property="Background" Value="LightSteelBlue"/>
+            <Setter Property="Background" Value="{StaticResource PositionDisplayBgBrush}"/>
         </Style>
-        <SolidColorBrush x:Key="PlayBrush" Color="#FF8AE234"></SolidColorBrush>
-        <SolidColorBrush x:Key="PauseBrush" Color="#FFFCE94F"></SolidColorBrush>
-        <SolidColorBrush x:Key="StopBrush" Color="#FFEF2929"></SolidColorBrush>
+        <Style x:Key="ChannelButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="Height" Value="{StaticResource ChannelBarHeight}"/>
+            <Setter Property="Width" Value="{StaticResource ChannelBarHeight}"/>
+            <Setter Property="Padding" Value="2pt"/>
+        </Style>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Name="nameRow" Height="Auto" />
+            <RowDefinition Name="nameRow" Height="{StaticResource ChannelBarHeightGrid}" />
             <RowDefinition Name="trackListRow"/>
             <RowDefinition Name="transportRow" MinHeight="32pt" Height="Auto" />
             <RowDefinition Name="trackDisplayRow" Height="Auto" />
@@ -47,17 +63,51 @@
             <ColumnDefinition />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Name="nameLbl"
-               Background="DarkSlateBlue"
-               Foreground="White"
+        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Name="nameLbl"
+               FontWeight="Bold"
+               Background="{StaticResource ChannelLegendBgBrush}"
+               Foreground="{StaticResource ChannelLegendFgBrush}"
                >
-            <TextBlock FontSize="14pt">Channel <TextBlock Text="{Binding ChannelID, Converter={StaticResource ChannelIDConverter}}" /></TextBlock>
+            <TextBlock FontSize="14pt" VerticalAlignment="Center">Channel <TextBlock Text="{Binding ChannelID, Converter={StaticResource ChannelIDConverter}}" /></TextBlock>
         </Label>
+        <StackPanel Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="1" Name="channelControlsPanel"
+                    Background="{StaticResource ChannelLegendBgBrush}"
+                    Orientation="Horizontal"
+                    FlowDirection="RightToLeft">
+            <Button Style="{StaticResource ChannelButtonStyle}">
+                <fa:ImageAwesome Icon="Commenting"/>
+            </Button>
+        </StackPanel>
         <ListBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Name="trackList"
                  ItemsSource="{Binding TrackList,UpdateSourceTrigger=PropertyChanged}"
                  
                  SelectionChanged="TrackList_SelectionChanged" SelectedIndex="{Binding SelectedItemIndex, Mode=OneWay}"
-                 />
+                 >
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="28px" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="28px" />
+                        </Grid.RowDefinitions>
+                        <fa:ImageAwesome Grid.Row="0" Grid.Column="0"
+                                         Foreground="Black"
+                                         Margin="2px"
+                                         Icon="{Binding Converter={StaticResource EntryTypeToIconConverter}}" />
+                        <TextBlock Grid.Row="0" Grid.Column="1"
+                                   VerticalAlignment="Center"
+                                   Margin="2px"
+                                   FontSize="10pt"
+                                   ToolTip="{Binding Description}"
+                                   Text="{Binding Description}" />
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <!-- Transport controls -->
         <Border Grid.Row="2" Grid.Column="0" Name="playButtonBorder">
             <Border.Style>
                 <Style BasedOn="{StaticResource TransportButtonBorderStyle}" TargetType="{x:Type Border}">
@@ -69,9 +119,10 @@
                 </Style>
             </Border.Style>
             <Button Name="playButton"
-                    Command="MediaCommands.Play"
+                    Command="{Binding PlayCommand}"
+                    ToolTip="Play"
                     Style="{StaticResource TransportButtonStyle}">
-                Play
+                <fa:ImageAwesome Icon="Play" />
             </Button>
         </Border>
         <Border Grid.Row="2" Grid.Column="1" Name="pauseButtonBorder">
@@ -85,9 +136,10 @@
                 </Style>
             </Border.Style>
             <Button Name="pauseButton"
-                    Command="MediaCommands.Pause"
+                    Command="{Binding PauseCommand}"
+                    ToolTip="Pause"
                     Style="{StaticResource TransportButtonStyle}">
-                Pause
+                <fa:ImageAwesome Icon="Pause"/>
             </Button>
         </Border>
         <Border Grid.Row="2" Grid.Column="2" Name="stopButtonBorder">
@@ -101,15 +153,17 @@
                 </Style>
             </Border.Style>
             <Button Name="stopButton"
-                    Command="MediaCommands.Stop"
+                    Command="{Binding StopCommand}"
+                    ToolTip="Stop"
                     Style="{StaticResource TransportButtonStyle}">
-                Stop
+                <fa:ImageAwesome Icon="Stop"/>
             </Button>
         </Border>
+        <!-- Track name -->
         <Border Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3"
-                BorderThickness="1pt" Background="DarkSlateBlue" BorderBrush="Black">
+                BorderThickness="1pt" Background="{StaticResource NameBgBrush}" BorderBrush="Black">
             <TextBlock Name="trackName"
-                       Foreground="AliceBlue"
+                       Foreground="{StaticResource NameFgBrush}"
                        TextTrimming="CharacterEllipsis"
                        Height="24pt"
                        HorizontalAlignment="Stretch"
@@ -118,9 +172,11 @@
                        FontSize="14pt"
                        Padding="4pt"
                        FontFamily="Consolas"
+                       ToolTip="{Binding LoadedTrack}"
                        Text="{Binding LoadedTrack, FallbackValue=UNKNOWN, TargetNullValue=NONE}">
             </TextBlock>
         </Border>
+        <!-- Position displays -->
         <Border Grid.Row="4" Grid.Column="0" Style="{StaticResource PositionDisplayBorder}">
             <local:PositionDisplay x:Name="elapsedPd" SubText="Elapsed"
                                    MainText="{Binding Position, Converter={StaticResource MsecToPositionStringConverter}}"/>

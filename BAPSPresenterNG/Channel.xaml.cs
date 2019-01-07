@@ -14,43 +14,10 @@ namespace BAPSPresenterNG
             InitializeComponent();
         }
 
-        private void PlayCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-        {
-            if (!(DataContext is ChannelViewModel viewModel)) return;
-            e.CanExecute = !viewModel.IsPlaying;
-        }
-
-        private void PauseCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = true;
-        }
-
-        private void StopCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = true;
-        }
-
-        private void PlayCommand_Executed(object sender, ExecutedRoutedEventArgs e)
-        {
-            if (!(DataContext is ChannelViewModel viewModel)) return;
-            viewModel.Controller?.Play();
-        }
-
-        private void PauseCommand_Executed(object sender, ExecutedRoutedEventArgs e)
-        {
-            if (!(DataContext is ChannelViewModel viewModel)) return;
-            viewModel.Controller?.Pause();
-        }
-
-        private void StopCommand_Executed(object sender, ExecutedRoutedEventArgs e)
-        {
-            if (!(DataContext is ChannelViewModel viewModel)) return;
-            viewModel.Controller?.Stop();
-        }
-
         private void TrackList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (!(DataContext is ChannelViewModel viewModel)) return;
+            // TODO(@MattWindsor91): MVVM?
+            if (!(DataContext is ViewModel.ChannelViewModel viewModel)) return;
             if (!(sender is ListBox box)) return;
 
             var index = box.SelectedIndex;
