@@ -21,7 +21,6 @@ namespace BAPSPresenter2
             if (disposing)
             {
                 core?.Dispose();
-                BAPSCommon.ConfigCache.closeConfigCache();
             }
 
             if (disposing && (components != null))

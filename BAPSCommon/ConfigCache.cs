@@ -31,18 +31,8 @@ namespace BAPSCommon
     **/
     public class ConfigCache
     {
-        /** This is a static class so initialize all the static members **/
-        public static void initConfigCache()
-        {
-            descLookup = new Dictionary<string, OptionCacheInfo>();
-            idLookup = new Dictionary<int, OptionCacheInfo>();
-        }
-        /** Nothing to destroy really **/
-        public static void closeConfigCache()
-        {
-        }
         /** add an option **/
-        public static void addOptionDescription(int optionid, int type, string description, bool isIndexed)
+        public void addOptionDescription(int optionid, int type, string description, bool isIndexed)
         {
             if (descLookup.ContainsKey(description)) return;
 
@@ -72,15 +62,15 @@ namespace BAPSCommon
             **/
             idLookup[optionid] = oci;
         }
-        public static void addOptionChoice(int optionid, int choiceid, string description)
+        public void addOptionChoice(int optionid, int choiceid, string description)
         {
             if (!idLookup.TryGetValue(optionid, out var option)) return;
             option.choiceList[description] = choiceid;
         }
-        public static int findChoiceIndexFor(string optionDesc, string description) =>
+        public int findChoiceIndexFor(string optionDesc, string description) =>
             descLookup.TryGetValue(optionDesc, out var x) ? x.choiceList[description] : -1;
 
-        public static void addOptionValue(int optionid, int index, string value)
+        public void addOptionValue(int optionid, int index, string value)
         {
             if (!idLookup.TryGetValue(optionid, out var option)) return;
 
@@ -94,7 +84,7 @@ namespace BAPSCommon
             }
         }
 
-        public static void addOptionValue(int optionid, int index, int value)
+        public void addOptionValue(int optionid, int index, int value)
         {
             if (!idLookup.TryGetValue(optionid, out var option)) return;
 
@@ -107,22 +97,22 @@ namespace BAPSCommon
                 option.valueList[index] = value;
             }
         }
-        public static OptionCacheInfo getOption(string optionDescription) =>
+        public OptionCacheInfo getOption(string optionDescription) =>
             descLookup.TryGetValue(optionDescription, out var x) ? x : null;
 
-        public static int getValueInt(string optionDescription) =>
+        public int getValueInt(string optionDescription) =>
             getOption(optionDescription)?.intValue ?? 0;
 
-        public static int getValueInt(string optionDescription, int index) =>            
+        public int getValueInt(string optionDescription, int index) =>            
             getOption(optionDescription)?.IntValueAt(index) ?? 0;
 
-        public static string getValueStr(string optionDescription) =>
+        public string getValueStr(string optionDescription) =>
             getOption(optionDescription)?.strValue ?? "";
 
-        public static string getValueStr(string optionDescription, int index) =>
+        public string getValueStr(string optionDescription, int index) =>
             getOption(optionDescription)?.StrValueAt(index) ?? "";
-
-        private static Dictionary<string, OptionCacheInfo> descLookup;
-	    private static Dictionary<int, OptionCacheInfo> idLookup;
+        
+        private Dictionary<string, OptionCacheInfo> descLookup = new Dictionary<string, OptionCacheInfo>();
+	    private Dictionary<int, OptionCacheInfo> idLookup = new Dictionary<int, OptionCacheInfo>();
     }
 }

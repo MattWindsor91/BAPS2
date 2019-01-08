@@ -346,19 +346,20 @@ namespace BAPSPresenter2
 
         private void TrackListContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            var config = Main.Config;
             var tl = (TrackList)trackListContextMenuStrip.SourceControl;
-            var testValue = ConfigCache.getValueInt("Automatically advance", tl.Channel);
-            var shouldCheck = testValue == ConfigCache.findChoiceIndexFor("Automatically advance", "Yes");
+            var testValue = config.getValueInt("Auto Advance", tl.Channel);
+            var shouldCheck = testValue == config.findChoiceIndexFor("Auto Advance", "Yes");
             automaticAdvanceToolStripMenuItem.Checked = shouldCheck;
-            testValue = ConfigCache.getValueInt("Play on load", tl.Channel);
-            shouldCheck = testValue == ConfigCache.findChoiceIndexFor("Play on load", "Yes");
+            testValue = config.getValueInt("Play on load", tl.Channel);
+            shouldCheck = testValue == config.findChoiceIndexFor("Play on load", "Yes");
             playOnLoadToolStripMenuItem.Checked = shouldCheck;
-            testValue = ConfigCache.getValueInt("Repeat", tl.Channel);
-            shouldCheck = testValue == ConfigCache.findChoiceIndexFor("Repeat", "No repeat");
+            testValue = config.getValueInt("Repeat", tl.Channel);
+            shouldCheck = testValue == config.findChoiceIndexFor("Repeat", "No repeat");
             repeatNoneToolStripMenuItem.Checked = shouldCheck;
-            shouldCheck = testValue == ConfigCache.findChoiceIndexFor("Repeat", "Repeat one");
+            shouldCheck = testValue == config.findChoiceIndexFor("Repeat", "Repeat one");
             repeatOneToolStripMenuItem.Checked = shouldCheck;
-            shouldCheck = testValue == ConfigCache.findChoiceIndexFor("Repeat", "Repeat all");
+            shouldCheck = testValue == config.findChoiceIndexFor("Repeat", "Repeat all");
             repeatAllToolStripMenuItem.Checked = shouldCheck;
             deleteItemToolStripMenuItem.Enabled = tl.LastIndexClicked != -1;
         }

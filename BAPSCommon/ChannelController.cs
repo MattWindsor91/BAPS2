@@ -16,11 +16,13 @@ namespace BAPSCommon
     {
         private readonly ushort _channelID;
         private BlockingCollection<Message> _msgQueue;
+        private ConfigCache _cache;
 
-        public ChannelController(ushort channelID, BlockingCollection<Message> msgQueue)
+        public ChannelController(ushort channelID, BlockingCollection<Message> msgQueue, ConfigCache cache)
         {
             _channelID = channelID;
             _msgQueue = msgQueue;
+            _cache = cache;
         }
 
         public void Play()
@@ -55,14 +57,14 @@ namespace BAPSCommon
                 if (!(type.HasFlag(ChannelConfigChangeType.Off) ||
                       type.HasFlag(ChannelConfigChangeType.On)))
                     throw new ArgumentOutOfRangeException("type", type, "AutoAdvance must have Off or On flag");
-                return ConfigCache.getOption("Auto Advance");
+                return _cache.getOption("Auto Advance");
             }
             else if (type.HasFlag(ChannelConfigChangeType.PlayOnLoad))
             {
                 if (!(type.HasFlag(ChannelConfigChangeType.Off) ||
                       type.HasFlag(ChannelConfigChangeType.On)))
                     throw new ArgumentOutOfRangeException("type", type, "PlayOnLoad must have Off or On flag");
-                return ConfigCache.getOption("Play on load");
+                return _cache.getOption("Play on load");
             }
             else if (type.HasFlag(ChannelConfigChangeType.Repeat))
             {
@@ -70,7 +72,7 @@ namespace BAPSCommon
                       type.HasFlag(ChannelConfigChangeType.One) ||
                       type.HasFlag(ChannelConfigChangeType.None)))
                     throw new ArgumentOutOfRangeException("type", type, "Repeat must have None, One, or All flag");
-                return ConfigCache.getOption("Repeat");
+                return _cache.getOption("Repeat");
             }
             throw new ArgumentOutOfRangeException("type", type, "No valid config category flag set");
         }

@@ -84,7 +84,7 @@ namespace BAPSPresenter2
         private void processChoice(uint optionid, uint choiceIndex, string choiceDescription)
         {
             /** Cache this info **/
-            ConfigCache.addOptionChoice((int)optionid, (int)choiceIndex, choiceDescription);
+            Config.addOptionChoice((int)optionid, (int)choiceIndex, choiceDescription);
             /** Ignore if the config dialog is closed **/
             var cd = configDialog;
             if (cd == null) return;
@@ -138,7 +138,7 @@ namespace BAPSPresenter2
         private void processOption(Command cmdReceived, uint optionid, string description, uint type)
         {
             /** Cache this info **/
-            ConfigCache.addOptionDescription((int)optionid, (int)type, description, cmdReceived.HasFlag(Command.CONFIG_USEVALUEMASK));
+            Config.addOptionDescription((int)optionid, (int)type, description, cmdReceived.HasFlag(Command.CONFIG_USEVALUEMASK));
             /** Pass onto the config dialog if available **/
             var cd = configDialog;
             if (cd == null) return;
@@ -218,10 +218,10 @@ namespace BAPSPresenter2
             {
                 case ConfigType.INT:
                 case ConfigType.CHOICE:
-                    ConfigCache.addOptionValue((int)optionid, index, (int)value);
+                    Config.addOptionValue((int)optionid, index, (int)value);
                     break;
                 case ConfigType.STR:
-                    ConfigCache.addOptionValue((int)optionid, index, (string)value);
+                    Config.addOptionValue((int)optionid, index, (string)value);
                     break;
             }
             /** 

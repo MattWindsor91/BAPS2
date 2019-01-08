@@ -4,11 +4,18 @@ using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ConfigCache = BAPSCommon.ConfigCache;
 
 namespace BAPSPresenter2
 {
     public partial class Main : Form
     {
+        /// <summary>
+        /// Singleton for the config cache.
+        /// </summary>
+        public static ConfigCache Config => _config ?? (_config = new ConfigCache());
+        private static ConfigCache _config = null;
+
         /** This flag is used to cleanly exit the send/receive loops
             in the case of the receive loop, the flag will not take effect
             until data is received, so an abort message is still required
@@ -99,8 +106,6 @@ namespace BAPSPresenter2
             textDialog = new Dialogs.Text("Write on me");
             textDialog.KeyDownForward += BAPSPresenterMain_KeyDown;
 
-            BAPSCommon.ConfigCache.initConfigCache();
-
             /** Enable or disable the timers depending on the config setting, enable on default when no registry config value set. **/
             var enableTimers = string.Compare(ConfigManager.getConfigValueString("EnableTimers", "Yes"), "Yes") == 0;
             EnableTimerControls(enableTimers);
@@ -128,7 +133,7 @@ namespace BAPSPresenter2
             {
                 Debug.Assert(0 <= bc.ChannelID, "Channel ID hasn't been set---check the channels' properties in the designer");
 
-                controllers[bc.ChannelID] = new ChannelController((ushort)bc.ChannelID, core.SendQueue);
+                controllers[bc.ChannelID] = new ChannelController((ushort)bc.ChannelID, core.SendQueue, Config);
 
                 bc.TrackListRequestChange += TrackList_RequestChange;
                 bc.OpRequest += ChannelOperation_Click;

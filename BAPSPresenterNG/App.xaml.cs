@@ -1,4 +1,5 @@
 ﻿using BAPSCommon;
+using GalaSoft.MvvmLight.Ioc;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -21,6 +22,7 @@ namespace BAPSPresenterNG
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             ConfigManager.initConfigManager();
+            SimpleIoc.Default.Register<ConfigCache>();
 
             _main = new MainWindow();
             _main.Show();
@@ -68,11 +70,13 @@ namespace BAPSPresenterNG
 
         private void Authenticated(object sender, EventArgs e)
         {
+            var config = SimpleIoc.Default.GetInstance<ConfigCache>();
+
             for (ushort i = 0; i < 3; i++)
             {
                 var channel = new ViewModel.ChannelViewModel(i)
                 {
-                    Controller = new ChannelController(i, _core.SendQueue)
+                    Controller = new ChannelController(i, _core.SendQueue, config)
                 };
                 _main.ViewModel.Channels.Add(channel);
             }
