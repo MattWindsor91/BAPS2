@@ -67,7 +67,7 @@ namespace BAPSPresenter2
         public event PositionRequestChangeEventHandler PositionRequestChange;
         public event TimelineChangeEventHandler TimelineChanged;
         public event EventHandler<uint> TrackBarMoved;
-        public event ToolStripItemClickedEventHandler TrackListContextMenuStripItemClicked;
+        public event ChannelConfigChangeHandler ChannelConfigChange;
 
         #endregion Events used to talk to the main presenter
 
@@ -362,10 +362,51 @@ namespace BAPSPresenter2
             deleteItemToolStripMenuItem.Enabled = tl.LastIndexClicked != -1;
         }
 
+        private void OnChannelConfigChange(ChannelConfigChangeType type) =>
+            ChannelConfigChange?.Invoke(this, new ChannelConfigChangeArgs((ushort)ChannelID, type));
+
         private void TrackListContextMenuStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             var tl = (TrackList)trackListContextMenuStrip.SourceControl;
-            TrackListContextMenuStripItemClicked?.Invoke(tl /* TODO(@MattWindsor91): this is a hack! */, e);
+
+            if (e.ClickedItem == automaticAdvanceToolStripMenuItem)
+            {
+                var rq = ChannelConfigChangeType.AutoAdvance;
+                rq |= automaticAdvanceToolStripMenuItem.Checked ? ChannelConfigChangeType.Off : ChannelConfigChangeType.On;
+                OnChannelConfigChange(rq);
+            }
+            else if (e.ClickedItem == playOnLoadToolStripMenuItem)
+            {
+                var rq = ChannelConfigChangeType.PlayOnLoad;
+                rq |= playOnLoadToolStripMenuItem.Checked ? ChannelConfigChangeType.Off : ChannelConfigChangeType.On;
+                OnChannelConfigChange(rq);
+            }
+            else if (e.ClickedItem == repeatNoneToolStripMenuItem && !repeatNoneToolStripMenuItem.Checked)
+            {
+                OnChannelConfigChange(ChannelConfigChangeType.RepeatNone);
+            }
+            else if (e.ClickedItem == repeatOneToolStripMenuItem && !repeatOneToolStripMenuItem.Checked)
+            {
+                OnChannelConfigChange(ChannelConfigChangeType.RepeatOne);
+            }
+            else if (e.ClickedItem == repeatAllToolStripMenuItem && !repeatAllToolStripMenuItem.Checked)
+            {
+                OnChannelConfigChange(ChannelConfigChangeType.RepeatAll);
+            }
+            else if (e.ClickedItem == deleteItemToolStripMenuItem)
+            {
+                //cmd = Command.PLAYLIST | Command.DELETEITEM | (Command)tl.Channel;
+                //core.SendQueue.Add(new BAPSCommon.Message(cmd).Add(, (uint)tl.LastIndexClicked));
+            }
+            else if (e.ClickedItem == resetChannelStripMenuItem)
+            {
+                //cmd = Command.PLAYLIST | Command.RESETPLAYLIST | (Command)tl.Channel;
+                //core.SendQueue.Add(new BAPSCommon.Message(cmd));
+            }
+            else if (e.ClickedItem == showAudioWallToolStripMenuItem)
+            {
+                //OpenAudioWall(tl);
+            }
         }
 
         #endregion Track list events

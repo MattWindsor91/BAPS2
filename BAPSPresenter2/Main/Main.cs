@@ -130,6 +130,7 @@ namespace BAPSPresenter2
                 bc.OpRequest += ChannelOperation_Click;
                 bc.PositionRequestChange += HandlePositionChanged;
                 bc.TimelineChanged += TimelineChanged;
+                bc.ChannelConfigChange += HandleChannelConfigChange;
                 //bc.TrackListContextMenuStripItemClicked += (e, x) => Invoke((ToolStripItemClickedEventHandler)trackListContextMenuStrip_ItemClicked, e, x);
             }
         }

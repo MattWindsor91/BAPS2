@@ -318,6 +318,57 @@ namespace BAPSPresenter2
             }
         }
 
+        private OptionCacheInfo GetChannelConfigOption(ChannelConfigChangeType type)
+        {
+            if (type.HasFlag(ChannelConfigChangeType.AutoAdvance))
+            {
+                if (!(type.HasFlag(ChannelConfigChangeType.Off) ||
+                      type.HasFlag(ChannelConfigChangeType.On)))
+                    throw new ArgumentOutOfRangeException("type", type, "AutoAdvance must have Off or On flag");
+                return ConfigCache.getOption("Auto Advance");
+            }
+            else if (type.HasFlag(ChannelConfigChangeType.PlayOnLoad))
+            {
+                if (!(type.HasFlag(ChannelConfigChangeType.Off) ||
+                      type.HasFlag(ChannelConfigChangeType.On)))
+                    throw new ArgumentOutOfRangeException("type", type, "PlayOnLoad must have Off or On flag");
+                return ConfigCache.getOption("Play on load");
+            }
+            else if (type.HasFlag(ChannelConfigChangeType.Repeat))
+            {
+                if (!(type.HasFlag(ChannelConfigChangeType.All) ||
+                      type.HasFlag(ChannelConfigChangeType.One) ||
+                      type.HasFlag(ChannelConfigChangeType.None)))
+                    throw new ArgumentOutOfRangeException("type", type, "Repeat must have None, One, or All flag");
+                return ConfigCache.getOption("Repeat");
+            }
+            throw new ArgumentOutOfRangeException("type", type, "No valid config category flag set");
+        }
+
+        private string GetChannelConfigChoice(ChannelConfigChangeType type)
+        {
+            if (type.HasFlag(ChannelConfigChangeType.On)) return "Yes";
+            if (type.HasFlag(ChannelConfigChangeType.Off)) return "No";
+            if (type.HasFlag(ChannelConfigChangeType.None)) return "No repeat";
+            if (type.HasFlag(ChannelConfigChangeType.One)) return "Repeat one";
+            if (type.HasFlag(ChannelConfigChangeType.All)) return "Repeat all";
+            throw new ArgumentOutOfRangeException("type", type, "No valid config choice flag set");
+        }
+
+        private void HandleChannelConfigChange(object sender, ChannelConfigChangeArgs e)
+        {
+            var msg = new BAPSCommon.Message(Command.CONFIG | Command.SETCONFIGVALUE | Command.CONFIG_USEVALUEMASK | (Command)e.ChannelID);
+
+            var oci = GetChannelConfigOption(e.Type);
+            msg.Add((uint)oci.optionid);
+            msg.Add((uint)oci.type);
+
+            var choice = GetChannelConfigChoice(e.Type);
+            msg.Add((uint)(int)oci.choiceList[choice]);
+
+            core.SendQueue.Add(msg);
+        }
+
 #if false // @MattWindsor91
         private void trackListContextMenuStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
