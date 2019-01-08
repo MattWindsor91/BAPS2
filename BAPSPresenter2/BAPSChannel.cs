@@ -3,6 +3,7 @@ using BAPSPresenter;
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
+using ConfigCache = BAPSCommon.ConfigCache;
 using EntryInfo = BAPSCommon.EntryInfo;
 
 namespace BAPSPresenter2

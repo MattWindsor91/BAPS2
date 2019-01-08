@@ -3,6 +3,7 @@
 using System;
 using BAPSCommon;
 using BAPSPresenter;
+using ConfigCache = BAPSCommon.ConfigCache;
 
 namespace BAPSPresenter2
 {

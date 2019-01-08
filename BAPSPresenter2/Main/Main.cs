@@ -18,6 +18,7 @@ namespace BAPSPresenter2
         // Accessor for the crashed variable.
         public bool HasCrashed { get; private set; } = false;
 
+        private ChannelController[] controllers;
         private BAPSChannel[] bapsChannels;
         private BAPSDirectory[] bapsDirectories;
 
@@ -98,7 +99,7 @@ namespace BAPSPresenter2
             textDialog = new Dialogs.Text("Write on me");
             textDialog.KeyDownForward += BAPSPresenterMain_KeyDown;
 
-            ConfigCache.initConfigCache();
+            BAPSCommon.ConfigCache.initConfigCache();
 
             /** Enable or disable the timers depending on the config setting, enable on default when no registry config value set. **/
             var enableTimers = string.Compare(ConfigManager.getConfigValueString("EnableTimers", "Yes"), "Yes") == 0;
@@ -122,9 +123,12 @@ namespace BAPSPresenter2
         private void SetupChannels()
         {
             bapsChannels = new BAPSChannel[3] { bapsChannel1, bapsChannel2, bapsChannel3 };
+            controllers = new ChannelController[bapsChannels.Length];
             foreach (var bc in bapsChannels)
             {
                 Debug.Assert(0 <= bc.ChannelID, "Channel ID hasn't been set---check the channels' properties in the designer");
+
+                controllers[bc.ChannelID] = new ChannelController((ushort)bc.ChannelID, core.SendQueue);
 
                 bc.TrackListRequestChange += TrackList_RequestChange;
                 bc.OpRequest += ChannelOperation_Click;
