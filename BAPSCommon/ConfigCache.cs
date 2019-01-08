@@ -1,4 +1,7 @@
-﻿namespace BAPSCommon
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace BAPSCommon
 {
     /**
     This stores all the info there is about a given option in hashtable
@@ -11,8 +14,14 @@
         public string description;
         public int intValue;
         public string strValue;
-        public System.Collections.Hashtable valueList;
-        public System.Collections.Hashtable choiceList;
+        public Dictionary<int, object> valueList;
+        public Dictionary<string, int> choiceList;
+
+        public int? IntValueAt(int index) =>
+            valueList.TryGetValue(index, out var x) ? x as int? : null;
+
+        public string StrValueAt(int index) =>
+            valueList.TryGetValue(index, out var x) ? x as string : null;
     };
 
     /** The config cache is designed as a quick access to config variables,
@@ -25,8 +34,8 @@
         /** This is a static class so initialize all the static members **/
         public static void initConfigCache()
         {
-            descLookup = new System.Collections.Hashtable();
-            idLookup = new System.Collections.Hashtable();
+            descLookup = new Dictionary<string, OptionCacheInfo>();
+            idLookup = new Dictionary<int, OptionCacheInfo>();
         }
         /** Nothing to destroy really **/
         public static void closeConfigCache()
@@ -35,7 +44,8 @@
         /** add an option **/
         public static void addOptionDescription(int optionid, int type, string description, bool isIndexed)
         {
-            if (descLookup[description] != null) return;
+            if (descLookup.ContainsKey(description)) return;
+
             /** Make a new option info object **/
             var oci = new OptionCacheInfo
             {
@@ -48,12 +58,12 @@
             if (isIndexed)
             {
                 /** for indexed options we need a hashtable of values **/
-                oci.valueList = new System.Collections.Hashtable();
+                oci.valueList = new Dictionary<int, object>();
             }
             if (oci.type == ConfigType.CHOICE)
             {
                 /** for choice based options we need a hashtable for the choices **/
-                oci.choiceList = new System.Collections.Hashtable();
+                oci.choiceList = new Dictionary<string, int>();
             }
             /** place the option in the description hashtable **/
             descLookup[description] = oci;
@@ -64,122 +74,55 @@
         }
         public static void addOptionChoice(int optionid, int choiceid, string description)
         {
-            /** Make sure we know about the option this data refers to **/
-            if (idLookup[optionid] != null)
-            {
-                /** enter the setting in the hashtable **/
-                ((OptionCacheInfo)idLookup[optionid]).choiceList[description] = choiceid;
-            }
+            if (!idLookup.TryGetValue(optionid, out var option)) return;
+            option.choiceList[description] = choiceid;
         }
-        public static int findChoiceIndexFor(string optionDesc, string description)
+        public static int findChoiceIndexFor(string optionDesc, string description) =>
+            descLookup.TryGetValue(optionDesc, out var x) ? x.choiceList[description] : -1;
+
+        public static void addOptionValue(int optionid, int index, string value)
         {
-            if (descLookup[optionDesc] != null)
+            if (!idLookup.TryGetValue(optionid, out var option)) return;
+
+            if (index == -1)
             {
-                /** fetch the id from the choice hashtable **/
-                return (int)((OptionCacheInfo)descLookup[optionDesc]).choiceList[description];
+                option.strValue = value;
             }
             else
             {
-                return -1;
-            }
-        }
-        public static void addOptionValue(int optionid, int index, string value)
-        {
-            /** Make sure we know about the option this data refers to **/
-            if (idLookup[optionid] != null)
-            {
-                if (index == -1)
-                {
-                    /** Non indexed setting **/
-                    ((OptionCacheInfo)idLookup[optionid]).strValue = value;
-                }
-                else
-                {
-                    /** enter the setting in the hashtable **/
-                    ((OptionCacheInfo)idLookup[optionid]).valueList[index] = value;
-                }
+                option.valueList[index] = value;
             }
         }
 
         public static void addOptionValue(int optionid, int index, int value)
         {
-            /** Make sure we know azbout the option this data refers to **/
-            if (idLookup[optionid] != null)
-            {
-                if (index == -1)
-                {
-                    /** Non indexed setting **/
-                    ((OptionCacheInfo)idLookup[optionid]).intValue = value;
-                }
-                else
-                {
-                    /** enter the setting in the hashtable **/
-                    ((OptionCacheInfo)idLookup[optionid]).valueList[index] = value;
-                }
-            }
-        }
-        public static OptionCacheInfo getOption(string optionDescription)
-        {
-            /** Gets an int from the cache **/
-            if (descLookup[optionDescription] != null)
-            {
-                return (OptionCacheInfo)descLookup[optionDescription];
-            }
-            else
-            {
-                return null;
-            }
-        }
-        public static int getValueInt(string optionDescription)
-        {
-            /** Gets an int from the cache **/
-            if (descLookup[optionDescription] != null)
-            {
-                return ((OptionCacheInfo)descLookup[optionDescription]).intValue;
-            }
-            else
-            {
-                return 0;
-            }
-        }
-        public static int getValueInt(string optionDescription, int index)
-        {
-            /** Gets an int from the cache **/
-            if (descLookup[optionDescription] != null)
-            {
-                return (int)((OptionCacheInfo) descLookup[optionDescription]).valueList[index];
-            }
-            else
-            {
-                return 0;
-            }
-        }
-        public static string getValueStr(string optionDescription)
-        {
-            /** Gets an int from the cache **/
-            if (descLookup[optionDescription] != null)
-            {
-                return ((OptionCacheInfo)descLookup[optionDescription]).strValue;
-            }
-            else
-            {
-                return "";
-            }
-        }
-        public static string getValueStr(string optionDescription, int index)
-        {
-            /** Gets an int from the cache **/
-            if (descLookup[optionDescription] != null)
-            {
-                return (string)((OptionCacheInfo)descLookup[optionDescription]).valueList[index];
-            }
-            else
-            {
-                return "";
-            }
-        }
+            if (!idLookup.TryGetValue(optionid, out var option)) return;
 
-        private static System.Collections.Hashtable descLookup;
-	    private static System.Collections.Hashtable idLookup;
+            if (index == -1)
+            {
+                option.intValue = value;
+            }
+            else
+            {
+                option.valueList[index] = value;
+            }
+        }
+        public static OptionCacheInfo getOption(string optionDescription) =>
+            descLookup.TryGetValue(optionDescription, out var x) ? x : null;
+
+        public static int getValueInt(string optionDescription) =>
+            getOption(optionDescription)?.intValue ?? 0;
+
+        public static int getValueInt(string optionDescription, int index) =>            
+            getOption(optionDescription)?.IntValueAt(index) ?? 0;
+
+        public static string getValueStr(string optionDescription) =>
+            getOption(optionDescription)?.strValue ?? "";
+
+        public static string getValueStr(string optionDescription, int index) =>
+            getOption(optionDescription)?.StrValueAt(index) ?? "";
+
+        private static Dictionary<string, OptionCacheInfo> descLookup;
+	    private static Dictionary<int, OptionCacheInfo> idLookup;
     }
 }
