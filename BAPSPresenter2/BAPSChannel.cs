@@ -348,18 +348,18 @@ namespace BAPSPresenter2
         {
             var config = Main.Config;
             var tl = (TrackList)trackListContextMenuStrip.SourceControl;
-            var testValue = config.getValueInt("Auto Advance", tl.Channel);
-            var shouldCheck = testValue == config.findChoiceIndexFor("Auto Advance", "Yes");
+            var testValue = config.GetValue<int>("Auto Advance", tl.Channel);
+            var shouldCheck = testValue == config.FindChoiceIndexFor("Auto Advance", "Yes");
             automaticAdvanceToolStripMenuItem.Checked = shouldCheck;
-            testValue = config.getValueInt("Play on load", tl.Channel);
-            shouldCheck = testValue == config.findChoiceIndexFor("Play on load", "Yes");
+            testValue = config.GetValue<int>("Play on load", tl.Channel);
+            shouldCheck = testValue == config.FindChoiceIndexFor("Play on load", "Yes");
             playOnLoadToolStripMenuItem.Checked = shouldCheck;
-            testValue = config.getValueInt("Repeat", tl.Channel);
-            shouldCheck = testValue == config.findChoiceIndexFor("Repeat", "No repeat");
+            testValue = config.GetValue<int>("Repeat", tl.Channel);
+            shouldCheck = testValue == config.FindChoiceIndexFor("Repeat", "No repeat");
             repeatNoneToolStripMenuItem.Checked = shouldCheck;
-            shouldCheck = testValue == config.findChoiceIndexFor("Repeat", "Repeat one");
+            shouldCheck = testValue == config.FindChoiceIndexFor("Repeat", "Repeat one");
             repeatOneToolStripMenuItem.Checked = shouldCheck;
-            shouldCheck = testValue == config.findChoiceIndexFor("Repeat", "Repeat all");
+            shouldCheck = testValue == config.FindChoiceIndexFor("Repeat", "Repeat all");
             repeatAllToolStripMenuItem.Checked = shouldCheck;
             deleteItemToolStripMenuItem.Enabled = tl.LastIndexClicked != -1;
         }

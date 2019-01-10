@@ -50,21 +50,21 @@ namespace BAPSCommon
             _msgQueue.Add(new Message(cmd).Add(index));
         }
 
-        private OptionCacheInfo GetChannelConfigOption(ChannelConfigChangeType type)
+        private string GetChannelConfigOption(ChannelConfigChangeType type)
         {
             if (type.HasFlag(ChannelConfigChangeType.AutoAdvance))
             {
                 if (!(type.HasFlag(ChannelConfigChangeType.Off) ||
                       type.HasFlag(ChannelConfigChangeType.On)))
                     throw new ArgumentOutOfRangeException("type", type, "AutoAdvance must have Off or On flag");
-                return _cache.getOption("Auto Advance");
+                return "Auto Advance";
             }
             else if (type.HasFlag(ChannelConfigChangeType.PlayOnLoad))
             {
                 if (!(type.HasFlag(ChannelConfigChangeType.Off) ||
                       type.HasFlag(ChannelConfigChangeType.On)))
                     throw new ArgumentOutOfRangeException("type", type, "PlayOnLoad must have Off or On flag");
-                return _cache.getOption("Play on load");
+                return "Play on load";
             }
             else if (type.HasFlag(ChannelConfigChangeType.Repeat))
             {
@@ -72,7 +72,7 @@ namespace BAPSCommon
                       type.HasFlag(ChannelConfigChangeType.One) ||
                       type.HasFlag(ChannelConfigChangeType.None)))
                     throw new ArgumentOutOfRangeException("type", type, "Repeat must have None, One, or All flag");
-                return _cache.getOption("Repeat");
+                return "Repeat";
             }
             throw new ArgumentOutOfRangeException("type", type, "No valid config category flag set");
         }
@@ -89,16 +89,10 @@ namespace BAPSCommon
 
         public void Configure(ChannelConfigChangeType type)
         {
-            var msg = new Message(Command.CONFIG | Command.SETCONFIGVALUE | Command.CONFIG_USEVALUEMASK | (Command)_channelID);
+            var optionDesc = GetChannelConfigOption(type);
+            var choiceDesc = GetChannelConfigChoice(type);
 
-            var oci = GetChannelConfigOption(type);
-            msg.Add((uint)oci.optionid);
-            msg.Add((uint)oci.type);
-
-            var choice = GetChannelConfigChoice(type);
-            msg.Add((uint)(int)oci.choiceList[choice]);
-
-            _msgQueue.Add(msg);
+            _msgQueue.Add(_cache.MakeConfigChoiceMessage(optionDesc, choiceDesc, index: _channelID));
         }
     }
 }
