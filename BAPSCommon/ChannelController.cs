@@ -57,14 +57,14 @@ namespace BAPSCommon
                 if (!(type.HasFlag(ChannelConfigChangeType.Off) ||
                       type.HasFlag(ChannelConfigChangeType.On)))
                     throw new ArgumentOutOfRangeException("type", type, "AutoAdvance must have Off or On flag");
-                return "Auto Advance";
+                return ConfigDescriptions.AutoAdvance;
             }
             else if (type.HasFlag(ChannelConfigChangeType.PlayOnLoad))
             {
                 if (!(type.HasFlag(ChannelConfigChangeType.Off) ||
                       type.HasFlag(ChannelConfigChangeType.On)))
                     throw new ArgumentOutOfRangeException("type", type, "PlayOnLoad must have Off or On flag");
-                return "Play on load";
+                return ConfigDescriptions.PlayOnLoad;
             }
             else if (type.HasFlag(ChannelConfigChangeType.Repeat))
             {
@@ -72,7 +72,7 @@ namespace BAPSCommon
                       type.HasFlag(ChannelConfigChangeType.One) ||
                       type.HasFlag(ChannelConfigChangeType.None)))
                     throw new ArgumentOutOfRangeException("type", type, "Repeat must have None, One, or All flag");
-                return "Repeat";
+                return ConfigDescriptions.Repeat;
             }
             throw new ArgumentOutOfRangeException("type", type, "No valid config category flag set");
         }

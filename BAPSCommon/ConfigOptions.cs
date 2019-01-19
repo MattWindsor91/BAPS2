@@ -3,50 +3,29 @@
 
 namespace BAPSCommon
 {
-    // The options rendered in the config menu depend on this ordering.
-    // Afaik these can be reordered to change the order they appear in the config menu.
-    public enum ConfigOption
+    /// <summary>
+    /// String constants corresponding to descriptions used in the bapsnet
+    /// config system.
+    /// </summary>
+    public static class ConfigDescriptions
     {
-        CHANNELCOUNT,
-        DEVICE,
-        CHANNELNAME,
-        AUTOADVANCE,
-        AUTOPLAY,
-        REPEAT,
-        DIRECTORYCOUNT,
-        NICEDIRECTORYNAME,
-        DIRECTORYLOCATION,
-        SERVERID,
-        PORT,
-        MAXQUEUECONNS,
-        CLIENTCONNLIMIT,
-        DBSERVER,
-        DBPORT,
-        LIBRARYDBNAME,
-        BAPSDBNAME,
-        DBUSERNAME,
-        DBPASSWORD,
-        LIBRARYLOCATION,
-        CLEANMUSICONLY,
-        SAVEINTROPOSITIONS,
-        STOREPLAYBACKEVENTS,
-        LOGNAME,
-        LOGSOURCE,
-        SUPPORTADDRESS,
-        SMTPSERVER,
-        BAPSCONTROLLERENABLED,
-        BAPSCONTROLLERPORT,
-        BAPSCONTROLLERBUTTONCOUNT,
-        BAPSCONTROLLERBUTTONCODE,
-        BAPSPADDLEMODE,
-        BAPSCONTROLLER2ENABLED,
-        BAPSCONTROLLER2DEVICECOUNT,
-        BAPSCONTROLLER2SERIAL,
-        BAPSCONTROLLER2OFFSET,
-        BAPSCONTROLLER2BUTTONCOUNT,
-        BAPSCONTROLLER2BUTTONCODE,
-        LASTOPTION
-    };
+        public const string AutoAdvance = "Auto Advance";
+        public const string PlayOnLoad = "Play on load";
+        public const string Repeat = "Repeat";
+    }
+
+    /// <summary>
+    /// String constants corresponding to choice descriptions used in the bapsnet
+    /// config system.
+    /// </summary>
+    public static class ChoiceDescriptions
+    {
+        public const string Yes = "Yes";
+        public const string No = "No";
+        public const string RepeatNone = "None";
+        public const string RepeatOne = "One";
+        public const string RepeatAll = "All";
+    }
 
     public enum ConfigType
     {

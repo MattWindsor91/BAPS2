@@ -42,6 +42,8 @@ namespace BAPSCommon
             Up   = 1,
         }
 
+        #region Event types
+
         public struct CountEventArgs { public CountType Type; public uint Count; public uint Extra;  }
 
         public delegate void CountEventHandler(object sender, CountEventArgs e);
@@ -54,6 +56,51 @@ namespace BAPSCommon
         }
 
         public struct ErrorEventArgs { public ErrorType Type; public byte Code; public string Description; }
+
+        /// <summary>
+        /// Arguments for the <see cref="ConfigSetting"/> event.
+        /// </summary>
+        public struct ConfigSettingArgs
+        {
+            /// <summary>The ID of the option to update.</summary>
+            public uint OptionID;
+
+            /// <summary>The BAPSNET type of the value.</summary>
+            public ConfigType Type;
+
+            /// <summary>The new value to apply.</summary>
+            public object Value;
+
+            /// <summary>If present and non-negative, the index of the option to set.</summary>
+            public int Index;
+        }
+
+        public delegate void ConfigSettingHandler(object sender, ConfigSettingArgs e);
+
+        /// <summary>
+        /// Arguments for the <see cref="ConfigOption"/> event.
+        /// </summary>
+        public struct ConfigOptionArgs
+        {
+            /// <summary>The ID of the option.</summary>
+            public uint OptionID;
+
+            /// <summary>The BAPSNET type of the value.</summary>
+            public ConfigType Type;
+
+            /// <summary>The string description of the option.</summary>
+            public string Description;
+
+            /// <summary>Whether the option has an index.</summary>
+            public bool HasIndex;
+
+            /// <summary>The value of the option's index field, if any.</summary>
+            public int Index;
+        }
+
+        public delegate void ConfigOptionHandler(object sender, ConfigOptionArgs e);
+
+        #endregion Event types
 
         /// <summary>
         /// Delegate for handling server errors.
@@ -114,14 +161,24 @@ namespace BAPSCommon
 
         #region Config events
 
-        public event EventHandler<(Command cmdReceived, uint optionID, string description, uint type)> ConfigOption;
-        private void OnConfigOption(Command cmdReceived, uint optionID, string description, uint type) => ConfigOption?.Invoke(this, (cmdReceived, optionID, description, type));
+        /// <summary>
+        /// Event raised when the server declares a config option.
+        /// </summary>
+        public event ConfigOptionHandler ConfigOption;
+        private void OnConfigOption(ConfigOptionArgs args) => ConfigOption?.Invoke(this, args);
 
+        /// <summary>
+        /// Event raised when the server declares a config choice.
+        /// </summary>
         public event EventHandler<(uint optionID, uint choiceIndex, string choiceDescription)> ConfigChoice;
         private void OnConfigChoice(uint optionID, uint choiceIndex, string choiceDescription) => ConfigChoice?.Invoke(this, (optionID, choiceIndex, choiceDescription));
 
-        public event EventHandler<(uint optionID, ConfigType type, object value, int index)> ConfigSetting;
-        private void OnConfigSetting(uint optionID, ConfigType type, object value, int index) => ConfigSetting?.Invoke(this, (optionID, type, value, index));
+        /// <summary>
+        /// Event raised when the server declares that a setting on a
+        /// config option has changed.
+        /// </summary>
+        public event ConfigSettingHandler ConfigSetting;
+        private void OnConfigSetting(ConfigSettingArgs args) => ConfigSetting?.Invoke(this, args);
 
         public event EventHandler<(Command cmdReceived, uint optionID, ConfigResult result)> ConfigResult;
         private void OnConfigResult(Command cmdReceived, uint optionID, ConfigResult result) => ConfigResult?.Invoke(this, (cmdReceived, optionID, result));
@@ -376,10 +433,12 @@ namespace BAPSCommon
                     {
                         if (cmdReceived.HasFlag(Command.CONFIG_MODEMASK))
                         {
+                            var hasIndex = cmdReceived.HasFlag(Command.CONFIG_USEVALUEMASK);
+                            var index = cmdReceived.ConfigValue();
                             var optionID = _cs.ReceiveI();
                             var description = _cs.ReceiveS();
                             var type = _cs.ReceiveI();
-                            OnConfigOption(cmdReceived, optionID, description, type);
+                            OnConfigOption(new ConfigOptionArgs { OptionID = optionID, Description = description, Type = (ConfigType)type, HasIndex = hasIndex, Index = index });
                         }
                         else DecodeCount(CountType.ConfigOption);
                     }
@@ -490,7 +549,7 @@ namespace BAPSCommon
                 index = cmdReceived.ConfigValue();
             }
 
-            OnConfigSetting(optionID, type, value, index);
+            OnConfigSetting(new ConfigSettingArgs { OptionID = optionID, Type = type, Value = value, Index = index });
         }
 
         private void DecodeSystemCommand(Command cmdReceived)

@@ -2,8 +2,6 @@
 
 using System;
 using BAPSCommon;
-using BAPSPresenter;
-using ConfigCache = BAPSCommon.ConfigCache;
 
 namespace BAPSPresenter2
 {
@@ -15,9 +13,9 @@ namespace BAPSPresenter2
             {
                 if (InvokeRequired)
                 {
-                    Invoke((Action<Command, uint, string, uint>)processOption, e.cmdReceived, e.optionID, e.description, e.type);
+                    Invoke((Receiver.ConfigOptionHandler)processOption, sender, e);
                 }
-                else processOption(e.cmdReceived, e.optionID, e.description, e.type);
+                else processOption(sender, e);
             };
             r.ConfigChoice += (sender, e) =>
             {
@@ -31,9 +29,9 @@ namespace BAPSPresenter2
             {
                 if (InvokeRequired)
                 {
-                    Invoke((Action<uint, ConfigType, object, int>)processConfigSetting, e.optionID, e.type, e.value, e.index);
+                    Invoke((Receiver.ConfigSettingHandler)processConfigSetting, this, e);
                 }
-                else processConfigSetting(e.optionID, e.type, e.value, e.index);
+                else processConfigSetting(this, e);
             };
             r.ConfigResult += (sender, e) =>
             {
@@ -84,7 +82,7 @@ namespace BAPSPresenter2
         private void processChoice(uint optionid, uint choiceIndex, string choiceDescription)
         {
             /** Cache this info **/
-            Config.addOptionChoice((int)optionid, (int)choiceIndex, choiceDescription);
+            Config.AddOptionChoice(optionid, (int)choiceIndex, choiceDescription);
             /** Ignore if the config dialog is closed **/
             var cd = configDialog;
             if (cd == null) return;
@@ -135,10 +133,10 @@ namespace BAPSPresenter2
             }
         }
 
-        private void processOption(Command cmdReceived, uint optionid, string description, uint type)
+        private void processOption(object sender, Receiver.ConfigOptionArgs e)
         {
             /** Cache this info **/
-            Config.addOptionDescription((int)optionid, (int)type, description, cmdReceived.HasFlag(Command.CONFIG_USEVALUEMASK));
+            Config.AddOptionDescription(e.OptionID, e.Type, e.Description, e.HasIndex);
             /** Pass onto the config dialog if available **/
             var cd = configDialog;
             if (cd == null) return;
@@ -147,17 +145,15 @@ namespace BAPSPresenter2
                 cd.closeMutex.WaitOne();
                 if (cd.Visible)
                 {
-                    /** Check for an indexed option **/
-                    if (cmdReceived.HasFlag(Command.CONFIG_USEVALUEMASK))
+                    if (e.HasIndex)
                     {
                         /** Indexed option - does not update the form UI just data **/
-                        var indexid = (ushort)(cmdReceived & Command.CONFIG_VALUEMASK);
-                        cd.addOption(new ConfigOptionInfo((int)optionid, description, (int)type, indexid));
+                        cd.addOption(new ConfigOptionInfo((int)e.OptionID, e.Description, (int)e.Type, e.Index));
                     }
                     else
                     {
                         /** Non indexed option - does not update the form ui just data **/
-                        cd.addOption(new ConfigOptionInfo((int)optionid, description, (int)type));
+                        cd.addOption(new ConfigOptionInfo((int)e.OptionID, e.Description, (int)e.Type));
                     }
                     /** The configDialog form knows how many options it is expecting and
                         will report true when it has them all, at this point it is able to
@@ -170,10 +166,10 @@ namespace BAPSPresenter2
                     }
                 }
             }
-#if DEBUG
-            catch (Exception e)
+#if !DEBUG
+            catch (Exception exc)
             {
-                var error = string.Concat("Failed to process option:\n", e.Message, "\nStack Trace:\n", e.StackTrace);
+                var error = string.Concat("Failed to process option:\n", exc.Message, "\nStack Trace:\n", exc.StackTrace);
                 logError(error);
             }
 #endif
@@ -209,21 +205,10 @@ namespace BAPSPresenter2
             }
         }
 
-        private void processConfigSetting(uint optionid, ConfigType type, object value, int index)
+        private void processConfigSetting(object sender, Receiver.ConfigSettingArgs e)
         {
-            var hasIndex = 0 <= index;
-            /** Cache this setting **/
-
-            switch (type)
-            {
-                case ConfigType.INT:
-                case ConfigType.CHOICE:
-                    Config.addOptionValue((int)optionid, index, (int)value);
-                    break;
-                case ConfigType.STR:
-                    Config.addOptionValue((int)optionid, index, (string)value);
-                    break;
-            }
+            var hasIndex = 0 <= e.Index;
+            Config.AddOptionValue(e);
             /** 
                 In order to support fetching single config options for use in normal
                 operation and also to retrieve all options (to change their values)
@@ -248,7 +233,7 @@ namespace BAPSPresenter2
                         **/
                         if (hasIndex)
                         {
-                            switch (type)
+                            switch (e.Type)
                             {
                                 case ConfigType.INT:
                                 case ConfigType.CHOICE:
@@ -256,12 +241,12 @@ namespace BAPSPresenter2
                                         /** Box it up and send it off, choices can be treated as
                                             just ints because that is the underlying datatype
                                         **/
-                                        configDialog.Invoke((Action<uint, int, int>)configDialog.setValue, optionid, index, (int)value);
+                                        configDialog.Invoke((Action<uint, int, int>)configDialog.setValue, e.OptionID, e.Index, (int)e.Value);
                                     }
                                     break;
                                 case ConfigType.STR:
                                     {
-                                        configDialog.Invoke((Action<uint, int, string>)configDialog.setValue, optionid, index, (string)value);
+                                        configDialog.Invoke((Action<uint, int, string>)configDialog.setValue, e.OptionID, e.Index, (string)e.Value);
                                     }
                                     break;
                             }
@@ -269,17 +254,17 @@ namespace BAPSPresenter2
                         else
                         {
                             /** Non indexed settings, just box them up and send them off **/
-                            switch (type)
+                            switch (e.Type)
                             {
                                 case ConfigType.INT:
                                 case ConfigType.CHOICE:
                                     {
-                                        configDialog.Invoke((Action<uint, int>)configDialog.setValue, optionid, (int)value);
+                                        configDialog.Invoke((Action<uint, int>)configDialog.setValue, e.OptionID, (int)e.Value);
                                     }
                                     break;
                                 case ConfigType.STR:
                                     {
-                                        configDialog.Invoke((Action<uint, string>)configDialog.setValue, optionid, (string)value);
+                                        configDialog.Invoke((Action<uint, string>)configDialog.setValue, e.OptionID, (string)e.Value);
                                     }
                                     break;
                             }

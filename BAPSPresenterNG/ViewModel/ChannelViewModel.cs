@@ -1,6 +1,7 @@
 ﻿using BAPSCommon;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Ioc;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
@@ -25,6 +26,8 @@ namespace BAPSPresenterNG.ViewModel
         /// </summary>
         public ObservableCollection<EntryInfo> TrackList { get; } = new ObservableCollection<EntryInfo>();
 
+        #region Channel flags
+
         /// <summary>
         /// Whether this channel is playing, according to the server.
         /// <para>
@@ -48,16 +51,6 @@ namespace BAPSPresenterNG.ViewModel
         private bool _isPlaying = false;
 
         /// <summary>
-        /// A command that, when fired, asks the server to start playing
-        /// on this channel.
-        /// </summary>
-        public RelayCommand PlayCommand => _playCommand
-            ?? (_playCommand = new RelayCommand(
-                execute: Controller.Play,
-                canExecute: () => !IsPlaying));
-        private RelayCommand _playCommand;
-
-        /// <summary>
         /// Whether this channel is paused, according to the server.
         /// <para>
         /// This property should only be set when the server state
@@ -76,15 +69,6 @@ namespace BAPSPresenterNG.ViewModel
         }
 
         private bool _isPaused = false;
-
-        /// <summary>
-        /// A command that, when fired, asks the server to pause
-        /// this channel.
-        /// </summary>
-        public RelayCommand PauseCommand => _pauseCommand
-            ?? (_pauseCommand = new RelayCommand(
-                execute: Controller.Pause));
-        private RelayCommand _pauseCommand;
 
         /// <summary>
         /// Whether this channel is stopped, according to the server.
@@ -108,6 +92,90 @@ namespace BAPSPresenterNG.ViewModel
         private bool _isStopped = false;
 
         /// <summary>
+        /// Whether play-on-load is active, according to the server.
+        /// <para>
+        /// This property should only be set when the server state
+        /// changes.
+        /// </para>
+        /// </summary>
+        public bool IsPlayOnLoad
+        {
+            get => _isPlayOnLoad;
+            set
+            {
+                if (_isPlayOnLoad == value) return;
+                _isPlayOnLoad = value;
+                RaisePropertyChanged(nameof(IsPlayOnLoad));
+            }
+        }
+
+        private bool _isPlayOnLoad = false;
+
+        /// <summary>
+        /// Whether auto-advance is active, according to the server.
+        /// <para>
+        /// This property should only be set when the server state
+        /// changes.
+        /// </para>
+        /// </summary>
+        public bool IsAutoAdvance
+        {
+            get => _isAutoAdvance;
+            set
+            {
+                if (_isAutoAdvance == value) return;
+                _isAutoAdvance = value;
+                RaisePropertyChanged(nameof(IsPlayOnLoad));
+            }
+        }
+
+        private bool _isAutoAdvance = false;
+
+        /// <summary>
+        /// Enumeration of repeat modes.
+        /// </summary>
+        public enum RepetitionMode
+        {
+            None,
+            One,
+            All
+        }
+        public RepetitionMode RepeatMode
+        {
+            get => _repeatMode;
+            set
+            {
+                if (_repeatMode == value) return;
+                _repeatMode = value;
+                RaisePropertyChanged(nameof(RepeatMode));
+            }
+        }
+        private RepetitionMode _repeatMode;
+
+        #endregion Channel flags
+
+        #region Commands
+
+        /// <summary>
+        /// A command that, when fired, asks the server to start playing
+        /// on this channel.
+        /// </summary>
+        public RelayCommand PlayCommand => _playCommand
+            ?? (_playCommand = new RelayCommand(
+                execute: Controller.Play,
+                canExecute: () => !IsPlaying));
+        private RelayCommand _playCommand;
+
+        /// <summary>
+        /// A command that, when fired, asks the server to pause
+        /// this channel.
+        /// </summary>
+        public RelayCommand PauseCommand => _pauseCommand
+            ?? (_pauseCommand = new RelayCommand(
+                execute: Controller.Pause));
+        private RelayCommand _pauseCommand;
+
+        /// <summary>
         /// A command that, when fired, asks the server to stop
         /// this channel.
         /// </summary>
@@ -115,6 +183,8 @@ namespace BAPSPresenterNG.ViewModel
             ?? (_stopCommand = new RelayCommand(
                 execute: Controller.Stop));
         private RelayCommand _stopCommand;
+
+        #endregion
 
         /// <summary>
         /// The duration of the currently loaded item (if any), in milliseconds.
@@ -238,7 +308,14 @@ namespace BAPSPresenterNG.ViewModel
 
         private EntryInfo _loadedTrack = null;
 
-        internal void SetupPlaybackReactions(Receiver r)
+        internal void SetupReactions(Receiver r)
+        {
+            SetupPlaybackReactions(r);
+            SetupPlaylistReactions(r);
+            SetupConfigReactions(r);
+        }
+
+        private void SetupPlaybackReactions(Receiver r)
         {
             r.ChannelOperation += HandleChannelOperation;
             r.Position += HandlePosition;
@@ -247,12 +324,79 @@ namespace BAPSPresenterNG.ViewModel
             r.TextItem += HandleTextItem;
         }
 
-        internal void SetupPlaylistReactions(Receiver r)
+        private void SetupPlaylistReactions(Receiver r)
         {
             r.ItemAdd += HandleItemAdd;
             r.ItemMove += HandleItemMove;
             r.ItemDelete += HandleItemDelete;
             r.ResetPlaylist += HandleResetPlaylist;
+        }
+
+        private void SetupConfigReactions(Receiver r)
+        {
+            var _config = SimpleIoc.Default.GetInstance<ConfigCache>();
+            _config.ConfigChoiceChanged += HandleConfigChoiceChanged;
+        }
+
+        private void HandleConfigChoiceChanged(object sender, ConfigChoiceChangeArgs e)
+        {
+            switch (e.Description)
+            {
+                case ConfigDescriptions.AutoAdvance:
+                    HandleAutoAdvance(e);
+                    break;
+                case ConfigDescriptions.PlayOnLoad:
+                    HandlePlayOnLoad(e);
+                    break;
+                case ConfigDescriptions.Repeat:
+                    HandleRepeat(e);
+                    break;
+            }
+        }
+
+        private void HandleAutoAdvance(ConfigChoiceChangeArgs e)
+        {
+            if (ChannelID != e.Index) return;
+            switch (e.Choice)
+            {
+                case ChoiceDescriptions.Yes:
+                    IsAutoAdvance = true;
+                    break;
+                case ChoiceDescriptions.No:
+                    IsAutoAdvance = false;
+                    break;
+            }
+        }
+
+        private void HandlePlayOnLoad(ConfigChoiceChangeArgs e)
+        {
+            if (ChannelID != e.Index) return;
+            switch (e.Choice)
+            {
+                case ChoiceDescriptions.Yes:
+                    IsPlayOnLoad = true;
+                    break;
+                case ChoiceDescriptions.No:
+                    IsPlayOnLoad = false;
+                    break;
+            }
+        }
+
+        private void HandleRepeat(ConfigChoiceChangeArgs e)
+        {
+            if (ChannelID != e.Index) return;
+            switch (e.Choice)
+            {
+                case ChoiceDescriptions.RepeatAll:
+                    RepeatMode = RepetitionMode.All;
+                    break;
+                case ChoiceDescriptions.RepeatNone:
+                    RepeatMode = RepetitionMode.None;
+                    break;
+                case ChoiceDescriptions.RepeatOne:
+                    RepeatMode = RepetitionMode.One;
+                    break;
+            }
         }
 
         private void HandleItemAdd(object sender, (ushort channelID, uint index, EntryInfo entry) e)

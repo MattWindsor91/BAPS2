@@ -63,9 +63,34 @@ namespace BAPSPresenterNG
         {
             foreach (var channel in _main.ViewModel.Channels)
             {
-                channel.SetupPlaybackReactions(e);
-                channel.SetupPlaylistReactions(e);
+                channel.SetupReactions(e);
             }
+
+            SetupConfigReactions(e);
+        }
+
+        private void SetupConfigReactions(Receiver r)
+        {
+            r.ConfigOption += HandleConfigOption;
+            r.ConfigChoice += HandleConfigChoice;
+            r.ConfigSetting += HandleConfigSetting;
+        }
+
+        private ConfigCache ConfigCache => SimpleIoc.Default.GetInstance<ConfigCache>();
+
+        private void HandleConfigSetting(object sender, Receiver.ConfigSettingArgs e)
+        {
+            ConfigCache.AddOptionValue(e);
+        }
+
+        private void HandleConfigChoice(object sender, (uint optionID, uint choiceIndex, string choiceDescription) e)
+        {
+            ConfigCache.AddOptionChoice((int)e.optionID, (int)e.choiceIndex, e.choiceDescription);
+        }
+
+        private void HandleConfigOption(object sender, Receiver.ConfigOptionArgs e)
+        {
+            ConfigCache.AddOptionDescription(e.OptionID, e.Type, e.Description, e.HasIndex);
         }
 
         private void Authenticated(object sender, EventArgs e)
