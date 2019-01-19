@@ -154,7 +154,6 @@ namespace BAPSCommon
                 : base(optionID, description, isIndexed) { }
         }
 
-
         private IOption MakeOptionCacheInfo(uint optionid, ConfigType type, string description, bool isIndexed)
         {
             switch (type)
@@ -219,29 +218,6 @@ namespace BAPSCommon
         }
 
         /// <summary>
-        /// Updates the value for a given option ID directly from a
-        /// <see cref="Receiver.ConfigSettingArgs"/> struct.
-        /// </summary>
-        /// <param name="args">The <see cref="Receiver.ConfigSettingArgs"/> struct to use.</param>
-        public void AddOptionValue(Receiver.ConfigSettingArgs args)
-        {
-            switch (args.Type)
-            {
-                case ConfigType.STR:
-                    if (!(args.Value is string str))
-                        throw new ArgumentException("value should be a string", nameof(args));
-                    AddOptionValue(args.OptionID, str, args.Index);
-                    break;
-                case ConfigType.CHOICE:
-                case ConfigType.INT:
-                    if (!(args.Value is int i))
-                        throw new ArgumentException("value should be an integer", nameof(args));
-                    AddOptionValue(args.OptionID, i, args.Index);
-                    break;
-            }
-        }
-
-        /// <summary>
         /// Updates the value for a given option ID.
         /// </summary>
         /// <typeparam name="T">The type of the value (generally string or int).</typeparam>
@@ -271,7 +247,43 @@ namespace BAPSCommon
             if (GetOption(optionDescription) is Option<T> option) return option.ValueAt(index);
             return default;
         }
-        
+
+        /// <summary>
+        /// Installs event handlers on a receiver that respond to BAPSnet configuration changes by
+        /// updating the config cache.
+        /// </summary>
+        /// <param name="r">The <see cref="Receiver"/> with whose event handlers we are registering.</param>
+        public void InstallReceiverEventHandlers(Receiver r)
+        {
+            r.ConfigSetting += (sender, e) => AddOptionValue(e);
+            r.ConfigOption += (sender, e) => AddOptionDescription(e.OptionID, e.Type, e.Description, e.HasIndex);
+            r.ConfigChoice += (sender, e) => AddOptionChoice(e.optionID, (int)e.choiceIndex, e.choiceDescription);
+        }
+
+        /// <summary>
+        /// Updates the value for a given option ID directly from a
+        /// <see cref="Receiver.ConfigSettingArgs"/> struct.
+        /// </summary>
+        /// <param name="args">The <see cref="Receiver.ConfigSettingArgs"/> struct to use.</param>
+        private void AddOptionValue(Receiver.ConfigSettingArgs args)
+        {
+            switch (args.Type)
+            {
+                case ConfigType.STR:
+                    if (!(args.Value is string str))
+                        throw new ArgumentException("value should be a string", nameof(args));
+                    AddOptionValue(args.OptionID, str, args.Index);
+                    break;
+                case ConfigType.CHOICE:
+                case ConfigType.INT:
+                    if (!(args.Value is int i))
+                        throw new ArgumentException("value should be an integer", nameof(args));
+                    AddOptionValue(args.OptionID, i, args.Index);
+                    break;
+            }
+        }
+
+
         private Dictionary<string, IOption> descLookup = new Dictionary<string, IOption>();
 	    private Dictionary<uint, IOption> idLookup = new Dictionary<uint, IOption>();
     }

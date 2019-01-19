@@ -9,6 +9,8 @@ namespace BAPSPresenter2
     {
         private void SetupConfigReactions(Receiver r)
         {
+            Config.InstallReceiverEventHandlers(r);
+
             r.ConfigOption += (sender, e) =>
             {
                 if (InvokeRequired)
@@ -81,8 +83,6 @@ namespace BAPSPresenter2
 
         private void processChoice(uint optionid, uint choiceIndex, string choiceDescription)
         {
-            /** Cache this info **/
-            Config.AddOptionChoice(optionid, (int)choiceIndex, choiceDescription);
             /** Ignore if the config dialog is closed **/
             var cd = configDialog;
             if (cd == null) return;
@@ -135,8 +135,6 @@ namespace BAPSPresenter2
 
         private void processOption(object sender, Receiver.ConfigOptionArgs e)
         {
-            /** Cache this info **/
-            Config.AddOptionDescription(e.OptionID, e.Type, e.Description, e.HasIndex);
             /** Pass onto the config dialog if available **/
             var cd = configDialog;
             if (cd == null) return;
@@ -208,7 +206,6 @@ namespace BAPSPresenter2
         private void processConfigSetting(object sender, Receiver.ConfigSettingArgs e)
         {
             var hasIndex = 0 <= e.Index;
-            Config.AddOptionValue(e);
             /** 
                 In order to support fetching single config options for use in normal
                 operation and also to retrieve all options (to change their values)
