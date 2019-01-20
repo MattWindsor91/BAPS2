@@ -3,7 +3,6 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Ioc;
 using System.Collections.ObjectModel;
-using System.Windows.Input;
 
 namespace BAPSPresenterNG.ViewModel
 {
@@ -26,6 +25,12 @@ namespace BAPSPresenterNG.ViewModel
         /// </summary>
         public ObservableCollection<EntryInfo> TrackList { get; } = new ObservableCollection<EntryInfo>();
 
+        /// <summary>
+        /// Shorthand for accessing the UI thread's dispatcher.
+        /// </summary>
+        private System.Windows.Threading.Dispatcher UIDispatcher =>
+            System.Windows.Application.Current.Dispatcher;
+
         #region Channel flags
 
         /// <summary>
@@ -43,7 +48,7 @@ namespace BAPSPresenterNG.ViewModel
             {
                 if (_isPlaying == value) return;
                 _isPlaying = value;
-                CommandManager.InvalidateRequerySuggested();
+                UIDispatcher.Invoke(PlayCommand.RaiseCanExecuteChanged);
                 RaisePropertyChanged(nameof(IsPlaying));
             }
         }
@@ -399,29 +404,36 @@ namespace BAPSPresenterNG.ViewModel
             }
         }
 
+        #region Tracklist event handlers
+
+        // NB: Anything involving the TrackList has to be done on the
+        // UI thread, hence the use of Dispatcher.
+
         private void HandleItemAdd(object sender, (ushort channelID, uint index, EntryInfo entry) e)
         {
             if (ChannelID != e.channelID) return;
-            TrackList.Add(e.entry);
+            UIDispatcher.Invoke(() => TrackList.Add(e.entry));
         }
 
         private void HandleItemMove(object sender, (ushort channelID, uint indexFrom, uint indexTo) e)
         {
             if (ChannelID != e.channelID) return;
-            TrackList.Move((int)e.indexFrom, (int)e.indexTo);
+            UIDispatcher.Invoke(() => TrackList.Move((int)e.indexFrom, (int)e.indexTo));
         }
 
         private void HandleItemDelete(object sender, (ushort channelID, uint index) e)
         {
             if (ChannelID != e.channelID) return;
-            TrackList.RemoveAt((int)e.index);
+            UIDispatcher.Invoke(() => TrackList.RemoveAt((int)e.index));
         }
 
         private void HandleResetPlaylist(object sender, ushort e)
         {
             if (ChannelID != e) return;
-            TrackList.Clear();
+            UIDispatcher.Invoke(() => TrackList.Clear());
         }
+
+        #endregion Tracklist event handlers
 
         private void HandleDuration(object sender, (ushort channelID, uint duration) e)
         {
