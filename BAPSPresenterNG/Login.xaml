@@ -5,39 +5,50 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BAPSPresenterNG"
         mc:Ignorable="d"
-        Title="BAPS Presenter: Please Login" Height="180" Width="240"
+        Title="BAPS Presenter: Please Login" Height="240" Width="320"
         ResizeMode="CanResizeWithGrip"
         ShowInTaskbar="False"
         WindowStartupLocation="CenterOwner"       
         DataContext="{Binding Login, Source={StaticResource Locator}}">
+    <Window.Resources>
+        <ResourceDictionary>
+            <BitmapImage x:Key="splash" UriSource="pack://application:,,,/Resources/splashIcon.png" />
+        </ResourceDictionary>
+    </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Name="splashCol" Width="Auto" />
             <ColumnDefinition Name="labelCol" Width="Auto" />
             <ColumnDefinition Name="controlCol" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Name="usernameRow" />
-            <RowDefinition Name="passwordRow" />
-            <RowDefinition Name="serverRow" />
-            <RowDefinition Name="portRow" />
-            <RowDefinition Name="buttonRow" Height="Auto" />
+            <RowDefinition Name="usernameRow" Height="32px" />
+            <RowDefinition Name="passwordRow" Height="32px" />
+            <RowDefinition Name="serverRow" Height="32px" />
+            <RowDefinition Name="portRow" Height="32px" />
+            <RowDefinition Name="buttonRow" Height="*" />
         </Grid.RowDefinitions>
         
-        <Label Grid.Row="0"  Grid.Column="0" Name="usernameLbl">Username:</Label>
-        <TextBox Grid.Row="0" Grid.Column="1" Margin="3pt"
+        <StackPanel Grid.Column="0" Grid.Row="0" Grid.RowSpan="5" Background="Gainsboro">
+            <Image Source="{StaticResource splash}" Width="128" Height="128"></Image>
+            <TextBlock FontSize="32px" TextAlignment="Center" FontWeight="Bold">BAPS</TextBlock>
+        </StackPanel>
+        
+        <Label Grid.Row="0"  Grid.Column="1" Name="usernameLbl">Username:</Label>
+        <TextBox Grid.Row="0" Grid.Column="2" Margin="3pt"
                  Name="usernameTxt" Text="{Binding Username, Mode=TwoWay}"/>
-        <Label Grid.Row="1" Grid.Column="0" Name="passwordLbl">Password:</Label>
-        <PasswordBox Grid.Row="1" Grid.Column="1" Margin="3pt"
+        <Label Grid.Row="1" Grid.Column="1" Name="passwordLbl">Password:</Label>
+        <PasswordBox Grid.Row="1" Grid.Column="2" Margin="3pt"
                      Name="passwordTxt"/>
-        <Label Grid.Row="2" Grid.Column="0" Name="serverLbl">Server:</Label>
-        <TextBox Grid.Row="2" Grid.Column="1" Name="serverTxt" Margin="3pt"
+        <Label Grid.Row="2" Grid.Column="1" Name="serverLbl">Server:</Label>
+        <TextBox Grid.Row="2" Grid.Column="2" Name="serverTxt" Margin="3pt"
                  Text="{Binding Server, Mode=TwoWay}"></TextBox>
-        <Label Grid.Row="3" Grid.Column="0" Name="portLbl">Port:</Label>
-        <TextBox Grid.Row="3" Grid.Column="1" Name="portTxt" Margin="3pt"
+        <Label Grid.Row="3" Grid.Column="1" Name="portLbl">Port:</Label>
+        <TextBox Grid.Row="3" Grid.Column="2" Name="portTxt" Margin="3pt"
                  Text="{Binding Port, Mode=TwoWay}"></TextBox>
         
-        <StackPanel Name="buttonPanel" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"
-                    Orientation="Horizontal" FlowDirection="RightToLeft">
+        <StackPanel Name="buttonPanel" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3"
+                    Orientation="Horizontal" FlowDirection="RightToLeft" VerticalAlignment="Bottom">
             <Button Name="loginBtn" Margin="3pt" MinWidth="42pt" IsDefault="True" Click="LoginBtn_Click">Login</Button>
             <Button Name="cancelBtn" Margin="3pt" MinWidth="42pt" IsCancel="True">Cancel</Button>
         </StackPanel>
