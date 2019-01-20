@@ -1,5 +1,6 @@
 ﻿using BAPSCommon;
 using GalaSoft.MvvmLight.Ioc;
+using GalaSoft.MvvmLight.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -18,6 +19,7 @@ namespace BAPSPresenterNG
     {
         private ClientCore _core;
         private MainWindow _main;
+        private ReceiverMessengerAdapter _rma;
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
@@ -61,6 +63,9 @@ namespace BAPSPresenterNG
 
         private void ReceiverCreated(object sender, Receiver e)
         {
+            _rma = new ReceiverMessengerAdapter(e, Messenger.Default);
+            _rma.Register();
+
             foreach (var channel in _main.ViewModel.Channels)
             {
                 channel.SetupReactions(e);

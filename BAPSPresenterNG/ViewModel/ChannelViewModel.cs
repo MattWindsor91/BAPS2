@@ -2,6 +2,8 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Ioc;
+using GalaSoft.MvvmLight.Messaging;
+using System;
 using System.Collections.ObjectModel;
 
 namespace BAPSPresenterNG.ViewModel
@@ -316,7 +318,7 @@ namespace BAPSPresenterNG.ViewModel
         internal void SetupReactions(Receiver r)
         {
             SetupPlaybackReactions(r);
-            SetupPlaylistReactions(r);
+            SetupPlaylistReactions();
             SetupConfigReactions(r);
         }
 
@@ -329,12 +331,13 @@ namespace BAPSPresenterNG.ViewModel
             r.TextItem += HandleTextItem;
         }
 
-        private void SetupPlaylistReactions(Receiver r)
+        private void SetupPlaylistReactions()
         {
-            r.ItemAdd += HandleItemAdd;
-            r.ItemMove += HandleItemMove;
-            r.ItemDelete += HandleItemDelete;
-            r.ResetPlaylist += HandleResetPlaylist;
+            var messenger = MessengerInstance ?? Messenger.Default;
+            messenger.Register(this, (Action<Receiver.ItemAddEventArgs>)HandleItemAdd);
+            messenger.Register(this, (Action<Receiver.ItemMoveEventArgs>)HandleItemMove);
+            messenger.Register(this, (Action<Receiver.ItemDeleteEventArgs>)HandleItemDelete);
+            messenger.Register(this, (Action<Receiver.ChannelResetEventArgs>)HandleResetPlaylist);
         }
 
         private void SetupConfigReactions(Receiver r)
@@ -409,27 +412,27 @@ namespace BAPSPresenterNG.ViewModel
         // NB: Anything involving the TrackList has to be done on the
         // UI thread, hence the use of Dispatcher.
 
-        private void HandleItemAdd(object sender, (ushort channelID, uint index, EntryInfo entry) e)
+        private void HandleItemAdd(Receiver.ItemAddEventArgs e)
         {
-            if (ChannelID != e.channelID) return;
-            UIDispatcher.Invoke(() => TrackList.Add(e.entry));
+            if (ChannelID != e.ChannelID) return;
+            UIDispatcher.Invoke(() => TrackList.Add(e.Item));
         }
 
-        private void HandleItemMove(object sender, (ushort channelID, uint indexFrom, uint indexTo) e)
+        private void HandleItemMove(Receiver.ItemMoveEventArgs e)
         {
-            if (ChannelID != e.channelID) return;
-            UIDispatcher.Invoke(() => TrackList.Move((int)e.indexFrom, (int)e.indexTo));
+            if (ChannelID != e.ChannelID) return;
+            UIDispatcher.Invoke(() => TrackList.Move((int)e.Index, (int)e.NewIndex));
         }
 
-        private void HandleItemDelete(object sender, (ushort channelID, uint index) e)
+        private void HandleItemDelete(Receiver.ItemDeleteEventArgs e)
         {
-            if (ChannelID != e.channelID) return;
-            UIDispatcher.Invoke(() => TrackList.RemoveAt((int)e.index));
+            if (ChannelID != e.ChannelID) return;
+            UIDispatcher.Invoke(() => TrackList.RemoveAt((int)e.Index));
         }
 
-        private void HandleResetPlaylist(object sender, ushort e)
+        private void HandleResetPlaylist(Receiver.ChannelResetEventArgs e)
         {
-            if (ChannelID != e) return;
+            if (ChannelID != e.ChannelID) return;
             UIDispatcher.Invoke(() => TrackList.Clear());
         }
 

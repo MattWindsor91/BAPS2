@@ -13,61 +13,61 @@ namespace BAPSPresenter2
             {
                 if (InvokeRequired)
                 {
-                    Invoke((Action<ushort, uint, EntryInfo>)addItem, e.channelID, e.index, e.entry);
+                    Invoke((Receiver.ItemAddEventHandler)AddItem, sender, e);
                 }
-                else addItem(e.channelID, e.index, e.entry);
+                else AddItem(sender, e);
             };
             r.ItemMove += (sender, e) =>
             {
                 if (InvokeRequired)
                 {
-                    Invoke((Action<ushort, uint, uint>)moveItemTo, e.channelID, e.indexFrom, e.indexTo);
+                    Invoke((Receiver.ItemMoveEventHandler)MoveItemTo, sender, e);
                 }
-                else moveItemTo(e.channelID, e.indexFrom, e.indexTo);
+                else MoveItemTo(sender, e);
             };
             r.ItemDelete += (sender, e) =>
             {
                 if (InvokeRequired)
                 {
-                    Invoke((Action<ushort, uint>)deleteItem, e.channelID, e.index);
+                    Invoke((Receiver.ItemDeleteEventHandler)DeleteItem, sender, e);
                 }
-                else deleteItem(e.channelID, e.index);
+                else DeleteItem(sender, e);
             };
             r.ResetPlaylist += (sender, e) =>
             {
                 if (InvokeRequired)
                 {
-                    Invoke((Action<ushort>)cleanPlaylist, e);
+                    Invoke((Receiver.ChannelResetEventHandler)CleanPlaylist, sender, e);
                 }
-                else cleanPlaylist(e);
+                else CleanPlaylist(sender, e);
             };
         }
 
-        private void addItem(ushort channel, uint index, EntryInfo entry)
+        private void AddItem(object sender, Receiver.ItemAddEventArgs e)
         {
-            if (ChannelOutOfBounds(channel)) return;
-            bapsChannels[channel].AddTrack(index, entry);
+            if (ChannelOutOfBounds(e.ChannelID)) return;
+            bapsChannels[e.ChannelID].AddTrack(e.Index, e.Item);
             RefreshAudioWall();
         }
 
-        private void moveItemTo(ushort channel, uint oldIndex, uint newIndex)
+        private void MoveItemTo(object sender, Receiver.ItemMoveEventArgs e)
         {
-            if (ChannelOutOfBounds(channel)) return;
-            bapsChannels[channel].MoveTrack(oldIndex, newIndex);
+            if (ChannelOutOfBounds(e.ChannelID)) return;
+            bapsChannels[e.ChannelID].MoveTrack(e.Index, e.NewIndex);
             RefreshAudioWall();
         }
 
-        private void deleteItem(ushort channel, uint index)
+        private void DeleteItem(object sender, Receiver.ItemDeleteEventArgs e)
         {
-            if (ChannelOutOfBounds(channel)) return;
-            bapsChannels[channel].RemoveTrack(index);
+            if (ChannelOutOfBounds(e.ChannelID)) return;
+            bapsChannels[e.ChannelID].RemoveTrack(e.Index);
             RefreshAudioWall();
         }
 
-        private void cleanPlaylist(ushort channel)
+        private void CleanPlaylist(object sender, Receiver.ChannelResetEventArgs e)
         {
-            if (ChannelOutOfBounds(channel)) return;
-            bapsChannels[channel].CleanPlaylist();
+            if (ChannelOutOfBounds(e.ChannelID)) return;
+            bapsChannels[e.ChannelID].CleanPlaylist();
             RefreshAudioWall();
         }
     }

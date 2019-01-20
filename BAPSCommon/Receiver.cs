@@ -48,15 +48,6 @@ namespace BAPSCommon
 
         public delegate void CountEventHandler(object sender, CountEventArgs e);
 
-        public enum ErrorType
-        {
-            Library,
-            BapsDB,
-            Config
-        }
-
-        public struct ErrorEventArgs { public ErrorType Type; public byte Code; public string Description; }
-
         /// <summary>
         /// Arguments for the <see cref="ConfigSetting"/> event.
         /// </summary>
@@ -100,7 +91,14 @@ namespace BAPSCommon
 
         public delegate void ConfigOptionHandler(object sender, ConfigOptionArgs e);
 
-        #endregion Event types
+        public enum ErrorType
+        {
+            Library,
+            BapsDB,
+            Config
+        }
+
+        public struct ErrorEventArgs { public ErrorType Type; public byte Code; public string Description; }
 
         /// <summary>
         /// Delegate for handling server errors.
@@ -108,6 +106,60 @@ namespace BAPSCommon
         /// <param name="sender">The sender of the event.</param>
         /// <param name="e">The argument struct, containing the error code and description.</param>
         public delegate void ErrorEventHandler(object sender, ErrorEventArgs e);
+
+        public abstract class ChannelEventArgs
+        {
+            public ushort ChannelID { get; }
+            public ChannelEventArgs(ushort channelID)
+            {
+                ChannelID = channelID;
+            }
+        }
+
+        public class ChannelResetEventArgs : ChannelEventArgs
+        {
+            public ChannelResetEventArgs(ushort channelID) : base(channelID) { }
+        }
+        public delegate void ChannelResetEventHandler(object sender, ChannelResetEventArgs e);
+
+        public abstract class ItemEventArgs : ChannelEventArgs
+        {
+            public uint Index { get; }
+            public ItemEventArgs(ushort channelID, uint index) : base(channelID)
+            {
+                Index = index;
+            }
+        }
+
+        public class ItemAddEventArgs : ItemEventArgs
+        {
+            public EntryInfo Item { get; }
+            public ItemAddEventArgs(ushort channelID, uint index, EntryInfo item)
+                : base(channelID, index)
+            {
+                Item = item;
+            }
+        }
+        public delegate void ItemAddEventHandler(object sender, ItemAddEventArgs e);
+
+        public class ItemMoveEventArgs : ItemEventArgs
+        {
+            public uint NewIndex { get; }
+            public ItemMoveEventArgs(ushort channelID, uint fromIndex, uint toIndex)
+                : base(channelID, fromIndex)
+            {
+                NewIndex = toIndex;
+            }
+        }
+        public delegate void ItemMoveEventHandler(object sender, ItemMoveEventArgs e);
+
+        public class ItemDeleteEventArgs : ItemEventArgs
+        {
+            public ItemDeleteEventArgs(ushort channelID, uint index) : base(channelID, index) { }
+        }
+        public delegate void ItemDeleteEventHandler(object sender, ItemDeleteEventArgs e);
+
+        #endregion Event types
 
         public struct VersionInfo { public string Version; public string Date; public string Time; public string Author; }
 
@@ -132,17 +184,17 @@ namespace BAPSCommon
 
         #region Playlist events
 
-        public event EventHandler<(ushort channelID, uint index, EntryInfo entry)> ItemAdd;
-        private void OnItemAdd(ushort channelID, uint index, EntryInfo entry) => ItemAdd?.Invoke(this, (channelID, index, entry));
+        public event ItemAddEventHandler ItemAdd;
+        private void OnItemAdd(ItemAddEventArgs e) => ItemAdd?.Invoke(this, e);
 
-        public event EventHandler<(ushort channelID, uint indexFrom, uint indexTo)> ItemMove;
-        private void OnItemMove(ushort channelID, uint indexFrom, uint indexTo) => ItemMove?.Invoke(this, (channelID, indexFrom, indexTo));
+        public event ItemMoveEventHandler ItemMove;
+        private void OnItemMove(ItemMoveEventArgs e) => ItemMove?.Invoke(this, e);
 
-        public event EventHandler<(ushort channelID, uint index)> ItemDelete;
-        private void OnItemDelete(ushort channelID, uint index) => ItemDelete?.Invoke(this, (channelID, index));
+        public event ItemDeleteEventHandler ItemDelete;
+        private void OnItemDelete(ItemDeleteEventArgs e) => ItemDelete?.Invoke(this, e);
 
-        public event EventHandler<ushort> ResetPlaylist;
-        private void OnResetPlaylist(ushort channelID) => ResetPlaylist?.Invoke(this, channelID);
+        public event ChannelResetEventHandler ResetPlaylist;
+        private void OnResetPlaylist(ChannelResetEventArgs e) => ResetPlaylist?.Invoke(this, e);
 
         #endregion Playlist events
 
@@ -340,7 +392,7 @@ namespace BAPSCommon
                         var type = _cs.ReceiveI();
                         var description = _cs.ReceiveS();
                         var entry = EntryInfoFactory.Create((Command)type, description);
-                        OnItemAdd(channelID, index, entry);
+                        OnItemAdd(new ItemAddEventArgs(channelID, index, entry));
                     }
                     else
                     {
@@ -353,20 +405,20 @@ namespace BAPSCommon
                         var channelID = cmdReceived.Channel();
                         var indexFrom = _cs.ReceiveI();
                         var indexTo = _cs.ReceiveI();
-                        OnItemMove(channelID, indexFrom, indexTo);
+                        OnItemMove(new ItemMoveEventArgs(channelID, indexFrom, indexTo));
                     }
                     break;
                 case Command.DELETEITEM:
                     {
                         var channelID = cmdReceived.Channel();
                         var index = _cs.ReceiveI();
-                        OnItemDelete(channelID, index);
+                        OnItemDelete(new ItemDeleteEventArgs(channelID, index));
                     }
                     break;
                 case Command.RESETPLAYLIST:
                     {
                         var channelID = cmdReceived.Channel();
-                        OnResetPlaylist(channelID);
+                        OnResetPlaylist(new ChannelResetEventArgs(channelID));
                     }
                     break;
                 default:
