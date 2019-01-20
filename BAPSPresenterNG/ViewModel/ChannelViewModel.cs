@@ -300,23 +300,28 @@ namespace BAPSPresenterNG.ViewModel
 
         internal void SetupReactions(Receiver r)
         {
-            SetupPlaybackReactions(r);
-            SetupPlaylistReactions();
+            // We use the MVVMLight messenger bus to receive server updates.
+            // Assume that the main app attached the server update events to
+            // the messenger below.
+            var messenger = MessengerInstance ?? Messenger.Default;
+
+            SetupPlaybackReactions(r, messenger);
+            SetupPlaylistReactions(messenger);
             SetupConfigReactions(r);
         }
 
-        private void SetupPlaybackReactions(Receiver r)
+        private void SetupPlaybackReactions(Receiver r, IMessenger messenger)
         {
-            r.ChannelState += HandleChannelOperation;
+            messenger.Register(this, (Action<ServerUpdates.ChannelStateEventArgs>)HandleChannelState);
+
             r.Position += HandlePosition;
             r.Duration += HandleDuration;
             r.LoadedItem += HandleLoadedItem;
             r.TextItem += HandleTextItem;
         }
 
-        private void SetupPlaylistReactions()
+        private void SetupPlaylistReactions(IMessenger messenger)
         {
-            var messenger = MessengerInstance ?? Messenger.Default;
             messenger.Register(this, (Action<ServerUpdates.ItemAddEventArgs>)HandleItemAdd);
             messenger.Register(this, (Action<ServerUpdates.ItemMoveEventArgs>)HandleItemMove);
             messenger.Register(this, (Action<ServerUpdates.ItemDeleteEventArgs>)HandleItemDelete);
@@ -446,7 +451,7 @@ namespace BAPSPresenterNG.ViewModel
             }
         }
 
-        private void HandleChannelOperation(object sender, ServerUpdates.ChannelStateEventArgs e)
+        private void HandleChannelState(ServerUpdates.ChannelStateEventArgs e)
         {
             if (ChannelID != e.ChannelID) return;
             State = e.State;
