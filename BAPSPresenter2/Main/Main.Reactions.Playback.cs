@@ -9,13 +9,13 @@ namespace BAPSPresenter2
     {
         private void SetupPlaybackReactions(Receiver r)
         {
-            r.ChannelOperation += (sender, e) =>
+            r.ChannelState += (sender, e) =>
             {
                 if (InvokeRequired)
                 {
-                    Invoke((Action<ushort, Command>)showChannelOperation, e.channelID, e.op);
+                    Invoke((ServerUpdates.ChannelStateEventHandler)showChannelOperation, sender, e);
                 }
-                else showChannelOperation(e.channelID, e.op);
+                else showChannelOperation(sender, e);
             };
             r.Position += (sender, e) =>
             {
@@ -37,7 +37,7 @@ namespace BAPSPresenter2
             {
                 if (InvokeRequired)
                 {
-                    Invoke((Action<ushort, uint, EntryInfo>)showLoadedItem, e.channelID, e.index, e.entry);
+                    Invoke((Action<ushort, uint, TracklistItem>)showLoadedItem, e.channelID, e.index, e.entry);
                 }
                 else showLoadedItem(e.channelID, e.index, e.entry);
             };
@@ -45,7 +45,7 @@ namespace BAPSPresenter2
             {
                 if (InvokeRequired)
                 {
-                    Invoke((Action<ushort, uint, TextEntryInfo>)showText, e.ChannelID, e.index, e.entry);
+                    Invoke((Action<ushort, uint, TextTracklistItem>)showText, e.ChannelID, e.index, e.entry);
                 }
                 else showText(e.ChannelID, e.index, e.entry);
             };
@@ -67,23 +67,23 @@ namespace BAPSPresenter2
             }
         }
 
-        private void showChannelOperation(ushort channelID, Command operation)
+        private void showChannelOperation(object sender, ServerUpdates.ChannelStateEventArgs e)
         {
-            if (ChannelOutOfBounds(channelID)) return;
-            var chan = bapsChannels[channelID];
-            switch (operation)
+            if (ChannelOutOfBounds(e.ChannelID)) return;
+            var chan = bapsChannels[e.ChannelID];
+            switch (e.State)
             {
-                case Command.PLAY:
+                case ChannelState.Playing:
                     chan.ShowPlay();
-                    timeLine.Lock(channelID);
+                    timeLine.Lock(e.ChannelID);
                     break;
-                case Command.PAUSE:
+                case ChannelState.Paused:
                     chan.ShowPause();
-                    timeLine.Unlock(channelID);
+                    timeLine.Unlock(e.ChannelID);
                     break;
-                case Command.STOP:
+                case ChannelState.Stopped:
                     chan.ShowStop();
-                    timeLine.Unlock(channelID);
+                    timeLine.Unlock(e.ChannelID);
                     break;
             }
         }
@@ -94,7 +94,7 @@ namespace BAPSPresenter2
             bapsChannels[channelID].DisplayedPosition = (int)value;
         }
 
-        private void showLoadedItem(ushort channelID, uint index, EntryInfo entry)
+        private void showLoadedItem(ushort channelID, uint index, TracklistItem entry)
         {
             if (ChannelOutOfBounds(channelID)) return;
             bapsChannels[channelID].ShowLoadedItem(index, entry);
@@ -107,7 +107,7 @@ namespace BAPSPresenter2
             bapsChannels[channelID].DisplayedDuration = (int)value;
         }
 
-        private void showText(ushort channel, uint index, TextEntryInfo entry)
+        private void showText(ushort channel, uint index, TextTracklistItem entry)
         {
             if (ChannelOutOfBounds(channel)) return;
             foreach (var chan in bapsChannels) chan.LoadedTextIndex = -1;

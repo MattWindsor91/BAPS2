@@ -216,7 +216,7 @@ namespace BAPSPresenter2
             {
                 if (InvokeRequired)
                 {
-                    Invoke((Receiver.CountEventHandler)HandleCount, sender, e);
+                    Invoke((ServerUpdates.CountEventHandler)HandleCount, sender, e);
                 }
                 else HandleCount(sender, e);
             };
@@ -224,7 +224,7 @@ namespace BAPSPresenter2
             {
                 if (InvokeRequired)
                 {
-                    Invoke((Receiver.ErrorEventHandler)HandleError, sender, e);
+                    Invoke((ServerUpdates.ErrorEventHandler)HandleError, sender, e);
                 }
                 else HandleError(sender, e);
             };
@@ -238,31 +238,31 @@ namespace BAPSPresenter2
             };
         }
 
-        private void HandleCount(object sender, Receiver.CountEventArgs e)
+        private void HandleCount(object sender, ServerUpdates.CountEventArgs e)
         {
             switch (e.Type)
             {
-                case Receiver.CountType.ConfigChoice:
+                case ServerUpdates.CountType.ConfigChoice:
                     processChoiceCount(e.Extra, (int)e.Count);
                     break;
-                case Receiver.CountType.ConfigOption:
+                case ServerUpdates.CountType.ConfigOption:
                     processOptionCount(e.Count);
                     break;
-                case Receiver.CountType.IPRestriction:
+                case ServerUpdates.CountType.IPRestriction:
                     break;
-                case Receiver.CountType.LibraryItem:
+                case ServerUpdates.CountType.LibraryItem:
                     setLibraryResultCount((int)e.Count);
                     break;
-                case Receiver.CountType.Listing:
+                case ServerUpdates.CountType.Listing:
                     setListingResultCount((int)e.Count);
                     break;
-                case Receiver.CountType.Permission:
+                case ServerUpdates.CountType.Permission:
                     processPermissionCount(e.Count);
                     break;
-                case Receiver.CountType.Show:
+                case ServerUpdates.CountType.Show:
                     setShowResultCount((int)e.Count);
                     break;
-                case Receiver.CountType.User:
+                case ServerUpdates.CountType.User:
                     processUserCount(e.Count);
                     break;
                 default:
@@ -274,17 +274,17 @@ namespace BAPSPresenter2
             }
         }
 
-        private void HandleError(object sender, Receiver.ErrorEventArgs e)
+        private void HandleError(object sender, ServerUpdates.ErrorEventArgs e)
         {
             switch (e.Type)
             {
-                case Receiver.ErrorType.Library:
+                case ServerUpdates.ErrorType.Library:
                     notifyLibraryError(e.Code, e.Description);
                     break;
-                case Receiver.ErrorType.BapsDB:
+                case ServerUpdates.ErrorType.BapsDB:
                     notifyLoadShowError(e.Code, e.Description);
                     break;
-                case Receiver.ErrorType.Config:
+                case ServerUpdates.ErrorType.Config:
                     processConfigError(e.Code, e.Description);
                     break;
                 default:

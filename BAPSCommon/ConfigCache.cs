@@ -262,10 +262,10 @@ namespace BAPSCommon
 
         /// <summary>
         /// Updates the value for a given option ID directly from a
-        /// <see cref="Receiver.ConfigSettingArgs"/> struct.
+        /// <see cref="ServerUpdates.ConfigSettingArgs"/> struct.
         /// </summary>
         /// <param name="args">The <see cref="Receiver.ConfigSettingArgs"/> struct to use.</param>
-        private void AddOptionValue(Receiver.ConfigSettingArgs args)
+        private void AddOptionValue(ServerUpdates.ConfigSettingArgs args)
         {
             switch (args.Type)
             {

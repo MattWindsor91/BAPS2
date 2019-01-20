@@ -4,7 +4,7 @@ using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 using ConfigCache = BAPSCommon.ConfigCache;
-using EntryInfo = BAPSCommon.EntryInfo;
+using TracklistItem = BAPSCommon.TracklistItem;
 
 namespace BAPSPresenter2
 {
@@ -165,7 +165,7 @@ namespace BAPSPresenter2
             }
         }
 
-        internal void ShowLoadedItem(uint index, EntryInfo entry)
+        internal void ShowLoadedItem(uint index, TracklistItem entry)
         {
             trackList.LoadedIndex = (int)index;
             loadedText.Text = entry.Description;
@@ -185,7 +185,7 @@ namespace BAPSPresenter2
             }
         }
 
-        internal void AddTrack(uint index, EntryInfo entry)
+        internal void AddTrack(uint index, TracklistItem entry)
         {
             /** Add an item to the end of the list ( only method currently supported by server ) **/
             trackList.AddTrack(entry);

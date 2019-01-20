@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace BAPSCommon
+﻿namespace BAPSCommon
 {
-    public abstract class EntryInfo
+    public abstract class TracklistItem
     {
         public string Description { get; private set; }
         public virtual string Text => "";
 
-        public EntryInfo(string description)
+        public TracklistItem(string description)
         {
             Description = description;
         }
@@ -21,9 +17,9 @@ namespace BAPSCommon
         public override string ToString() => Description;
     }
 
-    public class TextEntryInfo : EntryInfo
+    public class TextTracklistItem : TracklistItem
     {
-        public TextEntryInfo(string description, string text) : base(description)
+        public TextTracklistItem(string description, string text) : base(description)
         {
             Text = text;
         }
@@ -34,27 +30,27 @@ namespace BAPSCommon
         public override string Text { get; }
     }
 
-    public class FileEntryInfo : EntryInfo
+    public class FileTracklistItem : TracklistItem
     {
-        public FileEntryInfo(string description) : base(description) { }
+        public FileTracklistItem(string description) : base(description) { }
 
         public override bool IsAudioItem => true;
         public override bool IsTextItem => false;
         public override bool IsFromLibrary => false;
     }
 
-    public class LibraryEntryInfo : EntryInfo
+    public class LibraryTracklistItem : TracklistItem
     {
-        public LibraryEntryInfo(string description) : base(description) { }
+        public LibraryTracklistItem(string description) : base(description) { }
 
         public override bool IsAudioItem => true;
         public override bool IsTextItem => false;
         public override bool IsFromLibrary => true;
     }
 
-    public class NullEntryInfo : EntryInfo
+    public class NullTracklistItem : TracklistItem
     {
-        public NullEntryInfo() : base("NONE") { }
+        public NullTracklistItem() : base("NONE") { }
 
         public override bool IsAudioItem => false;
         public override bool IsTextItem => false;
@@ -64,32 +60,32 @@ namespace BAPSCommon
     /// <summary>
     /// Allows the creation of entries from bapsnet commands.
     /// </summary>
-    public static class EntryInfoFactory
+    public static class TracklistItemFactory
     {
         /// <summary>
-        /// Creates an <see cref="EntryInfo"/> with the given type and description.
+        /// Creates an <see cref="TracklistItem"/> with the given type and description.
         /// <para>
         /// If the type is 'text', the resulting text item will have no text.
         /// This is acceptable for track lists, but one should use
-        /// <see cref="TextEntryInfo(string, string)"/> when text is available.
+        /// <see cref="TextTracklistItem(string, string)"/> when text is available.
         /// </para>
         /// </summary>
         /// <param name="type">The bapsnet type of the entry.</param>
         /// <param name="descr">The description of the entry.</param>
-        /// <returns>An <see cref="EntryInfo"/> with the correct type
+        /// <returns>An <see cref="TracklistItem"/> with the correct type
         /// and description.</returns>
-        public static EntryInfo Create(Command type, string descr)
+        public static TracklistItem Create(Command type, string descr)
         {
             switch (type)
             {
                 case Command.FILEITEM:
-                    return new FileEntryInfo(descr);
+                    return new FileTracklistItem(descr);
                 case Command.TEXTITEM:
-                    return new TextEntryInfo(descr, "");
+                    return new TextTracklistItem(descr, "");
                 case Command.LIBRARYITEM:
-                    return new LibraryEntryInfo(descr);
+                    return new LibraryTracklistItem(descr);
                 default:
-                    return new NullEntryInfo();
+                    return new NullTracklistItem();
             }
         }
 

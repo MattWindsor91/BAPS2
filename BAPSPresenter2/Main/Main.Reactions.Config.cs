@@ -15,7 +15,7 @@ namespace BAPSPresenter2
             {
                 if (InvokeRequired)
                 {
-                    Invoke((Receiver.ConfigOptionHandler)processOption, sender, e);
+                    Invoke((ServerUpdates.ConfigOptionHandler)processOption, sender, e);
                 }
                 else processOption(sender, e);
             };
@@ -31,7 +31,7 @@ namespace BAPSPresenter2
             {
                 if (InvokeRequired)
                 {
-                    Invoke((Receiver.ConfigSettingHandler)processConfigSetting, this, e);
+                    Invoke((ServerUpdates.ConfigSettingHandler)processConfigSetting, this, e);
                 }
                 else processConfigSetting(this, e);
             };
@@ -133,7 +133,7 @@ namespace BAPSPresenter2
             }
         }
 
-        private void processOption(object sender, Receiver.ConfigOptionArgs e)
+        private void processOption(object sender, ServerUpdates.ConfigOptionArgs e)
         {
             /** Pass onto the config dialog if available **/
             var cd = configDialog;
@@ -203,7 +203,7 @@ namespace BAPSPresenter2
             }
         }
 
-        private void processConfigSetting(object sender, Receiver.ConfigSettingArgs e)
+        private void processConfigSetting(object sender, ServerUpdates.ConfigSettingArgs e)
         {
             var hasIndex = 0 <= e.Index;
             /** 

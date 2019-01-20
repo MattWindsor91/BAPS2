@@ -12,7 +12,7 @@ namespace BAPSPresenterNG
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (!(value is BAPSCommon.EntryInfo entry)) return FontAwesomeIcon.Question;
+            if (!(value is BAPSCommon.TracklistItem entry)) return FontAwesomeIcon.Question;
 
             if (entry.IsTextItem) return FontAwesomeIcon.CommentOutline;
             if (entry.IsAudioItem && entry.IsFromLibrary) return FontAwesomeIcon.Music;
@@ -22,7 +22,7 @@ namespace BAPSPresenterNG
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return new BAPSCommon.NullEntryInfo();
+            return new BAPSCommon.NullTracklistItem();
         }
     }
 }

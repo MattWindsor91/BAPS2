@@ -25,7 +25,7 @@ namespace BAPSPresenterNG.ViewModel
         /// <summary>
         /// The track list.
         /// </summary>
-        public ObservableCollection<EntryInfo> TrackList { get; } = new ObservableCollection<EntryInfo>();
+        public ObservableCollection<TracklistItem> TrackList { get; } = new ObservableCollection<TracklistItem>();
 
         /// <summary>
         /// Shorthand for accessing the UI thread's dispatcher.
@@ -35,6 +35,23 @@ namespace BAPSPresenterNG.ViewModel
 
         #region Channel flags
 
+        private ChannelState _state;
+        public ChannelState State
+        {
+            get => _state;
+            set
+            {
+                if (_state == value) return;
+                _state = value;
+                UIDispatcher.Invoke(PlayCommand.RaiseCanExecuteChanged);
+                RaisePropertyChanged(nameof(State));
+                // Derived properties
+                RaisePropertyChanged(nameof(IsPlaying));
+                RaisePropertyChanged(nameof(IsPaused));
+                RaisePropertyChanged(nameof(IsStopped));
+            }
+        }
+
         /// <summary>
         /// Whether this channel is playing, according to the server.
         /// <para>
@@ -43,19 +60,7 @@ namespace BAPSPresenterNG.ViewModel
         /// <see cref="PlayCommand"/>.
         /// </para>
         /// </summary>
-        public bool IsPlaying
-        {
-            get => _isPlaying;
-            set
-            {
-                if (_isPlaying == value) return;
-                _isPlaying = value;
-                UIDispatcher.Invoke(PlayCommand.RaiseCanExecuteChanged);
-                RaisePropertyChanged(nameof(IsPlaying));
-            }
-        }
-
-        private bool _isPlaying = false;
+        public bool IsPlaying => _state == ChannelState.Playing;
 
         /// <summary>
         /// Whether this channel is paused, according to the server.
@@ -64,18 +69,7 @@ namespace BAPSPresenterNG.ViewModel
         /// changes.  When the user requests the channel to play, send
         /// <see cref="PauseCommand"/>.
         /// </para>
-        public bool IsPaused
-        {
-            get => _isPaused;
-            set
-            {
-                if (_isPaused == value) return;
-                _isPaused = value;
-                RaisePropertyChanged(nameof(IsPaused));
-            }
-        }
-
-        private bool _isPaused = false;
+        public bool IsPaused => _state == ChannelState.Paused;
 
         /// <summary>
         /// Whether this channel is stopped, according to the server.
@@ -85,18 +79,7 @@ namespace BAPSPresenterNG.ViewModel
         /// <see cref="PauseCommand"/>.
         /// </para>
         /// </summary>
-        public bool IsStopped
-        {
-            get => _isStopped;
-            set
-            {
-                if (_isStopped == value) return;
-                _isStopped = value;
-                RaisePropertyChanged(nameof(IsStopped));
-            }
-        }
-
-        private bool _isStopped = false;
+        public bool IsStopped => _state == ChannelState.Stopped;
 
         /// <summary>
         /// Whether play-on-load is active, according to the server.
@@ -210,8 +193,8 @@ namespace BAPSPresenterNG.ViewModel
 
         private uint _duration = 0;
 
-        public EntryInfo TrackAt(int index) =>
-            TrackList[index] ?? new NullEntryInfo();
+        public TracklistItem TrackAt(int index) =>
+            TrackList[index] ?? new NullTracklistItem();
 
         public bool IsLoadPossible(int uindex) =>
             TrackAt(uindex).IsTextItem || !IsPlaying;
@@ -302,7 +285,7 @@ namespace BAPSPresenterNG.ViewModel
         /// <summary>
         /// The currently loaded item (if any).
         /// </summary>
-        public EntryInfo LoadedTrack
+        public TracklistItem LoadedTrack
         {
             get => _loadedTrack;
             set
@@ -313,7 +296,7 @@ namespace BAPSPresenterNG.ViewModel
             }
         }
 
-        private EntryInfo _loadedTrack = null;
+        private TracklistItem _loadedTrack = null;
 
         internal void SetupReactions(Receiver r)
         {
@@ -324,7 +307,7 @@ namespace BAPSPresenterNG.ViewModel
 
         private void SetupPlaybackReactions(Receiver r)
         {
-            r.ChannelOperation += HandleChannelOperation;
+            r.ChannelState += HandleChannelOperation;
             r.Position += HandlePosition;
             r.Duration += HandleDuration;
             r.LoadedItem += HandleLoadedItem;
@@ -334,10 +317,10 @@ namespace BAPSPresenterNG.ViewModel
         private void SetupPlaylistReactions()
         {
             var messenger = MessengerInstance ?? Messenger.Default;
-            messenger.Register(this, (Action<Receiver.ItemAddEventArgs>)HandleItemAdd);
-            messenger.Register(this, (Action<Receiver.ItemMoveEventArgs>)HandleItemMove);
-            messenger.Register(this, (Action<Receiver.ItemDeleteEventArgs>)HandleItemDelete);
-            messenger.Register(this, (Action<Receiver.ChannelResetEventArgs>)HandleResetPlaylist);
+            messenger.Register(this, (Action<ServerUpdates.ItemAddEventArgs>)HandleItemAdd);
+            messenger.Register(this, (Action<ServerUpdates.ItemMoveEventArgs>)HandleItemMove);
+            messenger.Register(this, (Action<ServerUpdates.ItemDeleteEventArgs>)HandleItemDelete);
+            messenger.Register(this, (Action<ServerUpdates.ChannelResetEventArgs>)HandleResetPlaylist);
         }
 
         private void SetupConfigReactions(Receiver r)
@@ -412,25 +395,25 @@ namespace BAPSPresenterNG.ViewModel
         // NB: Anything involving the TrackList has to be done on the
         // UI thread, hence the use of Dispatcher.
 
-        private void HandleItemAdd(Receiver.ItemAddEventArgs e)
+        private void HandleItemAdd(ServerUpdates.ItemAddEventArgs e)
         {
             if (ChannelID != e.ChannelID) return;
             UIDispatcher.Invoke(() => TrackList.Add(e.Item));
         }
 
-        private void HandleItemMove(Receiver.ItemMoveEventArgs e)
+        private void HandleItemMove(ServerUpdates.ItemMoveEventArgs e)
         {
             if (ChannelID != e.ChannelID) return;
             UIDispatcher.Invoke(() => TrackList.Move((int)e.Index, (int)e.NewIndex));
         }
 
-        private void HandleItemDelete(Receiver.ItemDeleteEventArgs e)
+        private void HandleItemDelete(ServerUpdates.ItemDeleteEventArgs e)
         {
             if (ChannelID != e.ChannelID) return;
             UIDispatcher.Invoke(() => TrackList.RemoveAt((int)e.Index));
         }
 
-        private void HandleResetPlaylist(Receiver.ChannelResetEventArgs e)
+        private void HandleResetPlaylist(ServerUpdates.ChannelResetEventArgs e)
         {
             if (ChannelID != e.ChannelID) return;
             UIDispatcher.Invoke(() => TrackList.Clear());
@@ -463,19 +446,17 @@ namespace BAPSPresenterNG.ViewModel
             }
         }
 
-        private void HandleChannelOperation(object sender, (ushort channelID, Command op) e)
+        private void HandleChannelOperation(object sender, ServerUpdates.ChannelStateEventArgs e)
         {
-            if (ChannelID != e.channelID) return;
-            IsPlaying = e.op == Command.PLAYBACK;
-            IsPaused = e.op == Command.PAUSE;
-            IsStopped = e.op == Command.STOP;
+            if (ChannelID != e.ChannelID) return;
+            State = e.State;
         }
 
-        private void HandleTextItem(object sender, (ushort channelID, uint index, TextEntryInfo entry) e)
+        private void HandleTextItem(object sender, (ushort channelID, uint index, TextTracklistItem entry) e)
         {
         }
 
-        private void HandleLoadedItem(object sender, (ushort channelID, uint index, EntryInfo entry) e)
+        private void HandleLoadedItem(object sender, (ushort channelID, uint index, TracklistItem entry) e)
         {
             if (ChannelID != e.channelID) return;
 

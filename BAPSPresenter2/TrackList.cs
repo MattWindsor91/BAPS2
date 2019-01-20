@@ -9,15 +9,15 @@ namespace BAPSPresenter2
 {
     public partial class TrackList : Control
     {
-        private NullEntryInfo nullEntry = new NullEntryInfo();
+        private NullTracklistItem nullEntry = new NullTracklistItem();
 
-        private System.Collections.Generic.List<EntryInfo> items = new System.Collections.Generic.List<EntryInfo>();
+        private System.Collections.Generic.List<TracklistItem> items = new System.Collections.Generic.List<TracklistItem>();
 
         public bool IsTextItemAt(int index) => GetTrack(index).IsTextItem;
 
-        public EntryInfo GetTrack(int i) => items.ElementAtOrDefault(i) ?? nullEntry;
+        public TracklistItem GetTrack(int i) => items.ElementAtOrDefault(i) ?? nullEntry;
 
-        public void AddTrack(EntryInfo entry)
+        public void AddTrack(TracklistItem entry)
         {
             items.Add(entry);
             ShowHideScrollBar();
@@ -596,7 +596,7 @@ namespace BAPSPresenter2
 
         private int selectedIndex = -1;
         private bool pendingLoadRequest = false;
-        private EntryInfo selectedTextEntry = null;
+        private TracklistItem selectedTextEntry = null;
         private int hoverIndex = -1;
         private int fromIndex = -1;
         private int savedFromIndex;
@@ -623,7 +623,7 @@ namespace BAPSPresenter2
 
     public static class EntryInfoExtensions
     {
-        public static void DrawTypeIcon(this EntryInfo ei, Control parent, Graphics gOffScreen, int itemTop)
+        public static void DrawTypeIcon(this TracklistItem ei, Control parent, Graphics gOffScreen, int itemTop)
         {
             if (ei.IsTextItem)
             {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using static BAPSCommon.ServerUpdates;
 
 namespace BAPSCommon
 {
@@ -24,149 +25,13 @@ namespace BAPSCommon
             }
         }
 
-        public enum CountType
-        {
-            LibraryItem,
-            Show,
-            Listing,
-            ConfigOption,
-            ConfigChoice,
-            User,
-            Permission,
-            IPRestriction
-        }
-
-        public enum UpDown : byte
-        {
-            Down = 0,
-            Up   = 1,
-        }
-
-        #region Event types
-
-        public struct CountEventArgs { public CountType Type; public uint Count; public uint Extra;  }
-
-        public delegate void CountEventHandler(object sender, CountEventArgs e);
-
-        /// <summary>
-        /// Arguments for the <see cref="ConfigSetting"/> event.
-        /// </summary>
-        public struct ConfigSettingArgs
-        {
-            /// <summary>The ID of the option to update.</summary>
-            public uint OptionID;
-
-            /// <summary>The BAPSNET type of the value.</summary>
-            public ConfigType Type;
-
-            /// <summary>The new value to apply.</summary>
-            public object Value;
-
-            /// <summary>If present and non-negative, the index of the option to set.</summary>
-            public int Index;
-        }
-
-        public delegate void ConfigSettingHandler(object sender, ConfigSettingArgs e);
-
-        /// <summary>
-        /// Arguments for the <see cref="ConfigOption"/> event.
-        /// </summary>
-        public struct ConfigOptionArgs
-        {
-            /// <summary>The ID of the option.</summary>
-            public uint OptionID;
-
-            /// <summary>The BAPSNET type of the value.</summary>
-            public ConfigType Type;
-
-            /// <summary>The string description of the option.</summary>
-            public string Description;
-
-            /// <summary>Whether the option has an index.</summary>
-            public bool HasIndex;
-
-            /// <summary>The value of the option's index field, if any.</summary>
-            public int Index;
-        }
-
-        public delegate void ConfigOptionHandler(object sender, ConfigOptionArgs e);
-
-        public enum ErrorType
-        {
-            Library,
-            BapsDB,
-            Config
-        }
-
-        public struct ErrorEventArgs { public ErrorType Type; public byte Code; public string Description; }
-
-        /// <summary>
-        /// Delegate for handling server errors.
-        /// </summary>
-        /// <param name="sender">The sender of the event.</param>
-        /// <param name="e">The argument struct, containing the error code and description.</param>
-        public delegate void ErrorEventHandler(object sender, ErrorEventArgs e);
-
-        public abstract class ChannelEventArgs
-        {
-            public ushort ChannelID { get; }
-            public ChannelEventArgs(ushort channelID)
-            {
-                ChannelID = channelID;
-            }
-        }
-
-        public class ChannelResetEventArgs : ChannelEventArgs
-        {
-            public ChannelResetEventArgs(ushort channelID) : base(channelID) { }
-        }
-        public delegate void ChannelResetEventHandler(object sender, ChannelResetEventArgs e);
-
-        public abstract class ItemEventArgs : ChannelEventArgs
-        {
-            public uint Index { get; }
-            public ItemEventArgs(ushort channelID, uint index) : base(channelID)
-            {
-                Index = index;
-            }
-        }
-
-        public class ItemAddEventArgs : ItemEventArgs
-        {
-            public EntryInfo Item { get; }
-            public ItemAddEventArgs(ushort channelID, uint index, EntryInfo item)
-                : base(channelID, index)
-            {
-                Item = item;
-            }
-        }
-        public delegate void ItemAddEventHandler(object sender, ItemAddEventArgs e);
-
-        public class ItemMoveEventArgs : ItemEventArgs
-        {
-            public uint NewIndex { get; }
-            public ItemMoveEventArgs(ushort channelID, uint fromIndex, uint toIndex)
-                : base(channelID, fromIndex)
-            {
-                NewIndex = toIndex;
-            }
-        }
-        public delegate void ItemMoveEventHandler(object sender, ItemMoveEventArgs e);
-
-        public class ItemDeleteEventArgs : ItemEventArgs
-        {
-            public ItemDeleteEventArgs(ushort channelID, uint index) : base(channelID, index) { }
-        }
-        public delegate void ItemDeleteEventHandler(object sender, ItemDeleteEventArgs e);
-
-        #endregion Event types
 
         public struct VersionInfo { public string Version; public string Date; public string Time; public string Author; }
 
         #region Playback events
 
-        public event EventHandler<(ushort channelID, Command op)> ChannelOperation;
-        private void OnChannelOperation(ushort channelID, Command op) => ChannelOperation?.Invoke(this, (channelID, op));
+        public event ChannelStateEventHandler ChannelState;
+        private void OnChannelOperation(ChannelStateEventArgs e) => ChannelState?.Invoke(this, e);
 
         public event EventHandler<(ushort channelID, PositionType type, uint position)> Position;
         private void OnPosition(ushort channelID, PositionType type, uint position) => Position?.Invoke(this, (channelID, type, position));
@@ -174,11 +39,11 @@ namespace BAPSCommon
         public event EventHandler<(ushort channelID, uint duration)> Duration;
         private void OnDuration(ushort channelID, uint duration) => Duration?.Invoke(this, (channelID, duration));
 
-        public event EventHandler<(ushort channelID, uint index, EntryInfo entry)> LoadedItem;
-        private void OnLoadedItem(ushort channelID, uint index, EntryInfo entry) => LoadedItem?.Invoke(this, (channelID, index, entry));
+        public event EventHandler<(ushort channelID, uint index, TracklistItem entry)> LoadedItem;
+        private void OnLoadedItem(ushort channelID, uint index, TracklistItem entry) => LoadedItem?.Invoke(this, (channelID, index, entry));
 
-        public event EventHandler<(ushort ChannelID, uint index, TextEntryInfo entry)> TextItem;
-        private void OnTextItem(ushort channelID, uint index, TextEntryInfo entry) => TextItem?.Invoke(this, (channelID, index, entry));
+        public event EventHandler<(ushort ChannelID, uint index, TextTracklistItem entry)> TextItem;
+        private void OnTextItem(ushort channelID, uint index, TextTracklistItem entry) => TextItem?.Invoke(this, (channelID, index, entry));
 
         #endregion Playback events
 
@@ -321,7 +186,7 @@ namespace BAPSCommon
                 case Command.PAUSE:
                 case Command.STOP:
                     {
-                        OnChannelOperation(cmdReceived.Channel(), op);
+                        OnChannelOperation(new ChannelStateEventArgs(cmdReceived.Channel(), cmdReceived.AsChannelState()));
                     }
                     break;
                 case Command.VOLUME:
@@ -348,14 +213,14 @@ namespace BAPSCommon
                                 goto case Command.VOIDITEM;
                             case Command.VOIDITEM:
                                 {
-                                    var entry = EntryInfoFactory.Create(type, description);
+                                    var entry = TracklistItemFactory.Create(type, description);
                                     OnLoadedItem(channelID, index, entry);
                                 }
                                 break;
                             case Command.TEXTITEM:
                                 {
                                     var text = _cs.ReceiveS();
-                                    var entry = new TextEntryInfo(description, text);
+                                    var entry = new TextTracklistItem(description, text);
                                     OnTextItem(channelID, index, entry);
                                 }
                                 break;
@@ -391,7 +256,7 @@ namespace BAPSCommon
                         var index = _cs.ReceiveI();
                         var type = _cs.ReceiveI();
                         var description = _cs.ReceiveS();
-                        var entry = EntryInfoFactory.Create((Command)type, description);
+                        var entry = TracklistItemFactory.Create((Command)type, description);
                         OnItemAdd(new ItemAddEventArgs(channelID, index, entry));
                     }
                     else
