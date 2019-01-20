@@ -17,6 +17,8 @@
         <sys:UInt16 x:Key="Chan0">0</sys:UInt16>
         <sys:UInt16 x:Key="Chan1">1</sys:UInt16>
         <sys:UInt16 x:Key="Chan2">2</sys:UInt16>
+        <!-- Brushes -->
+        <SolidColorBrush x:Key="SideBg" Color="#FFE1E1E1"/>
         <!-- Styles -->
         <Style x:Key="MainTextBoxStyle" TargetType="{x:Type TextBox}">
             <Setter Property="FontSize" Value="18pt" />
@@ -39,26 +41,33 @@
     <DockPanel>
         <!-- Order is significant here: the text box and timeline should take
              up all of the window width. -->
+        <StackPanel DockPanel.Dock="Top" Height="72px"
+                    Name="headerPanel"
+                    Background="{StaticResource MainBg}" Orientation="Horizontal">
+            <Image Width="64px" Height="64px" Margin="4px" Source="{DynamicResource Logo}"/>
+            <TextBlock Foreground="{StaticResource MainFg}"
+                       FontSize="20px"
+                       VerticalAlignment="Center"
+                       FontWeight="Bold"
+                       Margin="12px 0">
+                Broadcasting and
+                <LineBreak/>
+                Presenting Suite
+            </TextBlock>
+            <Button Width="64px" Margin="4px">
+                <TextBlock TextAlignment="Center">Load<LineBreak/>Show</TextBlock>
+            </Button>
+            <Button Width="64px" Margin="4px">
+                <TextBlock TextAlignment="Center">Search<LineBreak/>Library</TextBlock>
+            </Button>
+        </StackPanel>
         <TextBox DockPanel.Dock="Bottom" Name="textBox" MinHeight="72pt"
                  Style="{StaticResource MainTextBoxStyle}"
                  Text="{Binding Text, Mode=TwoWay}"/>
         <TextBox DockPanel.Dock="Bottom" Name="timeLine"/>
-        <StackPanel DockPanel.Dock="Left" Name="directoryPanel">
-            <Grid Name="libraryButtons">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" MinWidth="42pt"/>
-                    <ColumnDefinition Width="*" MinWidth="42pt"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="42pt"/>
-                </Grid.RowDefinitions>
-                <Button Grid.Row="0" Grid.Column="0">
-                    <TextBlock TextAlignment="Center">Load<LineBreak/>Show</TextBlock>
-                </Button>
-                <Button Grid.Row="0" Grid.Column="1">
-                    <TextBlock TextAlignment="Center">Search<LineBreak/>Library</TextBlock>
-                </Button>
-            </Grid>
+        <StackPanel DockPanel.Dock="Left" Name="directoryPanel"
+                    Width="256px"
+                    Background="{StaticResource SideBg}">
         </StackPanel>
         <ListView Name="channelList"
                   ItemsSource="{Binding Channels}"

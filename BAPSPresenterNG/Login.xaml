@@ -5,14 +5,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BAPSPresenterNG"
         mc:Ignorable="d"
-        Title="BAPS Presenter: Please Login" Height="240" Width="320"
+        Title="Login" Height="240" Width="320"
         ResizeMode="CanResizeWithGrip"
         ShowInTaskbar="False"
         WindowStartupLocation="CenterOwner"       
         DataContext="{Binding Login, Source={StaticResource Locator}}">
     <Window.Resources>
         <ResourceDictionary>
-            <BitmapImage x:Key="splash" UriSource="pack://application:,,,/Resources/splashIcon.png" />
+            <Style x:Key="FieldLabel" TargetType="{x:Type Label}">
+                <Setter Property="Margin" Value="12px 0px 6px 0px" />
+                <Setter Property="VerticalAlignment" Value="Center"/>
+            </Style>
+            <Style x:Key="Field" TargetType="{x:Type Control}">
+                <Setter Property="Margin" Value="6px 8px 8px 8px" />
+                <Setter Property="MinHeight" Value="24px"/>
+            </Style>
         </ResourceDictionary>
     </Window.Resources>
     <Grid>
@@ -22,35 +29,64 @@
             <ColumnDefinition Name="controlCol" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Name="usernameRow" Height="32px" />
-            <RowDefinition Name="passwordRow" Height="32px" />
-            <RowDefinition Name="serverRow" Height="32px" />
-            <RowDefinition Name="portRow" Height="32px" />
+            <RowDefinition Name="usernameRow" Height="Auto" />
+            <RowDefinition Name="passwordRow" Height="Auto" />
+            <RowDefinition Name="serverRow" Height="Auto" />
+            <RowDefinition Name="portRow" Height="Auto" />
             <RowDefinition Name="buttonRow" Height="*" />
         </Grid.RowDefinitions>
         
-        <StackPanel Grid.Column="0" Grid.Row="0" Grid.RowSpan="5" Background="Gainsboro">
-            <Image Source="{StaticResource splash}" Width="128" Height="128"></Image>
-            <TextBlock FontSize="32px" TextAlignment="Center" FontWeight="Bold">BAPS</TextBlock>
+        <StackPanel Grid.Column="0" Grid.Row="0" Grid.RowSpan="5" Background="{DynamicResource MainBg}">
+            <Image Width="128px" Height="128px" Source="{DynamicResource Logo}"/>
+            <TextBlock FontSize="32px" TextAlignment="Center"
+                       Foreground="{StaticResource MainFg}"
+                       FontWeight="Bold">BAPS</TextBlock>
         </StackPanel>
         
-        <Label Grid.Row="0"  Grid.Column="1" Name="usernameLbl">Username:</Label>
-        <TextBox Grid.Row="0" Grid.Column="2" Margin="3pt"
-                 Name="usernameTxt" Text="{Binding Username, Mode=TwoWay}"/>
-        <Label Grid.Row="1" Grid.Column="1" Name="passwordLbl">Password:</Label>
-        <PasswordBox Grid.Row="1" Grid.Column="2" Margin="3pt"
-                     Name="passwordTxt"/>
-        <Label Grid.Row="2" Grid.Column="1" Name="serverLbl">Server:</Label>
-        <TextBox Grid.Row="2" Grid.Column="2" Name="serverTxt" Margin="3pt"
-                 Text="{Binding Server, Mode=TwoWay}"></TextBox>
-        <Label Grid.Row="3" Grid.Column="1" Name="portLbl">Port:</Label>
-        <TextBox Grid.Row="3" Grid.Column="2" Name="portTxt" Margin="3pt"
-                 Text="{Binding Port, Mode=TwoWay}"></TextBox>
+        <Label
+            Grid.Row="0" Grid.Column="1"
+            Style="{StaticResource FieldLabel}"
+            Target="{Binding ElementName=usernameTxt}"
+            Name="usernameLbl">_Username:</Label>
+        <TextBox
+            Grid.Row="0" Grid.Column="2"
+            Style="{StaticResource Field}"
+            Name="usernameTxt" Text="{Binding Username, Mode=TwoWay}" />
         
+        <Label
+            Grid.Row="1" Grid.Column="1"
+            Style="{StaticResource FieldLabel}"
+            Target="{Binding ElementName=passwordTxt}"
+            Name="passwordLbl">_Password:</Label>
+        <PasswordBox
+            Grid.Row="1" Grid.Column="2"
+            Style="{StaticResource Field}"
+            Name="passwordTxt" />
+
+        <Label
+            Grid.Row="2" Grid.Column="1"
+            Style="{StaticResource FieldLabel}"
+            Target="{Binding ElementName=serverTxt}"
+            Name="serverLbl">_Server:</Label>
+        <TextBox
+            Grid.Row="2" Grid.Column="2"
+            Style="{StaticResource Field}"
+            Name="serverTxt" Text="{Binding Server, Mode=TwoWay}" />
+
+        <Label
+            Grid.Row="3" Grid.Column="1"
+            Style="{StaticResource FieldLabel}"
+            Target="{Binding ElementName=portTxt}"
+            Name="portLbl">P_ort:</Label>
+        <TextBox
+            Grid.Row="3" Grid.Column="2" Name="portTxt"
+            Style="{StaticResource Field}"
+            Text="{Binding Port, Mode=TwoWay}"/>
+
         <StackPanel Name="buttonPanel" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3"
                     Orientation="Horizontal" FlowDirection="RightToLeft" VerticalAlignment="Bottom">
-            <Button Name="loginBtn" Margin="3pt" MinWidth="42pt" IsDefault="True" Click="LoginBtn_Click">Login</Button>
-            <Button Name="cancelBtn" Margin="3pt" MinWidth="42pt" IsCancel="True">Cancel</Button>
+            <Button Name="loginBtn" Margin="4px" MinWidth="64px" Height="32px" IsDefault="True" Click="LoginBtn_Click">Login</Button>
+            <Button Name="cancelBtn" Margin="4px" MinWidth="64px" Height="32px" IsCancel="True">Cancel</Button>
         </StackPanel>
     </Grid>
 </Window>

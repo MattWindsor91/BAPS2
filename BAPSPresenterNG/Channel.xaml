@@ -18,18 +18,17 @@
         <!-- ChannelBarHeight - (2*ChannelBarMargin) -->
         <sys:Double x:Key="ChannelBarHeightMinusMargin">20</sys:Double>
         <!-- Tango colours (for now) -->
-        <SolidColorBrush x:Key="PlayBrush" Color="#FF8AE234"></SolidColorBrush>
-        <SolidColorBrush x:Key="PauseBrush" Color="#FFFCE94F"></SolidColorBrush>
-        <SolidColorBrush x:Key="StopBrush" Color="#FFEF2929"></SolidColorBrush>
-        <SolidColorBrush x:Key="ChannelLegendFgBrush" Color="#FFEEEEEC"></SolidColorBrush>
+        <SolidColorBrush x:Key="PlayBrush" Color="#FF60ABA2"></SolidColorBrush>
+        <SolidColorBrush x:Key="PauseBrush" Color="#FFFEB93A"></SolidColorBrush>
+        <SolidColorBrush x:Key="StopBrush" Color="#FFE2293A"></SolidColorBrush>
         <SolidColorBrush x:Key="ChannelLegendLampOut" Color="#FF888a85"></SolidColorBrush>
         <SolidColorBrush x:Key="ChannelLegendLampOn" Color="#FFEEEEEC"></SolidColorBrush>
         <SolidColorBrush x:Key="ChannelLegendLampAlt" Color="#FFEF2929"></SolidColorBrush>
         <SolidColorBrush x:Key="ChannelLegendBgBrush" Color="#FF2E3436"></SolidColorBrush>
         <SolidColorBrush x:Key="PositionLegendFgBrush" Color="#FFEEEEEC"></SolidColorBrush>
         <SolidColorBrush x:Key="PositionDisplayBgBrush" Color="#FFD3D7CF"></SolidColorBrush>
-        <SolidColorBrush x:Key="NameFgBrush" Color="#FFEEEEEC"></SolidColorBrush>
-        <SolidColorBrush x:Key="NameBgBrush" Color="#FF204A87"></SolidColorBrush>
+        <SolidColorBrush x:Key="NameFgBrush" Color="#FFE1E1E1"></SolidColorBrush>
+        <SolidColorBrush x:Key="NameBgBrush" Color="#FF0073E6"></SolidColorBrush>
         <!-- Styles -->
         <Style x:Key="TransportButtonStyle" TargetType="{x:Type Button}">
             <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
@@ -75,10 +74,9 @@
             <ColumnDefinition />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <DockPanel Background="{StaticResource ChannelLegendBgBrush}"
+        <DockPanel Background="{StaticResource AccentBg}"
                    Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Name="channelLegend">
             <StackPanel DockPanel.Dock="Right" Name="channelControlsPanel"
-                    Background="{StaticResource ChannelLegendBgBrush}"
                     Orientation="Horizontal"
                     FlowDirection="RightToLeft">
                 <fa:ImageAwesome Name="repeatLamp"
@@ -129,8 +127,7 @@
             </StackPanel>
             <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Name="nameLbl"
                FontWeight="Bold"
-               Background="{StaticResource ChannelLegendBgBrush}"
-               Foreground="{StaticResource ChannelLegendFgBrush}"
+               Foreground="{StaticResource AccentFg}"
                >
                 <TextBlock FontSize="14pt" VerticalAlignment="Center">Channel <TextBlock Text="{Binding ChannelID, Converter={StaticResource ChannelIDConverter}}" /></TextBlock>
             </Label>
