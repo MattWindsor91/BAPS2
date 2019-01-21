@@ -209,6 +209,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BAPSClientWindows\BAPSClientWindows.csproj">
+      <Project>{f429ef69-9102-42dc-ad98-9234b0dccc35}</Project>
+      <Name>BAPSClientWindows</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BAPSCommon\BAPSCommon.csproj">
       <Project>{701B4F5C-600A-4EB2-82AE-BA11EA8160A7}</Project>
       <Name>BAPSCommon</Name>

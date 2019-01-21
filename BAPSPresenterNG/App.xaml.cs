@@ -2,12 +2,7 @@
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace BAPSPresenterNG
@@ -23,7 +18,7 @@ namespace BAPSPresenterNG
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            ConfigManager.initConfigManager();
+            SimpleIoc.Default.Register<BAPSClientWindows.ConfigManager>();
             SimpleIoc.Default.Register<ConfigCache>();
 
             _main = new MainWindow();

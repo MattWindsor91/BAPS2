@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Ioc;
 
 namespace BAPSPresenterNG.ViewModel
 {
@@ -41,14 +42,13 @@ namespace BAPSPresenterNG.ViewModel
 
         public LoginViewModel()
         {
-            Server = ConfigManager.getConfigValueString("ServerAddress", "localhost");
+            var cman = SimpleIoc.Default.GetInstance<BAPSClientWindows.ConfigManager>();
+            Server = cman.GetValue("ServerAddress", "localhost");
 
-            int.TryParse(ConfigManager.getConfigValueString("ServerPort", "1350"), out var temp);
+            int.TryParse(cman.GetValue("ServerPort", "1350"), out var temp);
             Port = temp;
 
-            Username = ConfigManager.getConfigValueString("DefaultUsername", "");
-
-            ConfigManager.getConfigValueString("ServerAddress", "1350");
+            Username = cman.GetValue("DefaultUsername", "");
         }
     }
 }
