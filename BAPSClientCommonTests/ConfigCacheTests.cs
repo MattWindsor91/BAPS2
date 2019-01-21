@@ -130,7 +130,7 @@ namespace Tests
             receiver.OnConfigOption(new ServerUpdates.ConfigOptionArgs { OptionID = 64, Description = "Barbaz", HasIndex = false, Index = -1, Type = ConfigType.STR });
             Assert.That(cache.GetValue<string>("Barbaz"), Is.Null);
 
-            receiver.OnConfigSetting(new ServerUpdates.ConfigSettingArgs { OptionID = 64, Index = -1, Type = ConfigType.STR, Value = "FrankerZ" });
+            receiver.OnConfigSetting(new ServerUpdates.ConfigSettingArgs(64, ConfigType.STR, "FrankerZ"));
             Assert.That(cache.GetValue<string>("Barbaz"), Is.EqualTo("FrankerZ"));
         }
 
@@ -144,7 +144,7 @@ namespace Tests
             Assert.That(cache.FindChoiceIndexFor("Keepo", "Yes"), Is.EqualTo(0), "Choice index for 'yes' incorrect");
             Assert.That(cache.FindChoiceIndexFor("Keepo", "No"), Is.EqualTo(1), "Choice index for 'no' incorrect");
 
-            receiver.OnConfigSetting(new ServerUpdates.ConfigSettingArgs { OptionID = 99, Index = -1, Type = ConfigType.CHOICE, Value = 1 });
+            receiver.OnConfigSetting(new ServerUpdates.ConfigSettingArgs(99, ConfigType.CHOICE, 1));
             Assert.That(cache.GetValue<int>("Keepo"), Is.EqualTo(1), "Choice hasn't changed");
         }
 

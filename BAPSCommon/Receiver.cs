@@ -462,7 +462,7 @@ namespace BAPSCommon
                 index = cmdReceived.ConfigValue();
             }
 
-            OnConfigSetting(new ConfigSettingArgs { OptionID = optionID, Type = type, Value = value, Index = index });
+            OnConfigSetting(new ConfigSettingArgs(optionID, type, value, index));
         }
 
         private void DecodeSystemCommand(Command cmdReceived)

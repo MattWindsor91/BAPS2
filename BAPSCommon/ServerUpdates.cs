@@ -29,22 +29,38 @@
 
         public delegate void CountEventHandler(object sender, CountEventArgs e);
 
+        public abstract class ConfigArgs
+        {
+            /// <summary>The ID of the option to update.</summary>
+            public uint OptionID { get; }
+
+            /// <summary>The BAPSNET type of the value.</summary>
+            public ConfigType Type { get; }
+
+            /// <summary>If present and non-negative, the index of the option to set.</summary>
+            public int Index { get; }
+
+            public ConfigArgs(uint optionID, ConfigType type, int index = -1)
+            {
+                OptionID = optionID;
+                Type = type;
+                Index = index;
+            }
+        }
+
         /// <summary>
         /// Event payload sent when the server declares a config setting.
         /// </summary>
-        public struct ConfigSettingArgs
+        public class ConfigSettingArgs : ConfigArgs
         {
-            /// <summary>The ID of the option to update.</summary>
-            public uint OptionID;
-
-            /// <summary>The BAPSNET type of the value.</summary>
-            public ConfigType Type;
-
             /// <summary>The new value to apply.</summary>
             public object Value;
 
-            /// <summary>If present and non-negative, the index of the option to set.</summary>
-            public int Index;
+            public ConfigSettingArgs(uint optionID, ConfigType type, object value, int index = -1)
+                : base(optionID, type, index)
+            {
+                Value = value;
+            }
         }
 
         public delegate void ConfigSettingHandler(object sender, ConfigSettingArgs e);
