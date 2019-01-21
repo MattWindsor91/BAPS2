@@ -4,7 +4,7 @@ using static BAPSCommon.ServerUpdates;
 
 namespace BAPSCommon
 {
-    public class Receiver : IReceiver
+    public class Receiver : IServerUpdater
     {
         private ClientSocket _cs;
         private CancellationToken _token;
@@ -78,17 +78,12 @@ namespace BAPSCommon
 
         #region Config events
 
-        /// <summary>
-        /// Event raised when the server declares a config option.
-        /// </summary>
+
         public event ConfigOptionHandler ConfigOption;
         private void OnConfigOption(ConfigOptionArgs args) => ConfigOption?.Invoke(this, args);
 
-        /// <summary>
-        /// Event raised when the server declares a config choice.
-        /// </summary>
-        public event EventHandler<(uint optionID, uint choiceIndex, string choiceDescription)> ConfigChoice;
-        private void OnConfigChoice(uint optionID, uint choiceIndex, string choiceDescription) => ConfigChoice?.Invoke(this, (optionID, choiceIndex, choiceDescription));
+        public event ConfigChoiceHandler ConfigChoice;
+        private void OnConfigChoice(ConfigChoiceArgs args) => ConfigChoice?.Invoke(this, args);
 
         public event ConfigSettingHandler ConfigSetting;
         private void OnConfigSetting(ConfigSettingArgs args) => ConfigSetting?.Invoke(this, args);
@@ -351,7 +346,7 @@ namespace BAPSCommon
                             var optionID = _cs.ReceiveI();
                             var description = _cs.ReceiveS();
                             var type = _cs.ReceiveI();
-                            OnConfigOption(new ConfigOptionArgs { OptionID = optionID, Description = description, Type = (ConfigType)type, HasIndex = hasIndex, Index = index });
+                            OnConfigOption(new ConfigOptionArgs(optionID, (ConfigType)type, description, hasIndex, index));
                         }
                         else DecodeCount(CountType.ConfigOption);
                     }
@@ -363,7 +358,7 @@ namespace BAPSCommon
                         {
                             var choiceIndex = _cs.ReceiveI();
                             var choiceDescription = _cs.ReceiveS();
-                            OnConfigChoice(optionID, choiceIndex, choiceDescription);
+                            OnConfigChoice(new ConfigChoiceArgs(optionID, choiceIndex, choiceDescription));
                         }
                         else DecodeCount(CountType.ConfigChoice, extra: optionID);
                     }

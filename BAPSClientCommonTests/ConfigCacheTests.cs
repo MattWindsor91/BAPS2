@@ -9,12 +9,12 @@ namespace Tests
     /// </summary>
     public class ConfigCacheTests
     {
-        public class MockReceiver : IReceiver
+        public class MockReceiver : IConfigServerUpdater
         {
             public event ServerUpdates.ChannelStateEventHandler ChannelState;
 
-            public event EventHandler<(uint optionID, uint choiceIndex, string choiceDescription)> ConfigChoice;
-            public void OnConfigChoice(uint optionID, uint choiceIndex, string choiceDescription) => ConfigChoice.Invoke(this, (optionID, choiceIndex, choiceDescription));
+            public event ServerUpdates.ConfigChoiceHandler ConfigChoice;
+            public void OnConfigChoice(ServerUpdates.ConfigChoiceArgs e) => ConfigChoice.Invoke(this, e);
 
             public event ServerUpdates.ConfigOptionHandler ConfigOption;
             public void OnConfigOption(ServerUpdates.ConfigOptionArgs e) => ConfigOption?.Invoke(this, e);
@@ -23,31 +23,6 @@ namespace Tests
 
             public event ServerUpdates.ConfigSettingHandler ConfigSetting;
             public void OnConfigSetting(ServerUpdates.ConfigSettingArgs e) => ConfigSetting?.Invoke(this, e);
-
-            public event EventHandler<(ushort directoryID, uint index, string description)> DirectoryFileAdd;
-            public event EventHandler<(ushort directoryID, string directoryName)> DirectoryPrepare;
-            public event EventHandler<(ushort channelID, uint duration)> Duration;
-            public event ServerUpdates.ErrorEventHandler Error;
-            public event ServerUpdates.CountEventHandler IncomingCount;
-            public event EventHandler<(Command cmdReceived, string ipAddress, uint mask)> IPRestriction;
-            public event ServerUpdates.ItemAddEventHandler ItemAdd;
-            public event ServerUpdates.ItemDeleteEventHandler ItemDelete;
-            public event ServerUpdates.ItemMoveEventHandler ItemMove;
-            public event EventHandler<(uint resultID, byte dirtyStatus, string description)> LibraryResult;
-            public event EventHandler<(uint listingID, uint channelID, string description)> ListingResult;
-            public event EventHandler<(ushort channelID, uint index, TracklistItem entry)> LoadedItem;
-            public event EventHandler<(uint permissionCode, string description)> Permission;
-            public event EventHandler<(ushort channelID, PositionType type, uint position)> Position;
-            public event ServerUpdates.ChannelResetEventHandler ResetPlaylist;
-            public event EventHandler<bool> ServerQuit;
-            public event EventHandler<(uint showID, string description)> ShowResult;
-            public event EventHandler<(ushort ChannelID, uint index, TextTracklistItem entry)> TextItem;
-            public event EventHandler<ServerUpdates.UpDown> TextScroll;
-            public event EventHandler<ServerUpdates.UpDown> TextSizeChange;
-            public event EventHandler<(Command command, string description)> UnknownCommand;
-            public event EventHandler<(string username, uint permissions)> User;
-            public event EventHandler<(byte resultCode, string description)> UserResult;
-            public event EventHandler<Receiver.VersionInfo> Version;
         }
 
         private ConfigCache cache;
@@ -127,7 +102,7 @@ namespace Tests
         [Test]
         public void TestReceiverString()
         {
-            receiver.OnConfigOption(new ServerUpdates.ConfigOptionArgs { OptionID = 64, Description = "Barbaz", HasIndex = false, Index = -1, Type = ConfigType.STR });
+            receiver.OnConfigOption(new ServerUpdates.ConfigOptionArgs(64, ConfigType.STR, "Barbaz", hasIndex: false));
             Assert.That(cache.GetValue<string>("Barbaz"), Is.Null);
 
             receiver.OnConfigSetting(new ServerUpdates.ConfigSettingArgs(64, ConfigType.STR, "FrankerZ"));
@@ -137,10 +112,10 @@ namespace Tests
         [Test]
         public void TestReceiverChoice()
         {
-            receiver.OnConfigOption(new ServerUpdates.ConfigOptionArgs { OptionID = 99, Description = "Keepo", HasIndex = false, Index = -1, Type = ConfigType.CHOICE });
+            receiver.OnConfigOption(new ServerUpdates.ConfigOptionArgs(99, ConfigType.CHOICE, "Keepo", hasIndex: false));
 
-            receiver.OnConfigChoice(99, 0, "Yes");
-            receiver.OnConfigChoice(99, 1, "No");
+            receiver.OnConfigChoice(new ServerUpdates.ConfigChoiceArgs(99, 0, "Yes"));
+            receiver.OnConfigChoice(new ServerUpdates.ConfigChoiceArgs(99, 1, "No"));
             Assert.That(cache.FindChoiceIndexFor("Keepo", "Yes"), Is.EqualTo(0), "Choice index for 'yes' incorrect");
             Assert.That(cache.FindChoiceIndexFor("Keepo", "No"), Is.EqualTo(1), "Choice index for 'no' incorrect");
 

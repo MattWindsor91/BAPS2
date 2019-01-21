@@ -294,12 +294,12 @@ namespace BAPSCommon
         /// Installs event handlers on a receiver that respond to BAPSnet configuration changes by
         /// updating the config cache.
         /// </summary>
-        /// <param name="r">The <see cref="IReceiver"/> with whose event handlers we are registering.</param>
-        public void InstallReceiverEventHandlers(IReceiver r)
+        /// <param name="r">The <see cref="IConfigServerUpdater"/> with whose event handlers we are registering.</param>
+        public void InstallReceiverEventHandlers(IConfigServerUpdater r)
         {
             r.ConfigSetting += (sender, e) => AddOptionValue(e);
             r.ConfigOption += (sender, e) => AddOptionDescription(e.OptionID, e.Type, e.Description, e.HasIndex);
-            r.ConfigChoice += (sender, e) => AddOptionChoice(e.optionID, (int)e.choiceIndex, e.choiceDescription);
+            r.ConfigChoice += (sender, e) => AddOptionChoice(e.OptionID, (int)e.ChoiceID, e.ChoiceDescription);
         }
 
         /// <summary>

@@ -2,18 +2,44 @@
 
 namespace BAPSCommon
 {
-    public interface IReceiver
+    /// <summary>
+    /// Event interface for classes that send BAPSnet server playback updates.
+    /// </summary>
+    public interface IPlaybackServerUpdater
     {
         event ServerUpdates.ChannelStateEventHandler ChannelState;
-        event EventHandler<(uint optionID, uint choiceIndex, string choiceDescription)> ConfigChoice;
+    }
+
+    /// <summary>
+    /// Event interface for classes that send BAPSnet server config updates.
+    /// </summary>
+    public interface IConfigServerUpdater
+    {
+        /// <summary>
+        /// Event raised when the server declares a config choice.
+        /// </summary>
+        event ServerUpdates.ConfigChoiceHandler ConfigChoice;
+
+        /// <summary>
+        /// Event raised when the server declares a config option.
+        /// </summary>
         event ServerUpdates.ConfigOptionHandler ConfigOption;
-        event EventHandler<(Command cmdReceived, uint optionID, ConfigResult result)> ConfigResult;
 
         /// <summary>
         /// Event raised when the server declares that a setting on a
         /// config option has changed.
         /// </summary>
         event ServerUpdates.ConfigSettingHandler ConfigSetting;
+
+        event EventHandler<(Command cmdReceived, uint optionID, ConfigResult result)> ConfigResult;
+    }
+
+    /// <summary>
+    /// Event interface for classes that send BAPSnet server updates.
+    /// </summary>
+    public interface IServerUpdater : IConfigServerUpdater, IPlaybackServerUpdater
+    {
+
 
         event EventHandler<(ushort directoryID, uint index, string description)> DirectoryFileAdd;
         event EventHandler<(ushort directoryID, string directoryName)> DirectoryPrepare;

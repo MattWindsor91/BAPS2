@@ -23,17 +23,17 @@ namespace BAPSPresenter2
             {
                 if (InvokeRequired)
                 {
-                    Invoke((Action<uint, uint, string>)processChoice, e.optionID, e.choiceIndex, e.choiceDescription);
+                    Invoke((ServerUpdates.ConfigChoiceHandler)processChoice, sender, e);
                 }
-                else processChoice(e.optionID, e.choiceIndex, e.choiceDescription);
+                else processChoice(sender, e);
             };
             r.ConfigSetting += (sender, e) =>
             {
                 if (InvokeRequired)
                 {
-                    Invoke((ServerUpdates.ConfigSettingHandler)processConfigSetting, this, e);
+                    Invoke((ServerUpdates.ConfigSettingHandler)processConfigSetting, sender, e);
                 }
-                else processConfigSetting(this, e);
+                else processConfigSetting(sender, e);
             };
             r.ConfigResult += (sender, e) =>
             {
@@ -81,7 +81,7 @@ namespace BAPSPresenter2
 	        update the configDialog... exceptions to the rule exist... read on
         **/
 
-        private void processChoice(uint optionid, uint choiceIndex, string choiceDescription)
+        private void processChoice(object sender, ServerUpdates.ConfigChoiceArgs e)
         {
             /** Ignore if the config dialog is closed **/
             var cd = configDialog;
@@ -91,7 +91,7 @@ namespace BAPSPresenter2
                 cd.closeMutex.WaitOne();
                 if (cd.Visible)
                 {
-                    cd.Invoke((Action<uint, int, string>)configDialog.addChoice, optionid, (int)choiceIndex, choiceDescription);
+                    cd.Invoke((Action<uint, int, string>)configDialog.addChoice, e.OptionID, (int)e.ChoiceID, e.ChoiceDescription);
                 }
             }
 #if !DEBUG

@@ -29,20 +29,59 @@
 
         public delegate void CountEventHandler(object sender, CountEventArgs e);
 
+        /// <summary>
+        /// Abstract base class of event payloads over config options.
+        /// </summary>
         public abstract class ConfigArgs
         {
             /// <summary>The ID of the option to update.</summary>
             public uint OptionID { get; }
 
+            public ConfigArgs(uint optionID)
+            {
+                OptionID = optionID;
+            }
+        }
+
+        /// <summary>
+        /// Event payload sent when the server declares a config choice.
+        /// </summary>
+        public class ConfigChoiceArgs : ConfigArgs
+        {
+            /// <summary>
+            /// The ID of the choice to add or update.
+            /// </summary>
+            public uint ChoiceID { get; }
+
+            /// <summary>
+            /// The new description of the choice.
+            /// </summary>
+            public string ChoiceDescription { get; }
+
+            public ConfigChoiceArgs(uint optionID, uint choiceID, string description)
+                : base(optionID)
+            {
+                ChoiceID = choiceID;
+                ChoiceDescription = description;
+            }
+        }
+
+        public delegate void ConfigChoiceHandler(object sender, ConfigChoiceArgs e);
+
+        /// <summary>
+        /// Abstract base class of event payloads over config options that
+        /// contain a type and an index.
+        /// </summary>
+        public abstract class ConfigTypeIndexArgs : ConfigArgs
+        {
             /// <summary>The BAPSNET type of the value.</summary>
             public ConfigType Type { get; }
 
             /// <summary>If present and non-negative, the index of the option to set.</summary>
             public int Index { get; }
 
-            public ConfigArgs(uint optionID, ConfigType type, int index = -1)
+            public ConfigTypeIndexArgs(uint optionID, ConfigType type, int index = -1) : base(optionID)
             {
-                OptionID = optionID;
                 Type = type;
                 Index = index;
             }
@@ -51,7 +90,7 @@
         /// <summary>
         /// Event payload sent when the server declares a config setting.
         /// </summary>
-        public class ConfigSettingArgs : ConfigArgs
+        public class ConfigSettingArgs : ConfigTypeIndexArgs
         {
             /// <summary>The new value to apply.</summary>
             public object Value;
@@ -68,22 +107,20 @@
         /// <summary>
         /// Event payload sent when the server declares a config option.
         /// </summary>
-        public struct ConfigOptionArgs
+        public class ConfigOptionArgs : ConfigTypeIndexArgs
         {
-            /// <summary>The ID of the option.</summary>
-            public uint OptionID;
-
-            /// <summary>The BAPSNET type of the value.</summary>
-            public ConfigType Type;
-
             /// <summary>The string description of the option.</summary>
-            public string Description;
+            public string Description { get; }
 
             /// <summary>Whether the option has an index.</summary>
-            public bool HasIndex;
+            public bool HasIndex { get; }
 
-            /// <summary>The value of the option's index field, if any.</summary>
-            public int Index;
+            public ConfigOptionArgs(uint optionID, ConfigType type, string description, bool hasIndex, int index = -1)
+                : base(optionID, type, index)
+            {
+                Description = description;
+                HasIndex = hasIndex;
+            }
         }
 
         public delegate void ConfigOptionHandler(object sender, ConfigOptionArgs e);
