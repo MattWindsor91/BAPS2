@@ -218,6 +218,31 @@ namespace BAPSCommon
         }
 
         /// <summary>
+        /// Updates the value for a given option.
+        /// <para>
+        /// This is an internal intermediate function only.
+        /// </para>
+        /// </summary>
+        /// <typeparam name="T">The type of the value (generally string or int).</typeparam>
+        /// <param name="option">The internal option object to update.</param>
+        /// <param name="value">The new value to apply.</param>
+        /// <param name="index">If present and non-negative, the index of the option to set.</param>
+        private void SetValue<T>(IOption option, T value, int index = -1)
+        {
+            if (option is Option<T> o) o.AddValue(value, index);
+            if (option is ChoiceOption c)
+            {
+                var e = new ConfigChoiceChangeArgs
+                {
+                    Choice = c.ChoiceAt(index),
+                    Description = c.Description,
+                    Index = index,
+                };
+                ConfigChoiceChanged?.Invoke(this, e);
+            }
+        }
+
+        /// <summary>
         /// Updates the value for a given option ID.
         /// </summary>
         /// <typeparam name="T">The type of the value (generally string or int).</typeparam>
@@ -226,20 +251,37 @@ namespace BAPSCommon
         /// <param name="index">If present and non-negative, the index of the option to set.</param>
         public void AddOptionValue<T>(uint optionid, T value, int index = -1)
         {
-            if (idLookup.TryGetValue(optionid, out var option))
+            if (idLookup.TryGetValue(optionid, out var option)) SetValue(option, value, index);
+        }
+
+        /// <summary>
+        /// Updates the value for a given option description.
+        /// </summary>
+        /// <typeparam name="T">The type of the value (generally string or int).</typeparam>
+        /// <param name="optionDescription">The description of the option to update.</param>
+        /// <param name="value">The new value to apply.</param>
+        /// <param name="index">If present and non-negative, the index of the option to set.</param>
+        public void SetValue<T>(string optionDescription, T value, int index = -1)
+        {
+            if (descLookup.TryGetValue(optionDescription, out var option)) SetValue(option, value, index);
+        }
+
+        public void SetChoice(string optionDescription, string choiceDescription, int index = -1)
+        {
+            if (GetOption(optionDescription) is ChoiceOption option)
             {
-                if (option is Option<T> o) o.AddValue(value, index);
-                if (option is ChoiceOption c)
-                {
-                    var e = new ConfigChoiceChangeArgs
-                    {
-                        Choice = c.ChoiceAt(index),
-                        Description = c.Description,
-                        Index = index,
-                    };
-                    ConfigChoiceChanged?.Invoke(this, e);
-                }
+                var choice = FindChoiceIndexFor(optionDescription, choiceDescription);
+                if (choice != -1) SetValue(optionDescription, choice, index);
             }
+        }
+
+        public string GetChoice(string optionDescription, int index = -1)
+        {
+            if (GetOption(optionDescription) is ChoiceOption option)
+            {
+                return option.Choice;
+            }
+            return null;
         }
 
         public T GetValue<T>(string optionDescription, int index = -1)
@@ -252,8 +294,8 @@ namespace BAPSCommon
         /// Installs event handlers on a receiver that respond to BAPSnet configuration changes by
         /// updating the config cache.
         /// </summary>
-        /// <param name="r">The <see cref="Receiver"/> with whose event handlers we are registering.</param>
-        public void InstallReceiverEventHandlers(Receiver r)
+        /// <param name="r">The <see cref="IReceiver"/> with whose event handlers we are registering.</param>
+        public void InstallReceiverEventHandlers(IReceiver r)
         {
             r.ConfigSetting += (sender, e) => AddOptionValue(e);
             r.ConfigOption += (sender, e) => AddOptionDescription(e.OptionID, e.Type, e.Description, e.HasIndex);

@@ -4,7 +4,7 @@ using static BAPSCommon.ServerUpdates;
 
 namespace BAPSCommon
 {
-    public class Receiver
+    public class Receiver : IReceiver
     {
         private ClientSocket _cs;
         private CancellationToken _token;
@@ -90,10 +90,6 @@ namespace BAPSCommon
         public event EventHandler<(uint optionID, uint choiceIndex, string choiceDescription)> ConfigChoice;
         private void OnConfigChoice(uint optionID, uint choiceIndex, string choiceDescription) => ConfigChoice?.Invoke(this, (optionID, choiceIndex, choiceDescription));
 
-        /// <summary>
-        /// Event raised when the server declares that a setting on a
-        /// config option has changed.
-        /// </summary>
         public event ConfigSettingHandler ConfigSetting;
         private void OnConfigSetting(ConfigSettingArgs args) => ConfigSetting?.Invoke(this, args);
 

@@ -115,7 +115,7 @@ namespace BAPSPresenterNG.ViewModel
             {
                 if (_isAutoAdvance == value) return;
                 _isAutoAdvance = value;
-                RaisePropertyChanged(nameof(IsPlayOnLoad));
+                RaisePropertyChanged(nameof(IsAutoAdvance));
             }
         }
 
@@ -173,6 +173,31 @@ namespace BAPSPresenterNG.ViewModel
             ?? (_stopCommand = new RelayCommand(
                 execute: Controller.Stop));
         private RelayCommand _stopCommand;
+
+        /// <summary>
+        /// A command that, when fired, checks the current auto advance
+        /// status and asks the server to invert it.
+        /// </summary>
+        public RelayCommand ToggleAutoAdvanceCommand => _toggleAutoAdvanceCommand
+            ?? (_toggleAutoAdvanceCommand = new RelayCommand(
+                execute: () => ToggleConfig(ChannelConfigChangeType.AutoAdvance, IsAutoAdvance)));
+        private RelayCommand _toggleAutoAdvanceCommand;
+
+        /// <summary>
+        /// A command that, when fired, checks the current play-on-load
+        /// status and asks the server to invert it.
+        /// </summary>
+        public RelayCommand TogglePlayOnLoadCommand => _togglePlayOnLoadCommand
+            ?? (_togglePlayOnLoadCommand = new RelayCommand(
+        execute: () => ToggleConfig(ChannelConfigChangeType.PlayOnLoad, IsPlayOnLoad)));
+        private RelayCommand _togglePlayOnLoadCommand;
+
+
+        private void ToggleConfig(ChannelConfigChangeType configurable, bool lastValue)
+        {
+            var nextValue = lastValue ? ChannelConfigChangeType.Off : ChannelConfigChangeType.On;
+            Controller.Configure(configurable | nextValue);
+        }
 
         #endregion
 

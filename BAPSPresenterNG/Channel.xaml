@@ -24,7 +24,6 @@
         <SolidColorBrush x:Key="ChannelLegendLampOut" Color="#FF888a85"></SolidColorBrush>
         <SolidColorBrush x:Key="ChannelLegendLampOn" Color="#FFEEEEEC"></SolidColorBrush>
         <SolidColorBrush x:Key="ChannelLegendLampAlt" Color="#FFEF2929"></SolidColorBrush>
-        <SolidColorBrush x:Key="ChannelLegendBgBrush" Color="#FF2E3436"></SolidColorBrush>
         <SolidColorBrush x:Key="PositionLegendFgBrush" Color="#FFEEEEEC"></SolidColorBrush>
         <SolidColorBrush x:Key="PositionDisplayBgBrush" Color="#FFD3D7CF"></SolidColorBrush>
         <SolidColorBrush x:Key="NameFgBrush" Color="#FFE1E1E1"></SolidColorBrush>
@@ -137,6 +136,30 @@
                  
                  SelectionChanged="TrackList_SelectionChanged" SelectedIndex="{Binding SelectedItemIndex, Mode=OneWay}"
                  >
+            <ListBox.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="_Reset Channel"/>
+                    <Separator/>
+                    <MenuItem Header="_Delete Item"/>
+                    <Separator/>
+                    <MenuItem
+                        Header="_Auto advance"
+                        IsCheckable="True" IsChecked="{Binding IsAutoAdvance, Mode=OneWay}"
+                        Command="{Binding ToggleAutoAdvanceCommand}"
+                        />
+                    <MenuItem
+                        Header="_Play on load"
+                        IsCheckable="True" IsChecked="{Binding IsPlayOnLoad, Mode=OneWay}"
+                        Command="{Binding TogglePlayOnLoadCommand}"
+                        />
+                    <Separator/>
+                    <MenuItem Header="Repeat a_ll"/>
+                    <MenuItem Header="Repeat _one"/>
+                    <MenuItem Header="Repeat _none"/>
+                    <Separator/>
+                    <MenuItem Header="_Show audio wall"/>
+                </ContextMenu>
+            </ListBox.ContextMenu>
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid>
