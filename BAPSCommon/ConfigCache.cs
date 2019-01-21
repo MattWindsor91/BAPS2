@@ -189,7 +189,7 @@ namespace BAPSCommon
             var cmd = Command.CONFIG | Command.SETCONFIGVALUE;
             if (index != NO_INDEX) cmd |= (Command.CONFIG_USEVALUEMASK | (Command)index);
 
-            return new Message(cmd).Add(oci.OptionID).Add((uint)cci.Type).Add(cid);
+            return new Message(cmd).Add(oci.OptionID).Add((uint)cci.Type).Add((uint)cid);
         }
 
         /** add an option **/
