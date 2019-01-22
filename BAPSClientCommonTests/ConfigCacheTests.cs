@@ -2,7 +2,7 @@ using NUnit.Framework;
 using BAPSCommon;
 using System;
 
-namespace Tests
+namespace BAPSClientCommonTests
 {
     /// <summary>
     /// Tests for the <see cref="ConfigCache"/>.

@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows.Data;
 using FontAwesome.WPF;
 
-namespace BAPSPresenterNG
+namespace BAPSPresenterNG.Converters
 {
     /// <summary>
     /// Converts the type of a tracklist entry to a Font Awesome icon.

@@ -208,7 +208,7 @@ namespace BAPSFormControls
 
         private void DrawTime(PaintEventArgs e, int time, int x, int y)
         {
-            e.Graphics.DrawString(Utils.MillisecondsToTimeString(time),
+            e.Graphics.DrawString(TimeUtils.MillisecondsToTimeString(time),
                         Font,
                         new SolidBrush(ForeColor),
                         new Rectangle(x + 12, y - 2, 50, 12));

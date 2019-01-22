@@ -3,7 +3,6 @@ using BAPSPresenter;
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
-using ConfigCache = BAPSCommon.ConfigCache;
 using TracklistItem = BAPSCommon.TracklistItem;
 
 namespace BAPSPresenter2
@@ -117,9 +116,9 @@ namespace BAPSPresenter2
 
                     value = (int)(Math.Round(value / 1000f) * 1000);
                     /** Set the amount of time gone **/
-                    timeGone.Text = BAPSFormControls.Utils.MillisecondsToTimeString(value);
+                    timeGone.Text = TimeUtils.MillisecondsToTimeString(value);
                     var timeleft = trackTime.Duration - value;
-                    timeLeft.Text = BAPSFormControls.Utils.MillisecondsToTimeString(timeleft);
+                    timeLeft.Text = TimeUtils.MillisecondsToTimeString(timeleft);
                     if (playButton.Enabled || timeleft > 10000 || timeleft < 500)
                     {
                         nearEndTimer.Enabled = false;
@@ -178,8 +177,8 @@ namespace BAPSPresenter2
                 RequestTimelineChange(TimelineChangeType.Duration, 0);
                 trackTime.CuePosition = 0;
                 trackTime.IntroPosition = 0;
-                timeLeft.Text = BAPSFormControls.Utils.MillisecondsToTimeString(0);
-                timeGone.Text = BAPSFormControls.Utils.MillisecondsToTimeString(0);
+                timeLeft.Text = TimeUtils.MillisecondsToTimeString(0);
+                timeGone.Text = TimeUtils.MillisecondsToTimeString(0);
                 nearEndTimer.Enabled = false;
                 timeLeft.Highlighted = false;
             }

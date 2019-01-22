@@ -82,10 +82,10 @@
     <Compile Include="Channel.xaml.cs">
       <DependentUpon>Channel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ChannelIDConverter.cs" />
+    <Compile Include="Converters\ChannelIDConverter.cs" />
     <Compile Include="ReceiverMessengerAdapter.cs" />
     <Compile Include="ViewModel\ChannelViewModel.cs" />
-    <Compile Include="EntryTypeToIconConverter.cs" />
+    <Compile Include="Converters\EntryTypeToIconConverter.cs" />
     <Compile Include="Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
     </Compile>
@@ -118,7 +118,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MsecToPositionStringConverter.cs" />
+    <Compile Include="Converters\MsecToPositionStringConverter.cs" />
     <Compile Include="PositionDisplay.xaml.cs">
       <DependentUpon>PositionDisplay.xaml</DependentUpon>
     </Compile>

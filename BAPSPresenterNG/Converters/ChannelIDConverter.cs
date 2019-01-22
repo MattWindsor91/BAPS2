@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace BAPSPresenterNG
+namespace BAPSPresenterNG.Converters
 {
     /// <summary>
     /// A value converter that maps from internal channel IDs to human-friendly channel numbers.
