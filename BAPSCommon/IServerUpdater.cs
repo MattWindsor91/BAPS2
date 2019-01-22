@@ -10,6 +10,12 @@ namespace BAPSCommon
         event ServerUpdates.ChannelStateEventHandler ChannelState;
     }
 
+    public interface IDirectoryServerUpdater
+    {
+        event ServerUpdates.DirectoryFileAddHandler DirectoryFileAdd;
+        event ServerUpdates.DirectoryPrepareHandler DirectoryPrepare;
+    }
+
     /// <summary>
     /// Event interface for classes that send BAPSnet server config updates.
     /// </summary>
@@ -37,12 +43,8 @@ namespace BAPSCommon
     /// <summary>
     /// Event interface for classes that send BAPSnet server updates.
     /// </summary>
-    public interface IServerUpdater : IConfigServerUpdater, IPlaybackServerUpdater
+    public interface IServerUpdater : IConfigServerUpdater, IDirectoryServerUpdater, IPlaybackServerUpdater
     {
-
-
-        event EventHandler<(ushort directoryID, uint index, string description)> DirectoryFileAdd;
-        event EventHandler<(ushort directoryID, string directoryName)> DirectoryPrepare;
         event EventHandler<(ushort channelID, uint duration)> Duration;
         event ServerUpdates.ErrorEventHandler Error;
         event ServerUpdates.CountEventHandler IncomingCount;

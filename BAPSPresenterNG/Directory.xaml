@@ -1,0 +1,46 @@
+﻿<UserControl x:Class="BAPSPresenterNG.Directory"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:fa="http://schemas.fontawesome.io/icons/"
+             mc:Ignorable="d" 
+             d:DesignHeight="240" d:DesignWidth="300" MaxHeight="300">
+    <UserControl.Resources>
+        <GridLength x:Key="DirectoryBarHeightGrid">32<!-- px --></GridLength>
+        <sys:Double x:Key="DirectoryBarHeight">32<!-- px --></sys:Double>
+        <Thickness x:Key="DirectoryBarMargin">6px</Thickness>
+        <!-- DirectoryBarHeight - (2*DirectoryBarMargin) -->
+        <sys:Double x:Key="DirectoryBarHeightMinusMargin">20</sys:Double>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Name="nameRow" Height="{StaticResource DirectoryBarHeightGrid}" />
+            <RowDefinition Name="fileListRow"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <DockPanel Background="{StaticResource AccentBg}"
+                   Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Name="channelLegend">
+            <StackPanel DockPanel.Dock="Right" Name="directoryControlsPanel"
+                    Orientation="Horizontal"
+                    FlowDirection="RightToLeft">
+            </StackPanel>
+            <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Name="nameLbl"
+               FontWeight="Bold"
+               Foreground="{StaticResource AccentFg}"
+               >
+                <TextBlock FontSize="14pt" VerticalAlignment="Center">
+                    <fa:ImageAwesome Foreground="White" Height="14pt" Icon="FolderOpen"/>
+                    <TextBlock VerticalAlignment="Center" Text="{Binding Name, FallbackValue='Unknown Directory'}"/>
+                </TextBlock>
+            </Label>
+        </DockPanel>
+        <ListBox Grid.Row="1" Grid.Column="0" Name="fileList"
+                 ItemsSource="{Binding Files}"
+                 >
+        </ListBox>
+    </Grid>
+</UserControl>

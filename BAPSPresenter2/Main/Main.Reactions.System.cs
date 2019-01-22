@@ -13,17 +13,17 @@ namespace BAPSPresenter2
             {
                 if (InvokeRequired)
                 {
-                    Invoke((Action<ushort, uint, string>)addFileToDirectoryList, e.directoryID, e.index, e.description);
+                    Invoke((ServerUpdates.DirectoryFileAddHandler)addFileToDirectoryList, sender, e);
                 }
-                else addFileToDirectoryList(e.directoryID, e.index, e.description);
+                else addFileToDirectoryList(sender, e);
             };
             r.DirectoryPrepare += (sender, e) =>
             {
                 if (InvokeRequired)
                 {
-                    Invoke((Action<ushort, string>)clearFiles, e.directoryID, e.directoryName);
+                    Invoke((ServerUpdates.DirectoryPrepareHandler)clearFiles, sender, e);
                 }
-                else clearFiles(e.directoryID, e.directoryName);
+                else clearFiles(sender, e);
             };
             r.Version += (sender, e) =>
             {
@@ -65,19 +65,19 @@ namespace BAPSPresenter2
             };
         }
 
-        private void addFileToDirectoryList(ushort directoryIndex, uint _fileIndex, string entry)
+        private void addFileToDirectoryList(object sender, ServerUpdates.DirectoryFileAddArgs e)
         {
-            if (DirectoryOutOfBounds(directoryIndex)) return;
+            if (DirectoryOutOfBounds(e.DirectoryID)) return;
             // TODO(@MattWindsor91): file index?
             /** Add the new entry to the bottom of the listbox **/
-            bapsDirectories[directoryIndex].Add(entry);
+            bapsDirectories[e.DirectoryID].Add(e.Description);
         }
 
-        private void clearFiles(ushort directoryIndex, string niceDirectoryName)
+        private void clearFiles(object sender, ServerUpdates.DirectoryPrepareArgs e)
         {
-            if (DirectoryOutOfBounds(directoryIndex)) return;
+            if (DirectoryOutOfBounds(e.DirectoryID)) return;
             /** Empty the list box ready for new entries (required due to implicit indexing) **/
-            bapsDirectories[directoryIndex].Clear(niceDirectoryName);
+            bapsDirectories[e.DirectoryID].Clear(e.Name);
         }
 
         private void displayVersion(string version, string date, string time, string author)

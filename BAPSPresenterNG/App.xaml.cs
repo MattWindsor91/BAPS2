@@ -58,10 +58,15 @@ namespace BAPSPresenterNG
 
         private void ReceiverCreated(object sender, Receiver e)
         {
-            _rma = new ReceiverMessengerAdapter(e, Messenger.Default);
+            var messenger = Messenger.Default;
+
+            _rma = new ReceiverMessengerAdapter(e, messenger);
             _rma.Register();
 
-            foreach (var channel in _main.ViewModel.Channels)
+            // TODO(@MattWindsor91): replace this with messages
+            var mainViewModel = SimpleIoc.Default.GetInstance<ViewModel.MainViewModel>();
+            mainViewModel.Register(messenger);
+            foreach (var channel in mainViewModel.Channels)
             {
                 channel.SetupReactions(e);
             }
@@ -79,14 +84,16 @@ namespace BAPSPresenterNG
         private void Authenticated(object sender, EventArgs e)
         {
             var config = SimpleIoc.Default.GetInstance<ConfigCache>();
+            var mainViewModel = SimpleIoc.Default.GetInstance<ViewModel.MainViewModel>();
 
             for (ushort i = 0; i < 3; i++)
             {
                 var channel = new ViewModel.ChannelViewModel(i)
                 {
                     Controller = new ChannelController(i, _core.SendQueue, config)
+                    // TODO: send the messenger to the channel here
                 };
-                _main.ViewModel.Channels.Add(channel);
+                mainViewModel.Channels.Add(channel);
             }
         }
 

@@ -107,11 +107,11 @@ namespace BAPSCommon
 
         #region System events
 
-        public event EventHandler<(ushort directoryID, uint index, string description)> DirectoryFileAdd;
-        public void OnDirectoryFileAdd(byte directoryID, uint index, string description) => DirectoryFileAdd?.Invoke(this, (directoryID, index, description));
+        public event DirectoryFileAddHandler DirectoryFileAdd;
+        public void OnDirectoryFileAdd(DirectoryFileAddArgs args) => DirectoryFileAdd?.Invoke(this, args);
 
-        public event EventHandler<(ushort directoryID, string directoryName)> DirectoryPrepare;
-        public void OnDirectoryPrepare(byte directoryID, string directoryName) => DirectoryPrepare?.Invoke(this, (directoryID, directoryName));
+        public event DirectoryPrepareHandler DirectoryPrepare;
+        public void OnDirectoryPrepare(DirectoryPrepareArgs args) => DirectoryPrepare?.Invoke(this, args);
 
         public event EventHandler<VersionInfo> Version;
         public void OnVersion(VersionInfo v) => Version?.Invoke(this, v);
@@ -473,14 +473,14 @@ namespace BAPSCommon
                         var directoryIndex = cmdReceived.SystemValue();
                         var index = _cs.ReceiveI();
                         var description = _cs.ReceiveS();
-                        OnDirectoryFileAdd(directoryIndex, index, description);
+                        OnDirectoryFileAdd(new DirectoryFileAddArgs(directoryIndex, index, description));
                     }
                     else
                     {
                         var directoryIndex = cmdReceived.SystemValue();
                         _ = _cs.ReceiveI();
                         var niceDirectoryName = _cs.ReceiveS();
-                        OnDirectoryPrepare(directoryIndex, niceDirectoryName);
+                        OnDirectoryPrepare(new DirectoryPrepareArgs(directoryIndex, niceDirectoryName));
                     }
                     break;
                 case Command.VERSION:

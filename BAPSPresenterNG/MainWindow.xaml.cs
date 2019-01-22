@@ -12,7 +12,5 @@ namespace BAPSPresenterNG
         {
             InitializeComponent();
         }
-
-        public ViewModel.MainViewModel ViewModel => DataContext as ViewModel.MainViewModel;
     }
 }

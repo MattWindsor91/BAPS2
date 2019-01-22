@@ -1,5 +1,8 @@
+using BAPSCommon;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -35,6 +38,49 @@ namespace BAPSPresenterNG.ViewModel
         /// <param name="channelID">The ID of the channel to get.</param>
         /// <returns>The channel at <paramref name="channelID"/>, or null if one doesn't exist.</returns>
         public ChannelViewModel ChannelAt(ushort channelID) => Channels?.ElementAtOrDefault(channelID);
+
+        public ObservableCollection<DirectoryViewModel> Directories { get; } = new ObservableCollection<DirectoryViewModel>();
+
+        public void Register(IMessenger messenger)
+        {
+            MessengerInstance = messenger;
+            messenger.Register(this, (Action<ServerUpdates.DirectoryPrepareArgs>)HandleDirectoryPrepare);
+        }
+
+        /// <summary>
+        /// Handles a directory-prepare server update.
+        /// <para>
+        /// This view model only handles directory-prepares that don't
+        /// correspond to existing directory view models; the corresponding 
+        /// view models themselves handle those updates.
+        /// </para>
+        /// </summary>
+        /// <param name="e"></param>
+        private void HandleDirectoryPrepare(ServerUpdates.DirectoryPrepareArgs e)
+        {
+            System.Windows.Application.Current.Dispatcher.Invoke(() =>
+            {
+                // Assume that, since this is the only thing that inserts into
+                // the directories list, the list is always sorted by
+                // directory ID.
+                var count = Directories.Count;
+                int i;
+                for (i = 0; i < count; i++)
+                {
+                    var id = Directories[i].DirectoryID;
+                    if (id == e.DirectoryID) return; // Already present.
+                    if (id > e.DirectoryID) break; // This is where we need to insert.
+                }
+
+                var dir = new DirectoryViewModel(e.DirectoryID)
+                {
+                    Name = e.Name
+                };
+                dir.Register(MessengerInstance ?? Messenger.Default);
+                Directories.Insert(i, dir);
+            }
+            );
+        }
 
         private RelayCommand<ushort> _forwardPlayCommand = null;
 

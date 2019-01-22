@@ -65,13 +65,28 @@
                  Style="{StaticResource MainTextBoxStyle}"
                  Text="{Binding Text, Mode=TwoWay}"/>
         <TextBox DockPanel.Dock="Bottom" Name="timeLine"/>
-        <StackPanel DockPanel.Dock="Left" Name="directoryPanel"
-                    Width="256px"
-                    Background="{StaticResource SideBg}">
-        </StackPanel>
-        <ListView Name="channelList"
-                  ItemsSource="{Binding Channels}"
-                  HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+        <ListView
+            Name="directoryList"
+            DockPanel.Dock="Left"
+            Width="320px"
+            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+            ItemsSource="{Binding Directories}"
+            Background="{StaticResource SideBg}">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                </Style>
+            </ListBox.ItemContainerStyle>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <local:Directory />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <ListView
+            Name="channelList"
+            ItemsSource="{Binding Channels}"
+            HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="Focusable" Value="False" />

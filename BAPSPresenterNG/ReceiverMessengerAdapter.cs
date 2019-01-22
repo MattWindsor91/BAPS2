@@ -38,6 +38,9 @@ namespace BAPSPresenterNG
             receiver.ItemMove += (sender, e) => messenger.Send(e);
             receiver.ItemDelete += (sender, e) => messenger.Send(e);
             receiver.ResetPlaylist += (sender, e) => messenger.Send(e);
+
+            receiver.DirectoryFileAdd += (sender, e) => messenger.Send(e);
+            receiver.DirectoryPrepare += (sender, e) => messenger.Send(e);
         }
     }
 }

@@ -234,5 +234,70 @@
         public delegate void ItemDeleteEventHandler(object sender, ItemDeleteEventArgs e);
 
         #endregion Channel and playlist item
+
+        #region Directory
+
+        /// <summary>
+        /// Base class for all directory update event payloads.
+        /// </summary>
+        public abstract class DirectoryArgs
+        {
+            /// <summary>
+            /// The ID of the directory this update concerns.
+            /// </summary>
+            public ushort DirectoryID { get; }
+
+            public DirectoryArgs(ushort directoryID)
+            {
+                DirectoryID = directoryID;
+            }
+        }
+
+        /// <summary>
+        /// Event payload for when the server adds a file to a directory.
+        /// </summary>
+        public class DirectoryFileAddArgs : DirectoryArgs
+        {
+            /// <summary>
+            /// The target position of the file in the directory.
+            /// </summary>
+            public uint Index { get; }
+
+            /// <summary>
+            /// The description of the file.
+            /// </summary>
+            public string Description { get; }
+
+            public DirectoryFileAddArgs(ushort directoryID, uint index, string description)
+                : base(directoryID)
+            {
+                Index = index;
+                Description = description;
+            }
+        }
+
+        public delegate void DirectoryFileAddHandler(object sender, DirectoryFileAddArgs e);
+
+        /// <summary>
+        /// Event payload for when the server clears out and renames a directory,
+        /// or creates one if it doesn't exist.
+        /// </summary>
+        public class DirectoryPrepareArgs : DirectoryArgs
+        {
+            /// <summary>
+            /// The new name of the directory.
+            /// </summary>
+            public string Name { get; }
+
+            public DirectoryPrepareArgs(ushort directoryID, string name)
+                : base(directoryID)
+            {
+                Name = name;
+            }
+        }
+
+        public delegate void DirectoryPrepareHandler(object sender, DirectoryPrepareArgs e);
+
+        #endregion Directory
     }
 }
