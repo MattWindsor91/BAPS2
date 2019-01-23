@@ -74,9 +74,13 @@
             <ColumnDefinition />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <DockPanel Background="{StaticResource AccentBg}"
-                   Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Name="channelLegend">
-            <StackPanel DockPanel.Dock="Right" Name="channelControlsPanel"
+        <local:Header
+            Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
+            x:Name="channelHeader"
+            Icon="Music"
+            Text="{Binding ChannelID, Converter={StaticResource ChannelIDConverter},StringFormat='Channel {0}'}"
+            >
+            <StackPanel
                     Orientation="Horizontal"
                     FlowDirection="RightToLeft">
                 <fa:ImageAwesome Name="repeatLamp"
@@ -125,13 +129,8 @@
                     </fa:ImageAwesome.Style>
                 </fa:ImageAwesome>
             </StackPanel>
-            <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Name="nameLbl"
-               FontWeight="Bold"
-               Foreground="{StaticResource AccentFg}"
-               >
-                <TextBlock FontSize="14pt" VerticalAlignment="Center">Channel <TextBlock Text="{Binding ChannelID, Converter={StaticResource ChannelIDConverter}}" /></TextBlock>
-            </Label>
-        </DockPanel>
+        </local:Header>
+
         <ListBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Name="trackList"
                  ItemsSource="{Binding TrackList,UpdateSourceTrigger=PropertyChanged}"
                  

@@ -86,6 +86,7 @@
       <DependentUpon>Channel.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\ChannelIDConverter.cs" />
+    <Compile Include="Header.cs" />
     <Compile Include="ReceiverMessengerAdapter.cs" />
     <Compile Include="ViewModel\ChannelViewModel.cs" />
     <Compile Include="Converters\EntryTypeToIconConverter.cs" />
@@ -123,6 +124,10 @@
     <Page Include="PositionDisplay.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>
