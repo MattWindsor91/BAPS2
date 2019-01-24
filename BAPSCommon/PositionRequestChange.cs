@@ -1,6 +1,7 @@
 ﻿using System;
+using BAPSClientCommon.BapsNet;
 
-namespace BAPSCommon
+namespace BAPSClientCommon
 {
     /// <summary>
     /// Enumeration of the various positions that a channel's track-line represents.

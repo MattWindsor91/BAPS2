@@ -1,6 +1,7 @@
 using NUnit.Framework;
-using BAPSCommon;
 using System;
+using BAPSClientCommon;
+using BAPSClientCommon.BapsNet;
 
 namespace BAPSClientCommonTests
 {

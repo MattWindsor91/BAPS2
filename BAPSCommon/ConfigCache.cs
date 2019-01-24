@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using BAPSClientCommon.BapsNet;
 
-namespace BAPSCommon
+namespace BAPSClientCommon
 {
     /// <summary>
     ///     Arguments for a config choice change event.

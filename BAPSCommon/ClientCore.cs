@@ -3,8 +3,9 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using BAPSClientCommon.BapsNet;
 
-namespace BAPSCommon
+namespace BAPSClientCommon
 {
     /// <inheritdoc />
     /// <summary>

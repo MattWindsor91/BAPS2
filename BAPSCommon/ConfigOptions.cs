@@ -1,7 +1,7 @@
 ﻿// This reflects Common/ConfigDialog.h.
 // It *should* be kept in sync with it until one can be deprecated in favour of the other.
 
-namespace BAPSCommon
+namespace BAPSClientCommon
 {
     /// <summary>
     /// String constants corresponding to descriptions used in the bapsnet

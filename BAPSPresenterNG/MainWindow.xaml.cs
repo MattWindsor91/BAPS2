@@ -1,4 +1,4 @@
-﻿using BAPSCommon;
+﻿using BAPSClientCommon;
 using System.Windows;
 
 namespace BAPSPresenterNG

@@ -1,9 +1,10 @@
-﻿using BAPSCommon;
+﻿using BAPSClientCommon;
 using BAPSPresenter;
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
-using TracklistItem = BAPSCommon.TracklistItem;
+using BAPSClientCommon.BapsNet;
+using TracklistItem = BAPSClientCommon.TracklistItem;
 
 namespace BAPSPresenter2
 {
@@ -397,12 +398,12 @@ namespace BAPSPresenter2
             else if (e.ClickedItem == deleteItemToolStripMenuItem)
             {
                 //cmd = Command.PLAYLIST | Command.DELETEITEM | (Command)tl.Channel;
-                //core.SendQueue.Add(new BAPSCommon.Message(cmd).Add(, (uint)tl.LastIndexClicked));
+                //core.SendQueue.Add(new BAPSClientCommon.Message(cmd).Add(, (uint)tl.LastIndexClicked));
             }
             else if (e.ClickedItem == resetChannelStripMenuItem)
             {
                 //cmd = Command.PLAYLIST | Command.RESETPLAYLIST | (Command)tl.Channel;
-                //core.SendQueue.Add(new BAPSCommon.Message(cmd));
+                //core.SendQueue.Add(new BAPSClientCommon.Message(cmd));
             }
             else if (e.ClickedItem == showAudioWallToolStripMenuItem)
             {

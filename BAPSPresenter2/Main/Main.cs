@@ -1,10 +1,11 @@
-﻿using BAPSCommon;
+﻿using BAPSClientCommon;
 using BAPSPresenter; // Legacy
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using ConfigCache = BAPSCommon.ConfigCache;
+using BAPSClientCommon.BapsNet;
+using ConfigCache = BAPSClientCommon.ConfigCache;
 
 namespace BAPSPresenter2
 {

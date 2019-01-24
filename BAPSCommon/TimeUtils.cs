@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BAPSCommon
+namespace BAPSClientCommon
 {
     public static class TimeUtils
     {

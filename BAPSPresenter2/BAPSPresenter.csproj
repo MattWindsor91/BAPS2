@@ -213,9 +213,9 @@
       <Project>{f429ef69-9102-42dc-ad98-9234b0dccc35}</Project>
       <Name>BAPSClientWindows</Name>
     </ProjectReference>
-    <ProjectReference Include="..\BAPSCommon\BAPSCommon.csproj">
+    <ProjectReference Include="..\BAPSCommon\BAPSClientCommon.csproj">
       <Project>{701B4F5C-600A-4EB2-82AE-BA11EA8160A7}</Project>
-      <Name>BAPSCommon</Name>
+      <Name>BAPSClientCommon</Name>
     </ProjectReference>
     <ProjectReference Include="..\BAPSFormControls\BAPSFormControls.csproj">
       <Project>{4c3d1722-7b93-4081-8d61-572f8f088ced}</Project>

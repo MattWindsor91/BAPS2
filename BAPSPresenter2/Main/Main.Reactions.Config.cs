@@ -1,7 +1,8 @@
 ﻿// This used to be BAPSPresenterMainReactions_config.cpp.
 
 using System;
-using BAPSCommon;
+using BAPSClientCommon;
+using BAPSClientCommon.BapsNet;
 
 namespace BAPSPresenter2
 {

@@ -1,10 +1,10 @@
-﻿using BAPSCommon;
+﻿using BAPSClientCommon;
 using GalaSoft.MvvmLight.Messaging;
 
 namespace BAPSPresenterNG
 {
     /// <summary>
-    /// An object that listens to events from a <see cref="BAPSCommon.Receiver"/>
+    /// An object that listens to events from a <see cref="BAPSClientCommon.Receiver"/>
     /// and forwards them onto the MVVMLight messenger bus.
     /// </summary>
     public class ReceiverMessengerAdapter

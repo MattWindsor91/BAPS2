@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Threading;
+using BAPSClientCommon.BapsNet;
 
-namespace BAPSCommon
+namespace BAPSClientCommon
 {
     /// <summary>
     ///     A message-send loop for BAPSnet.

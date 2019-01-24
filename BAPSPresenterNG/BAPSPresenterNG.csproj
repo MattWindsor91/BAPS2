@@ -166,9 +166,9 @@
       <Project>{f429ef69-9102-42dc-ad98-9234b0dccc35}</Project>
       <Name>BAPSClientWindows</Name>
     </ProjectReference>
-    <ProjectReference Include="..\BAPSCommon\BAPSCommon.csproj">
+    <ProjectReference Include="..\BAPSCommon\BAPSClientCommon.csproj">
       <Project>{701b4f5c-600a-4eb2-82ae-ba11ea8160a7}</Project>
-      <Name>BAPSCommon</Name>
+      <Name>BAPSClientCommon</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

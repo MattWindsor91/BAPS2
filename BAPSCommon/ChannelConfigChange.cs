@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BAPSCommon
+namespace BAPSClientCommon
 {
     /// <summary>
     /// Types of channel config change.

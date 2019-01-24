@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using BAPSClientCommon.BapsNet;
 
-namespace BAPSCommon
+namespace BAPSClientCommon
 {
     /// <summary>
     ///     Abstraction between a channel user interface and the BAPSNet protocol.

@@ -1,4 +1,4 @@
-﻿using BAPSCommon;
+﻿using BAPSClientCommon;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
 using System;

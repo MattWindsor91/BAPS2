@@ -3,15 +3,15 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using BAPSClientCommon.BapsNet;
 
-namespace BAPSCommon
+namespace BAPSClientCommon
 {
-    /// <inheritdoc />
     /// <summary>
     ///     This class defines all the low level network connection functions and functions
     ///     for how to send and receive the 4 fundamental data types used in BAPSNet.
     /// </summary>
-    public class ClientSocket : IDisposable
+    public class ClientSocket : IDisposable, ISink
     {
         private const int MaxReceiveBuffer = 512;
 
@@ -168,10 +168,10 @@ namespace BAPSCommon
 
         #region Strings
 
-        public void Send(string s)
+        public void SendString(string s)
         {
             /** Strings are a combination of integer length and then UTF8 data **/
-            Send((uint) Encoding.UTF8.GetByteCount(s));
+            SendU32((uint) Encoding.UTF8.GetByteCount(s));
             Send(Encoding.UTF8.GetBytes(s));
         }
 
@@ -194,7 +194,7 @@ namespace BAPSCommon
 
         #region Commands
 
-        public void Send(Command cmd)
+        public void SendCommand(Command cmd)
         {
             SendN(BitConverter.GetBytes((ushort) cmd));
         }
@@ -208,7 +208,7 @@ namespace BAPSCommon
 
         #region Floats
 
-        public void Send(float f)
+        public void SendFloat(float f)
         {
             SendN(BitConverter.GetBytes(f));
         }
@@ -222,7 +222,7 @@ namespace BAPSCommon
 
         #region Uints
 
-        public void Send(uint i)
+        public void SendU32(uint i)
         {
             SendN(BitConverter.GetBytes(i));
         }

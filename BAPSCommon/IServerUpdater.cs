@@ -1,6 +1,7 @@
 ﻿using System;
+using BAPSClientCommon.BapsNet;
 
-namespace BAPSCommon
+namespace BAPSClientCommon
 {
     /// <summary>
     /// Event interface for classes that send BAPSnet server playback updates.

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading;
-using static BAPSCommon.ServerUpdates;
+using BAPSClientCommon.BapsNet;
 
-namespace BAPSCommon
+namespace BAPSClientCommon
 {
     public class Receiver : IServerUpdater
     {
@@ -36,9 +36,9 @@ namespace BAPSCommon
 
         #region Playback events
 
-        public event ChannelStateEventHandler ChannelState;
+        public event ServerUpdates.ChannelStateEventHandler ChannelState;
 
-        private void OnChannelOperation(ChannelStateEventArgs e)
+        private void OnChannelOperation(ServerUpdates.ChannelStateEventArgs e)
         {
             ChannelState?.Invoke(this, e);
         }
@@ -75,30 +75,30 @@ namespace BAPSCommon
 
         #region Playlist events
 
-        public event ItemAddEventHandler ItemAdd;
+        public event ServerUpdates.ItemAddEventHandler ItemAdd;
 
-        private void OnItemAdd(ItemAddEventArgs e)
+        private void OnItemAdd(ServerUpdates.ItemAddEventArgs e)
         {
             ItemAdd?.Invoke(this, e);
         }
 
-        public event ItemMoveEventHandler ItemMove;
+        public event ServerUpdates.ItemMoveEventHandler ItemMove;
 
-        private void OnItemMove(ItemMoveEventArgs e)
+        private void OnItemMove(ServerUpdates.ItemMoveEventArgs e)
         {
             ItemMove?.Invoke(this, e);
         }
 
-        public event ItemDeleteEventHandler ItemDelete;
+        public event ServerUpdates.ItemDeleteEventHandler ItemDelete;
 
-        private void OnItemDelete(ItemDeleteEventArgs e)
+        private void OnItemDelete(ServerUpdates.ItemDeleteEventArgs e)
         {
             ItemDelete?.Invoke(this, e);
         }
 
-        public event ChannelResetEventHandler ResetPlaylist;
+        public event ServerUpdates.ChannelResetEventHandler ResetPlaylist;
 
-        private void OnResetPlaylist(ChannelResetEventArgs e)
+        private void OnResetPlaylist(ServerUpdates.ChannelResetEventArgs e)
         {
             ResetPlaylist?.Invoke(this, e);
         }
@@ -132,23 +132,23 @@ namespace BAPSCommon
 
         #region Config events
 
-        public event ConfigOptionHandler ConfigOption;
+        public event ServerUpdates.ConfigOptionHandler ConfigOption;
 
-        private void OnConfigOption(ConfigOptionArgs args)
+        private void OnConfigOption(ServerUpdates.ConfigOptionArgs args)
         {
             ConfigOption?.Invoke(this, args);
         }
 
-        public event ConfigChoiceHandler ConfigChoice;
+        public event ServerUpdates.ConfigChoiceHandler ConfigChoice;
 
-        private void OnConfigChoice(ConfigChoiceArgs args)
+        private void OnConfigChoice(ServerUpdates.ConfigChoiceArgs args)
         {
             ConfigChoice?.Invoke(this, args);
         }
 
-        public event ConfigSettingHandler ConfigSetting;
+        public event ServerUpdates.ConfigSettingHandler ConfigSetting;
 
-        private void OnConfigSetting(ConfigSettingArgs args)
+        private void OnConfigSetting(ServerUpdates.ConfigSettingArgs args)
         {
             ConfigSetting?.Invoke(this, args);
         }
@@ -192,16 +192,16 @@ namespace BAPSCommon
 
         #region System events
 
-        public event DirectoryFileAddHandler DirectoryFileAdd;
+        public event ServerUpdates.DirectoryFileAddHandler DirectoryFileAdd;
 
-        public void OnDirectoryFileAdd(DirectoryFileAddArgs args)
+        public void OnDirectoryFileAdd(ServerUpdates.DirectoryFileAddArgs args)
         {
             DirectoryFileAdd?.Invoke(this, args);
         }
 
-        public event DirectoryPrepareHandler DirectoryPrepare;
+        public event ServerUpdates.DirectoryPrepareHandler DirectoryPrepare;
 
-        public void OnDirectoryPrepare(DirectoryPrepareArgs args)
+        public void OnDirectoryPrepare(ServerUpdates.DirectoryPrepareArgs args)
         {
             DirectoryPrepare?.Invoke(this, args);
         }
@@ -213,16 +213,16 @@ namespace BAPSCommon
             Version?.Invoke(this, v);
         }
 
-        public event EventHandler<UpDown> TextScroll;
+        public event EventHandler<ServerUpdates.UpDown> TextScroll;
 
-        public void OnTextScroll(UpDown upDown)
+        public void OnTextScroll(ServerUpdates.UpDown upDown)
         {
             TextScroll?.Invoke(this, upDown);
         }
 
-        public event EventHandler<UpDown> TextSizeChange;
+        public event EventHandler<ServerUpdates.UpDown> TextSizeChange;
 
-        public void OnTextSizeChange(UpDown upDown)
+        public void OnTextSizeChange(ServerUpdates.UpDown upDown)
         {
             TextSizeChange?.Invoke(this, upDown);
         }
@@ -238,16 +238,16 @@ namespace BAPSCommon
 
         #region General events
 
-        public event CountEventHandler IncomingCount;
+        public event ServerUpdates.CountEventHandler IncomingCount;
 
-        private void OnIncomingCount(CountEventArgs e)
+        private void OnIncomingCount(ServerUpdates.CountEventArgs e)
         {
             IncomingCount?.Invoke(this, e);
         }
 
-        public event ErrorEventHandler Error;
+        public event ServerUpdates.ErrorEventHandler Error;
 
-        private void OnError(ErrorEventArgs e)
+        private void OnError(ServerUpdates.ErrorEventArgs e)
         {
             Error?.Invoke(this, e);
         }
@@ -298,7 +298,7 @@ namespace BAPSCommon
                 case Command.Pause:
                 case Command.Stop:
                 {
-                    OnChannelOperation(new ChannelStateEventArgs(cmdReceived.Channel(), cmdReceived.AsChannelState()));
+                    OnChannelOperation(new ServerUpdates.ChannelStateEventArgs(cmdReceived.Channel(), cmdReceived.AsChannelState()));
                 }
                     break;
                 case Command.Volume:
@@ -369,7 +369,7 @@ namespace BAPSCommon
                         var type = _cs.ReceiveI();
                         var description = _cs.ReceiveS();
                         var entry = TracklistItemFactory.Create((Command) type, description);
-                        OnItemAdd(new ItemAddEventArgs(channelId, index, entry));
+                        OnItemAdd(new ServerUpdates.ItemAddEventArgs(channelId, index, entry));
                     }
                     else
                     {
@@ -383,20 +383,20 @@ namespace BAPSCommon
                     var channelId = cmdReceived.Channel();
                     var indexFrom = _cs.ReceiveI();
                     var indexTo = _cs.ReceiveI();
-                    OnItemMove(new ItemMoveEventArgs(channelId, indexFrom, indexTo));
+                    OnItemMove(new ServerUpdates.ItemMoveEventArgs(channelId, indexFrom, indexTo));
                 }
                     break;
                 case Command.DeleteItem:
                 {
                     var channelId = cmdReceived.Channel();
                     var index = _cs.ReceiveI();
-                    OnItemDelete(new ItemDeleteEventArgs(channelId, index));
+                    OnItemDelete(new ServerUpdates.ItemDeleteEventArgs(channelId, index));
                 }
                     break;
                 case Command.ResetPlaylist:
                 {
                     var channelId = cmdReceived.Channel();
-                    OnResetPlaylist(new ChannelResetEventArgs(channelId));
+                    OnResetPlaylist(new ServerUpdates.ChannelResetEventArgs(channelId));
                 }
                     break;
                 default:
@@ -420,14 +420,14 @@ namespace BAPSCommon
                     }
                     else
                     {
-                        DecodeCount(CountType.LibraryItem);
+                        DecodeCount(ServerUpdates.CountType.LibraryItem);
                     }
                 }
                     break;
                 case Command.LibraryError:
                 {
                     var errorCode = cmdReceived.DatabaseValue();
-                    DecodeError(ErrorType.Library, errorCode);
+                    DecodeError(ServerUpdates.ErrorType.Library, errorCode);
                 }
                     break;
                 case Command.Show:
@@ -439,7 +439,7 @@ namespace BAPSCommon
                     }
                     else
                     {
-                        DecodeCount(CountType.Show);
+                        DecodeCount(ServerUpdates.CountType.Show);
                     }
 
                     break;
@@ -453,12 +453,12 @@ namespace BAPSCommon
                     }
                     else
                     {
-                        DecodeCount(CountType.Listing);
+                        DecodeCount(ServerUpdates.CountType.Listing);
                     }
 
                     break;
                 case Command.BapsDbError:
-                    DecodeError(ErrorType.BapsDb, cmdReceived.DatabaseValue());
+                    DecodeError(ServerUpdates.ErrorType.BapsDb, cmdReceived.DatabaseValue());
                     break;
                 default:
                     OnUnknownCommand(cmdReceived, "possibly a malformed DATABASE");
@@ -479,11 +479,11 @@ namespace BAPSCommon
                         var optionId = _cs.ReceiveI();
                         var description = _cs.ReceiveS();
                         var type = _cs.ReceiveI();
-                        OnConfigOption(new ConfigOptionArgs(optionId, (ConfigType) type, description, hasIndex, index));
+                        OnConfigOption(new ServerUpdates.ConfigOptionArgs(optionId, (ConfigType) type, description, hasIndex, index));
                     }
                     else
                     {
-                        DecodeCount(CountType.ConfigOption);
+                        DecodeCount(ServerUpdates.CountType.ConfigOption);
                     }
                 }
                     break;
@@ -494,11 +494,11 @@ namespace BAPSCommon
                     {
                         var choiceIndex = _cs.ReceiveI();
                         var choiceDescription = _cs.ReceiveS();
-                        OnConfigChoice(new ConfigChoiceArgs(optionId, choiceIndex, choiceDescription));
+                        OnConfigChoice(new ServerUpdates.ConfigChoiceArgs(optionId, choiceIndex, choiceDescription));
                     }
                     else
                     {
-                        DecodeCount(CountType.ConfigChoice, optionId);
+                        DecodeCount(ServerUpdates.CountType.ConfigChoice, optionId);
                     }
                 }
                     break;
@@ -524,7 +524,7 @@ namespace BAPSCommon
                 }
                     break;
                 case Command.ConfigError:
-                    DecodeError(ErrorType.Config, cmdReceived.ConfigValue());
+                    DecodeError(ServerUpdates.ErrorType.Config, cmdReceived.ConfigValue());
                     break;
                 case Command.User:
                 {
@@ -536,7 +536,7 @@ namespace BAPSCommon
                     }
                     else
                     {
-                        DecodeCount(CountType.User);
+                        DecodeCount(ServerUpdates.CountType.User);
                     }
                 }
                     break;
@@ -550,7 +550,7 @@ namespace BAPSCommon
                     }
                     else
                     {
-                        DecodeCount(CountType.Permission);
+                        DecodeCount(ServerUpdates.CountType.Permission);
                     }
                 }
                     break;
@@ -571,7 +571,7 @@ namespace BAPSCommon
                     }
                     else
                     {
-                        DecodeCount(CountType.IpRestriction);
+                        DecodeCount(ServerUpdates.CountType.IpRestriction);
                     }
                 }
                     break;
@@ -602,7 +602,7 @@ namespace BAPSCommon
             var index = -1;
             if (cmdReceived.HasFlag(Command.ConfigUseValueMask)) index = cmdReceived.ConfigValue();
 
-            OnConfigSetting(new ConfigSettingArgs(optionId, type, value, index));
+            OnConfigSetting(new ServerUpdates.ConfigSettingArgs(optionId, type, value, index));
         }
 
         private void DecodeSystemCommand(Command cmdReceived)
@@ -618,14 +618,14 @@ namespace BAPSCommon
                         var directoryIndex = cmdReceived.SystemValue();
                         var index = _cs.ReceiveI();
                         var description = _cs.ReceiveS();
-                        OnDirectoryFileAdd(new DirectoryFileAddArgs(directoryIndex, index, description));
+                        OnDirectoryFileAdd(new ServerUpdates.DirectoryFileAddArgs(directoryIndex, index, description));
                     }
                     else
                     {
                         var directoryIndex = cmdReceived.SystemValue();
                         _ = _cs.ReceiveI();
                         var niceDirectoryName = _cs.ReceiveS();
-                        OnDirectoryPrepare(new DirectoryPrepareArgs(directoryIndex, niceDirectoryName));
+                        OnDirectoryPrepare(new ServerUpdates.DirectoryPrepareArgs(directoryIndex, niceDirectoryName));
                     }
 
                     break;
@@ -657,13 +657,13 @@ namespace BAPSCommon
                     break;
                 case Command.ScrollText:
                 {
-                    var upDown = cmdReceived.SystemValue() == 0 ? UpDown.Down : UpDown.Up;
+                    var upDown = cmdReceived.SystemValue() == 0 ? ServerUpdates.UpDown.Down : ServerUpdates.UpDown.Up;
                     OnTextScroll(upDown);
                 }
                     break;
                 case Command.TextSize:
                 {
-                    var upDown = cmdReceived.SystemValue() == 0 ? UpDown.Down : UpDown.Up;
+                    var upDown = cmdReceived.SystemValue() == 0 ? ServerUpdates.UpDown.Down : ServerUpdates.UpDown.Up;
                     OnTextSizeChange(upDown);
                 }
                     break;
@@ -680,16 +680,16 @@ namespace BAPSCommon
             }
         }
 
-        private void DecodeCount(CountType type, uint extra = 0)
+        private void DecodeCount(ServerUpdates.CountType type, uint extra = 0)
         {
             var count = _cs.ReceiveI();
-            OnIncomingCount(new CountEventArgs {Count = count, Type = type, Extra = extra});
+            OnIncomingCount(new ServerUpdates.CountEventArgs {Count = count, Type = type, Extra = extra});
         }
 
-        private void DecodeError(ErrorType type, byte errorCode)
+        private void DecodeError(ServerUpdates.ErrorType type, byte errorCode)
         {
             var description = _cs.ReceiveS();
-            OnError(new ErrorEventArgs {Type = type, Code = errorCode, Description = description});
+            OnError(new ServerUpdates.ErrorEventArgs {Type = type, Code = errorCode, Description = description});
         }
 
         #endregion Command decoding

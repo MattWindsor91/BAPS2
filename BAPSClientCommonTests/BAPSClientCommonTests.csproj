@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BAPSCommon\BAPSCommon.csproj" />
+    <ProjectReference Include="..\BAPSCommon\BAPSClientCommon.csproj" />
   </ItemGroup>
 
 </Project>

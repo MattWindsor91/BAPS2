@@ -117,7 +117,7 @@
             this.trackTime.Size = new System.Drawing.Size(384, 72);
             this.trackTime.TabIndex = 227;
             this.trackTime.Text = "trackTime0";
-            this.trackTime.PositionChanged += new BAPSCommon.PositionRequestChangeEventHandler(this.OnPositionChanged);
+            this.trackTime.PositionChanged += new BAPSClientCommon.PositionRequestChangeEventHandler(this.OnPositionChanged);
             // 
             // trackList
             // 

@@ -115,9 +115,9 @@
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BAPSCommon\BAPSCommon.csproj">
+    <ProjectReference Include="..\BAPSCommon\BAPSClientCommon.csproj">
       <Project>{701B4F5C-600A-4EB2-82AE-BA11EA8160A7}</Project>
-      <Name>BAPSCommon</Name>
+      <Name>BAPSClientCommon</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

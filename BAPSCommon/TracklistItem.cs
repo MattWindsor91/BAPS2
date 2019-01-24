@@ -1,4 +1,6 @@
-﻿namespace BAPSCommon
+﻿using BAPSClientCommon.BapsNet;
+
+namespace BAPSClientCommon
 {
     public abstract class TracklistItem
     {

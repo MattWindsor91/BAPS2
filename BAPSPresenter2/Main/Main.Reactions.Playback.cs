@@ -1,7 +1,7 @@
 ﻿// This used to be BAPSPresenterMainReactions_playback.cpp.
 
 using System;
-using BAPSCommon;
+using BAPSClientCommon;
 
 namespace BAPSPresenter2
 {
