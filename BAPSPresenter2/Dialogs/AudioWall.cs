@@ -105,10 +105,10 @@ namespace BAPSPresenter2
             var index = (uint)(int)bb.Tag;  // These two casts are deliberate.
             if (!bb.Highlighted)
             {
-                var lcmd = Command.PLAYBACK | Command.LOAD | (Command)tl.Channel;
+                var lcmd = Command.Playback | Command.Load | (Command)tl.Channel;
                 msgQueue.Add(new BAPSCommon.Message(lcmd).Add(index));
             }
-            var pcmd = Command.PLAYBACK | Command.PLAY | (Command)tl.Channel;
+            var pcmd = Command.Playback | Command.Play | (Command)tl.Channel;
             msgQueue.Add(new BAPSCommon.Message(pcmd));
         }
 

@@ -29,25 +29,25 @@ namespace BAPSCommon
 
     public enum ConfigType
     {
-        INT = 0,
-        STR = 1,
-        CHOICE = 2
-    };
+        Int = 0,
+        Str = 1,
+        Choice = 2
+    }
 
     public enum ConfigResult
     {
-        SUCCESS,
-        BADTYPE,
-        BADOPTION,
-        INDEXINGERROR,
-        INDEXOUTOFRANGE,
-        VALIDATIONERROR,
-        NOPERMISSION
-    };
+        Success,
+        BadType,
+        BadOption,
+        IndexingError,
+        IndexOutOfRange,
+        ValidationError,
+        NoPermission
+    }
 
     public static class ConfigResultText
     {
-        public static string[] text =
+        public static string[] Text =
         {"Success",
          "Incorrect type for option",
          "Option does not exist",
@@ -56,4 +56,4 @@ namespace BAPSCommon
          "Setting failed validation check",
          "You do not have permission"};
     }
-};
+}

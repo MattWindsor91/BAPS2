@@ -101,9 +101,9 @@ namespace BAPSPresenter2.Dialogs
             /** Add the option to the hashtable **/
             options.Add((uint)option.getOptionid(), option);
             /** If it is a choice type we must get the choices for it before requesting the settings **/
-            if ((ConfigType)option.getType() == ConfigType.CHOICE)
+            if ((ConfigType)option.getType() == ConfigType.Choice)
             {
-                var cmd = Command.CONFIG | Command.GETOPTIONCHOICES;
+                var cmd = Command.Config | Command.GetOptionChoices;
                 msgQueue.Add(new BAPSCommon.Message(cmd).Add((uint)option.getOptionid()));
             }
         }
@@ -283,7 +283,7 @@ namespace BAPSPresenter2.Dialogs
                     /** Each option type has to be treated differently as it is stored differently in the datatable **/
                     switch ((ConfigType)option.getType())
                     {
-                        case ConfigType.STR:
+                        case ConfigType.Str:
                             {
                                 /** Strings are stored as... strings **/
                                 dt.Columns.Add(option.getDescription(), typeof(string));
@@ -300,7 +300,7 @@ namespace BAPSPresenter2.Dialogs
                             }
                             break;
 
-                        case ConfigType.INT:
+                        case ConfigType.Int:
                             {
                                 /** Integers are stored as... integers **/
                                 dt.Columns.Add(option.getDescription(), typeof(int));
@@ -315,7 +315,7 @@ namespace BAPSPresenter2.Dialogs
                             }
                             break;
 
-                        case ConfigType.CHOICE:
+                        case ConfigType.Choice:
                             {
                                 /** Choice types are stored as integers as well because we refer to the choice index not the value **/
                                 dt.Columns.Add(option.getDescription(), typeof(int));
@@ -359,8 +359,8 @@ namespace BAPSPresenter2.Dialogs
 
                     switch ((ConfigType)option.getType())
                     {
-                        case ConfigType.STR:
-                        case ConfigType.INT:
+                        case ConfigType.Str:
+                        case ConfigType.Int:
                             {
                                 /** String and integer options can be treated the same (For now)
                                     WORK NEEDED: validate entries to integer text boxes to ensure they are integers
@@ -388,7 +388,7 @@ namespace BAPSPresenter2.Dialogs
                             }
                             break;
 
-                        case ConfigType.CHOICE:
+                        case ConfigType.Choice:
                             {
                                 cb = new ComboBox
                                 {
@@ -443,10 +443,10 @@ namespace BAPSPresenter2.Dialogs
         public void setResult(uint optionid, ConfigResult res)
         {
             // WORK NEEDED: fix this
-            options[optionid].setResult(res == ConfigResult.SUCCESS);
-            if (res != ConfigResult.SUCCESS)
+            options[optionid].setResult(res == ConfigResult.Success);
+            if (res != ConfigResult.Success)
             {
-                statusLabel.Text = string.Concat("Failed to set: ", options[optionid].getDescription(), ". Error: ", BAPSCommon.ConfigResultText.text[(int)res]);
+                statusLabel.Text = string.Concat("Failed to set: ", options[optionid].getDescription(), ". Error: ", BAPSCommon.ConfigResultText.Text[(int)res]);
             }
             var allReceived = options.Values.All(op => op.hasReceivedResult());
             if (!allReceived) return;
@@ -504,7 +504,7 @@ namespace BAPSPresenter2.Dialogs
         {
             if (!(optionCountSet && (numberOfOptions == 0))) return;
             if (options.Values.Any(op => !op.isValid())) return;
-            Command cmd = Command.CONFIG | Command.GETCONFIGSETTINGS;
+            Command cmd = Command.Config | Command.GetConfigSettings;
             msgQueue.Add(new BAPSCommon.Message(cmd));
             optionCountSet = false;
         }
@@ -534,17 +534,17 @@ namespace BAPSPresenter2.Dialogs
                 {
                     for (int j = 0; j < coi.getIndexCount(); j++)
                     {
-                        cmd = Command.CONFIG | Command.SETCONFIGVALUE | Command.CONFIG_USEVALUEMASK | (Command)j;
+                        cmd = Command.Config | Command.SetConfigValue | Command.ConfigUseValueMask | (Command)j;
                         switch ((ConfigType)coi.getType())
                         {
-                            case ConfigType.STR:
+                            case ConfigType.Str:
                                 {
                                     msgQueue.Add(new BAPSCommon.Message(cmd).Add((uint)coi.getOptionid()).Add((uint)coi.getType()).Add(coi.getValueStr(j)));
                                 }
                                 break;
 
-                            case ConfigType.INT:
-                            case ConfigType.CHOICE:
+                            case ConfigType.Int:
+                            case ConfigType.Choice:
                                 {
                                     msgQueue.Add(new BAPSCommon.Message(cmd).Add((uint)coi.getOptionid()).Add((uint)coi.getType()).Add((uint)coi.getValueInt(j)));
                                 }
@@ -557,17 +557,17 @@ namespace BAPSPresenter2.Dialogs
                 }
                 else
                 {
-                    cmd = Command.CONFIG | Command.SETCONFIGVALUE;
+                    cmd = Command.Config | Command.SetConfigValue;
                     switch ((ConfigType)coi.getType())
                     {
-                        case ConfigType.STR:
+                        case ConfigType.Str:
                             {
                                 msgQueue.Add(new BAPSCommon.Message(cmd).Add((uint)coi.getOptionid()).Add((uint)coi.getType()).Add(coi.getValueStr()));
                             }
                             break;
 
-                        case ConfigType.INT:
-                        case ConfigType.CHOICE:
+                        case ConfigType.Int:
+                        case ConfigType.Choice:
                             {
                                 msgQueue.Add(new BAPSCommon.Message(cmd).Add((uint)coi.getOptionid()).Add((uint)coi.getType()).Add(coi.getValueInt()));
                             }
@@ -583,7 +583,7 @@ namespace BAPSPresenter2.Dialogs
         private void restartButton_Click(object sender, EventArgs e)
         {
             restartButton.Enabled = false;
-            Command cmd = Command.SYSTEM | Command.QUIT;
+            Command cmd = Command.System | Command.Quit;
             msgQueue.Add(new BAPSCommon.Message(cmd));
         }
 
@@ -602,7 +602,7 @@ namespace BAPSPresenter2.Dialogs
 
         private void ConfigDialog_Load(object sender, EventArgs e)
         {
-            Command cmd = Command.CONFIG | Command.GETOPTIONS;
+            Command cmd = Command.Config | Command.GetOptions;
             msgQueue.Add(new BAPSCommon.Message(cmd));
         }
 

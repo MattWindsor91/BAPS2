@@ -67,17 +67,17 @@ namespace BAPSPresenter2
 
         private void addFileToDirectoryList(object sender, ServerUpdates.DirectoryFileAddArgs e)
         {
-            if (DirectoryOutOfBounds(e.DirectoryID)) return;
+            if (DirectoryOutOfBounds(e.DirectoryId)) return;
             // TODO(@MattWindsor91): file index?
             /** Add the new entry to the bottom of the listbox **/
-            bapsDirectories[e.DirectoryID].Add(e.Description);
+            bapsDirectories[e.DirectoryId].Add(e.Description);
         }
 
         private void clearFiles(object sender, ServerUpdates.DirectoryPrepareArgs e)
         {
-            if (DirectoryOutOfBounds(e.DirectoryID)) return;
+            if (DirectoryOutOfBounds(e.DirectoryId)) return;
             /** Empty the list box ready for new entries (required due to implicit indexing) **/
-            bapsDirectories[e.DirectoryID].Clear(e.Name);
+            bapsDirectories[e.DirectoryId].Clear(e.Name);
         }
 
         private void displayVersion(string version, string date, string time, string author)

@@ -41,7 +41,7 @@ namespace BAPSPresenterNG
         public string Text
         {
             get => (string)GetValue(TextProperty);
-            set { SetValue(TextProperty, value); }
+            set => SetValue(TextProperty, value);
         }
 
         #endregion DependencyProperty Text
@@ -63,7 +63,7 @@ namespace BAPSPresenterNG
         public FontAwesome.WPF.FontAwesomeIcon Icon
         {
             get => (FontAwesome.WPF.FontAwesomeIcon)GetValue(IconProperty);
-            set { SetValue(IconProperty, value); }
+            set => SetValue(IconProperty, value);
         }
 
         #endregion DependencyProperty Icon

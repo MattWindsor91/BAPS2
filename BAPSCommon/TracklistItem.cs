@@ -78,11 +78,11 @@
         {
             switch (type)
             {
-                case Command.FILEITEM:
+                case Command.FileItem:
                     return new FileTracklistItem(descr);
-                case Command.TEXTITEM:
+                case Command.TextItem:
                     return new TextTracklistItem(descr, "");
-                case Command.LIBRARYITEM:
+                case Command.LibraryItem:
                     return new LibraryTracklistItem(descr);
                 default:
                     return new NullTracklistItem();

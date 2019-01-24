@@ -48,7 +48,7 @@ namespace BAPSCommon
         event EventHandler<(ushort channelID, uint duration)> Duration;
         event ServerUpdates.ErrorEventHandler Error;
         event ServerUpdates.CountEventHandler IncomingCount;
-        event EventHandler<(Command cmdReceived, string ipAddress, uint mask)> IPRestriction;
+        event EventHandler<(Command cmdReceived, string ipAddress, uint mask)> IpRestriction;
         event ServerUpdates.ItemAddEventHandler ItemAdd;
         event ServerUpdates.ItemDeleteEventHandler ItemDelete;
         event ServerUpdates.ItemMoveEventHandler ItemMove;

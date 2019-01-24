@@ -68,11 +68,11 @@ namespace BAPSPresenterNG.ViewModel
                 for (i = 0; i < count; i++)
                 {
                     var id = Directories[i].DirectoryID;
-                    if (id == e.DirectoryID) return; // Already present.
-                    if (id > e.DirectoryID) break; // This is where we need to insert.
+                    if (id == e.DirectoryId) return; // Already present.
+                    if (id > e.DirectoryId) break; // This is where we need to insert.
                 }
 
-                var dir = new DirectoryViewModel(e.DirectoryID)
+                var dir = new DirectoryViewModel(e.DirectoryId)
                 {
                     Name = e.Name
                 };

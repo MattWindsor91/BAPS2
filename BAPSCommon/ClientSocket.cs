@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -14,23 +12,23 @@ namespace BAPSCommon
     /// </summary>
     public class ClientSocket : IDisposable
     {
-        private CancellationToken send_tok;
-        private CancellationToken recv_tok;
+        private CancellationToken _sendTok;
+        private CancellationToken _recvTok;
 
-        public ClientSocket(string host, int port, CancellationToken send_tok = default, CancellationToken recv_tok = default)
+        public ClientSocket(string host, int port, CancellationToken sendTok = default, CancellationToken recvTok = default)
         {
-            this.send_tok = send_tok;
-            this.recv_tok = recv_tok;
+            _sendTok = sendTok;
+            _recvTok = recvTok;
 
-            clientSocket.Connect(new IPEndPoint(IPAddress.Parse(host), port));
+            _clientSocket.Connect(new IPEndPoint(IPAddress.Parse(host), port));
             /** All sockets are non blocking due to lack of preemption on windows **/
-            clientSocket.Blocking = false;
+            _clientSocket.Blocking = false;
             /** Sockets will close without delay **/
-            clientSocket.SetSocketOption(SocketOptionLevel.Tcp,
+            _clientSocket.SetSocketOption(SocketOptionLevel.Tcp,
                                          SocketOptionName.NoDelay,
                                          1);
             /** Sockets shall linger for 0 milliseconds **/
-            clientSocket.SetSocketOption(SocketOptionLevel.Socket,
+            _clientSocket.SetSocketOption(SocketOptionLevel.Socket,
                                          SocketOptionName.Linger,
                                          new LingerOption(false, 0));
         }
@@ -38,8 +36,8 @@ namespace BAPSCommon
         public void Dispose()
         {
             if (!IsValid) return;
-            clientSocket.Shutdown(SocketShutdown.Both);
-            clientSocket.Close();
+            _clientSocket.Shutdown(SocketShutdown.Both);
+            _clientSocket.Close();
         }
 
         #region Strings
@@ -54,10 +52,10 @@ namespace BAPSCommon
         {
             /** As before we find out how long the string is first and then grab the UTF8 data **/
             var stringLength = (int)ReceiveI();
-            var sb = new StringBuilder(MAX_RECEIVE_BUFFER);
+            var sb = new StringBuilder(MaxReceiveBuffer);
             while (stringLength > 0)
             {
-                var toReceive = Math.Min(stringLength, MAX_RECEIVE_BUFFER);
+                var toReceive = Math.Min(stringLength, MaxReceiveBuffer);
                 sb.Append(Encoding.UTF8.GetString(Receive(toReceive), 0, toReceive));
                 stringLength -= toReceive;
             }
@@ -90,7 +88,7 @@ namespace BAPSCommon
         /// <summary>
         /// Check if the socket is valid/connected.
         /// </summary>
-        public bool IsValid => clientSocket != null && clientSocket.Connected;
+        public bool IsValid => _clientSocket != null && _clientSocket.Connected;
 
         /// <summary>
         /// As <see cref="Send(byte[])"/>, but shuffles bytes to network order.
@@ -135,7 +133,7 @@ namespace BAPSCommon
             /** If sending no data then return immediately, else wait until it is all sent **/
             for (int index = 0; index < bytes.Length; index += nsent)
             {
-                send_tok.ThrowIfCancellationRequested();
+                _sendTok.ThrowIfCancellationRequested();
 
                 /**
                  *  Manage exceptions and maintain a count of the bytes sent and therefore the position
@@ -143,7 +141,7 @@ namespace BAPSCommon
                 **/
                 try
                 {
-                    nsent = clientSocket.Send(bytes, index, bytes.Length - index, SocketFlags.None);
+                    nsent = _clientSocket.Send(bytes, index, bytes.Length - index, SocketFlags.None);
                 }
                 catch (SocketException e)
                 {
@@ -157,23 +155,23 @@ namespace BAPSCommon
             }
         }
 
-        private const int MAX_RECEIVE_BUFFER = 512;
+        private const int MaxReceiveBuffer = 512;
 
         /// <summary>
         /// Generic receive function (limit MAX_RECEIVE_BUFFER), returned data is at start of byte array
         /// </summary>
         private byte[] Receive(int count)
         {
-            if (MAX_RECEIVE_BUFFER < count) throw new ArgumentOutOfRangeException("count");
+            if (MaxReceiveBuffer < count) throw new ArgumentOutOfRangeException("count");
 
             int nread = 0;
             for (int offset = 0; offset < count; offset += nread)
             {
-                recv_tok.ThrowIfCancellationRequested();
+                _recvTok.ThrowIfCancellationRequested();
 
                 try
                 {
-                    nread = clientSocket.Receive(rxBytes, offset, count - offset, SocketFlags.None);
+                    nread = _clientSocket.Receive(_rxBytes, offset, count - offset, SocketFlags.None);
                 } catch (SocketException e)
                 {
                     if (e.SocketErrorCode != SocketError.WouldBlock) throw e;
@@ -181,31 +179,31 @@ namespace BAPSCommon
             }
 
             // TODO(@MattWindsor91): use a Span once we move to netcore
-            return rxBytes;
+            return _rxBytes;
         }
 
         /// <summary>
         /// The low level socket connection
         /// </summary>
-        private Socket clientSocket =
+        private Socket _clientSocket =
             new Socket(AddressFamily.InterNetwork,
                                       SocketType.Stream,
                                       ProtocolType.Tcp);
         /// <summary>
         /// The receive buffer
         /// </summary>
-		private readonly byte[] rxBytes = new byte[MAX_RECEIVE_BUFFER];
+		private readonly byte[] _rxBytes = new byte[MaxReceiveBuffer];
 
         public void ShutdownReceive()
         {
             if (!IsValid) return;
-            clientSocket.Shutdown(SocketShutdown.Receive);
+            _clientSocket.Shutdown(SocketShutdown.Receive);
         }
 
         public void ShutdownSend()
         {
             if (!IsValid) return;
-            clientSocket.Shutdown(SocketShutdown.Send);
+            _clientSocket.Shutdown(SocketShutdown.Send);
         }
     }
 }

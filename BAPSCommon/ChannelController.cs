@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BAPSCommon
 {
@@ -14,39 +12,39 @@ namespace BAPSCommon
     /// </summary>
     public class ChannelController
     {
-        private readonly ushort _channelID;
+        private readonly ushort _channelId;
         private BlockingCollection<Message> _msgQueue;
         private ConfigCache _cache;
 
-        public ChannelController(ushort channelID, BlockingCollection<Message> msgQueue, ConfigCache cache)
+        public ChannelController(ushort channelId, BlockingCollection<Message> msgQueue, ConfigCache cache)
         {
-            _channelID = channelID;
+            _channelId = channelId;
             _msgQueue = msgQueue;
             _cache = cache;
         }
 
         public void Play()
         {
-            var cmd = Command.PLAYBACK | Command.PLAY | (Command)_channelID;
+            var cmd = Command.Playback | Command.Play | (Command)_channelId;
             _msgQueue.Add(new Message(cmd));
         }
 
         public void Pause()
         {
-            var cmd = Command.PLAYBACK | Command.PAUSE | (Command)_channelID;
+            var cmd = Command.Playback | Command.Pause | (Command)_channelId;
             _msgQueue.Add(new Message(cmd));
         }
 
         public void Stop()
         {
-            var cmd = Command.PLAYBACK | Command.STOP | (Command)_channelID;
+            var cmd = Command.Playback | Command.Stop | (Command)_channelId;
             _msgQueue.Add(new Message(cmd));
         }
 
         public void Select(uint index)
         {
-            var cmd = Command.PLAYBACK | Command.LOAD;
-            cmd |= (Command)(_channelID & 0x3f);
+            var cmd = Command.Playback | Command.Load;
+            cmd |= (Command)(_channelId & 0x3f);
             _msgQueue.Add(new Message(cmd).Add(index));
         }
 
@@ -59,14 +57,16 @@ namespace BAPSCommon
                     throw new ArgumentOutOfRangeException("type", type, "AutoAdvance must have Off or On flag");
                 return ConfigDescriptions.AutoAdvance;
             }
-            else if (type.HasFlag(ChannelConfigChangeType.PlayOnLoad))
+
+            if (type.HasFlag(ChannelConfigChangeType.PlayOnLoad))
             {
                 if (!(type.HasFlag(ChannelConfigChangeType.Off) ||
                       type.HasFlag(ChannelConfigChangeType.On)))
                     throw new ArgumentOutOfRangeException("type", type, "PlayOnLoad must have Off or On flag");
                 return ConfigDescriptions.PlayOnLoad;
             }
-            else if (type.HasFlag(ChannelConfigChangeType.Repeat))
+
+            if (type.HasFlag(ChannelConfigChangeType.Repeat))
             {
                 if (!(type.HasFlag(ChannelConfigChangeType.All) ||
                       type.HasFlag(ChannelConfigChangeType.One) ||
@@ -92,7 +92,7 @@ namespace BAPSCommon
             var optionDesc = GetChannelConfigOption(type);
             var choiceDesc = GetChannelConfigChoice(type);
 
-            _msgQueue.Add(_cache.MakeConfigChoiceMessage(optionDesc, choiceDesc, index: _channelID));
+            _msgQueue.Add(_cache.MakeConfigChoiceMessage(optionDesc, choiceDesc, index: _channelId));
         }
     }
 }

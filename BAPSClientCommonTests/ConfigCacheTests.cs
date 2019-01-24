@@ -37,23 +37,23 @@ namespace BAPSClientCommonTests
         }
 
         [Test, Combinatorial]
-        public void TestAddIntegralOptionDescription([Values(ConfigType.INT, ConfigType.CHOICE)] ConfigType type, [Values(true, false)] bool isIndexed)
+        public void TestAddIntegralOptionDescription([Values(ConfigType.Int, ConfigType.Choice)] ConfigType type, [Values(true, false)] bool isIndexed)
         {
             cache.AddOptionDescription(0, type, "Foo", isIndexed);
-            Assert.That(cache.GetValue<int>("Foo", isIndexed ? 0 : ConfigCache.NO_INDEX), Is.EqualTo(0));
+            Assert.That(cache.GetValue<int>("Foo", isIndexed ? 0 : ConfigCache.NoIndex), Is.EqualTo(0));
         }
 
         [Test, Combinatorial]
         public void TestAddStringOptionDescription([Values(true, false)] bool isIndexed)
         {
-            cache.AddOptionDescription(0, ConfigType.STR, "Foo", isIndexed);
-            Assert.That(cache.GetValue<string>("Foo", isIndexed ? 0 : ConfigCache.NO_INDEX), Is.Null);
+            cache.AddOptionDescription(0, ConfigType.Str, "Foo", isIndexed);
+            Assert.That(cache.GetValue<string>("Foo", isIndexed ? 0 : ConfigCache.NoIndex), Is.Null);
         }
 
         [Test]
         public void TestFindChoiceIndexFor([Values(true, false)] bool isIndexed)
         {
-            cache.AddOptionDescription(0, ConfigType.CHOICE, "Foobar", isIndexed);
+            cache.AddOptionDescription(0, ConfigType.Choice, "Foobar", isIndexed);
             cache.AddOptionChoice(0, 0, "Yes");
             cache.AddOptionChoice(0, 1, "No");
             Assert.That(cache.FindChoiceIndexFor("Foobar", "Yes"), Is.EqualTo(0));
@@ -63,7 +63,7 @@ namespace BAPSClientCommonTests
         [Test]
         public void TestGetSetNonIndexedChoiceById()
         {
-            cache.AddOptionDescription(0, ConfigType.CHOICE, "Foobar", false);
+            cache.AddOptionDescription(0, ConfigType.Choice, "Foobar", false);
             cache.AddOptionChoice(0, 0, "Yes");
             cache.AddOptionChoice(0, 1, "No");
             Assert.That(cache.GetValue<int>("Foobar"), Is.EqualTo(0));
@@ -74,7 +74,7 @@ namespace BAPSClientCommonTests
         [Test]
         public void TestGetSetNonIndexedChoiceByDescription()
         {
-            cache.AddOptionDescription(0, ConfigType.CHOICE, "Foobar", false);
+            cache.AddOptionDescription(0, ConfigType.Choice, "Foobar", false);
             cache.AddOptionChoice(0, 0, "Yes");
             cache.AddOptionChoice(0, 1, "No");
             Assert.That(cache.GetChoice("Foobar"), Is.EqualTo("Yes"));
@@ -85,7 +85,7 @@ namespace BAPSClientCommonTests
         [Test]
         public void TestSetIndexedChoiceIndependence()
         {
-            cache.AddOptionDescription(0, ConfigType.CHOICE, "Foobar", true);
+            cache.AddOptionDescription(0, ConfigType.Choice, "Foobar", true);
             cache.AddOptionChoice(0, 0, "Some");
             cache.AddOptionChoice(0, 1, "Most");
             cache.AddOptionChoice(0, 2, "All");
@@ -102,24 +102,24 @@ namespace BAPSClientCommonTests
         [Test]
         public void TestReceiverString()
         {
-            receiver.OnConfigOption(new ServerUpdates.ConfigOptionArgs(64, ConfigType.STR, "Barbaz", hasIndex: false));
+            receiver.OnConfigOption(new ServerUpdates.ConfigOptionArgs(64, ConfigType.Str, "Barbaz", hasIndex: false));
             Assert.That(cache.GetValue<string>("Barbaz"), Is.Null);
 
-            receiver.OnConfigSetting(new ServerUpdates.ConfigSettingArgs(64, ConfigType.STR, "FrankerZ"));
+            receiver.OnConfigSetting(new ServerUpdates.ConfigSettingArgs(64, ConfigType.Str, "FrankerZ"));
             Assert.That(cache.GetValue<string>("Barbaz"), Is.EqualTo("FrankerZ"));
         }
 
         [Test]
         public void TestReceiverChoice()
         {
-            receiver.OnConfigOption(new ServerUpdates.ConfigOptionArgs(99, ConfigType.CHOICE, "Keepo", hasIndex: false));
+            receiver.OnConfigOption(new ServerUpdates.ConfigOptionArgs(99, ConfigType.Choice, "Keepo", hasIndex: false));
 
             receiver.OnConfigChoice(new ServerUpdates.ConfigChoiceArgs(99, 0, "Yes"));
             receiver.OnConfigChoice(new ServerUpdates.ConfigChoiceArgs(99, 1, "No"));
             Assert.That(cache.FindChoiceIndexFor("Keepo", "Yes"), Is.EqualTo(0), "Choice index for 'yes' incorrect");
             Assert.That(cache.FindChoiceIndexFor("Keepo", "No"), Is.EqualTo(1), "Choice index for 'no' incorrect");
 
-            receiver.OnConfigSetting(new ServerUpdates.ConfigSettingArgs(99, ConfigType.CHOICE, 1));
+            receiver.OnConfigSetting(new ServerUpdates.ConfigSettingArgs(99, ConfigType.Choice, 1));
             Assert.That(cache.GetValue<int>("Keepo"), Is.EqualTo(1), "Choice hasn't changed");
         }
 

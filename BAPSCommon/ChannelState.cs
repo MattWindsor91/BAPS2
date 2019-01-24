@@ -19,11 +19,11 @@ namespace BAPSCommon
             switch (pt)
             {
                 case ChannelState.Playing:
-                    return Command.PLAY;
+                    return Command.Play;
                 case ChannelState.Paused:
-                    return Command.PAUSE;
+                    return Command.Pause;
                 case ChannelState.Stopped:
-                    return Command.STOP;
+                    return Command.Stop;
                 default:
                     throw new ArgumentOutOfRangeException("this", pt, "Not a valid channel state");
             }
@@ -31,13 +31,13 @@ namespace BAPSCommon
 
         public static ChannelState AsChannelState(this Command c)
         {
-            switch (c & Command.PLAYBACK_OPMASK)
+            switch (c & Command.PlaybackOpMask)
             {
-                case Command.PLAY:
+                case Command.Play:
                     return ChannelState.Playing;
-                case Command.PAUSE:
+                case Command.Pause:
                     return ChannelState.Paused;
-                case Command.STOP:
+                case Command.Stop:
                     return ChannelState.Stopped;
                 default:
                     throw new ArgumentOutOfRangeException("this", c, "Command is not a valid channel state");

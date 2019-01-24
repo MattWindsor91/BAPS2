@@ -67,7 +67,7 @@ namespace BAPSPresenter2
                 }
                 else processUserResult(e.resultCode, e.description);
             };
-            r.IPRestriction += (sender, e) =>
+            r.IpRestriction += (sender, e) =>
             {
                 if (InvokeRequired)
                 {
@@ -91,7 +91,7 @@ namespace BAPSPresenter2
                 cd.closeMutex.WaitOne();
                 if (cd.Visible)
                 {
-                    cd.Invoke((Action<uint, int, string>)configDialog.addChoice, e.OptionID, (int)e.ChoiceID, e.ChoiceDescription);
+                    cd.Invoke((Action<uint, int, string>)configDialog.addChoice, e.OptionId, (int)e.ChoiceId, e.ChoiceDescription);
                 }
             }
 #if !DEBUG
@@ -146,12 +146,12 @@ namespace BAPSPresenter2
                     if (e.HasIndex)
                     {
                         /** Indexed option - does not update the form UI just data **/
-                        cd.addOption(new ConfigOptionInfo((int)e.OptionID, e.Description, (int)e.Type, e.Index));
+                        cd.addOption(new ConfigOptionInfo((int)e.OptionId, e.Description, (int)e.Type, e.Index));
                     }
                     else
                     {
                         /** Non indexed option - does not update the form ui just data **/
-                        cd.addOption(new ConfigOptionInfo((int)e.OptionID, e.Description, (int)e.Type));
+                        cd.addOption(new ConfigOptionInfo((int)e.OptionId, e.Description, (int)e.Type));
                     }
                     /** The configDialog form knows how many options it is expecting and
                         will report true when it has them all, at this point it is able to
@@ -232,18 +232,18 @@ namespace BAPSPresenter2
                         {
                             switch (e.Type)
                             {
-                                case ConfigType.INT:
-                                case ConfigType.CHOICE:
+                                case ConfigType.Int:
+                                case ConfigType.Choice:
                                     {
                                         /** Box it up and send it off, choices can be treated as
                                             just ints because that is the underlying datatype
                                         **/
-                                        configDialog.Invoke((Action<uint, int, int>)configDialog.setValue, e.OptionID, e.Index, (int)e.Value);
+                                        configDialog.Invoke((Action<uint, int, int>)configDialog.setValue, e.OptionId, e.Index, (int)e.Value);
                                     }
                                     break;
-                                case ConfigType.STR:
+                                case ConfigType.Str:
                                     {
-                                        configDialog.Invoke((Action<uint, int, string>)configDialog.setValue, e.OptionID, e.Index, (string)e.Value);
+                                        configDialog.Invoke((Action<uint, int, string>)configDialog.setValue, e.OptionId, e.Index, (string)e.Value);
                                     }
                                     break;
                             }
@@ -253,15 +253,15 @@ namespace BAPSPresenter2
                             /** Non indexed settings, just box them up and send them off **/
                             switch (e.Type)
                             {
-                                case ConfigType.INT:
-                                case ConfigType.CHOICE:
+                                case ConfigType.Int:
+                                case ConfigType.Choice:
                                     {
-                                        configDialog.Invoke((Action<uint, int>)configDialog.setValue, e.OptionID, (int)e.Value);
+                                        configDialog.Invoke((Action<uint, int>)configDialog.setValue, e.OptionId, (int)e.Value);
                                     }
                                     break;
-                                case ConfigType.STR:
+                                case ConfigType.Str:
                                     {
-                                        configDialog.Invoke((Action<uint, string>)configDialog.setValue, e.OptionID, (string)e.Value);
+                                        configDialog.Invoke((Action<uint, string>)configDialog.setValue, e.OptionId, (string)e.Value);
                                     }
                                     break;
                             }
@@ -382,7 +382,7 @@ namespace BAPSPresenter2
             var s = securityDialog;
             if (s == null) return;
             if (s.IsDisposed || !s.IsHandleCreated) return;
-            var target = cmd.HasFlag(Command.CONFIG_USEVALUEMASK)
+            var target = cmd.HasFlag(Command.ConfigUseValueMask)
                 ? (Action<uint>)s.receiveIPDenyCount
                 : s.receiveIPAllowCount;
             if (s.InvokeRequired)
@@ -397,7 +397,7 @@ namespace BAPSPresenter2
             var s = securityDialog;
             if (s == null) return;
             if (s.IsDisposed || !s.IsHandleCreated) return;
-            var target = cmd.HasFlag(Command.CONFIG_USEVALUEMASK)
+            var target = cmd.HasFlag(Command.ConfigUseValueMask)
                 ? (Action<string, uint>)s.receiveIPDeny
                 : s.receiveIPAllow;
             if (s.InvokeRequired)

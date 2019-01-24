@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Net.Sockets;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
 
 namespace BAPSCommon
@@ -66,11 +68,11 @@ namespace BAPSCommon
         private readonly Func<Response> _loginCallback;
         private readonly CancellationToken _token;
 
-        private bool done = false;
-        private string lastServer = null;
-        private int lastPort = -1;
-        private string seed = null;
-        private ClientSocket sock = null;
+        private bool _done;
+        private string _lastServer;
+        private int _lastPort = -1;
+        private string _seed;
+        private ClientSocket _sock;
 
         /// <summary>
         /// Tries to construct an authenticated <see cref="ClientSocket"/>.
@@ -78,20 +80,20 @@ namespace BAPSCommon
         /// <returns>Null, if we gave up trying to log in; a connected and ready client socket, otherwise.</returns>
         public ClientSocket Run()
         {
-            while (!done) Attempt();
-            return sock; // may be null if we gave up
+            while (!_done) Attempt();
+            return _sock; // may be null if we gave up
         }
 
         private void DisposeSocketIfExists()
         {
-            sock?.Dispose();
-            sock = null;
+            _sock?.Dispose();
+            _sock = null;
         }
 
         private bool NeedNewConnection(Response response)
         {
             if (!ConnectionReady) return true;
-            return lastServer != response.Server || lastPort != response.Port;
+            return _lastServer != response.Server || _lastPort != response.Port;
         }
 
         private void MakeNewConnectionIfNeeded(Response response)
@@ -106,13 +108,13 @@ namespace BAPSCommon
         {
             try
             {
-                sock = new ClientSocket(server, port, _token, _token);
+                _sock = new ClientSocket(server, port, _token, _token);
             } catch (SocketException e)
             {
                 /** If an error occurs just give the exception message and start again **/
                 var errorMessage = $"System Error:\n{e.Message}\nStack Trace:\n{e.StackTrace}";
                 ServerError?.Invoke(this, errorMessage);
-                sock = null;
+                _sock = null;
                 return;
             }
 
@@ -120,22 +122,22 @@ namespace BAPSCommon
                 that does not follow the 'command' 'command-length' 'argument1'...
                 structure
              **/
-            var greeting = sock.ReceiveS();
-            var binaryModeCmd = new Message(Command.SYSTEM | Command.SETBINARYMODE);
-            binaryModeCmd.Send(sock);
+            _ = _sock.ReceiveS();
+            var binaryModeCmd = new Message(Command.System | Command.SetBinaryMode);
+            binaryModeCmd.Send(_sock);
             /** Receive what should be the SEED command **/
-            var seedCmd = sock.ReceiveC();
+            var seedCmd = _sock.ReceiveC();
             /** Receive the length of the seed command **/
-            sock.ReceiveI();
+            _sock.ReceiveI();
             /** Verify the server is sending what we expect **/
-            if ((seedCmd & (Command.GROUPMASK | Command.SYSTEM_OPMASK)) != (Command.SYSTEM | Command.SEED))
+            if ((seedCmd & (Command.GroupMask | Command.SystemOpMask)) != (Command.System | Command.Seed))
             {
                 IncompatibleLoginProcedure();
                 return;
             }
 
-            seed = sock.ReceiveS();
-            Debug.Assert(seed != null, "Got a null seed despite making a connection");
+            _seed = _sock.ReceiveS();
+            Debug.Assert(_seed != null, "Got a null seed despite making a connection");
         }
 
         private void IncompatibleLoginProcedure()
@@ -143,10 +145,10 @@ namespace BAPSCommon
             ServerError?.Invoke(this, "Server login procedure is not compatible with this client.");
             // Force a re-connect next time.
             DisposeSocketIfExists();
-            seed = null;
+            _seed = null;
         }
 
-        private bool ConnectionReady => sock != null && seed != null;
+        private bool ConnectionReady => _sock != null && _seed != null;
 
         private void Attempt()
         {
@@ -154,27 +156,27 @@ namespace BAPSCommon
             if (result.IsGivingUp)
             {
                 DisposeSocketIfExists();
-                done = true;
+                _done = true;
                 return;
             }
 
-            Debug.Assert(!done, "should only be done if we gave up or a previous attempt succeeded");
+            Debug.Assert(!_done, "should only be done if we gave up or a previous attempt succeeded");
 
             MakeNewConnectionIfNeeded(result);
-            lastServer = result.Server;
-            lastPort = result.Port;
+            _lastServer = result.Server;
+            _lastPort = result.Port;
 
             if (!ConnectionReady) return;
             TryLogin(result.Username, result.Password);
         }
 
         /** Generate an md5 sum of the raw argument **/
-        private string Md5sum(string raw)
+        private string Md5Sum(string raw)
         {
-            var md5serv = System.Security.Cryptography.MD5.Create();
-            var stringbuff = new System.Text.StringBuilder();
-            var buffer = System.Text.Encoding.ASCII.GetBytes(raw);
-            var hash = md5serv.ComputeHash(buffer);
+            var md5Serv = MD5.Create();
+            var stringbuff = new StringBuilder();
+            var buffer = Encoding.ASCII.GetBytes(raw);
+            var hash = md5Serv.ComputeHash(buffer);
 
             foreach (var h in hash)
             {
@@ -186,25 +188,25 @@ namespace BAPSCommon
         private void TryLogin(string username, string password)
         {
             Debug.Assert(ConnectionReady, "tried to login without a waiting connection");
-            var securedPassword = Md5sum(string.Concat(seed, Md5sum(password)));
+            var securedPassword = Md5Sum(string.Concat(_seed, Md5Sum(password)));
 
-            var loginCmd = new Message(Command.SYSTEM | Command.LOGIN).Add(username).Add(securedPassword);
-            loginCmd.Send(sock);
+            var loginCmd = new Message(Command.System | Command.Login).Add(username).Add(securedPassword);
+            loginCmd.Send(_sock);
 
-            var authResult = sock.ReceiveC();
+            var authResult = _sock.ReceiveC();
             /** Verify it is what we expected **/
-            if ((authResult & (Command.GROUPMASK | Command.SYSTEM_OPMASK)) != (Command.SYSTEM | Command.LOGINRESULT))
+            if ((authResult & (Command.GroupMask | Command.SystemOpMask)) != (Command.System | Command.LoginResult))
             {
                 IncompatibleLoginProcedure();
                 return;
             }
 
             /** Receive the result command length **/
-            sock.ReceiveI();
+            _sock.ReceiveI();
             /** Receive the description of the result code **/
-            var description = sock.ReceiveS();
+            var description = _sock.ReceiveS();
             /** Check the value for '0' meaning success **/
-            var authenticated = (authResult & Command.SYSTEM_VALUEMASK) == 0;
+            var authenticated = (authResult & Command.SystemValueMask) == 0;
             if (!authenticated)
             {
                 UserError?.Invoke(this, description);
@@ -212,8 +214,7 @@ namespace BAPSCommon
             }
 
             Debug.Assert(ConnectionReady, "was about to hand over a non-ready connection");
-            done = true;
-            return;
+            _done = true;
         }
     }
 }

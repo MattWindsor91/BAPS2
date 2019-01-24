@@ -248,7 +248,7 @@ namespace BAPSPresenter2
                 case ServerUpdates.CountType.ConfigOption:
                     processOptionCount(e.Count);
                     break;
-                case ServerUpdates.CountType.IPRestriction:
+                case ServerUpdates.CountType.IpRestriction:
                     break;
                 case ServerUpdates.CountType.LibraryItem:
                     setLibraryResultCount((int)e.Count);
@@ -281,7 +281,7 @@ namespace BAPSPresenter2
                 case ServerUpdates.ErrorType.Library:
                     notifyLibraryError(e.Code, e.Description);
                     break;
-                case ServerUpdates.ErrorType.BapsDB:
+                case ServerUpdates.ErrorType.BapsDb:
                     notifyLoadShowError(e.Code, e.Description);
                     break;
                 case ServerUpdates.ErrorType.Config:

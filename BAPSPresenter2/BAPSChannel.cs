@@ -221,16 +221,16 @@ namespace BAPSPresenter2
             OpRequest?.Invoke(this, new ChannelOperationLookup(ChannelID, (ushort)command));
         }
 
-        private void playButton_Click(object sender, EventArgs e) => RequestOp(Command.PLAY);
+        private void playButton_Click(object sender, EventArgs e) => RequestOp(Command.Play);
         private void pauseButton_Click(object sender, EventArgs e)
         {
             trackList.ClearPendingLoadRequest();
-            RequestOp(Command.PAUSE);
+            RequestOp(Command.Pause);
         }
         private void stopButton_Click(object sender, EventArgs e)
         {
             trackList.ClearPendingLoadRequest();
-            RequestOp(Command.STOP);
+            RequestOp(Command.Stop);
         }
 
         private void Length_MouseDown(object sender, MouseEventArgs e)
@@ -314,7 +314,7 @@ namespace BAPSPresenter2
         private void OnPositionChanged(object sender, PositionRequestChangeEventArgs e)
         {
             Debug.Assert(sender == trackTime, "Got position change request from unexpected place");
-            Debug.Assert(e.ChannelID == ChannelID, "Got position change request for unexpected channel");
+            Debug.Assert(e.ChannelId == ChannelID, "Got position change request for unexpected channel");
             PositionRequestChange?.Invoke(this, e);
         }
 
@@ -473,7 +473,7 @@ namespace BAPSPresenter2
             if (valuesecs > 3595)
             {
                 cds.running = false;
-                RequestOp(Command.PLAY);
+                RequestOp(Command.Play);
             }
             length.Text = string.Concat((valuesecs / 60).ToString("00"), ":", (valuesecs % 60).ToString("00"));
 

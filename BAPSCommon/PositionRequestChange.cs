@@ -9,7 +9,7 @@ namespace BAPSCommon
     {
         Position,
         Cue,
-        Intro,
+        Intro
     }
 
     public static class PositionTypeExtensions
@@ -19,11 +19,11 @@ namespace BAPSCommon
             switch (pt)
             {
                 case PositionType.Position:
-                    return Command.POSITION;
+                    return Command.Position;
                 case PositionType.Cue:
-                    return Command.CUEPOSITION;
+                    return Command.CuePosition;
                 case PositionType.Intro:
-                    return Command.INTROPOSITION;
+                    return Command.IntroPosition;
                 default:
                     throw new ArgumentOutOfRangeException("this", pt, "Not a valid position type");
             }
@@ -31,13 +31,13 @@ namespace BAPSCommon
 
         public static PositionType AsPositionType(this Command c)
         {
-            switch (c & Command.PLAYBACK_OPMASK)
+            switch (c & Command.PlaybackOpMask)
             {
-                case Command.POSITION:
+                case Command.Position:
                     return PositionType.Position;
-                case Command.CUEPOSITION:
+                case Command.CuePosition:
                     return PositionType.Cue;
-                case Command.INTROPOSITION:
+                case Command.IntroPosition:
                     return PositionType.Intro;
                 default:
                     throw new ArgumentOutOfRangeException("this", c, "Command is not a valid position type");
@@ -54,7 +54,7 @@ namespace BAPSCommon
         /// <summary>
         /// The ID of the channel from where the request originates.
         /// </summary>
-        public ushort ChannelID { get; }
+        public ushort ChannelId { get; }
 
         /// <summary>
         /// The type of requested position change.
@@ -66,9 +66,9 @@ namespace BAPSCommon
         /// </summary>
         public int Value { get; }
 
-        public PositionRequestChangeEventArgs(ushort channelID, PositionType type, int newValue) : base()
+        public PositionRequestChangeEventArgs(ushort channelId, PositionType type, int newValue)
         {
-            ChannelID = channelID;
+            ChannelId = channelId;
             ChangeType = type;
             Value = newValue;
         }

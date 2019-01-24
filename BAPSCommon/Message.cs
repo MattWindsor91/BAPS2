@@ -1,6 +1,7 @@
-﻿using System.Linq;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Text;
 
 namespace BAPSCommon
 {
@@ -17,35 +18,35 @@ namespace BAPSCommon
 
         private struct SArgument : IArgument
         {
-            public string value;
-            public int Length() => System.Text.Encoding.UTF8.GetByteCount(value) + sizeof(uint);
-            public void Send(ClientSocket sock) => sock.Send(value);
+            public string Value;
+            public int Length() => Encoding.UTF8.GetByteCount(Value) + sizeof(uint);
+            public void Send(ClientSocket sock) => sock.Send(Value);
         }
 
         private struct U32Argument : IArgument
         {
-            public uint value;
+            public uint Value;
             public int Length() => sizeof(uint);
-            public void Send(ClientSocket sock) => sock.Send(value);
+            public void Send(ClientSocket sock) => sock.Send(Value);
         }
 
         private struct FArgument : IArgument
         {
-            public float value;
+            public float Value;
             public int Length() => sizeof(float);
-            public void Send(ClientSocket sock) => sock.Send(value);
+            public void Send(ClientSocket sock) => sock.Send(Value);
         }
 
-        private readonly Command cmd;
-        private Queue<IArgument> args = new Queue<IArgument>();
+        private readonly Command _cmd;
+        private readonly Queue<IArgument> _args = new Queue<IArgument>();
 
         /// <summary>
         /// Constructs a message containing the given command word.
         /// </summary>
-        /// <param name="_cmd">The command word.</param>
-        public Message(Command _cmd)
+        /// <param name="cmd">The command word.</param>
+        public Message(Command cmd)
         {
-            cmd = _cmd;
+            _cmd = cmd;
         }
 
         /// <summary>
@@ -53,14 +54,14 @@ namespace BAPSCommon
         /// </summary>
         /// <param name="value">The string to add to the message.</param>
         /// <returns>This.</returns>
-        public Message Add(string value) => Add(new SArgument { value = value });
+        public Message Add(string value) => Add(new SArgument { Value = value });
 
         /// <summary>
         /// Adds an unsigned integer to this message.
         /// </summary>
         /// <param name="value">The string to add to the message.</param>
         /// <returns>This.</returns>
-        public Message Add(uint value) => Add(new U32Argument { value = value });
+        public Message Add(uint value) => Add(new U32Argument { Value = value });
 
 
         /// <summary>
@@ -68,7 +69,7 @@ namespace BAPSCommon
         /// </summary>
         /// <param name="value">The float to add to the message.</param>
         /// <returns>This.</returns>
-        public Message Add(float value) => Add(new FArgument { value = value });
+        public Message Add(float value) => Add(new FArgument { Value = value });
 
         /// <summary>
         /// Sends this command over a client socket.
@@ -76,21 +77,21 @@ namespace BAPSCommon
         /// <param name="sock">The socket to send onto.</param>
         public void Send(ClientSocket sock)
         {
-            sock.Send(cmd);
+            sock.Send(_cmd);
             SendLength(sock);
-            foreach (var arg in args) arg.Send(sock);
+            foreach (var arg in _args) arg.Send(sock);
         }
 
         private void SendLength(ClientSocket sock)
         {
-            int length = (from arg in args select arg.Length()).Sum();
+            var length = (from arg in _args select arg.Length()).Sum();
             Debug.Assert(0 <= length, "negative length");
             sock.Send((uint)length);
         }
 
         private Message Add(IArgument arg)
         {
-            args.Enqueue(arg);
+            _args.Enqueue(arg);
             return this;
         }
     }

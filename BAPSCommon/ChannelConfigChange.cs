@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BAPSCommon
 {
@@ -32,7 +30,7 @@ namespace BAPSCommon
         PlayOnLoadOff  = PlayOnLoad  | Off,
         RepeatNone     = Repeat      | None,
         RepeatOne      = Repeat      | One,
-        RepeatAll      = Repeat      | All,
+        RepeatAll      = Repeat      | All
     }
 
     /// <summary>
@@ -40,12 +38,12 @@ namespace BAPSCommon
     /// </summary>
     public class ChannelConfigChangeArgs : EventArgs
     {
-        public ushort ChannelID { get; }
+        public ushort ChannelId { get; }
         public ChannelConfigChangeType Type { get; }
 
-        public ChannelConfigChangeArgs(ushort channelID, ChannelConfigChangeType type) : base()
+        public ChannelConfigChangeArgs(ushort channelId, ChannelConfigChangeType type)
         {
-            ChannelID = ChannelID;
+            ChannelId = ChannelId;
             Type = type;
         }
     }

@@ -11,16 +11,16 @@ namespace BAPSCommon
     /// </summary>
     public class ClientCore : IDisposable
     {
-        private Authenticator _auth = null;
+        private Authenticator _auth;
         private CancellationTokenSource _dead = new CancellationTokenSource();
 
-        private Sender _sender = null;
-        private Task _senderTask = null;
+        private Sender _sender;
+        private Task _senderTask;
 
-        private Receiver _receiver = null;
-        private Task _receiverTask = null;
+        private Receiver _receiver;
+        private Task _receiverTask;
 
-        private ClientSocket _socket = null;
+        private ClientSocket _socket;
 
         /// <summary>
         /// A thread-safe queue for outgoing BAPSnet messages.
@@ -86,12 +86,12 @@ namespace BAPSCommon
         private void EnqueueAutoUpdate()
         {
             // Add the autoupdate message onto the queue (chat(2) and general(1))
-            Command cmd = Command.SYSTEM | Command.AUTOUPDATE | (Command)2 | (Command)1;
+            Command cmd = Command.System | Command.AutoUpdate | (Command)2 | (Command)1;
             SendQueue.Add(new Message(cmd));
             for (int i = 0; i < 3; i++)
             {
                 /** Add the refresh folder onto the queue **/
-                cmd = Command.SYSTEM | Command.LISTFILES | (Command)i;
+                cmd = Command.System | Command.ListFiles | (Command)i;
                 SendQueue.Add(new Message(cmd));
             }
         }
@@ -101,7 +101,7 @@ namespace BAPSCommon
         /// </summary>
         private void NotifyServerOfQuit()
         {
-            var cmd = Command.SYSTEM | Command.END;
+            var cmd = Command.System | Command.End;
             SendQueue.Add(new Message(cmd).Add("Normal Termination"));
         }
 
@@ -140,11 +140,11 @@ namespace BAPSCommon
         }
 
         #region IDisposable Support
-        private bool disposedValue = false; // To detect redundant calls
+        private bool _disposedValue; // To detect redundant calls
 
         protected virtual void Dispose(bool disposing)
         {
-            if (disposedValue) return;
+            if (_disposedValue) return;
 
             if (disposing)
             {
@@ -154,7 +154,7 @@ namespace BAPSCommon
                 _socket?.Dispose();
             }
 
-            disposedValue = true;
+            _disposedValue = true;
         }
 
         // This code added to correctly implement the disposable pattern.

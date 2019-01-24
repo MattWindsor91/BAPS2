@@ -1,231 +1,223 @@
-﻿namespace BAPSCommon
+﻿using System;
+
+namespace BAPSCommon
 {
     public enum CommandGroup : ushort
     {
         Playback = 0,
         Playlist = 1,
-        BText    = 2,
         Database = 3,
         Config   = 5,
-        System   = 7,
+        System   = 7
     }
 
+    [Flags]
     public enum Command : ushort
     {
         /**
          * MASKS
          **/
-        GROUPMASK            = 0b11100000_00000000, // 14th bit onwards, hence shift is 13
-        PLAYBACK_OPMASK      = 0b00011111_10000000,
-        PLAYBACK_MODEMASK    = 0b00000000_01000000,
-        PLAYBACK_CHANNELMASK = 0b00000000_00111111,
-        PLAYLIST_OPMASK      = 0b00011111_10000000,
-        PLAYLIST_MODEMASK    = 0b00000000_01000000,
-        PLAYLIST_CHANNELMASK = 0b00000000_00111111,
-        TEXT_OPMASK          = 0b00011100_00000000,
-        DATABASE_OPMASK      = 0b00011111_00000000,
-        DATABASE_MODEMASK    = 0b00000000_10000000,
-        DATABASE_VALUEMASK   = 0b00000000_01111111,
-        CONFIG_OPMASK        = 0b00011111_00000000,
-        CONFIG_MODEMASK      = 0b00000000_10000000,
-        CONFIG_USEVALUEMASK  = 0b00000000_01000000,
-        CONFIG_VALUEMASK     = 0b00000000_00111111,
-        SYSTEM_OPMASK        = 0b00011111_00000000,
-        SYSTEM_MODEMASK      = 0b00000000_10000000,
-        SYSTEM_VALUEMASK     = 0b00000000_01111111,
+        GroupMask           = 0b11100000_00000000, // 14th bit onwards, hence shift is 13
+        PlaybackOpMask      = 0b00011111_10000000,
+        PlaybackModeMask    = 0b00000000_01000000,
+        PlaybackChannelMask = 0b00000000_00111111,
+        PlaylistOpMask      = 0b00011111_10000000,
+        PlaylistModeMask    = 0b00000000_01000000,
+        PlaylistChannelMask = 0b00000000_00111111,
+        TextOpMask          = 0b00011100_00000000,
+        DatabaseOpMask      = 0b00011111_00000000,
+        DatabaseModeMask    = 0b00000000_10000000,
+        DatabaseValueMask   = 0b00000000_01111111,
+        ConfigOpMask        = 0b00011111_00000000,
+        ConfigModeMask      = 0b00000000_10000000,
+        ConfigUseValueMask  = 0b00000000_01000000,
+        ConfigValueMask     = 0b00000000_00111111,
+        SystemOpMask        = 0b00011111_00000000,
+        SystemModeMask      = 0b00000000_10000000,
+        SystemValueMask     = 0b00000000_01111111,
 
         /**
          * Operation categories
          **/
-        PLAYBACK = CommandGroup.Playback << 13,
-        PLAYLIST = CommandGroup.Playlist << 13,
-        BTEXT    = CommandGroup.BText    << 13,
-        DATABASE = CommandGroup.Database << 13,
-        CONFIG   = CommandGroup.Config   << 13,
-        SYSTEM   = CommandGroup.System   << 13,
+        Playback = CommandGroup.Playback << 13,
+        Playlist = CommandGroup.Playlist << 13,
+        Database = CommandGroup.Database << 13,
+        Config   = CommandGroup.Config   << 13,
+        System   = CommandGroup.System   << 13,
 
         /**
          * Playback
          **/
-        PLAY     = 0 << 7,    //C-
-        STOP     = 1 << 7,    //C-
-        PAUSE    = 2 << 7,   //C-
-        POSITION = 3 << 7,  //SC-[0](set) u32int timeposition
+        Play     = 0 << 7,    //C-
+        Stop     = 1 << 7,    //C-
+        Pause    = 2 << 7,   //C-
+        Position = 3 << 7,  //SC-[0](set) u32int timeposition
 
         //C -[1](get)
-        VOLUME = 4 << 7,  //SC-[0](set) float level
+        Volume = 4 << 7,  //SC-[0](set) float level
 
         //C -[1](get)
-        LOAD = 5 << 7,  //SC-[0](set) u32int playlistIndex
+        Load = 5 << 7,  //SC-[0](set) u32int playlistIndex
 
         //C -[1](get)
-        CUEPOSITION = 6 << 7,  //SC-[0](set) u32int cueposition
+        CuePosition = 6 << 7,  //SC-[0](set) u32int cueposition
 
         //C -[1](get)
-        INTROPOSITION = 7 << 7,  //SC-[0](set) u32int introposition
+        IntroPosition = 7 << 7,  //SC-[0](set) u32int introposition
 
         //C -[1](get)
 
         /**
          * Playlist
          **/
-        ADDITEM = 0 << 7,  //C-u32int itemtype [VOID]
+        AddItem = 0 << 7,  //C-u32int itemtype [VOID]
 
         //					[FILE]		u32int directory number, string filename
         //					[LIBRARY]	u32int searchItemIndex
         //					[TEXT]		string briefdescription, longstring details
-        DELETEITEM = 1 << 7,  //SC-u32int index
+        DeleteItem = 1 << 7,  //SC-u32int index
 
-        MOVEITEMTO = 2 << 7,  //C-u32int oldIndex, u32int newIndex
-        ITEM = 3 << 7,    //S-[0](count)	u32int count
+        MoveItemTo = 2 << 7,  //C-u32int oldIndex, u32int newIndex
+        Item = 3 << 7,    //S-[0](count)	u32int count
 
         //  [1](data)	u32int index, string name
         //C-[1](get)	u32int index
-        GETPLAYLIST = 4 << 7, //C-none
+        GetPlaylist = 4 << 7, //C-none
 
-        RESETPLAYLIST = 5 << 7,  //SC-none
-        COPYITEM = 6 << 7,  //C-u32int fromindex, u32int tochannel
+        ResetPlaylist = 5 << 7,  //SC-none
+        CopyItem = 6 << 7,  //C-u32int fromindex, u32int tochannel
 
         /** PLAYLIST ITEMS **/
-        VOIDITEM = 0,
-        FILEITEM = 1,
-        LIBRARYITEM = 2,
-        TEXTITEM = 3,
-        DIRECTLIBRARYITEM = 4,  // mattbw 2013-11-18; needed for direct library addition
-
-        /**
-         * Text
-         **/
-        AUTOTXTON = 0 << 10,  //UNUSED
-        AUTOTXTOFF = 1 << 10, //UNUSED
-        SENDTXTLIST = 2 << 10,    //UNSUED
-        READ = 3 << 10,   //UNSUED
-        UNREAD = 4 << 10, //UNUSED
+        VoidItem = 0,
+        FileItem = 1,
+        LibraryItem = 2,
+        TextItem = 3,
+        DirectLibraryItem = 4,  // mattbw 2013-11-18; needed for direct library addition
 
         /**
          * Database
          **/
-        LIBRARYSEARCH = 0 << 8,       //C  string artist, string title			MUSICLIBRESULT | LIBRARYERROR
-        LIBRARYORDERING = 1 << 8,     //C  [VALUE-maybedirty] u32int orderingfield, u32int reverseorder?
-        LIBRARYRESULT = 2 << 8,       //S  [0](count) u32int count
+        LibrarySearch = 0 << 8,       //C  string artist, string title			MUSICLIBRESULT | LIBRARYERROR
+        LibraryOrdering = 1 << 8,     //C  [VALUE-maybedirty] u32int orderingfield, u32int reverseorder?
+        LibraryResult = 2 << 8,       //S  [0](count) u32int count
 
         //   [1](data)[VALUE-maybedirty] u32int index, string description
-        LIBRARYERROR = 3 << 8,        //S  [-][VALUE-errorCode] string description
+        LibraryError = 3 << 8,        //S  [-][VALUE-errorCode] string description
 
-        GETSHOWS = 4 << 8,        //C  [-][VALUE-0]		{current user's shows)		SHOW
+        GetShows = 4 << 8,        //C  [-][VALUE-0]		{current user's shows)		SHOW
 
         //   [-][VALUE-1]		{system shows}				SHOW
         //   [-][VALUE-2]		string username				SHOW
-        SHOW = 5 << 8,        //S  [0](count)	u32int count
+        Show = 5 << 8,        //S  [0](count)	u32int count
 
         //   [1](data)	u32int showid, string description
-        GETLISTINGS = 6 << 8,     //C				u32int showid
+        GetListings = 6 << 8,     //C				u32int showid
 
-        LISTING = 7 << 8,     //S  [0](count) u32int count
+        Listing = 7 << 8,     //S  [0](count) u32int count
 
         //   [1](data)  u32int listingid, u32int channel, string description
-        ASSIGNLISTING = 8 << 8,       //C  [-][channel] u32int listingid
+        AssignListing = 8 << 8,       //C  [-][channel] u32int listingid
 
-        BAPSDBERROR = 9 << 8,     //S  [-][VALUE-errorCode] string description
+        BapsDbError = 9 << 8,     //S  [-][VALUE-errorCode] string description
 
         /**
          * Library orderings
         **/
-        ORDER_BYARTIST = 0,
-        ORDER_BYTITLE = 1,
-        ORDER_BYDATEADDED = 2,
-        ORDER_BYDATERELEASED = 3,
+        OrderByArtist = 0,
+        OrderByTitle = 1,
+        OrderByDateAdded = 2,
+        OrderByDateReleased = 3,
 
-        ORDER_ASCENDING = 0,
-        ORDER_DESCENDING = 1,
+        OrderAscending = 0,
+        OrderDescending = 1,
 
-        LIBRARY_MAYBEDIRTY = 1,
-        LIBRARY_DIRTY = 2,
+        LibraryMaybeDirty = 1,
+        LibraryDirty = 2,
 
         /**
          * Config
          **/
-        GETOPTIONS = 0 << 8,  //(no args)			OPTION (count-data)
-        GETOPTIONCHOICES = 1 << 8,    //u32int optionid 	OPTIONCHOICE (count-data)
-        GETCONFIGSETTINGS = 2 << 8,   //(no args)			CONFIGSETTING (count-data)
-        GETCONFIGSETTING = 3 << 8,    //u32int optionid	CONFIGSETTING
-        GETOPTION = 4 << 8,   //string optionName	OPTION CONFIGSETTING  (COUNT-DATA)
-        SETCONFIGVALUE = 5 << 8,  //[x][0/1](uses index)[6bit index]	u32int optionid, u32int type, [string value | u32int value] CONFIGRESULT
-        GETUSERS = 6 << 8,    //(no args)			USER (count-data)
-        GETPERMISSIONS = 7 << 8,  //(no args)			PERMISSION (count-data)
-        GETUSER = 8 << 8, //string username	USER
+        GetOptions = 0 << 8,  //(no args)			OPTION (count-data)
+        GetOptionChoices = 1 << 8,    //u32int optionid 	OPTIONCHOICE (count-data)
+        GetConfigSettings = 2 << 8,   //(no args)			CONFIGSETTING (count-data)
+        GetConfigSetting = 3 << 8,    //u32int optionid	CONFIGSETTING
+        GetOption = 4 << 8,   //string optionName	OPTION CONFIGSETTING  (COUNT-DATA)
+        SetConfigValue = 5 << 8,  //[x][0/1](uses index)[6bit index]	u32int optionid, u32int type, [string value | u32int value] CONFIGRESULT
+        GetUsers = 6 << 8,    //(no args)			USER (count-data)
+        GetPermissions = 7 << 8,  //(no args)			PERMISSION (count-data)
+        GetUser = 8 << 8, //string username	USER
 
-        ADDUSER = 9 << 8, //string username, string password		USERRESULT
-        REMOVEUSER = 10 << 8, //string username						USERRESULT
-        SETPASSWORD = 11 << 8,    //string username, string password		USERRESULT
-        GRANTPERMISSION = 12 << 8,    //string username, u32int permission	USERRESULT
-        REVOKEPERMISSION = 13 << 8,   //string username, u32int permission	USERRESULT
+        AddUser = 9 << 8, //string username, string password		USERRESULT
+        RemoveUser = 10 << 8, //string username						USERRESULT
+        SetPassword = 11 << 8,    //string username, string password		USERRESULT
+        GrantPermission = 12 << 8,    //string username, u32int permission	USERRESULT
+        RevokePermission = 13 << 8,   //string username, u32int permission	USERRESULT
 
-        OPTION = 16 << 8, // [0](count)		u32int count
+        Option = 16 << 8, // [0](count)		u32int count
 
         // [1](data)[0/1](uses index)[6bit index]	u32int optionid, string optionDesc, u32int type
-        OPTIONCHOICE = 17 << 8,   // [0](count)		u32int count
+        OptionChoice = 17 << 8,   // [0](count)		u32int count
 
         // [1](data)		u32int optionid, u32int optionValueid, string optionValueName
-        CONFIGSETTING = 18 << 8,  // [0](count)		u32int count
+        ConfigSetting = 18 << 8,  // [0](count)		u32int count
 
         // [1](data)[0/1](uses index)[6bit index]	u32int optionid, u32int type, [u32int value | string value]
-        USER = 19 << 8, // [0](count)		u32int count
+        User = 19 << 8, // [0](count)		u32int count
 
         // [1](data)		string username, u32int permission
-        PERMISSION = 20 << 8, // [0](count)		u32int count
+        Permission = 20 << 8, // [0](count)		u32int count
 
         // [1](data)		u32int permission, string name
-        USERRESULT = 21 << 8, // [RESULTVALUE] string resultText
+        UserResult = 21 << 8, // [RESULTVALUE] string resultText
 
-        CONFIGRESULT = 22 << 8, // [x][0/1](uses index)[6bit index] u32int optionid, u32int result
-        CONFIGERROR = 23 << 8, // [x][x][6bit errorcode]					string description
-        GETIPRESTRICTIONS = 24 << 8, // (no args)		IPRESTRICTION count/data *2(allow deny lists)
-        IPRESTRICTION = 25 << 8, // [0](count) [0/1](allow/deny) u32int count
+        ConfigResult = 22 << 8, // [x][0/1](uses index)[6bit index] u32int optionid, u32int result
+        ConfigError = 23 << 8, // [x][x][6bit errorcode]					string description
+        GetIpRestrictions = 24 << 8, // (no args)		IPRESTRICTION count/data *2(allow deny lists)
+        IpRestriction = 25 << 8, // [0](count) [0/1](allow/deny) u32int count
 
         // [1](data)  [0/1](allow/deny)	string ipaddress, u32int mask
-        ALTERIPRESTRICTION = 26 << 8, // [0/1](add/remove) [0/1](allow/deny) string ipaddress, u32int mask
+        AlterIpRestriction = 26 << 8, // [0/1](add/remove) [0/1](allow/deny) string ipaddress, u32int mask
 
         /**
          * System
          **/
-        LISTFILES = 0 << 8,   //C-[x][VALUE-dirnumber]
-        FILENAME = 1 << 8,    //S-[0](count)[VALUE-dirnumber] u32int count, string niceDirectoryName
+        ListFiles = 0 << 8,   //C-[x][VALUE-dirnumber]
+        Filename = 1 << 8,    //S-[0](count)[VALUE-dirnumber] u32int count, string niceDirectoryName
 
         //	[1](data) [VALUE-dirnumber] u32int index, string filename
-        SENDMESSAGE = 2 << 8, //C-	u32int clientid, string message
+        SendMessage = 2 << 8, //C-	u32int clientid, string message
 
-        AUTOUPDATE = 3 << 8,  //C-[VALUE-1](on)
+        AutoUpdate = 3 << 8,  //C-[VALUE-1](on)
 
         //  [VALUE-X](off)
-        END = 4 << 8, //CS-	string reason
+        End = 4 << 8, //CS-	string reason
 
-        SENDLOGMESSAGE = 5 << 8,  //S -	string description
-        SETBINARYMODE = 6 << 8,   //C-
-        SEED = 7 << 8,    //S- string encryptionSeed
-        LOGIN = 8 << 8,   //C- string username, string encryptedpass
-        LOGINRESULT = 9 << 8, //S- [VALUE-resultCode] string resultText
-        VERSION = 10 << 8, //C-
+        SendLogMessage = 5 << 8,  //S -	string description
+        SetBinaryMode = 6 << 8,   //C-
+        Seed = 7 << 8,    //S- string encryptionSeed
+        Login = 8 << 8,   //C- string username, string encryptedpass
+        LoginResult = 9 << 8, //S- [VALUE-resultCode] string resultText
+        Version = 10 << 8, //C-
 
         //S- string date, string time, string version, string author
-        FEEDBACK = 11 << 8, //C- string message
+        Feedback = 11 << 8, //C- string message
 
         //S- [VALUE-0/1] success/fail
-        CLIENTCHANGE = 12 << 8,   //S- [VALUE-0] string clientToRemove
+        ClientChange = 12 << 8,   //S- [VALUE-0] string clientToRemove
 
         //   [VALUE-1] string clientToAdd
-        SCROLLTEXT = 13 << 8, //S- [VALUE-0] scroll down
+        ScrollText = 13 << 8, //S- [VALUE-0] scroll down
 
         //   [VALUE-1] scroll up
-        TEXTSIZE = 14 << 8, //S- [VALUE-0] text smaller
+        TextSize = 14 << 8, //S- [VALUE-0] text smaller
 
         //	 [VALUE-1] text bigger
-        QUIT = 15 << 8, //(no args)
+        Quit = 15 << 8 //(no args)
     }
 
     public static class CommandExtensions
     {
-        public static CommandGroup Group(this Command cmd) => (CommandGroup)(((uint) (cmd & Command.GROUPMASK)) >> 13);
+        public static CommandGroup Group(this Command cmd) => (CommandGroup)(((uint) (cmd & Command.GroupMask)) >> 13);
 
         /// <summary>
         /// Returns the channel component of a BAPSnet command.
@@ -236,10 +228,10 @@
         /// </summary>
         /// <param name="cmd">The command to mask-off.</param>
         /// <returns>The channel component</returns>
-        public static ushort Channel(this Command cmd) => (ushort)(cmd & Command.PLAYBACK_CHANNELMASK);
+        public static ushort Channel(this Command cmd) => (ushort)(cmd & Command.PlaybackChannelMask);
 
-        public static byte DatabaseValue(this Command cmd) => (byte)(cmd & Command.DATABASE_VALUEMASK);
-        public static byte ConfigValue(this Command cmd) => (byte)(cmd & Command.CONFIG_VALUEMASK);
-        public static byte SystemValue(this Command cmd) => (byte)(cmd & Command.SYSTEM_VALUEMASK);
+        public static byte DatabaseValue(this Command cmd) => (byte)(cmd & Command.DatabaseValueMask);
+        public static byte ConfigValue(this Command cmd) => (byte)(cmd & Command.ConfigValueMask);
+        public static byte SystemValue(this Command cmd) => (byte)(cmd & Command.SystemValueMask);
     }
 }

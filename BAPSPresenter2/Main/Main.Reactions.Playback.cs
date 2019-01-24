@@ -69,21 +69,21 @@ namespace BAPSPresenter2
 
         private void showChannelOperation(object sender, ServerUpdates.ChannelStateEventArgs e)
         {
-            if (ChannelOutOfBounds(e.ChannelID)) return;
-            var chan = bapsChannels[e.ChannelID];
+            if (ChannelOutOfBounds(e.ChannelId)) return;
+            var chan = bapsChannels[e.ChannelId];
             switch (e.State)
             {
                 case ChannelState.Playing:
                     chan.ShowPlay();
-                    timeLine.Lock(e.ChannelID);
+                    timeLine.Lock(e.ChannelId);
                     break;
                 case ChannelState.Paused:
                     chan.ShowPause();
-                    timeLine.Unlock(e.ChannelID);
+                    timeLine.Unlock(e.ChannelId);
                     break;
                 case ChannelState.Stopped:
                     chan.ShowStop();
-                    timeLine.Unlock(e.ChannelID);
+                    timeLine.Unlock(e.ChannelId);
                     break;
             }
         }

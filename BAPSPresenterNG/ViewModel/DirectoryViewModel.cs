@@ -50,7 +50,7 @@ namespace BAPSPresenterNG.ViewModel
 
         private void HandleDirectoryFileAdd(ServerUpdates.DirectoryFileAddArgs e)
         {
-            if (e.DirectoryID != DirectoryID) return;
+            if (e.DirectoryId != DirectoryID) return;
             Files.Insert((int)e.Index, e.Description);
         }
 
@@ -66,7 +66,7 @@ namespace BAPSPresenterNG.ViewModel
         /// <param name="e">The server update payload</param>
         private void HandleDirectoryPrepare(ServerUpdates.DirectoryPrepareArgs e)
         {
-            if (e.DirectoryID != DirectoryID) return;
+            if (e.DirectoryId != DirectoryID) return;
             Files.Clear();
             Name = e.Name;
         }

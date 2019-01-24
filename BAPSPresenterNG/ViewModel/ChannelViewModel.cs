@@ -427,25 +427,25 @@ namespace BAPSPresenterNG.ViewModel
 
         private void HandleItemAdd(ServerUpdates.ItemAddEventArgs e)
         {
-            if (ChannelID != e.ChannelID) return;
+            if (ChannelID != e.ChannelId) return;
             UIDispatcher.Invoke(() => TrackList.Add(e.Item));
         }
 
         private void HandleItemMove(ServerUpdates.ItemMoveEventArgs e)
         {
-            if (ChannelID != e.ChannelID) return;
+            if (ChannelID != e.ChannelId) return;
             UIDispatcher.Invoke(() => TrackList.Move((int)e.Index, (int)e.NewIndex));
         }
 
         private void HandleItemDelete(ServerUpdates.ItemDeleteEventArgs e)
         {
-            if (ChannelID != e.ChannelID) return;
+            if (ChannelID != e.ChannelId) return;
             UIDispatcher.Invoke(() => TrackList.RemoveAt((int)e.Index));
         }
 
         private void HandleResetPlaylist(ServerUpdates.ChannelResetEventArgs e)
         {
-            if (ChannelID != e.ChannelID) return;
+            if (ChannelID != e.ChannelId) return;
             UIDispatcher.Invoke(() => TrackList.Clear());
         }
 
@@ -478,7 +478,7 @@ namespace BAPSPresenterNG.ViewModel
 
         private void HandleChannelState(ServerUpdates.ChannelStateEventArgs e)
         {
-            if (ChannelID != e.ChannelID) return;
+            if (ChannelID != e.ChannelId) return;
             State = e.State;
         }
 

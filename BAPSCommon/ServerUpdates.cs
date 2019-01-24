@@ -10,7 +10,7 @@
         public enum UpDown : byte
         {
             Down = 0,
-            Up = 1,
+            Up = 1
         }
 
         public enum CountType
@@ -22,7 +22,7 @@
             ConfigChoice,
             User,
             Permission,
-            IPRestriction
+            IpRestriction
         }
 
         public struct CountEventArgs { public CountType Type; public uint Count; public uint Extra; }
@@ -35,11 +35,11 @@
         public abstract class ConfigArgs
         {
             /// <summary>The ID of the option to update.</summary>
-            public uint OptionID { get; }
+            public uint OptionId { get; }
 
-            public ConfigArgs(uint optionID)
+            public ConfigArgs(uint optionId)
             {
-                OptionID = optionID;
+                OptionId = optionId;
             }
         }
 
@@ -51,17 +51,17 @@
             /// <summary>
             /// The ID of the choice to add or update.
             /// </summary>
-            public uint ChoiceID { get; }
+            public uint ChoiceId { get; }
 
             /// <summary>
             /// The new description of the choice.
             /// </summary>
             public string ChoiceDescription { get; }
 
-            public ConfigChoiceArgs(uint optionID, uint choiceID, string description)
-                : base(optionID)
+            public ConfigChoiceArgs(uint optionId, uint choiceId, string description)
+                : base(optionId)
             {
-                ChoiceID = choiceID;
+                ChoiceId = choiceId;
                 ChoiceDescription = description;
             }
         }
@@ -80,7 +80,7 @@
             /// <summary>If present and non-negative, the index of the option to set.</summary>
             public int Index { get; }
 
-            public ConfigTypeIndexArgs(uint optionID, ConfigType type, int index = -1) : base(optionID)
+            public ConfigTypeIndexArgs(uint optionId, ConfigType type, int index = -1) : base(optionId)
             {
                 Type = type;
                 Index = index;
@@ -95,8 +95,8 @@
             /// <summary>The new value to apply.</summary>
             public object Value;
 
-            public ConfigSettingArgs(uint optionID, ConfigType type, object value, int index = -1)
-                : base(optionID, type, index)
+            public ConfigSettingArgs(uint optionId, ConfigType type, object value, int index = -1)
+                : base(optionId, type, index)
             {
                 Value = value;
             }
@@ -115,8 +115,8 @@
             /// <summary>Whether the option has an index.</summary>
             public bool HasIndex { get; }
 
-            public ConfigOptionArgs(uint optionID, ConfigType type, string description, bool hasIndex, int index = -1)
-                : base(optionID, type, index)
+            public ConfigOptionArgs(uint optionId, ConfigType type, string description, bool hasIndex, int index = -1)
+                : base(optionId, type, index)
             {
                 Description = description;
                 HasIndex = hasIndex;
@@ -131,7 +131,7 @@
         public enum ErrorType
         {
             Library,
-            BapsDB,
+            BapsDb,
             Config
         }
 
@@ -148,10 +148,10 @@
 
         public abstract class ChannelEventArgs
         {
-            public ushort ChannelID { get; }
-            public ChannelEventArgs(ushort channelID)
+            public ushort ChannelId { get; }
+            public ChannelEventArgs(ushort channelId)
             {
-                ChannelID = channelID;
+                ChannelId = channelId;
             }
         }
 
@@ -165,7 +165,7 @@
             /// </summary>
             public ChannelState State { get; }
 
-            public ChannelStateEventArgs(ushort channelID, ChannelState state) : base(channelID)
+            public ChannelStateEventArgs(ushort channelId, ChannelState state) : base(channelId)
             {
                 State = state;
             }
@@ -183,14 +183,14 @@
         /// </summary>
         public class ChannelResetEventArgs : ChannelEventArgs
         {
-            public ChannelResetEventArgs(ushort channelID) : base(channelID) { }
+            public ChannelResetEventArgs(ushort channelId) : base(channelId) { }
         }
         public delegate void ChannelResetEventHandler(object sender, ChannelResetEventArgs e);
 
         public abstract class ItemEventArgs : ChannelEventArgs
         {
             public uint Index { get; }
-            public ItemEventArgs(ushort channelID, uint index) : base(channelID)
+            public ItemEventArgs(ushort channelId, uint index) : base(channelId)
             {
                 Index = index;
             }
@@ -202,8 +202,8 @@
         public class ItemAddEventArgs : ItemEventArgs
         {
             public TracklistItem Item { get; }
-            public ItemAddEventArgs(ushort channelID, uint index, TracklistItem item)
-                : base(channelID, index)
+            public ItemAddEventArgs(ushort channelId, uint index, TracklistItem item)
+                : base(channelId, index)
             {
                 Item = item;
             }
@@ -216,8 +216,8 @@
         public class ItemMoveEventArgs : ItemEventArgs
         {
             public uint NewIndex { get; }
-            public ItemMoveEventArgs(ushort channelID, uint fromIndex, uint toIndex)
-                : base(channelID, fromIndex)
+            public ItemMoveEventArgs(ushort channelId, uint fromIndex, uint toIndex)
+                : base(channelId, fromIndex)
             {
                 NewIndex = toIndex;
             }
@@ -229,7 +229,7 @@
         /// </summary>
         public class ItemDeleteEventArgs : ItemEventArgs
         {
-            public ItemDeleteEventArgs(ushort channelID, uint index) : base(channelID, index) { }
+            public ItemDeleteEventArgs(ushort channelId, uint index) : base(channelId, index) { }
         }
         public delegate void ItemDeleteEventHandler(object sender, ItemDeleteEventArgs e);
 
@@ -245,11 +245,11 @@
             /// <summary>
             /// The ID of the directory this update concerns.
             /// </summary>
-            public ushort DirectoryID { get; }
+            public ushort DirectoryId { get; }
 
-            public DirectoryArgs(ushort directoryID)
+            public DirectoryArgs(ushort directoryId)
             {
-                DirectoryID = directoryID;
+                DirectoryId = directoryId;
             }
         }
 
@@ -268,8 +268,8 @@
             /// </summary>
             public string Description { get; }
 
-            public DirectoryFileAddArgs(ushort directoryID, uint index, string description)
-                : base(directoryID)
+            public DirectoryFileAddArgs(ushort directoryId, uint index, string description)
+                : base(directoryId)
             {
                 Index = index;
                 Description = description;
@@ -289,8 +289,8 @@
             /// </summary>
             public string Name { get; }
 
-            public DirectoryPrepareArgs(ushort directoryID, string name)
-                : base(directoryID)
+            public DirectoryPrepareArgs(ushort directoryId, string name)
+                : base(directoryId)
             {
                 Name = name;
             }
