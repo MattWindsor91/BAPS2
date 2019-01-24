@@ -2,10 +2,10 @@
 {
     public abstract class TracklistItem
     {
-        public string Description { get; private set; }
+        public string Description { get; }
         public virtual string Text => "";
 
-        public TracklistItem(string description)
+        protected TracklistItem(string description)
         {
             Description = description;
         }

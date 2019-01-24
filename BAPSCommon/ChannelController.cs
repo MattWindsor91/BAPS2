@@ -4,17 +4,17 @@ using System.Collections.Concurrent;
 namespace BAPSCommon
 {
     /// <summary>
-    /// Abstraction between a channel user interface and the bapsnet protocol.
-    /// <para>
-    /// This class uses a blocking queue to talk to the
-    /// <see cref="Sender"/>, and thus should be thread-safe.
-    /// </para>
+    ///     Abstraction between a channel user interface and the BAPSNet protocol.
+    ///     <para>
+    ///         This class uses a blocking queue to talk to the
+    ///         <see cref="Sender" />, and thus should be thread-safe.
+    ///     </para>
     /// </summary>
     public class ChannelController
     {
+        private readonly ConfigCache _cache;
         private readonly ushort _channelId;
-        private BlockingCollection<Message> _msgQueue;
-        private ConfigCache _cache;
+        private readonly BlockingCollection<Message> _msgQueue;
 
         public ChannelController(ushort channelId, BlockingCollection<Message> msgQueue, ConfigCache cache)
         {
@@ -23,29 +23,43 @@ namespace BAPSCommon
             _cache = cache;
         }
 
+        /// <summary>
+        ///     Asks the server to set this channel's state to 'playing'.
+        /// </summary>
         public void Play()
         {
-            var cmd = Command.Playback | Command.Play | (Command)_channelId;
-            _msgQueue.Add(new Message(cmd));
+            SetState(ChannelState.Playing);
         }
 
+        /// <summary>
+        ///     Asks the server to set this channel's state to 'paused'.
+        /// </summary>
         public void Pause()
         {
-            var cmd = Command.Playback | Command.Pause | (Command)_channelId;
-            _msgQueue.Add(new Message(cmd));
+            SetState(ChannelState.Paused);
         }
 
+        /// <summary>
+        ///     Asks the server to set this channel's state to 'stopped'.
+        /// </summary>
         public void Stop()
         {
-            var cmd = Command.Playback | Command.Stop | (Command)_channelId;
-            _msgQueue.Add(new Message(cmd));
+            SetState(ChannelState.Stopped);
+        }
+
+        /// <summary>
+        ///     Asks the server to set this channel's state to <see cref="state" />.
+        /// </summary>
+        /// <param name="state">The intended new state of the channel.</param>
+        public void SetState(ChannelState state)
+        {
+            _msgQueue.Add(new Message(state.AsCommand().WithChannel(_channelId)));
         }
 
         public void Select(uint index)
         {
-            var cmd = Command.Playback | Command.Load;
-            cmd |= (Command)(_channelId & 0x3f);
-            _msgQueue.Add(new Message(cmd).Add(index));
+            const Command cmd = Command.Playback | Command.Load;
+            _msgQueue.Add(new Message(cmd.WithChannel(_channelId)).Add(index));
         }
 
         private string GetChannelConfigOption(ChannelConfigChangeType type)
@@ -54,7 +68,7 @@ namespace BAPSCommon
             {
                 if (!(type.HasFlag(ChannelConfigChangeType.Off) ||
                       type.HasFlag(ChannelConfigChangeType.On)))
-                    throw new ArgumentOutOfRangeException("type", type, "AutoAdvance must have Off or On flag");
+                    throw new ArgumentOutOfRangeException(nameof(type), type, "AutoAdvance must have Off or On flag");
                 return ConfigDescriptions.AutoAdvance;
             }
 
@@ -62,7 +76,7 @@ namespace BAPSCommon
             {
                 if (!(type.HasFlag(ChannelConfigChangeType.Off) ||
                       type.HasFlag(ChannelConfigChangeType.On)))
-                    throw new ArgumentOutOfRangeException("type", type, "PlayOnLoad must have Off or On flag");
+                    throw new ArgumentOutOfRangeException(nameof(type), type, "PlayOnLoad must have Off or On flag");
                 return ConfigDescriptions.PlayOnLoad;
             }
 
@@ -71,10 +85,12 @@ namespace BAPSCommon
                 if (!(type.HasFlag(ChannelConfigChangeType.All) ||
                       type.HasFlag(ChannelConfigChangeType.One) ||
                       type.HasFlag(ChannelConfigChangeType.None)))
-                    throw new ArgumentOutOfRangeException("type", type, "Repeat must have None, One, or All flag");
+                    throw new ArgumentOutOfRangeException(nameof(type), type,
+                        "Repeat must have None, One, or All flag");
                 return ConfigDescriptions.Repeat;
             }
-            throw new ArgumentOutOfRangeException("type", type, "No valid config category flag set");
+
+            throw new ArgumentOutOfRangeException(nameof(type), type, "No valid config category flag set");
         }
 
         private string GetChannelConfigChoice(ChannelConfigChangeType type)
@@ -84,7 +100,7 @@ namespace BAPSCommon
             if (type.HasFlag(ChannelConfigChangeType.None)) return "No repeat";
             if (type.HasFlag(ChannelConfigChangeType.One)) return "Repeat one";
             if (type.HasFlag(ChannelConfigChangeType.All)) return "Repeat all";
-            throw new ArgumentOutOfRangeException("type", type, "No valid config choice flag set");
+            throw new ArgumentOutOfRangeException(nameof(type), type, "No valid config choice flag set");
         }
 
         public void Configure(ChannelConfigChangeType type)
@@ -92,7 +108,7 @@ namespace BAPSCommon
             var optionDesc = GetChannelConfigOption(type);
             var choiceDesc = GetChannelConfigChoice(type);
 
-            _msgQueue.Add(_cache.MakeConfigChoiceMessage(optionDesc, choiceDesc, index: _channelId));
+            _msgQueue.Add(_cache.MakeConfigChoiceMessage(optionDesc, choiceDesc, _channelId));
         }
     }
 }

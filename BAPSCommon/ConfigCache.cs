@@ -5,7 +5,7 @@ using System.Linq;
 namespace BAPSCommon
 {
     /// <summary>
-    /// Arguments for a config choice change event.
+    ///     Arguments for a config choice change event.
     /// </summary>
     public struct ConfigChoiceChangeArgs
     {
@@ -17,7 +17,6 @@ namespace BAPSCommon
     public delegate void ConfigChoiceChangeHandler(object sender, ConfigChoiceChangeArgs e);
 
 
-
     /** The config cache is designed as a quick access to config variables,
         You tell it what config item is expected next and then ask for that
         option from the server. It will then associate the result with the
@@ -26,151 +25,36 @@ namespace BAPSCommon
     public class ConfigCache
     {
         /// <summary>
-        /// The (rather paradoxically named) integer that represents a lack of index.
+        ///     The (rather paradoxically named) integer that represents a lack of index.
         /// </summary>
         public const int NoIndex = -1;
 
+
+        private readonly Dictionary<string, IOption> _descLookup = new Dictionary<string, IOption>();
+        private readonly Dictionary<uint, IOption> _idLookup = new Dictionary<uint, IOption>();
+
         /// <summary>
-        /// Event raised when a choice-type config option changes.
+        ///     Event raised when a choice-type config option changes.
         /// </summary>
         public event ConfigChoiceChangeHandler ConfigChoiceChanged;
 
-        /// <summary>
-        /// Non-parametric interface onto options.
-        /// </summary>
-        interface IOption
-        {
-            string Description { get; }
-            bool IsIndexed { get; }
-            uint OptionId { get; }
-            ConfigType Type { get; }
-        }
-
-        /// <summary>
-        /// Base class for config option that can store one or more values.
-        /// </summary>
-        /// <typeparam name="T">The basic type of the values.</typeparam>
-        abstract class Option<T> : IOption
-        {
-            public uint OptionId { get; }
-            public string Description { get; }
-            public bool IsIndexed { get; }
-
-            public abstract ConfigType Type { get; }        
-
-            private Dictionary<int, T> _values = new Dictionary<int, T>();
-
-            public T ValueAt(int index) => _values.TryGetValue(index, out var x) ? x : default;
-            public T Value => ValueAt(-1);
-            
-            /// <summary>
-            /// Hook for validating options before storing them.
-            /// </summary>
-            /// <param name="value">
-            /// The value to validate; validation should raise exceptions if this value is invalid.
-            /// </param>
-            public abstract void ValidateValue(T value);
-
-            public void AddValue(T value, int index = NoIndex)
-            {
-                if (IsIndexed && index == NoIndex)
-                    throw new ArgumentOutOfRangeException(
-                        nameof(index), index,
-                        "Can't set a non-indexed value: this option is indexed.");
-
-                if (!IsIndexed && index != NoIndex)
-                    throw new ArgumentOutOfRangeException(
-                        nameof(index), index,
-                        "Can't set an indexed value: this option is not indexed.");
-
-                ValidateValue(value);
-                _values[index] = value;
-            }
-
-            public Option(uint optionId, string description, bool isIndexed)
-            {
-                OptionId = optionId;
-                Description = description;
-                IsIndexed = isIndexed;
-            }
-        }
-
-        /// <summary>
-        /// Describes an option where values are strings.
-        /// </summary>
-        class StringOption : Option<string>
-        {
-            public override ConfigType Type => ConfigType.Str;
-
-            public override void ValidateValue(string value)
-            {
-                if (value == null) throw new ArgumentNullException(nameof(value), "Can't store a null string");
-            }
-
-            public StringOption(uint optionId, string description, bool isIndexed)
-                : base(optionId, description, isIndexed) { }
-        }
-
-        /// <summary>
-        /// Describes an option where values are integers.
-        /// </summary>
-        class IntOption : Option<int>
-        {
-            public override ConfigType Type => ConfigType.Int;
-
-            public override void ValidateValue(int value)
-            {
-                // All integers are valid.
-            }
-
-            public IntOption(uint optionId, string description, bool isIndexed)
-                : base(optionId, description, isIndexed) { }
-        }
-
-        /// <summary>
-        /// Describes an option where values are restricted to a specific set of choices.
-        /// </summary>
-        class ChoiceOption : Option<int>
-        {
-            public override ConfigType Type => ConfigType.Choice;
-
-            private Dictionary<string, int> _choiceList = new Dictionary<string, int>();
-            public void AddChoice(int choiceId, string description) => _choiceList[description] = choiceId;
-
-            public int ChoiceIndexFor(string description) => _choiceList.TryGetValue(description, out var v) ? v : NoIndex;
-            public string ChoiceDescriptionFor(int index) =>
-                _choiceList.FirstOrDefault(pair => index == pair.Value).Key;
-
-            public override void ValidateValue(int value)
-            {
-                if (!_choiceList.Values.Contains(value))
-                    throw new ArgumentOutOfRangeException(nameof(value), value, "Value not a valid choice ID.");
-            }
-
-            public string ChoiceAt(int index) => ChoiceDescriptionFor(ValueAt(index));
-            public string Choice => ChoiceDescriptionFor(Value);
-
-            public ChoiceOption(uint optionId, string description, bool isIndexed)
-                : base(optionId, description, isIndexed) { }
-        }
-
-        private IOption MakeOptionCacheInfo(uint optionid, ConfigType type, string description, bool isIndexed)
+        private IOption MakeOptionCacheInfo(uint optionId, ConfigType type, string description, bool isIndexed)
         {
             switch (type)
             {
                 case ConfigType.Choice:
-                    return new ChoiceOption(optionid, description, isIndexed);
+                    return new ChoiceOption(optionId, description, isIndexed);
                 case ConfigType.Int:
-                    return new IntOption(optionid, description, isIndexed);
+                    return new IntOption(optionId, description, isIndexed);
                 case ConfigType.Str:
-                    return new StringOption(optionid, description, isIndexed);
+                    return new StringOption(optionId, description, isIndexed);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, "Unsupported config type");
             }
         }
 
         /// <summary>
-        /// Creates a bapsnet message to set an option to one of its choices.
+        ///     Creates a BAPSNet message to set an option to one of its choices.
         /// </summary>
         /// <param name="optionDesc">The option to set.</param>
         /// <param name="choiceDesc">The choice to use.</param>
@@ -181,35 +65,39 @@ namespace BAPSCommon
             var oci = GetOption(optionDesc);
             if (oci == null) throw new ArgumentOutOfRangeException(nameof(optionDesc), optionDesc, "Unknown option.");
 
-            if (!(oci is ChoiceOption cci)) throw new ArgumentException("Option doesn't have choices.", nameof(optionDesc));
+            if (!(oci is ChoiceOption cci))
+                throw new ArgumentException("Option doesn't have choices.", nameof(optionDesc));
 
             var cid = cci.ChoiceIndexFor(choiceDesc);
-            if (cid == NoIndex) throw new ArgumentOutOfRangeException(nameof(choiceDesc), choiceDesc, "Unknown choice.");
+            if (cid == NoIndex)
+                throw new ArgumentOutOfRangeException(nameof(choiceDesc), choiceDesc, "Unknown choice.");
 
             var cmd = Command.Config | Command.SetConfigValue;
-            if (index != NoIndex) cmd |= (Command.ConfigUseValueMask | (Command)index);
+            if (index != NoIndex) cmd |= Command.ConfigUseValueMask | (Command) index;
 
-            return new Message(cmd).Add(oci.OptionId).Add((uint)cci.Type).Add((uint)cid);
+            return new Message(cmd).Add(oci.OptionId).Add((uint) cci.Type).Add((uint) cid);
         }
 
         /** add an option **/
-        public void AddOptionDescription(uint optionid, ConfigType type, string description, bool isIndexed)
+        public void AddOptionDescription(uint optionId, ConfigType type, string description, bool isIndexed)
         {
             if (_descLookup.ContainsKey(description)) return;
-            var oci = MakeOptionCacheInfo(optionid, type, description, isIndexed);
+            var oci = MakeOptionCacheInfo(optionId, type, description, isIndexed);
             _descLookup[description] = oci;
-            _idLookup[optionid] = oci;
+            _idLookup[optionId] = oci;
         }
-       
 
-        public void AddOptionChoice(uint optionid, int choiceid, string description)
+
+        public void AddOptionChoice(uint optionId, int choiceId, string description)
         {
-            if (!_idLookup.TryGetValue(optionid, out var option)) return;
-            (option as ChoiceOption)?.AddChoice(choiceid, description);
+            if (!_idLookup.TryGetValue(optionId, out var option)) return;
+            (option as ChoiceOption)?.AddChoice(choiceId, description);
         }
 
-        private IOption GetOption(string optionDescription) =>
-         _descLookup.TryGetValue(optionDescription, out var x) ? x : null;
+        private IOption GetOption(string optionDescription)
+        {
+            return _descLookup.TryGetValue(optionDescription, out var x) ? x : null;
+        }
 
         public int FindChoiceIndexFor(string optionDesc, string description)
         {
@@ -218,10 +106,10 @@ namespace BAPSCommon
         }
 
         /// <summary>
-        /// Updates the value for a given option.
-        /// <para>
-        /// This is an internal intermediate function only.
-        /// </para>
+        ///     Updates the value for a given option.
+        ///     <para>
+        ///         This is an internal intermediate function only.
+        ///     </para>
         /// </summary>
         /// <typeparam name="T">The type of the value (generally string or int).</typeparam>
         /// <param name="option">The internal option object to update.</param>
@@ -230,32 +118,30 @@ namespace BAPSCommon
         private void SetValue<T>(IOption option, T value, int index = -1)
         {
             if (option is Option<T> o) o.AddValue(value, index);
-            if (option is ChoiceOption c)
+            if (!(option is ChoiceOption c)) return;
+            var e = new ConfigChoiceChangeArgs
             {
-                var e = new ConfigChoiceChangeArgs
-                {
-                    Choice = c.ChoiceAt(index),
-                    Description = c.Description,
-                    Index = index
-                };
-                ConfigChoiceChanged?.Invoke(this, e);
-            }
+                Choice = c.ChoiceAt(index),
+                Description = c.Description,
+                Index = index
+            };
+            ConfigChoiceChanged?.Invoke(this, e);
         }
 
         /// <summary>
-        /// Updates the value for a given option ID.
+        ///     Updates the value for a given option ID.
         /// </summary>
         /// <typeparam name="T">The type of the value (generally string or int).</typeparam>
-        /// <param name="optionid">The ID of the option to update.</param>
+        /// <param name="optionId">The ID of the option to update.</param>
         /// <param name="value">The new value to apply.</param>
         /// <param name="index">If present and non-negative, the index of the option to set.</param>
-        public void AddOptionValue<T>(uint optionid, T value, int index = -1)
+        public void AddOptionValue<T>(uint optionId, T value, int index = -1)
         {
-            if (_idLookup.TryGetValue(optionid, out var option)) SetValue(option, value, index);
+            if (_idLookup.TryGetValue(optionId, out var option)) SetValue(option, value, index);
         }
 
         /// <summary>
-        /// Updates the value for a given option description.
+        ///     Updates the value for a given option description.
         /// </summary>
         /// <typeparam name="T">The type of the value (generally string or int).</typeparam>
         /// <param name="optionDescription">The description of the option to update.</param>
@@ -268,19 +154,14 @@ namespace BAPSCommon
 
         public void SetChoice(string optionDescription, string choiceDescription, int index = -1)
         {
-            if (GetOption(optionDescription) is ChoiceOption option)
-            {
-                var choice = FindChoiceIndexFor(optionDescription, choiceDescription);
-                if (choice != -1) SetValue(optionDescription, choice, index);
-            }
+            if (!(GetOption(optionDescription) is ChoiceOption)) return;
+            var choice = FindChoiceIndexFor(optionDescription, choiceDescription);
+            if (choice != -1) SetValue(optionDescription, choice, index);
         }
 
         public string GetChoice(string optionDescription, int index = -1)
         {
-            if (GetOption(optionDescription) is ChoiceOption option)
-            {
-                return option.Choice;
-            }
+            if (GetOption(optionDescription) is ChoiceOption option) return option.Choice;
             return null;
         }
 
@@ -291,22 +172,22 @@ namespace BAPSCommon
         }
 
         /// <summary>
-        /// Installs event handlers on a receiver that respond to BAPSnet configuration changes by
-        /// updating the config cache.
+        ///     Installs event handlers on a receiver that respond to BAPSNet configuration changes by
+        ///     updating the config cache.
         /// </summary>
-        /// <param name="r">The <see cref="IConfigServerUpdater"/> with whose event handlers we are registering.</param>
+        /// <param name="r">The <see cref="IConfigServerUpdater" /> with whose event handlers we are registering.</param>
         public void InstallReceiverEventHandlers(IConfigServerUpdater r)
         {
             r.ConfigSetting += (sender, e) => AddOptionValue(e);
             r.ConfigOption += (sender, e) => AddOptionDescription(e.OptionId, e.Type, e.Description, e.HasIndex);
-            r.ConfigChoice += (sender, e) => AddOptionChoice(e.OptionId, (int)e.ChoiceId, e.ChoiceDescription);
+            r.ConfigChoice += (sender, e) => AddOptionChoice(e.OptionId, (int) e.ChoiceId, e.ChoiceDescription);
         }
 
         /// <summary>
-        /// Updates the value for a given option ID directly from a
-        /// <see cref="ServerUpdates.ConfigSettingArgs"/> struct.
+        ///     Updates the value for a given option ID directly from a
+        ///     <see cref="ServerUpdates.ConfigSettingArgs" /> struct.
         /// </summary>
-        /// <param name="args">The <see cref="Receiver.ConfigSettingArgs"/> struct to use.</param>
+        /// <param name="args">The <see cref="ServerUpdates.ConfigSettingArgs" /> struct to use.</param>
         private void AddOptionValue(ServerUpdates.ConfigSettingArgs args)
         {
             switch (args.Type)
@@ -325,8 +206,147 @@ namespace BAPSCommon
             }
         }
 
+        /// <summary>
+        ///     Non-parametric interface onto options.
+        /// </summary>
+        private interface IOption
+        {
+            string Description { get; }
+            uint OptionId { get; }
+            ConfigType Type { get; }
+        }
 
-        private Dictionary<string, IOption> _descLookup = new Dictionary<string, IOption>();
-	    private Dictionary<uint, IOption> _idLookup = new Dictionary<uint, IOption>();
+        /// <inheritdoc />
+        /// <summary>
+        ///     Base class for config option that can store one or more values.
+        /// </summary>
+        /// <typeparam name="T">The basic type of the values.</typeparam>
+        private abstract class Option<T> : IOption
+        {
+            private readonly Dictionary<int, T> _values = new Dictionary<int, T>();
+
+            protected Option(uint optionId, string description, bool isIndexed)
+            {
+                OptionId = optionId;
+                Description = description;
+                IsIndexed = isIndexed;
+            }
+
+            private bool IsIndexed { get; }
+            protected T Value => ValueAt(-1);
+            public uint OptionId { get; }
+            public string Description { get; }
+
+            public abstract ConfigType Type { get; }
+
+            public T ValueAt(int index)
+            {
+                return _values.TryGetValue(index, out var x) ? x : default;
+            }
+
+            /// <summary>
+            ///     Hook for validating options before storing them.
+            /// </summary>
+            /// <param name="value">
+            ///     The value to validate; validation should raise exceptions if this value is invalid.
+            /// </param>
+            public abstract void ValidateValue(T value);
+
+            public void AddValue(T value, int index = NoIndex)
+            {
+                if (IsIndexed && index == NoIndex)
+                    throw new ArgumentOutOfRangeException(
+                        nameof(index), index,
+                        "Can't set a non-indexed value: this option is indexed.");
+
+                if (!IsIndexed && index != NoIndex)
+                    throw new ArgumentOutOfRangeException(
+                        nameof(index), index,
+                        "Can't set an indexed value: this option is not indexed.");
+
+                ValidateValue(value);
+                _values[index] = value;
+            }
+        }
+
+        /// <summary>
+        ///     Describes an option where values are strings.
+        /// </summary>
+        private class StringOption : Option<string>
+        {
+            public StringOption(uint optionId, string description, bool isIndexed)
+                : base(optionId, description, isIndexed)
+            {
+            }
+
+            public override ConfigType Type => ConfigType.Str;
+
+            public override void ValidateValue(string value)
+            {
+                if (value == null) throw new ArgumentNullException(nameof(value), "Can't store a null string");
+            }
+        }
+
+        /// <inheritdoc />
+        /// <summary>
+        ///     Describes an option where values are integers.
+        /// </summary>
+        private class IntOption : Option<int>
+        {
+            public IntOption(uint optionId, string description, bool isIndexed)
+                : base(optionId, description, isIndexed)
+            {
+            }
+
+            public override ConfigType Type => ConfigType.Int;
+
+            public override void ValidateValue(int value)
+            {
+                // All integers are valid.
+            }
+        }
+
+        /// <inheritdoc />
+        /// <summary>
+        ///     Describes an option where values are restricted to a specific set of choices.
+        /// </summary>
+        private class ChoiceOption : Option<int>
+        {
+            private readonly Dictionary<string, int> _choiceList = new Dictionary<string, int>();
+
+            public ChoiceOption(uint optionId, string description, bool isIndexed)
+                : base(optionId, description, isIndexed)
+            {
+            }
+
+            public override ConfigType Type => ConfigType.Choice;
+            public string Choice => ChoiceDescriptionFor(Value);
+
+            public void AddChoice(int choiceId, string description)
+            {
+                _choiceList[description] = choiceId;
+            }
+
+            public int ChoiceIndexFor(string description)
+            {
+                return _choiceList.TryGetValue(description, out var v) ? v : NoIndex;
+            }
+
+            private string ChoiceDescriptionFor(int index)
+            {
+                return _choiceList.FirstOrDefault(pair => index == pair.Value).Key;
+            }
+
+            public override void ValidateValue(int value)
+            {
+                if (!_choiceList.Values.Contains(value))
+                    throw new ArgumentOutOfRangeException(nameof(value), value, "Value not a valid choice ID.");
+            }
+
+            public string ChoiceAt(int index)
+            {
+                return ChoiceDescriptionFor(ValueAt(index));
+            }
+        }
     }
 }

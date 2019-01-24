@@ -41,7 +41,7 @@ namespace BAPSCommon
     }
 
     /// <summary>
-    /// Event interface for classes that send BAPSnet server updates.
+    /// Event interface for classes that send BAPSNet server updates.
     /// </summary>
     public interface IServerUpdater : IConfigServerUpdater, IDirectoryServerUpdater, IPlaybackServerUpdater
     {

@@ -3,7 +3,7 @@
 namespace BAPSCommon
 {
     /// <summary>
-    /// Enumeration of basic channel states.
+    ///     Enumeration of basic channel states.
     /// </summary>
     public enum ChannelState
     {
@@ -19,13 +19,13 @@ namespace BAPSCommon
             switch (pt)
             {
                 case ChannelState.Playing:
-                    return Command.Play;
+                    return Command.Playback | Command.Play;
                 case ChannelState.Paused:
-                    return Command.Pause;
+                    return Command.Playback | Command.Pause;
                 case ChannelState.Stopped:
-                    return Command.Stop;
+                    return Command.Playback | Command.Stop;
                 default:
-                    throw new ArgumentOutOfRangeException("this", pt, "Not a valid channel state");
+                    throw new ArgumentOutOfRangeException(nameof(pt), pt, "Not a valid channel state");
             }
         }
 
@@ -40,7 +40,7 @@ namespace BAPSCommon
                 case Command.Stop:
                     return ChannelState.Stopped;
                 default:
-                    throw new ArgumentOutOfRangeException("this", c, "Command is not a valid channel state");
+                    throw new ArgumentOutOfRangeException(nameof(c), c, "Command is not a valid channel state");
             }
         }
     }

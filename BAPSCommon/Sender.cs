@@ -5,30 +5,29 @@ using System.Threading;
 namespace BAPSCommon
 {
     /// <summary>
-    /// A message-send loop for BAPSnet.
+    ///     A message-send loop for BAPSnet.
     /// </summary>
     public class Sender
     {
-        private CancellationToken _token;
+        private readonly BlockingCollection<Message> _queue;
 
-        private BlockingCollection<Message> _queue;
-
-        private ClientSocket _socket;
+        private readonly ClientSocket _socket;
+        private readonly CancellationToken _token;
 
         /// <summary>
-        /// Constructs a new <see cref="Sender"/>.
+        ///     Constructs a new <see cref="Sender" />.
         /// </summary>
         /// <param name="queue">
-        /// The message queue from which the <see cref="Sender"/> will receive
-        /// BAPSnet messages.
+        ///     The message queue from which the <see cref="Sender" /> will receive
+        ///     BAPSnet messages.
         /// </param>
         /// <param name="token">
-        /// The cancellation token that the <see cref="Sender"/> will check
-        /// to see if it should shut down.
+        ///     The cancellation token that the <see cref="Sender" /> will check
+        ///     to see if it should shut down.
         /// </param>
         /// <param name="socket">
-        /// The <see cref="ClientSocket"/> that the <see cref="Sender"/> will
-        /// send packed BAPSnet messages on.
+        ///     The <see cref="ClientSocket" /> that the <see cref="Sender" /> will
+        ///     send packed BAPSnet messages on.
         /// </param>
         public Sender(BlockingCollection<Message> queue, CancellationToken token, ClientSocket socket)
         {
@@ -38,18 +37,19 @@ namespace BAPSCommon
         }
 
         /// <summary>
-        /// Runs the sender loop.
+        ///     Runs the sender loop.
         /// </summary>
         public void Run()
         {
             try
             {
-                while (true)
+                while (!_token.IsCancellationRequested)
                 {
-                    _token.ThrowIfCancellationRequested();
                     var msg = _queue.Take(_token);
                     msg.Send(_socket);
                 }
+
+                _token.ThrowIfCancellationRequested();
             }
             finally
             {

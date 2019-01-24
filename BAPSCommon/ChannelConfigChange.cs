@@ -8,7 +8,7 @@ namespace BAPSCommon
     public enum ChannelConfigChangeType : byte
     {
         // NB: These bit patterns are arbitrary, and don't correspond to anything in
-        // BAPSnet.  The main goal is that each valid change type has a unique
+        // BAPSNet.  The main goal is that each valid change type has a unique
         // bit pattern.
 
         // Categories
@@ -43,7 +43,7 @@ namespace BAPSCommon
 
         public ChannelConfigChangeArgs(ushort channelId, ChannelConfigChangeType type)
         {
-            ChannelId = ChannelId;
+            ChannelId = channelId;
             Type = type;
         }
     }

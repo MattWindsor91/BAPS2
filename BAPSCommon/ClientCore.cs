@@ -6,26 +6,23 @@ using System.Threading.Tasks;
 
 namespace BAPSCommon
 {
+    /// <inheritdoc />
     /// <summary>
-    /// Object encapsulating the core features of a BAPSnet client.
+    ///     Object encapsulating the core features of a BAPSNet client.
     /// </summary>
     public class ClientCore : IDisposable
     {
-        private Authenticator _auth;
-        private CancellationTokenSource _dead = new CancellationTokenSource();
-
-        private Sender _sender;
-        private Task _senderTask;
+        private const int CancelGracePeriodMilliseconds = 500;
+        private readonly Authenticator _auth;
+        private readonly CancellationTokenSource _dead = new CancellationTokenSource();
 
         private Receiver _receiver;
         private Task _receiverTask;
 
-        private ClientSocket _socket;
+        private Sender _sender;
+        private Task _senderTask;
 
-        /// <summary>
-        /// A thread-safe queue for outgoing BAPSnet messages.
-        /// </summary>
-        public BlockingCollection<Message> SendQueue { get; } = new BlockingCollection<Message>();
+        private ClientSocket _socket;
 
         public ClientCore(Func<Authenticator.Response> loginCallback)
         {
@@ -33,27 +30,44 @@ namespace BAPSCommon
         }
 
         /// <summary>
-        /// Event raised just before authentication.
-        /// Subscribe to this to install any event handlers needed for the authenticator.
+        ///     A thread-safe queue for outgoing BAPSNet messages.
+        /// </summary>
+        public BlockingCollection<Message> SendQueue { get; } = new BlockingCollection<Message>();
+
+        /// <summary>
+        ///     Event raised just before authentication.
+        ///     Subscribe to this to install any event handlers needed for the authenticator.
         /// </summary>
         public event EventHandler<Authenticator> AboutToAuthenticate;
-        private void OnAboutToAuthenticate() => AboutToAuthenticate?.Invoke(this, _auth);
+
+        private void OnAboutToAuthenticate()
+        {
+            AboutToAuthenticate?.Invoke(this, _auth);
+        }
 
         /// <summary>
-        /// Event raised when the <see cref="ClientCore"/> has just authenticated.
+        ///     Event raised when the <see cref="ClientCore" /> has just authenticated.
         /// </summary>
         public event EventHandler Authenticated;
-        private void OnAuthenticated() => Authenticated?.Invoke(this, EventArgs.Empty);
+
+        private void OnAuthenticated()
+        {
+            Authenticated?.Invoke(this, EventArgs.Empty);
+        }
 
         /// <summary>
-        /// Event raised when the <see cref="ClientCore"/> has created a receiver.
-        /// Subscribe to this in order to attach reactions to receiver events.
+        ///     Event raised when the <see cref="ClientCore" /> has created a receiver.
+        ///     Subscribe to this in order to attach reactions to receiver events.
         /// </summary>
         public event EventHandler<Receiver> ReceiverCreated;
-        private void OnReceiverCreated() => ReceiverCreated?.Invoke(this, _receiver);
-        
+
+        private void OnReceiverCreated()
+        {
+            ReceiverCreated?.Invoke(this, _receiver);
+        }
+
         /// <summary>
-        /// Tries to authenticate and launch a BAPS client.
+        ///     Tries to authenticate and launch a BAPS client.
         /// </summary>
         /// <returns>Whether the client successfully launched.</returns>
         public bool Launch()
@@ -66,7 +80,8 @@ namespace BAPSCommon
 
             EnqueueAutoUpdate();
 
-            var tf = new TaskFactory(_dead.Token, TaskCreationOptions.LongRunning, TaskContinuationOptions.None, TaskScheduler.Current);
+            var tf = new TaskFactory(_dead.Token, TaskCreationOptions.LongRunning, TaskContinuationOptions.None,
+                TaskScheduler.Current);
             _receiver = new Receiver(_socket, _dead.Token);
             OnReceiverCreated();
             _receiverTask = tf.StartNew(_receiver.Run);
@@ -85,34 +100,32 @@ namespace BAPSCommon
 
         private void EnqueueAutoUpdate()
         {
-            // Add the autoupdate message onto the queue (chat(2) and general(1))
-            Command cmd = Command.System | Command.AutoUpdate | (Command)2 | (Command)1;
+            // Add the auto-update message onto the queue (chat(2) and general(1))
+            var cmd = Command.System | Command.AutoUpdate | (Command) 2 | (Command) 1;
             SendQueue.Add(new Message(cmd));
-            for (int i = 0; i < 3; i++)
+            for (var i = 0; i < 3; i++)
             {
                 /** Add the refresh folder onto the queue **/
-                cmd = Command.System | Command.ListFiles | (Command)i;
+                cmd = Command.System | Command.ListFiles | (Command) i;
                 SendQueue.Add(new Message(cmd));
             }
         }
 
         /// <summary>
-        /// Sends a BAPSnet message telling the server that we've quit.
+        ///     Sends a BAPSNet message telling the server that we've quit.
         /// </summary>
         private void NotifyServerOfQuit()
         {
-            var cmd = Command.System | Command.End;
+            const Command cmd = Command.System | Command.End;
             SendQueue.Add(new Message(cmd).Add("Normal Termination"));
         }
 
-        private const int CancelGracePeriodMsec = 500;
-
         /// <summary>
-        /// Cancels and joins the receiver and sender tasks.
+        ///     Cancels and joins the receiver and sender tasks.
         /// </summary>
         private void CancelTasks()
         {
-            _dead.CancelAfter(CancelGracePeriodMsec);
+            _dead.CancelAfter(CancelGracePeriodMilliseconds);
             // Force the receive thread to abort FIRST so that we cant receive
             // any messages that need automatic responses
             Join(_receiverTask);
@@ -122,10 +135,10 @@ namespace BAPSCommon
         }
 
         /// <summary>
-        /// Waits for the given task to finish, then disposes it.
+        ///     Waits for the given task to finish, then disposes it.
         /// </summary>
         /// <param name="task">The task to join.</param>
-        private void Join(Task task)
+        private static void Join(Task task)
         {
             if (task == null) return;
             try
@@ -136,10 +149,12 @@ namespace BAPSCommon
             {
                 a.Handle(e => e is OperationCanceledException);
             }
+
             task.Dispose();
         }
 
         #region IDisposable Support
+
         private bool _disposedValue; // To detect redundant calls
 
         protected virtual void Dispose(bool disposing)
@@ -163,8 +178,7 @@ namespace BAPSCommon
             // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
             Dispose(true);
         }
+
         #endregion
-
-
     }
 }

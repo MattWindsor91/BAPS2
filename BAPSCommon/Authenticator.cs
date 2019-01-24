@@ -8,7 +8,7 @@ using System.Threading;
 namespace BAPSCommon
 {
     /// <summary>
-    /// Represents an attempt to create an authenticated BAPSnet connection.
+    /// Represents an attempt to create an authenticated BAPSNet connection.
     /// <para>
     /// Objects of this class are not thread-safe; only call
     /// <see cref="Run"/> in one thread.
@@ -171,7 +171,7 @@ namespace BAPSCommon
         }
 
         /** Generate an md5 sum of the raw argument **/
-        private string Md5Sum(string raw)
+        private static string Md5Sum(string raw)
         {
             var md5Serv = MD5.Create();
             var stringbuff = new StringBuilder();

@@ -25,7 +25,7 @@ namespace BAPSCommon
                 case PositionType.Intro:
                     return Command.IntroPosition;
                 default:
-                    throw new ArgumentOutOfRangeException("this", pt, "Not a valid position type");
+                    throw new ArgumentOutOfRangeException(nameof(pt), pt, "Not a valid position type");
             }
         }
 
@@ -40,11 +40,12 @@ namespace BAPSCommon
                 case Command.IntroPosition:
                     return PositionType.Intro;
                 default:
-                    throw new ArgumentOutOfRangeException("this", c, "Command is not a valid position type");
+                    throw new ArgumentOutOfRangeException(nameof(c), c, "Command is not a valid position type");
             }
         }
     }
 
+    /// <inheritdoc />
     /// <summary>
     /// An event argument bundle used to tell the main presenter that a channel
     /// has received a position change request from the user.
