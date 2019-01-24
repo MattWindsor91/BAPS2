@@ -20,11 +20,9 @@ namespace BAPSClientCommon.BapsNet
         GroupMask = 0b11100000_00000000, // 14th bit onwards, hence shift is 13
         PlaybackOpMask = 0b00011111_10000000,
         PlaybackModeMask = 0b00000000_01000000,
-        PlaybackChannelMask = 0b00000000_00111111,
+        ChannelMask = 0b00000000_00111111,
         PlaylistOpMask = 0b00011111_10000000,
         PlaylistModeMask = 0b00000000_01000000,
-        PlaylistChannelMask = 0b00000000_00111111,
-        TextOpMask = 0b00011100_00000000,
         DatabaseOpMask = 0b00011111_00000000,
         DatabaseModeMask = 0b00000000_10000000,
         DatabaseValueMask = 0b00000000_01111111,
@@ -235,7 +233,7 @@ namespace BAPSClientCommon.BapsNet
         /// <returns>The channel component</returns>
         public static ushort Channel(this Command cmd)
         {
-            return (ushort) (cmd & Command.PlaybackChannelMask);
+            return (ushort) (cmd & Command.ChannelMask);
         }
 
         /// <summary>

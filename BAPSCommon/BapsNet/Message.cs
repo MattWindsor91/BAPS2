@@ -75,7 +75,7 @@ namespace BAPSClientCommon.BapsNet
         /// Sends this command over a client socket.
         /// </summary>
         /// <param name="sock">The socket to send onto.</param>
-        public void Send(ClientSocket sock)
+        public void Send(ISink sock)
         {
             sock.SendCommand(_cmd);
             SendLength(sock);

@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace BAPSClientCommon
+namespace BAPSClientCommon.Utils
 {
-    public static class TimeUtils
+    public static class Time
     {
         public static string MillisecondsToTimeString(int milliseconds) =>
             TimeSpanOfMilliseconds(milliseconds).ToString("hh\\:mm\\:ss");

@@ -1,31 +1,32 @@
 ﻿using BAPSClientCommon;
+using BAPSClientCommon.Utils;
 using NUnit.Framework;
 
 namespace BAPSClientCommonTests
 {
     /// <summary>
-    /// Tests for the <see cref="TimeUtils"/> static class.
+    ///     Tests for the <see cref="Time" /> static class.
     /// </summary>
-    class TimeUtilsTests
+    internal class TimeUtilsTests
     {
-        private int BuildMsec(ushort hours, ushort minutes, ushort seconds)
+        private static int BuildMilliseconds(ushort hours, ushort minutes, ushort seconds)
         {
-            var totalMinutes = (hours * 60) + minutes;
-            var totalSeconds = (totalMinutes * 60) + seconds;
+            var totalMinutes = hours * 60 + minutes;
+            var totalSeconds = totalMinutes * 60 + seconds;
             return totalSeconds * 1_000;
         }
 
         [Test]
         public void TestMillisecondsToTimeString()
         {
-            var time1 = BuildMsec(1, 2, 3);
-            Assert.That(TimeUtils.MillisecondsToTimeString(time1), Is.EqualTo("01:02:03"));
+            var time1 = BuildMilliseconds(1, 2, 3);
+            Assert.That(Time.MillisecondsToTimeString(time1), Is.EqualTo("01:02:03"));
 
-            var time2 = BuildMsec(21, 42, 53);
-            Assert.That(TimeUtils.MillisecondsToTimeString(time2), Is.EqualTo("21:42:53"));
+            var time2 = BuildMilliseconds(21, 42, 53);
+            Assert.That(Time.MillisecondsToTimeString(time2), Is.EqualTo("21:42:53"));
 
-            var time3 = BuildMsec(0, 0, 0);
-            Assert.That(TimeUtils.MillisecondsToTimeString(time3), Is.EqualTo("00:00:00"));
+            var time3 = BuildMilliseconds(0, 0, 0);
+            Assert.That(Time.MillisecondsToTimeString(time3), Is.EqualTo("00:00:00"));
         }
     }
 }
