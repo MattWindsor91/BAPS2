@@ -63,5 +63,31 @@ namespace BAPSClientCommonTests
             var length = result[1];
             Assert.That(length, Is.InstanceOf<uint>().And.EqualTo(0));
         }
+
+        /// <summary>
+        ///     Tests sending a command with a floating-point argument.
+        /// </summary>
+        [Test]
+        public void TestFloatChannelCommandSend()
+        {
+            const Command cmd = Command.Playback | Command.Volume;
+            const float value = 0.75f;
+
+            var m = new Message(cmd).Add(value);
+            m.Send(_sink);
+
+            var result = _sink.Items;
+            Assert.That(result, Has.Length.EqualTo(3));
+
+            var actualCmd = result[0];
+            Assert.That(actualCmd, Is.InstanceOf<Command>().And.EqualTo(cmd));
+
+            // Floats are 32-bit, so the length should be 4.
+            var length = result[1];
+            Assert.That(length, Is.InstanceOf<uint>().And.EqualTo(4));
+
+            var actualValue = result[2];
+            Assert.That(actualValue, Is.InstanceOf<float>().And.EqualTo(value).Within(1).Percent);
+        }
     }
 }
