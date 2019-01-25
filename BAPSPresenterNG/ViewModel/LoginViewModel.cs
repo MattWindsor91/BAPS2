@@ -1,20 +1,36 @@
-﻿using GalaSoft.MvvmLight;
+﻿using BAPSClientWindows;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 
 namespace BAPSPresenterNG.ViewModel
 {
     public class LoginViewModel : ViewModelBase
     {
+        private int _port;
+        private string _server;
+        private string _username;
+
+        public LoginViewModel()
+        {
+            var configManager = SimpleIoc.Default.GetInstance<ConfigManager>();
+            Server = configManager.GetValue("ServerAddress", "localhost");
+
+            int.TryParse(configManager.GetValue("ServerPort", "1350"), out var temp);
+            Port = temp;
+
+            Username = configManager.GetValue("DefaultUsername", "");
+        }
+
         public string Username
         {
             get => _username;
-            set {
+            set
+            {
                 if (_username == value) return;
                 _username = value;
                 RaisePropertyChanged(nameof(Username));
             }
         }
-        private string _username;
 
         public string Server
         {
@@ -26,7 +42,6 @@ namespace BAPSPresenterNG.ViewModel
                 RaisePropertyChanged(nameof(Server));
             }
         }
-        private string _server;
 
         public int Port
         {
@@ -37,18 +52,6 @@ namespace BAPSPresenterNG.ViewModel
                 _port = value;
                 RaisePropertyChanged(nameof(Port));
             }
-        }
-        private int _port;
-
-        public LoginViewModel()
-        {
-            var cman = SimpleIoc.Default.GetInstance<BAPSClientWindows.ConfigManager>();
-            Server = cman.GetValue("ServerAddress", "localhost");
-
-            int.TryParse(cman.GetValue("ServerPort", "1350"), out var temp);
-            Port = temp;
-
-            Username = cman.GetValue("DefaultUsername", "");
         }
     }
 }
