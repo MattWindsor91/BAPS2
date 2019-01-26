@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using FontAwesome.WPF;
 
-namespace BAPSPresenterNG
+namespace BAPSPresenterNG.Controls
 {
     /// <summary>
     ///     A control used for the headers of BAPS channels and directories.

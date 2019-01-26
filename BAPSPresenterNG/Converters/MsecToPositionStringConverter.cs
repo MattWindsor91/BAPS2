@@ -13,7 +13,7 @@ namespace BAPSPresenterNG.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (!(value is uint msecs)) return "??";
-            return BAPSClientCommon.TimeUtils.MillisecondsToTimeString((int)msecs);
+            return BAPSClientCommon.Utils.Time.MillisecondsToTimeString((int)msecs);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

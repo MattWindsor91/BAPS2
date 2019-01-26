@@ -79,15 +79,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Directory.xaml.cs">
+    <Compile Include="Controls\Directory.xaml.cs">
       <DependentUpon>Directory.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Channel.xaml.cs">
+    <Compile Include="Controls\Channel.xaml.cs">
       <DependentUpon>Channel.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\ChannelIDConverter.cs" />
-    <Compile Include="Header.cs" />
+    <Compile Include="Controls\Header.cs" />
     <Compile Include="ReceiverMessengerAdapter.cs" />
+    <Compile Include="Controls\TransportButton.xaml.cs">
+      <DependentUpon>TransportButton.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModel\ChannelViewModel.cs" />
     <Compile Include="Converters\EntryTypeToIconConverter.cs" />
     <Compile Include="Login.xaml.cs">
@@ -96,11 +99,11 @@
     <Compile Include="ViewModel\DirectoryViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
-    <Page Include="Directory.xaml">
+    <Page Include="Controls\Directory.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Channel.xaml">
+    <Page Include="Controls\Channel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -121,7 +124,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="PositionDisplay.xaml">
+    <Page Include="Controls\PositionDisplay.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -129,10 +132,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Controls\TransportButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Converters\MsecToPositionStringConverter.cs" />
-    <Compile Include="PositionDisplay.xaml.cs">
+    <Compile Include="Controls\PositionDisplay.xaml.cs">
       <DependentUpon>PositionDisplay.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">

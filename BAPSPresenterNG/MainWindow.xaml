@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:local="clr-namespace:BAPSPresenterNG"
+        xmlns:controls="clr-namespace:BAPSPresenterNG.Controls"
         mc:Ignorable="d"
         Title="BAPS Presenter" Height="768" Width="1024"
         DataContext="{Binding Main, Source={StaticResource Locator}}">
@@ -79,7 +80,7 @@
             </ListBox.ItemContainerStyle>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <local:Directory />
+                    <controls:Directory />
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
@@ -103,7 +104,7 @@
 
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <local:Channel />
+                    <controls:Channel />
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>

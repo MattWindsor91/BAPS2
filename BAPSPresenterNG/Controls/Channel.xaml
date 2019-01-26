@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="BAPSPresenterNG.Channel"
+﻿<UserControl x:Class="BAPSPresenterNG.Controls.Channel"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -7,10 +7,11 @@
              xmlns:local="clr-namespace:BAPSPresenterNG"
              xmlns:conv="clr-namespace:BAPSPresenterNG.Converters"
              xmlns:fa="http://schemas.fontawesome.io/icons/"
+             xmlns:controls="clr-namespace:BAPSPresenterNG.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Width="360">
     <UserControl.Resources>
-        <conv:ChannelIDConverter x:Key="ChannelIDConverter" />
+        <conv:ChannelIDConverter x:Key="ChannelIdConverter" />
         <conv:MsecToPositionStringConverter x:Key="MsecToPositionStringConverter" />
         <conv:EntryTypeToIconConverter x:Key="EntryTypeToIconConverter" />
         <GridLength x:Key="ChannelBarHeightGrid">32<!-- px --></GridLength>
@@ -30,17 +31,7 @@
         <SolidColorBrush x:Key="NameFgBrush" Color="#FFE1E1E1"></SolidColorBrush>
         <SolidColorBrush x:Key="NameBgBrush" Color="#FF0073E6"></SolidColorBrush>
         <!-- Styles -->
-        <Style x:Key="TransportButtonStyle" TargetType="{x:Type Button}">
-            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
-            <Setter Property="Height" Value="32pt"/>
-            <Setter Property="Padding" Value="4pt"/>
-            <Setter Property="MinWidth" Value="32pt"/>
-        </Style>
-        <Style x:Key="TransportButtonBorderStyle" TargetType="{x:Type Border}">
-            <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"/>
-            <Setter Property="BorderThickness" Value="2pt"/>
-            <Setter Property="Margin" Value="1pt"/>
-        </Style>
+
         <Style x:Key="PositionDisplayBorder" TargetType="{x:Type Border}">
             <Setter Property="BorderBrush" Value="Black"/>
             <Setter Property="BorderThickness" Value="1pt"/>
@@ -74,16 +65,16 @@
             <ColumnDefinition />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <local:Header
+        <controls:Header
             Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
             x:Name="channelHeader"
             Icon="Music"
-            Text="{Binding ChannelID, Converter={StaticResource ChannelIDConverter},StringFormat='Channel {0}'}"
+            Text="{Binding ChannelId, Converter={StaticResource ChannelIdConverter},StringFormat='Channel {0}'}"
             >
             <StackPanel
                     Orientation="Horizontal"
                     FlowDirection="RightToLeft">
-                <fa:ImageAwesome Name="repeatLamp"
+                <fa:ImageAwesome Name="RepeatLamp"
                              Icon="Repeat"
                              ToolTip="Repeat mode">
                     <fa:ImageAwesome.Style>
@@ -129,9 +120,9 @@
                     </fa:ImageAwesome.Style>
                 </fa:ImageAwesome>
             </StackPanel>
-        </local:Header>
+        </controls:Header>
 
-        <ListBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Name="trackList"
+        <ListBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Name="TrackList"
                  ItemsSource="{Binding TrackList,UpdateSourceTrigger=PropertyChanged}"
                  
                  SelectionChanged="TrackList_SelectionChanged" SelectedIndex="{Binding SelectedItemIndex, Mode=OneWay}"
@@ -185,57 +176,24 @@
             </ListBox.ItemTemplate>
         </ListBox>
         <!-- Transport controls -->
-        <Border Grid.Row="2" Grid.Column="0" Name="playButtonBorder">
-            <Border.Style>
-                <Style BasedOn="{StaticResource TransportButtonBorderStyle}" TargetType="{x:Type Border}">
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding Path=IsPlaying}" Value="true">
-                            <Setter Property="BorderBrush" Value="{StaticResource PlayBrush}" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Border.Style>
-            <Button Name="playButton"
-                    Command="{Binding PlayCommand}"
-                    ToolTip="Play"
-                    Style="{StaticResource TransportButtonStyle}">
-                <fa:ImageAwesome Icon="Play" />
-            </Button>
-        </Border>
-        <Border Grid.Row="2" Grid.Column="1" Name="pauseButtonBorder">
-            <Border.Style>
-                <Style BasedOn="{StaticResource TransportButtonBorderStyle}" TargetType="{x:Type Border}">
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding Path=IsPaused}" Value="true">
-                            <Setter Property="BorderBrush" Value="{StaticResource PauseBrush}" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Border.Style>
-            <Button Name="pauseButton"
-                    Command="{Binding PauseCommand}"
-                    ToolTip="Pause"
-                    Style="{StaticResource TransportButtonStyle}">
-                <fa:ImageAwesome Icon="Pause"/>
-            </Button>
-        </Border>
-        <Border Grid.Row="2" Grid.Column="2" Name="stopButtonBorder">
-            <Border.Style>
-                <Style BasedOn="{StaticResource TransportButtonBorderStyle}" TargetType="{x:Type Border}">
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding Path=IsStopped}" Value="true">
-                            <Setter Property="BorderBrush" Value="{StaticResource StopBrush}" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Border.Style>
-            <Button Name="stopButton"
-                    Command="{Binding StopCommand}"
-                    ToolTip="Stop"
-                    Style="{StaticResource TransportButtonStyle}">
-                <fa:ImageAwesome Icon="Stop"/>
-            </Button>
-        </Border>
+        <local:TransportButton Grid.Row="2" Grid.Column="0"
+                               Icon="Play"
+                               IsHighlighted="{Binding IsPlaying}"
+                               HighlightBrush="{StaticResource PlayBrush}"
+                               ToolTip="Play"
+                               Command="{Binding PlayCommand}" />
+        <local:TransportButton Grid.Row="2" Grid.Column="1"
+                               Icon="Pause"
+                               IsHighlighted="{Binding IsPaused}"
+                               HighlightBrush="{StaticResource PauseBrush}"
+                               ToolTip="Pause"
+                               Command="{Binding PauseCommand}" />
+        <local:TransportButton Grid.Row="2" Grid.Column="2"
+                               Icon="Stop"
+                               IsHighlighted="{Binding IsStopped}"
+                               HighlightBrush="{StaticResource StopBrush}"
+                               ToolTip="Stop"
+                               Command="{Binding PauseCommand}" />
         <!-- Track name -->
         <Border Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3"
                 BorderThickness="1pt" Background="{StaticResource NameBgBrush}" BorderBrush="Black">
@@ -250,22 +208,16 @@
                        Padding="4pt"
                        FontFamily="Consolas"
                        ToolTip="{Binding LoadedTrack}"
-                       Text="{Binding LoadedTrack, FallbackValue=UNKNOWN, TargetNullValue=NONE}">
-            </TextBlock>
+                       Text="{Binding LoadedTrack, FallbackValue=UNKNOWN, TargetNullValue=NONE}" />
         </Border>
         <!-- Position displays -->
-        <Border Grid.Row="4" Grid.Column="0" Style="{StaticResource PositionDisplayBorder}">
-            <local:PositionDisplay x:Name="elapsedPd" SubText="Elapsed"
-                                   MainText="{Binding Position, Converter={StaticResource MsecToPositionStringConverter}}"/>
-        </Border>
-        <Border Grid.Row="4" Grid.Column="1" Style="{StaticResource PositionDisplayBorder}">
-            <local:PositionDisplay x:Name="remainingPd" SubText="Remaining"
-                                   MainText="{Binding Remaining, Converter={StaticResource MsecToPositionStringConverter}}"/>
-        </Border>
-        <Border Grid.Row="4" Grid.Column="2" Style="{StaticResource PositionDisplayBorder}">
-            <local:PositionDisplay x:Name="startPd"
-                                   SubText="Start at:"
-                                   MainText="{Binding StartTime, Converter={StaticResource MsecToPositionStringConverter}}"/>
-        </Border>
+        <controls:PositionDisplay Grid.Row="4" Grid.Column="0" x:Name="ElapsedDisplay" SubText="Elapsed"
+                               MainText="{Binding Position, Converter={StaticResource MsecToPositionStringConverter}}"/>
+        <controls:PositionDisplay Grid.Row="4" Grid.Column="1"
+                               x:Name="RemainingDisplay" SubText="Remaining"
+                               MainText="{Binding Remaining, Converter={StaticResource MsecToPositionStringConverter}}"/>
+        <controls:PositionDisplay Grid.Row="4" Grid.Column="2" x:Name="StartDisplay"
+                               SubText="Start at:"
+                               MainText="{Binding StartTime, Converter={StaticResource MsecToPositionStringConverter}}"/>
     </Grid>
 </UserControl>

@@ -1,9 +1,7 @@
-﻿
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 
-
-namespace BAPSPresenterNG
+namespace BAPSPresenterNG.Controls
 {
     /// <summary>
     /// Interaction logic for PositionDisplay.xaml
@@ -17,14 +15,14 @@ namespace BAPSPresenterNG
 
         public string SubText
         {
-            get { return (string)GetValue(SubTextProperty); }
-            set { SetValue(SubTextProperty, value); }
+            get => (string)GetValue(SubTextProperty);
+            set => SetValue(SubTextProperty, value);
         }
 
         public string MainText
         {
-            get { return (string)GetValue(MainTextProperty); }
-            set { SetValue(MainTextProperty, value); }
+            get => (string)GetValue(MainTextProperty);
+            set => SetValue(MainTextProperty, value);
         }
 
         public static DependencyProperty SubTextProperty =
