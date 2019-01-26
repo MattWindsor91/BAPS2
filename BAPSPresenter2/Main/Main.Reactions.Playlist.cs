@@ -46,28 +46,28 @@ namespace BAPSPresenter2
         private void AddItem(object sender, ServerUpdates.ItemAddEventArgs e)
         {
             if (ChannelOutOfBounds(e.ChannelId)) return;
-            bapsChannels[e.ChannelId].AddTrack(e.Index, e.Item);
+            _channels[e.ChannelId].AddTrack(e.Index, e.Item);
             RefreshAudioWall();
         }
 
         private void MoveItemTo(object sender, ServerUpdates.ItemMoveEventArgs e)
         {
             if (ChannelOutOfBounds(e.ChannelId)) return;
-            bapsChannels[e.ChannelId].MoveTrack(e.Index, e.NewIndex);
+            _channels[e.ChannelId].MoveTrack(e.Index, e.NewIndex);
             RefreshAudioWall();
         }
 
         private void DeleteItem(object sender, ServerUpdates.ItemDeleteEventArgs e)
         {
             if (ChannelOutOfBounds(e.ChannelId)) return;
-            bapsChannels[e.ChannelId].RemoveTrack(e.Index);
+            _channels[e.ChannelId].RemoveTrack(e.Index);
             RefreshAudioWall();
         }
 
         private void CleanPlaylist(object sender, ServerUpdates.ChannelResetEventArgs e)
         {
             if (ChannelOutOfBounds(e.ChannelId)) return;
-            bapsChannels[e.ChannelId].CleanPlaylist();
+            _channels[e.ChannelId].CleanPlaylist();
             RefreshAudioWall();
         }
     }

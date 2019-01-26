@@ -31,7 +31,7 @@ namespace BAPSPresenter2
         private void HandlePositionChanged(object sender, PositionRequestChangeEventArgs e)
         {
             var cmd = Command.Playback | e.ChangeType.AsCommand() | (Command)e.ChannelId;
-            core.SendQueue.Add(new Message(cmd).Add((uint)e.Value));
+            _core.SendQueue.Add(new Message(cmd).Add((uint)e.Value));
         }
 
         /** functions to receive context menu events **/
@@ -41,7 +41,7 @@ namespace BAPSPresenter2
             var cm = (ContextMenu)mi.Parent;
             var tl = (TrackList)cm.SourceControl;
             var cmd = Command.Playlist | Command.ResetPlaylist | (Command)tl.Channel;
-            core.SendQueue.Add(new Message(cmd));
+            _core.SendQueue.Add(new Message(cmd));
         }
 
         /** ### DESIGNER PRIVATE EVENT HANDLERS ### **/
@@ -54,17 +54,17 @@ namespace BAPSPresenter2
                 /** Keys F1-F4 are for channel 0 **/
                 case Keys.F1: /** F1 play **/
                     cmd = Command.Playback | Command.Play | 0;
-                    core.SendQueue.Add(new Message(cmd));
+                    _core.SendQueue.Add(new Message(cmd));
                     e.Handled = true;
                     break;
                 case Keys.F2: /** F2 Pause **/
                     cmd = Command.Playback | Command.Pause | 0;
-                    core.SendQueue.Add(new Message(cmd));
+                    _core.SendQueue.Add(new Message(cmd));
                     e.Handled = true;
                     break;
                 case Keys.F3: /** F3 Stop **/
                     cmd = Command.Playback | Command.Stop | 0;
-                    core.SendQueue.Add(new Message(cmd));
+                    _core.SendQueue.Add(new Message(cmd));
                     e.Handled = true;
                     break;
                 case Keys.F4 | Keys.Alt:
@@ -76,34 +76,34 @@ namespace BAPSPresenter2
                 /** Keys F5-F8 are for channel 1 **/
                 case Keys.F5: /** F5 Play **/
                     cmd = Command.Playback | Command.Play | (Command)1;
-                    core.SendQueue.Add(new Message(cmd));
+                    _core.SendQueue.Add(new Message(cmd));
                     e.Handled = true;
                     break;
                 case Keys.F6: /** F6 Pause **/
                     cmd = Command.Playback | Command.Pause | (Command)1;
-                    core.SendQueue.Add(new Message(cmd));
+                    _core.SendQueue.Add(new Message(cmd));
                     e.Handled = true;
                     break;
                 case Keys.F7: /** F7 Stop **/
                     cmd = Command.Playback | Command.Stop | (Command)1;
-                    core.SendQueue.Add(new Message(cmd));
+                    _core.SendQueue.Add(new Message(cmd));
                     e.Handled = true;
                     break;
 
                 /** Keys F9-F12 are for channel 2 **/
                 case Keys.F9: /** F9 Play **/
                     cmd = Command.Playback | Command.Play | (Command)2;
-                    core.SendQueue.Add(new Message(cmd));
+                    _core.SendQueue.Add(new Message(cmd));
                     e.Handled = true;
                     break;
                 case Keys.F10: /** F10 Pause **/
                     cmd = Command.Playback | Command.Pause | (Command)2;
-                    core.SendQueue.Add(new Message(cmd));
+                    _core.SendQueue.Add(new Message(cmd));
                     e.Handled = true;
                     break;
                 case Keys.F11: /** F11 Stop **/
                     cmd = Command.Playback | Command.Stop | (Command)2;
-                    core.SendQueue.Add(new Message(cmd));
+                    _core.SendQueue.Add(new Message(cmd));
                     e.Handled = true;
                     break;
                 /** Other keyboard Commands **/
@@ -134,29 +134,26 @@ namespace BAPSPresenter2
                     e.Handled = true;
                     break;
                 case KeyShortcuts.TextMaximised:
-                    ToggleTextDialog(shouldMaximize: true);
+                    ToggleTextDialog(true);
                     e.Handled = true;
                     break;
                 case KeyShortcuts.Text:
-                    ToggleTextDialog(shouldMaximize: false);
+                    ToggleTextDialog(false);
                     e.Handled = true;
                     break;
                 case KeyShortcuts.About:
                     OpenAboutDialog();
                     e.Handled = true;
                     break;
-                default:
-                    /** Ignore all other keys **/
-                    break;
             }
         }
 
         private void OpenSecurityDialog()
         {
-            using (securityDialog = new Dialogs.Security(core.SendQueue))
+            using (securityDialog = new Dialogs.Security(_core.SendQueue))
             {
                 securityDialog.KeyDownForward += BAPSPresenterMain_KeyDown;
-                core.SendQueue.Add(new Message(Command.Config | Command.GetPermissions));
+                _core.SendQueue.Add(new Message(Command.Config | Command.GetPermissions));
                 securityDialog.ShowDialog();
             }
             securityDialog = null;
@@ -167,7 +164,7 @@ namespace BAPSPresenter2
             using (about = new Dialogs.About())
             {
                 about.KeyDownForward += BAPSPresenterMain_KeyDown;
-                core.SendQueue.Add(new Message(Command.System | Command.Version));
+                _core.SendQueue.Add(new Message(Command.System | Command.Version));
                 about.ShowDialog();
             }
             about = null;
@@ -175,7 +172,7 @@ namespace BAPSPresenter2
 
         private void OpenConfigDialog()
         {
-            using (configDialog = new Dialogs.Config(core.SendQueue))
+            using (configDialog = new Dialogs.Config(_core.SendQueue))
             {
                 configDialog.KeyDownForward += BAPSPresenterMain_KeyDown;
                 configDialog.ShowDialog();
@@ -191,7 +188,7 @@ namespace BAPSPresenter2
                 ccd.ShowDialog();
             }
             /** Enable or disable the timers depending on the config setting **/
-            bool enableTimers = string.Compare(ConfigManager.getConfigValueString("EnableTimers", "Yes"), "Yes") == 0;
+            bool enableTimers = ConfigManager.getConfigValueString("EnableTimers", "Yes") == "Yes";
             EnableTimerControls(enableTimers);
         }
 
@@ -237,7 +234,7 @@ namespace BAPSPresenter2
         {
             var cmd = Command.System | Command.ListFiles;
             cmd |= (Command)channel & (Command)0x3f;
-            core.SendQueue.Add(new Message(cmd));
+            _core.SendQueue.Add(new Message(cmd));
         }
 
         private void SearchRecordLib_Click(object sender, EventArgs e)
@@ -274,28 +271,20 @@ namespace BAPSPresenter2
             _ = lb.DoDragDrop(fts, DragDropEffects.Copy);
         }
 
-        private void ChannelOperation_Click(object sender, ChannelOperationLookup col)
+        private void HandleChannelStateRequest(object sender, ServerUpdates.ChannelStateEventArgs e)
         {
-            var channelID = col.channel & (ushort)Command.ChannelMask;
-            var controller = controllers[channelID];
-            switch ((Command)col.co)
-            {
-                case Command.Play:
-                    controller.Play();
-                    break;
-                case Command.Pause:
-                    controller.Pause();
-                    break;
-                case Command.Stop:
-                    controller.Stop();
-                    break;
-            }
+            _controllers[e.ChannelId].SetState(e.State);
+        }
+
+        private void HandleItemDeleteRequest(object sender, ServerUpdates.ItemDeleteEventArgs e)
+        {
+            _controllers[e.ChannelId].DeleteItemAt(e.Index);
         }
 
         internal void TrackList_RequestChange(object sender, RequestChangeEventArgs e)
         {
             var channelId = e.channel & (ushort)Command.ChannelMask;
-            var controller = controllers[channelId];
+            var controller = _controllers[channelId];
 
             switch (e.ct)
             {
@@ -306,32 +295,32 @@ namespace BAPSPresenter2
                 case ChangeType.MOVEINDEX:
                     {
                         var cmd = Command.Playlist | (Command)(e.channel & 0x3f) | Command.MoveItemTo;
-                        core.SendQueue.Add(new Message(cmd).Add((uint)e.index).Add((uint)e.index2));
+                        _core.SendQueue.Add(new Message(cmd).Add((uint)e.index).Add((uint)e.index2));
                     }
                     break;
                 case ChangeType.DELETEINDEX:
                     {
                         var cmd = Command.Playlist | (Command)(e.channel & 0x3f) | Command.DeleteItem;
-                        core.SendQueue.Add(new Message(cmd).Add((uint)e.index));
+                        _core.SendQueue.Add(new Message(cmd).Add((uint)e.index));
                     }
                     break;
                 case ChangeType.ADD:
                     {
                         var cmd = Command.Playlist | Command.AddItem | (Command)(e.channel & 0x3f);
-                        core.SendQueue.Add(new Message(cmd).Add((uint)Command.FileItem).Add((uint)e.index).Add(bapsDirectories[e.index].TrackAt(e.index2)));
+                        _core.SendQueue.Add(new Message(cmd).Add((uint)Command.FileItem).Add((uint)e.index).Add(_directories[e.index].TrackAt(e.index2)));
                     }
                     break;
                 case ChangeType.COPY:
                     {
                         var cmd = Command.Playlist | Command.CopyItem | (Command)(e.channel & 0x3f);
-                        core.SendQueue.Add(new Message(cmd).Add((uint)e.index).Add((uint)e.index2));
+                        _core.SendQueue.Add(new Message(cmd).Add((uint)e.index).Add((uint)e.index2));
                     }
                     break;
             }
         }
 
         private void HandleChannelConfigChange(object sender, ChannelConfigChangeArgs e) =>
-            controllers[e.ChannelId].Configure(e.Type);
+            _controllers[e.ChannelId].Configure(e.Type);
 
 
 #if false // @MattWindsor91
@@ -395,17 +384,17 @@ namespace BAPSPresenter2
         
         private void countdownTick(object sender, EventArgs e)
         {
-            if (timersEnabled)
+            if (_timersEnabled)
             {
-                foreach (var chan in bapsChannels) chan.CountdownTick();
+                foreach (var chan in _channels) chan.CountdownTick();
             }
             timeLine.Tick();
         }
 
         private void timeLine_StartTimeChanged(object sender, BAPSFormControls.TimeLine.TimeLineEventArgs e)
         {
-            if (!timersEnabled) return;
-            bapsChannels[e.channel].UpdateCountDown(e.startTime / 1000 % 3600);
+            if (!_timersEnabled) return;
+            _channels[e.channel].UpdateCountDown(e.startTime / 1000 % 3600);
         }
     }
 }

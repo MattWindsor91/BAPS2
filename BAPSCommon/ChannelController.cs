@@ -111,5 +111,26 @@ namespace BAPSClientCommon
 
             _msgQueue.Add(_cache.MakeConfigChoiceMessage(optionDesc, choiceDesc, _channelId));
         }
+
+        /// <summary>
+        ///     Asks the BAPS server to delete the track-list item for this
+        ///     channel at index <see cref="index"/>.
+        /// </summary>
+        /// <param name="index">The 0-based index of the item to delete.</param>
+        public void DeleteItemAt(uint index)
+        {
+            var cmd = (Command.Playlist | Command.DeleteItem).WithChannel(_channelId);
+            _msgQueue.Add(new Message(cmd).Add(index));
+        }
+
+        /// <summary>
+        ///     Asks the BAPS server to reset this channel, deleting all
+        ///     track-list items.
+        /// </summary>
+        public void Reset()
+        {
+            var cmd = (Command.Playlist | Command.ResetPlaylist).WithChannel(_channelId);
+            _msgQueue.Add(new Message(cmd));
+        }
     }
 }

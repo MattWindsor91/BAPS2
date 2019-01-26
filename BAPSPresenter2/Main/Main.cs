@@ -1,11 +1,13 @@
-﻿using BAPSClientCommon;
-using BAPSPresenter; // Legacy
-using System;
+﻿using System;
 using System.Diagnostics;
-using System.Threading.Tasks;
+using System.IO;
+using System.Threading;
 using System.Windows.Forms;
+using BAPSClientCommon;
 using BAPSClientCommon.BapsNet;
-using ConfigCache = BAPSClientCommon.ConfigCache;
+using BAPSPresenter2.Dialogs;
+using Timer = System.Windows.Forms.Timer;
+// Legacy
 
 namespace BAPSPresenter2
 {
@@ -15,37 +17,37 @@ namespace BAPSPresenter2
         /// Singleton for the config cache.
         /// </summary>
         public static ConfigCache Config => _config ?? (_config = new ConfigCache());
-        private static ConfigCache _config = null;
+        private static ConfigCache _config;
 
         /** This flag is used to cleanly exit the send/receive loops
             in the case of the receive loop, the flag will not take effect
             until data is received, so an abort message is still required
         **/
-        private System.Threading.CancellationTokenSource dead = new System.Threading.CancellationTokenSource();
+        private CancellationTokenSource dead = new CancellationTokenSource();
 
         // Accessor for the crashed variable.
-        public bool HasCrashed { get; private set; } = false;
+        public bool HasCrashed { get; private set; }
 
-        private ChannelController[] controllers;
-        private BAPSChannel[] bapsChannels;
-        private BAPSDirectory[] bapsDirectories;
+        private ChannelController[] _controllers;
+        private BAPSChannel[] _channels;
+        private BAPSDirectory[] _directories;
 
-        private ClientCore core;
+        private ClientCore _core;
  
         /** Whether or not the timers are enabled **/
-        private bool timersEnabled = true;
+        private bool _timersEnabled = true;
 
-        private bool ChannelOutOfBounds(ushort channel) => bapsChannels.Length <= channel;
-        private bool DirectoryOutOfBounds(ushort directory) => bapsDirectories.Length <= directory;
+        private bool ChannelOutOfBounds(ushort channel) => _channels.Length <= channel;
+        private bool DirectoryOutOfBounds(ushort directory) => _directories.Length <= directory;
 
-        public Main() : base()
+        public Main()
         {
             InitializeComponent();
         }
 
         private Authenticator.Response LoginCallback()
         {
-            using (var login = new Dialogs.Login())
+            using (var login = new Login())
             {
                 if (login.ShowDialog() == DialogResult.Cancel)
                     return new Authenticator.Response { IsGivingUp = true };
@@ -68,9 +70,9 @@ namespace BAPSPresenter2
                 MessageBox.Show(errorMessage, "Server error:", MessageBoxButtons.OK);
                 logError(errorMessage);
             };
-            auth.UserError += (s, ErrorMessage) =>
+            auth.UserError += (s, errorMessage) =>
             {
-                MessageBox.Show(ErrorMessage, "Login error:", MessageBoxButtons.OK);
+                MessageBox.Show(errorMessage, "Login error:", MessageBoxButtons.OK);
             };
         }
 
@@ -80,15 +82,14 @@ namespace BAPSPresenter2
 
             ConfigManager.initConfigManager();
 
-            core = new ClientCore(LoginCallback);
-            core.AboutToAuthenticate += SetupAuthErrorReactions;
-            core.Authenticated += Setup;
-            core.ReceiverCreated += SetupReactions;
-            var launched = core.Launch();
+            _core = new ClientCore(LoginCallback);
+            _core.AboutToAuthenticate += SetupAuthErrorReactions;
+            _core.Authenticated += Setup;
+            _core.ReceiverCreated += SetupReactions;
+            var launched = _core.Launch();
             if (!launched)
             {
                 Close();
-                return;
             }
         }
 
@@ -104,7 +105,7 @@ namespace BAPSPresenter2
             countdownTimer.Tick += countdownTick;
             countdownTimer.Start();
 
-            textDialog = new Dialogs.Text("Write on me");
+            textDialog = new Text("Write on me");
             textDialog.KeyDownForward += BAPSPresenterMain_KeyDown;
 
             /** Enable or disable the timers depending on the config setting, enable on default when no registry config value set. **/
@@ -114,42 +115,44 @@ namespace BAPSPresenter2
 
         private void SetupDirectories()
         {
-            bapsDirectories = new BAPSDirectory[3];
-            for (var i = 0; i < bapsDirectories.Length; i++)
+            _directories = new BAPSDirectory[3];
+            for (var i = 0; i < _directories.Length; i++)
             {
-                bapsDirectories[i] = new BAPSDirectory()
+                _directories[i] = new BAPSDirectory
                 {
                     DirectoryID = i
                 };
-                bapsDirectories[i].RefreshRequest += RefreshDirectory;
+                _directories[i].RefreshRequest += RefreshDirectory;
             }
-            directoryFlow.Controls.AddRange(bapsDirectories);
+            directoryFlow.Controls.AddRange(_directories);
         }
 
         private void SetupChannels()
         {
-            bapsChannels = new BAPSChannel[3] { bapsChannel1, bapsChannel2, bapsChannel3 };
-            controllers = new ChannelController[bapsChannels.Length];
-            foreach (var bc in bapsChannels)
+            _channels = new BAPSChannel[3] { bapsChannel1, bapsChannel2, bapsChannel3 };
+            _controllers = new ChannelController[_channels.Length];
+            foreach (var bc in _channels)
             {
-                Debug.Assert(0 <= bc.ChannelID, "Channel ID hasn't been set---check the channels' properties in the designer");
+                Debug.Assert(0 <= bc.ChannelId, "Channel ID hasn't been set---check the channels' properties in the designer");
 
-                controllers[bc.ChannelID] = new ChannelController((ushort)bc.ChannelID, core.SendQueue, Config);
-
+                var cont = new ChannelController((ushort)bc.ChannelId, _core.SendQueue, Config);            
+                _controllers[bc.ChannelId] = cont;
                 bc.TrackListRequestChange += TrackList_RequestChange;
-                bc.OpRequest += ChannelOperation_Click;
+                bc.OpRequest += HandleChannelStateRequest;
                 bc.PositionRequestChange += HandlePositionChanged;
                 bc.TimelineChanged += TimelineChanged;
                 bc.ChannelConfigChange += HandleChannelConfigChange;
-                //bc.TrackListContextMenuStripItemClicked += (e, x) => Invoke((ToolStripItemClickedEventHandler)trackListContextMenuStrip_ItemClicked, e, x);
+                bc.AudioWallRequest += (sender, args) => OpenAudioWall(args);
+                bc.ItemDeleteRequest += (sender, args) => cont.DeleteItemAt(args.Index);
+                bc.ChannelResetRequest += (sender, args) => cont.Reset();
             }
         }
 
         /** Enable or disable the timer controls **/
         private void EnableTimerControls(bool shouldEnable)
         {
-            timersEnabled = shouldEnable;
-            foreach (var chan in bapsChannels) chan.EnableTimerControls(shouldEnable);
+            _timersEnabled = shouldEnable;
+            foreach (var chan in _channels) chan.EnableTimerControls(shouldEnable);
             timeLine.DragEnabled = shouldEnable;
         }
 
@@ -190,7 +193,7 @@ namespace BAPSPresenter2
         {
             try
             {
-                using (var stream = new System.IO.StreamWriter("bapserror.log", true))
+                using (var stream = new StreamWriter("bapserror.log", true))
                 {
                     stream.Write(errorMessage);
                 }
@@ -313,7 +316,7 @@ namespace BAPSPresenter2
         {
             if (audioWall == null || !audioWall.Visible)
             {
-                audioWall = new AudioWall(core.SendQueue, tl);
+                audioWall = new AudioWall(_core.SendQueue, tl);
                 audioWall.KeyDownForward += BAPSPresenterMain_KeyDown;
                 audioWall.Show();
             }

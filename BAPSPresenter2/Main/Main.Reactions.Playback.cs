@@ -70,7 +70,7 @@ namespace BAPSPresenter2
         private void showChannelOperation(object sender, ServerUpdates.ChannelStateEventArgs e)
         {
             if (ChannelOutOfBounds(e.ChannelId)) return;
-            var chan = bapsChannels[e.ChannelId];
+            var chan = _channels[e.ChannelId];
             switch (e.State)
             {
                 case ChannelState.Playing:
@@ -91,27 +91,27 @@ namespace BAPSPresenter2
         private void showPosition(ushort channelID, uint value)
         {
             if (ChannelOutOfBounds(channelID)) return;
-            bapsChannels[channelID].DisplayedPosition = (int)value;
+            _channels[channelID].DisplayedPosition = (int)value;
         }
 
         private void showLoadedItem(ushort channelID, uint index, TracklistItem entry)
         {
             if (ChannelOutOfBounds(channelID)) return;
-            bapsChannels[channelID].ShowLoadedItem(index, entry);
+            _channels[channelID].ShowLoadedItem(index, entry);
             RefreshAudioWall();
         }
 
         private void showDuration(ushort channelID, uint value)
         {
             if (ChannelOutOfBounds(channelID)) return;
-            bapsChannels[channelID].DisplayedDuration = (int)value;
+            _channels[channelID].DisplayedDuration = (int)value;
         }
 
         private void showText(ushort channel, uint index, TextTracklistItem entry)
         {
             if (ChannelOutOfBounds(channel)) return;
-            foreach (var chan in bapsChannels) chan.LoadedTextIndex = -1;
-            bapsChannels[channel].LoadedTextIndex = (int)index;
+            foreach (var chan in _channels) chan.LoadedTextIndex = -1;
+            _channels[channel].LoadedTextIndex = (int)index;
             MainTextDisplay.Text = entry.Text;
             if (textDialog?.Visible ?? false)
             {
@@ -122,13 +122,13 @@ namespace BAPSPresenter2
         private void showCuePosition(ushort channelID, uint cuePosition)
         {
             if (ChannelOutOfBounds(channelID)) return;
-            bapsChannels[channelID].DisplayedCuePosition = (int)cuePosition;
+            _channels[channelID].DisplayedCuePosition = (int)cuePosition;
         }
 
         private void showIntroPosition(ushort channelID, uint introPosition)
         {
             if (ChannelOutOfBounds(channelID)) return;
-            bapsChannels[channelID].DisplayedIntroPosition = (int)introPosition;
+            _channels[channelID].DisplayedIntroPosition = (int)introPosition;
         }
     }
 }

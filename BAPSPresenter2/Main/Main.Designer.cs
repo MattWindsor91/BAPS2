@@ -20,7 +20,7 @@ namespace BAPSPresenter2
         {
             if (disposing)
             {
-                core?.Dispose();
+                _core?.Dispose();
             }
 
             if (disposing && (components != null))
@@ -156,7 +156,7 @@ namespace BAPSPresenter2
             // bapsChannel3
             // 
             this.bapsChannel3.AutoSize = true;
-            this.bapsChannel3.ChannelID = 2;
+            this.bapsChannel3.ChannelId = 2;
             this.bapsChannel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.bapsChannel3.Location = new System.Drawing.Point(991, 3);
             this.bapsChannel3.Name = "bapsChannel3";
@@ -183,7 +183,7 @@ namespace BAPSPresenter2
             // bapsChannel2
             // 
             this.bapsChannel2.AutoSize = true;
-            this.bapsChannel2.ChannelID = 1;
+            this.bapsChannel2.ChannelId = 1;
             this.bapsChannel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.bapsChannel2.Location = new System.Drawing.Point(620, 3);
             this.bapsChannel2.Name = "bapsChannel2";
@@ -195,7 +195,7 @@ namespace BAPSPresenter2
             // bapsChannel1
             // 
             this.bapsChannel1.AutoSize = true;
-            this.bapsChannel1.ChannelID = 0;
+            this.bapsChannel1.ChannelId = 0;
             this.bapsChannel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.bapsChannel1.Location = new System.Drawing.Point(249, 3);
             this.bapsChannel1.Name = "bapsChannel1";
