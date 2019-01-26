@@ -4,6 +4,7 @@ using System.Linq;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
+using BAPSClientCommon.Model;
 
 namespace BAPSPresenter2
 {

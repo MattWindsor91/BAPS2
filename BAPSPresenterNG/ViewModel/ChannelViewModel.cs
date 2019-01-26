@@ -3,17 +3,19 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Threading;
 using BAPSClientCommon;
+using BAPSClientCommon.Model;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
+using GongSolutions.Wpf.DragDrop;
 
 namespace BAPSPresenterNG.ViewModel
 {
     /// <summary>
     ///     The view model for a channel.
     /// </summary>
-    public class ChannelViewModel : ViewModelBase
+    public class ChannelViewModel : ViewModelBase, IDropTarget
     {
         private uint _cuePosition;
 
@@ -519,5 +521,26 @@ namespace BAPSPresenterNG.ViewModel
         }
 
         #endregion Tracklist event handlers
+
+        public void DragOver(IDropInfo dropInfo)
+        {
+            switch (dropInfo.Data)
+            {
+                case DirectoryEntry _:
+                    dropInfo.DropTargetAdorner = DropTargetAdorners.Insert;
+                    dropInfo.Effects = DragDropEffects.Copy;
+                    break;
+            }
+        }
+
+        public void Drop(IDropInfo dropInfo)
+        {
+            switch (dropInfo.Data)
+            {
+                case DirectoryEntry dirEntry:
+                    Controller.AddFile(dirEntry);
+                    break;
+            }
+        }
     }
 }

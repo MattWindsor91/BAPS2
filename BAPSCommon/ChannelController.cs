@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using BAPSClientCommon.BapsNet;
+using BAPSClientCommon.Model;
 
 namespace BAPSClientCommon
 {
@@ -110,6 +111,12 @@ namespace BAPSClientCommon
             var choiceDesc = GetChannelConfigChoice(type);
 
             _msgQueue.Add(_cache.MakeConfigChoiceMessage(optionDesc, choiceDesc, _channelId));
+        }
+
+        public void AddFile(DirectoryEntry file)
+        {
+            var cmd = (Command.Playlist | Command.AddItem).WithChannel(_channelId);
+            _msgQueue.Add(new Message(cmd).Add((uint)TrackType.File).Add(file.DirectoryId).Add(file.Description));
         }
 
         /// <summary>

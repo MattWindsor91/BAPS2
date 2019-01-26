@@ -1,4 +1,4 @@
-﻿namespace BAPSClientCommon
+﻿namespace BAPSClientCommon.Model
 {
     /// <summary>
     ///     Enumeration of BapsNet track types.

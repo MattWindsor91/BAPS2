@@ -67,7 +67,7 @@ namespace BAPSPresenterNG.ViewModel
                 int i;
                 for (i = 0; i < count; i++)
                 {
-                    var id = Directories[i].DirectoryID;
+                    var id = Directories[i].DirectoryId;
                     if (id == e.DirectoryId) return; // Already present.
                     if (id > e.DirectoryId) break; // This is where we need to insert.
                 }

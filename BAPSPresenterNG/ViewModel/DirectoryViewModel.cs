@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BAPSClientCommon.Model;
 
 namespace BAPSPresenterNG.ViewModel
 {
@@ -15,11 +16,11 @@ namespace BAPSPresenterNG.ViewModel
     /// </summary>
     public class DirectoryViewModel : ViewModelBase
     {
-        public ushort DirectoryID { get; }
+        public ushort DirectoryId { get; }
 
-        public DirectoryViewModel(ushort directoryID)
+        public DirectoryViewModel(ushort directoryId)
         {
-            DirectoryID = directoryID;
+            DirectoryId = directoryId;
         }
 
         /// <summary>
@@ -40,7 +41,7 @@ namespace BAPSPresenterNG.ViewModel
         /// <summary>
         /// The collection of files the server reports as being in this directory.
         /// </summary>
-        public ObservableCollection<string> Files { get; } = new ObservableCollection<string>();
+        public ObservableCollection<DirectoryEntry> Files { get; } = new ObservableCollection<DirectoryEntry>();
 
         public void Register(IMessenger m)
         {
@@ -50,8 +51,8 @@ namespace BAPSPresenterNG.ViewModel
 
         private void HandleDirectoryFileAdd(ServerUpdates.DirectoryFileAddArgs e)
         {
-            if (e.DirectoryId != DirectoryID) return;
-            Files.Insert((int)e.Index, e.Description);
+            if (e.DirectoryId != DirectoryId) return;
+            Files.Insert((int)e.Index, new DirectoryEntry(DirectoryId, e.Description));
         }
 
         /// <summary>
@@ -66,7 +67,7 @@ namespace BAPSPresenterNG.ViewModel
         /// <param name="e">The server update payload</param>
         private void HandleDirectoryPrepare(ServerUpdates.DirectoryPrepareArgs e)
         {
-            if (e.DirectoryId != DirectoryID) return;
+            if (e.DirectoryId != DirectoryId) return;
             Files.Clear();
             Name = e.Name;
         }

@@ -3,6 +3,7 @@ using BAPSPresenter;
 using System;
 using System.Windows.Forms;
 using BAPSClientCommon.BapsNet;
+using BAPSClientCommon.Model;
 using Message = BAPSClientCommon.BapsNet.Message;
 
 namespace BAPSPresenter2

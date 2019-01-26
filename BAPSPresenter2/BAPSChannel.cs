@@ -4,6 +4,7 @@ using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 using BAPSClientCommon.BapsNet;
+using BAPSClientCommon.Model;
 
 namespace BAPSPresenter2
 {

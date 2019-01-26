@@ -8,6 +8,7 @@
              xmlns:conv="clr-namespace:BAPSPresenterNG.Converters"
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              xmlns:controls="clr-namespace:BAPSPresenterNG.Controls"
+             xmlns:dd="urn:gong-wpf-dragdrop"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Width="360">
     <UserControl.Resources>
@@ -108,7 +109,8 @@
 
         <ListBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Name="TrackList"
                  ItemsSource="{Binding TrackList,UpdateSourceTrigger=PropertyChanged}"
-                 
+                 dd:DragDrop.IsDropTarget="True"
+                 dd:DragDrop.DropHandler="{Binding}"
                  SelectionChanged="TrackList_SelectionChanged" SelectedIndex="{Binding SelectedItemIndex, Mode=OneWay}"
                  >
             <ListBox.ContextMenu>

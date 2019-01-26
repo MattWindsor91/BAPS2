@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:controls="clr-namespace:BAPSPresenterNG.Controls"
+             xmlns:dd="urn:gong-wpf-dragdrop"
              mc:Ignorable="d" 
              d:DesignHeight="240" d:DesignWidth="300" MaxHeight="300">
     <Grid>
@@ -19,6 +20,7 @@
             </Button>
         </controls:Header>
         <ListBox Grid.Row="1" Grid.Column="0" Name="FileList"
+                 dd:DragDrop.IsDragSource="true"
                  ItemsSource="{Binding Files}"
                  >
         </ListBox>

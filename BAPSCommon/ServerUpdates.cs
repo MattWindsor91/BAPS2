@@ -1,4 +1,6 @@
-﻿namespace BAPSClientCommon
+﻿using BAPSClientCommon.Model;
+
+namespace BAPSClientCommon
 {
     /// <summary>
     ///     Container for event structures and delegates that represent updates

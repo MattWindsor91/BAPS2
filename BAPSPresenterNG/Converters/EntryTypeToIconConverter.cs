@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Data;
+using BAPSClientCommon.Model;
 using FontAwesome.WPF;
 
 namespace BAPSPresenterNG.Converters
@@ -12,7 +13,7 @@ namespace BAPSPresenterNG.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (!(value is BAPSClientCommon.Track entry)) return FontAwesomeIcon.Question;
+            if (!(value is Track entry)) return FontAwesomeIcon.Question;
 
             if (entry.IsTextItem) return FontAwesomeIcon.CommentOutline;
             if (entry.IsAudioItem && entry.IsFromLibrary) return FontAwesomeIcon.Music;
@@ -22,7 +23,7 @@ namespace BAPSPresenterNG.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return new BAPSClientCommon.NullTrack();
+            return new NullTrack();
         }
     }
 }
