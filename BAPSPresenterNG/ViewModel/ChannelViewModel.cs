@@ -21,7 +21,7 @@ namespace BAPSPresenterNG.ViewModel
 
         private uint _introPosition;
 
-        private TracklistItem _loadedTrack;
+        private Track _loadedTrack;
 
         private uint _position;
 
@@ -41,7 +41,7 @@ namespace BAPSPresenterNG.ViewModel
         /// <summary>
         ///     The track list.
         /// </summary>
-        public ObservableCollection<TracklistItem> TrackList { get; } = new ObservableCollection<TracklistItem>();
+        public ObservableCollection<Track> TrackList { get; } = new ObservableCollection<Track>();
 
         /// <summary>
         ///     Shorthand for accessing the UI thread's dispatcher.
@@ -140,7 +140,7 @@ namespace BAPSPresenterNG.ViewModel
         /// <summary>
         ///     The currently loaded item (if any).
         /// </summary>
-        public TracklistItem LoadedTrack
+        public Track LoadedTrack
         {
             get => _loadedTrack;
             set
@@ -151,9 +151,9 @@ namespace BAPSPresenterNG.ViewModel
             }
         }
 
-        public TracklistItem TrackAt(int index)
+        public Track TrackAt(int index)
         {
-            return TrackList[index] ?? new NullTracklistItem();
+            return TrackList[index] ?? new NullTrack();
         }
 
         public bool IsLoadPossible(int index)
@@ -289,11 +289,11 @@ namespace BAPSPresenterNG.ViewModel
             State = e.State;
         }
 
-        private void HandleTextItem(object sender, (ushort channelID, uint index, TextTracklistItem entry) e)
+        private void HandleTextItem(object sender, (ushort channelID, uint index, TextTrack entry) e)
         {
         }
 
-        private void HandleLoadedItem(object sender, (ushort channelID, uint index, TracklistItem entry) e)
+        private void HandleLoadedItem(object sender, (ushort channelID, uint index, Track entry) e)
         {
             if (ChannelId != e.channelID) return;
 

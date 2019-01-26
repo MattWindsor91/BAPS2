@@ -85,13 +85,6 @@ namespace BAPSClientCommon.BapsNet
         ResetPlaylist = 5 << 7, //SC-none
         CopyItem = 6 << 7, //C-u32int fromindex, u32int tochannel
 
-        /** PLAYLIST ITEMS **/
-        VoidItem = 0,
-        FileItem = 1,
-        LibraryItem = 2,
-        TextItem = 3,
-        DirectLibraryItem = 4, // mattbw 2013-11-18; needed for direct library addition
-
         /**
          * Database
          **/

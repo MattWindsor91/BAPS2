@@ -4,7 +4,6 @@ using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 using BAPSClientCommon.BapsNet;
-using TracklistItem = BAPSClientCommon.TracklistItem;
 
 namespace BAPSPresenter2
 {
@@ -175,7 +174,7 @@ namespace BAPSPresenter2
             set => trackTime.IntroPosition = value;
         }
 
-        internal void ShowLoadedItem(uint index, TracklistItem entry)
+        internal void ShowLoadedItem(uint index, Track entry)
         {
             trackList.LoadedIndex = (int)index;
             loadedText.Text = entry.Description;
@@ -195,7 +194,7 @@ namespace BAPSPresenter2
             }
         }
 
-        internal void AddTrack(uint index, TracklistItem entry)
+        internal void AddTrack(uint index, Track entry)
         {
             /** Add an item to the end of the list ( only method currently supported by server ) **/
             trackList.AddTrack(entry);

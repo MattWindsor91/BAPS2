@@ -4,7 +4,7 @@ using BAPSClientCommon.BapsNet;
 namespace BAPSClientCommon
 {
     /// <summary>
-    /// Event interface for classes that send BAPSnet server playback updates.
+    /// Event interface for classes that send BapsNet server playback updates.
     /// </summary>
     public interface IPlaybackServerUpdater
     {
@@ -18,7 +18,7 @@ namespace BAPSClientCommon
     }
 
     /// <summary>
-    /// Event interface for classes that send BAPSnet server config updates.
+    /// Event interface for classes that send BapsNet server config updates.
     /// </summary>
     public interface IConfigServerUpdater
     {
@@ -55,13 +55,13 @@ namespace BAPSClientCommon
         event ServerUpdates.ItemMoveEventHandler ItemMove;
         event EventHandler<(uint resultID, byte dirtyStatus, string description)> LibraryResult;
         event EventHandler<(uint listingID, uint channelID, string description)> ListingResult;
-        event EventHandler<(ushort channelID, uint index, TracklistItem entry)> LoadedItem;
+        event EventHandler<(ushort channelID, uint index, Track entry)> LoadedItem;
         event EventHandler<(uint permissionCode, string description)> Permission;
         event EventHandler<(ushort channelID, PositionType type, uint position)> Position;
         event ServerUpdates.ChannelResetEventHandler ResetPlaylist;
         event EventHandler<bool> ServerQuit;
         event EventHandler<(uint showID, string description)> ShowResult;
-        event EventHandler<(ushort ChannelID, uint index, TextTracklistItem entry)> TextItem;
+        event EventHandler<(ushort ChannelID, uint index, TextTrack entry)> TextItem;
         event EventHandler<ServerUpdates.UpDown> TextScroll;
         event EventHandler<ServerUpdates.UpDown> TextSizeChange;
         event EventHandler<(Command command, string description)> UnknownCommand;

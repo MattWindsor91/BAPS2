@@ -37,7 +37,7 @@ namespace BAPSPresenter2
             {
                 if (InvokeRequired)
                 {
-                    Invoke((Action<ushort, uint, TracklistItem>)showLoadedItem, e.channelID, e.index, e.entry);
+                    Invoke((Action<ushort, uint, Track>)showLoadedItem, e.channelID, e.index, e.entry);
                 }
                 else showLoadedItem(e.channelID, e.index, e.entry);
             };
@@ -45,7 +45,7 @@ namespace BAPSPresenter2
             {
                 if (InvokeRequired)
                 {
-                    Invoke((Action<ushort, uint, TextTracklistItem>)showText, e.ChannelID, e.index, e.entry);
+                    Invoke((Action<ushort, uint, TextTrack>)showText, e.ChannelID, e.index, e.entry);
                 }
                 else showText(e.ChannelID, e.index, e.entry);
             };
@@ -94,7 +94,7 @@ namespace BAPSPresenter2
             _channels[channelID].DisplayedPosition = (int)value;
         }
 
-        private void showLoadedItem(ushort channelID, uint index, TracklistItem entry)
+        private void showLoadedItem(ushort channelID, uint index, Track entry)
         {
             if (ChannelOutOfBounds(channelID)) return;
             _channels[channelID].ShowLoadedItem(index, entry);
@@ -107,7 +107,7 @@ namespace BAPSPresenter2
             _channels[channelID].DisplayedDuration = (int)value;
         }
 
-        private void showText(ushort channel, uint index, TextTracklistItem entry)
+        private void showText(ushort channel, uint index, TextTrack entry)
         {
             if (ChannelOutOfBounds(channel)) return;
             foreach (var chan in _channels) chan.LoadedTextIndex = -1;

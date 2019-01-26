@@ -307,7 +307,7 @@ namespace BAPSPresenter2
                 case ChangeType.ADD:
                     {
                         var cmd = Command.Playlist | Command.AddItem | (Command)(e.channel & 0x3f);
-                        _core.SendQueue.Add(new Message(cmd).Add((uint)Command.FileItem).Add((uint)e.index).Add(_directories[e.index].TrackAt(e.index2)));
+                        _core.SendQueue.Add(new Message(cmd).Add((uint)TrackType.File).Add((uint)e.index).Add(_directories[e.index].TrackAt(e.index2)));
                     }
                     break;
                 case ChangeType.COPY:

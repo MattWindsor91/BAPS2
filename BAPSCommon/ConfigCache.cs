@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using BAPSClientCommon.BapsNet;
 
@@ -50,7 +51,7 @@ namespace BAPSClientCommon
                 case ConfigType.Str:
                     return new StringOption(optionId, description, isIndexed);
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, "Unsupported config type");
+                    throw new InvalidEnumArgumentException(nameof(type), (int)type, typeof(ConfigType));
             }
         }
 

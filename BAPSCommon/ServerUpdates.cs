@@ -218,13 +218,13 @@
         /// </summary>
         public class ItemAddEventArgs : ItemEventArgs
         {
-            public ItemAddEventArgs(ushort channelId, uint index, TracklistItem item)
+            public ItemAddEventArgs(ushort channelId, uint index, Track item)
                 : base(channelId, index)
             {
                 Item = item;
             }
 
-            public TracklistItem Item { get; }
+            public Track Item { get; }
         }
 
         public delegate void ItemAddEventHandler(object sender, ItemAddEventArgs e);

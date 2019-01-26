@@ -57,16 +57,16 @@ namespace BAPSClientCommon
             Duration?.Invoke(this, (channelID: channelId, duration));
         }
 
-        public event EventHandler<(ushort channelID, uint index, TracklistItem entry)> LoadedItem;
+        public event EventHandler<(ushort channelID, uint index, Track entry)> LoadedItem;
 
-        private void OnLoadedItem(ushort channelId, uint index, TracklistItem entry)
+        private void OnLoadedItem(ushort channelId, uint index, Track entry)
         {
             LoadedItem?.Invoke(this, (channelID: channelId, index, entry));
         }
 
-        public event EventHandler<(ushort ChannelID, uint index, TextTracklistItem entry)> TextItem;
+        public event EventHandler<(ushort ChannelID, uint index, TextTrack entry)> TextItem;
 
-        private void OnTextItem(ushort channelId, uint index, TextTracklistItem entry)
+        private void OnTextItem(ushort channelId, uint index, TextTrack entry)
         {
             TextItem?.Invoke(this, (channelId, index, entry));
         }
@@ -309,40 +309,9 @@ namespace BAPSClientCommon
                     break;
                 case Command.Load:
                 {
-                    var channelId = cmdReceived.Channel();
-                    var index = _cs.ReceiveI();
-                    var type = (Command) _cs.ReceiveI();
-                    var description = _cs.ReceiveS();
-                    switch (type)
-                    {
-                        case Command.FileItem:
-                        case Command.LibraryItem:
-                        {
-                            var duration = _cs.ReceiveI();
-                            OnDuration(channelId, duration);
-                            OnPosition(channelId, PositionType.Position, 0U);
-                        }
-                            goto case Command.VoidItem;
-                        case Command.VoidItem:
-                        {
-                            var entry = TracklistItemFactory.Create(type, description);
-                            OnLoadedItem(channelId, index, entry);
-                        }
-                            break;
-                        case Command.TextItem:
-                        {
-                            var text = _cs.ReceiveS();
-                            var entry = new TextTracklistItem(description, text);
-                            OnTextItem(channelId, index, entry);
-                        }
-                            break;
-                        default:
-                            OnDuration(channelId, 0U);
-                            OnPosition(channelId, PositionType.Position, 0U);
-                            break;
-                    }
+                    DecodeLoad(cmdReceived.Channel());
                 }
-                    break;
+                break;
                 case Command.Position:
                 case Command.CuePosition:
                 case Command.IntroPosition:
@@ -357,6 +326,31 @@ namespace BAPSClientCommon
             }
         }
 
+        private void DecodeLoad(ushort channelId)
+        {
+            var index = _cs.ReceiveI();
+            var type = (TrackType) _cs.ReceiveI();
+            var description = _cs.ReceiveS();
+
+            var duration = 0U;
+            if (type.HasAudio()) duration = _cs.ReceiveI();
+            OnDuration(channelId, duration);
+            OnPosition(channelId, PositionType.Position, 0U);
+
+            var text = "";
+            if (type.HasText()) text = _cs.ReceiveS();
+
+            var entry = TrackFactory.Create(type, description, duration, text);
+            if (entry.IsTextItem)
+            {
+                OnTextItem(channelId, index, entry as TextTrack);
+            }
+            else
+            {
+                OnLoadedItem(channelId, index, entry);
+            }
+        }
+
         private void DecodePlaylistCommand(Command cmdReceived)
         {
             switch (cmdReceived & Command.PlaylistOpMask)
@@ -366,9 +360,9 @@ namespace BAPSClientCommon
                     {
                         var channelId = cmdReceived.Channel();
                         var index = _cs.ReceiveI();
-                        var type = _cs.ReceiveI();
+                        var type = (TrackType)_cs.ReceiveI();
                         var description = _cs.ReceiveS();
-                        var entry = TracklistItemFactory.Create((Command) type, description);
+                        var entry = TrackFactory.Create(type, description);
                         OnItemAdd(new ServerUpdates.ItemAddEventArgs(channelId, index, entry));
                     }
                     else
