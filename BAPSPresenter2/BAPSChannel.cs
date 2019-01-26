@@ -117,9 +117,9 @@ namespace BAPSPresenter2
 
                     value = (int)(Math.Round(value / 1000f) * 1000);
                     /** Set the amount of time gone **/
-                    timeGone.Text = TimeUtils.MillisecondsToTimeString(value);
+                    timeGone.Text = BAPSClientCommon.Utils.Time.MillisecondsToTimeString(value);
                     var timeleft = trackTime.Duration - value;
-                    timeLeft.Text = TimeUtils.MillisecondsToTimeString(timeleft);
+                    timeLeft.Text = BAPSClientCommon.Utils.Time.MillisecondsToTimeString(timeleft);
                     if (playButton.Enabled || timeleft > 10000 || timeleft < 500)
                     {
                         nearEndTimer.Enabled = false;
@@ -178,8 +178,8 @@ namespace BAPSPresenter2
                 RequestTimelineChange(TimelineChangeType.Duration, 0);
                 trackTime.CuePosition = 0;
                 trackTime.IntroPosition = 0;
-                timeLeft.Text = TimeUtils.MillisecondsToTimeString(0);
-                timeGone.Text = TimeUtils.MillisecondsToTimeString(0);
+                timeLeft.Text = BAPSClientCommon.Utils.Time.MillisecondsToTimeString(0);
+                timeGone.Text = BAPSClientCommon.Utils.Time.MillisecondsToTimeString(0);
                 nearEndTimer.Enabled = false;
                 timeLeft.Highlighted = false;
             }

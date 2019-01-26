@@ -1,7 +1,6 @@
 ﻿using BAPSClientCommon;
 using BAPSPresenter;
 using System;
-using System.Diagnostics;
 using System.Windows.Forms;
 using BAPSClientCommon.BapsNet;
 using Message = BAPSClientCommon.BapsNet.Message;
@@ -277,7 +276,7 @@ namespace BAPSPresenter2
 
         private void ChannelOperation_Click(object sender, ChannelOperationLookup col)
         {
-            var channelID = col.channel & (ushort)Command.PlaybackChannelMask;
+            var channelID = col.channel & (ushort)Command.ChannelMask;
             var controller = controllers[channelID];
             switch ((Command)col.co)
             {
@@ -295,8 +294,8 @@ namespace BAPSPresenter2
 
         internal void TrackList_RequestChange(object sender, RequestChangeEventArgs e)
         {
-            var channelID = e.channel & (ushort)Command.PlaybackChannelMask;
-            var controller = controllers[channelID];
+            var channelId = e.channel & (ushort)Command.ChannelMask;
+            var controller = controllers[channelId];
 
             switch (e.ct)
             {
