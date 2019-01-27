@@ -1,7 +1,7 @@
 ﻿using System;
 using BAPSClientCommon.BapsNet;
 
-namespace BAPSClientCommon
+namespace BAPSClientCommon.Model
 {
     /// <summary>
     /// Enumeration of the various position markers that a channel's track-line contain.
@@ -48,41 +48,4 @@ namespace BAPSClientCommon
             }
         }
     }
-
-    /// <inheritdoc />
-    /// <summary>
-    /// An event argument bundle used to tell the main presenter that a channel
-    /// has received a position change request from the user.
-    /// </summary>
-    public class PositionRequestChangeEventArgs : EventArgs
-    {
-        /// <summary>
-        /// The ID of the channel from where the request originates.
-        /// </summary>
-        public ushort ChannelId { get; }
-
-        /// <summary>
-        /// The type of requested position change.
-        /// </summary>
-        public MarkerType ChangeType { get; }
-
-        /// <summary>
-        /// The new value that the timeline should adopt.
-        /// </summary>
-        public int Value { get; }
-
-        public PositionRequestChangeEventArgs(ushort channelId, MarkerType type, int newValue)
-        {
-            ChannelId = channelId;
-            ChangeType = type;
-            Value = newValue;
-        }
-    }
-
-    /// <summary>
-    /// Delegate type for position change requests.
-    /// </summary>
-    /// <param name="sender">The sender of the event (usually a channel).</param>
-    /// <param name="e">The event details.</param>
-    public delegate void PositionRequestChangeEventHandler(object sender, PositionRequestChangeEventArgs e);
 }

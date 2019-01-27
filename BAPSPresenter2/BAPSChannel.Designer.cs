@@ -1,4 +1,6 @@
-﻿namespace BAPSPresenter2
+﻿using BAPSClientCommon.Events;
+
+namespace BAPSPresenter2
 {
     partial class BAPSChannel
     {
@@ -117,7 +119,7 @@
             this.trackTime.Size = new System.Drawing.Size(384, 72);
             this.trackTime.TabIndex = 227;
             this.trackTime.Text = "trackTime0";
-            this.trackTime.PositionChanged += new BAPSClientCommon.PositionRequestChangeEventHandler(this.OnPositionChanged);
+            this.trackTime.PositionChanged += new Requests.ChannelMarkerEventHandler(this.OnPositionChanged);
             // 
             // trackList
             // 

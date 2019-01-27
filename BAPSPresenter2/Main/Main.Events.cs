@@ -3,6 +3,7 @@ using BAPSPresenter;
 using System;
 using System.Windows.Forms;
 using BAPSClientCommon.BapsNet;
+using BAPSClientCommon.Events;
 using BAPSClientCommon.Model;
 using Message = BAPSClientCommon.BapsNet.Message;
 
@@ -29,10 +30,10 @@ namespace BAPSPresenter2
         }
 
         /** functions to receive events from the custom TrackTime class */
-        private void HandlePositionChanged(object sender, PositionRequestChangeEventArgs e)
+        private void HandlePositionChanged(object sender, Requests.ChannelMarkerEventArgs e)
         {
-            var cmd = Command.Playback | e.ChangeType.AsCommand() | (Command)e.ChannelId;
-            _core.SendQueue.Add(new Message(cmd).Add((uint)e.Value));
+            var cmd = Command.Playback | e.Marker.AsCommand() | (Command)e.ChannelId;
+            _core.SendQueue.Add(new Message(cmd).Add(e.NewValue));
         }
 
         /** functions to receive context menu events **/
@@ -272,12 +273,12 @@ namespace BAPSPresenter2
             _ = lb.DoDragDrop(fts, DragDropEffects.Copy);
         }
 
-        private void HandleChannelStateRequest(object sender, ServerUpdates.ChannelStateEventArgs e)
+        private void HandleChannelStateRequest(object sender, Updates.ChannelStateEventArgs e)
         {
             _controllers[e.ChannelId].SetState(e.State);
         }
 
-        private void HandleItemDeleteRequest(object sender, ServerUpdates.ItemDeleteEventArgs e)
+        private void HandleItemDeleteRequest(object sender, Updates.ItemDeleteEventArgs e)
         {
             _controllers[e.ChannelId].DeleteItemAt(e.Index);
         }

@@ -4,6 +4,7 @@ using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 using BAPSClientCommon.BapsNet;
+using BAPSClientCommon.Events;
 using BAPSClientCommon.Model;
 
 namespace BAPSPresenter2
@@ -68,19 +69,19 @@ namespace BAPSPresenter2
         /// <summary>
         ///     Event that fires when the channel wants to change its state.
         ///     <para>
-        ///         The use of the 'ServerUpdates' event here is slightly
+        ///         The use of the 'Updates' event here is slightly
         ///         misleading: this is a server request, not a response.
         ///         We re-use the same event because we're sending the exact
         ///         same data.
         ///     </para>
         /// </summary>
-        public event ServerUpdates.ChannelStateEventHandler OpRequest;
-        public event PositionRequestChangeEventHandler PositionRequestChange;
+        public event Updates.ChannelStateEventHandler OpRequest;
+        public event Requests.ChannelMarkerEventHandler PositionRequestChange;
         public event TimelineChangeEventHandler TimelineChanged;
         public event EventHandler<uint> TrackBarMoved;
         public event ChannelConfigChangeHandler ChannelConfigChange;
-        public event ServerUpdates.ItemDeleteEventHandler ItemDeleteRequest;
-        public event ServerUpdates.ChannelResetEventHandler ChannelResetRequest;
+        public event Updates.ItemDeleteEventHandler ItemDeleteRequest;
+        public event Updates.ChannelResetEventHandler ChannelResetRequest;
         public event EventHandler<TrackList> AudioWallRequest;
 
         #endregion Events used to talk to the main presenter
@@ -228,7 +229,7 @@ namespace BAPSPresenter2
 
         private void RequestStateChange(ChannelState state)
         {
-            OpRequest?.Invoke(this, new ServerUpdates.ChannelStateEventArgs((ushort)ChannelId, state));
+            OpRequest?.Invoke(this, new Updates.ChannelStateEventArgs((ushort)ChannelId, state));
         }
 
         private void playButton_Click(object sender, EventArgs e) => RequestStateChange(ChannelState.Playing);
@@ -314,7 +315,7 @@ namespace BAPSPresenter2
 
         #region Position movement events
 
-        private void OnPositionChanged(object sender, PositionRequestChangeEventArgs e)
+        private void OnPositionChanged(object sender, Requests.ChannelMarkerEventArgs e)
         {
             Debug.Assert(sender == trackTime, "Got position change request from unexpected place");
             Debug.Assert(e.ChannelId == ChannelId, "Got position change request for unexpected channel");
@@ -392,11 +393,11 @@ namespace BAPSPresenter2
             else if (e.ClickedItem == deleteItemToolStripMenuItem)
             {
                 var indexToDelete = (uint) trackList.LastIndexClicked;
-                OnItemDeleteRequest(new ServerUpdates.ItemDeleteEventArgs((ushort)ChannelId, indexToDelete));
+                OnItemDeleteRequest(new Updates.ItemDeleteEventArgs((ushort)ChannelId, indexToDelete));
             }
             else if (e.ClickedItem == resetChannelStripMenuItem)
             {
-                OnChannelResetRequest(new ServerUpdates.ChannelResetEventArgs((ushort)ChannelId));
+                OnChannelResetRequest(new Updates.ChannelResetEventArgs((ushort)ChannelId));
             }
             else if (e.ClickedItem == showAudioWallToolStripMenuItem)
             {
@@ -480,7 +481,7 @@ namespace BAPSPresenter2
 
         #endregion Timer events
 
-        protected virtual void OnItemDeleteRequest(ServerUpdates.ItemDeleteEventArgs e)
+        protected virtual void OnItemDeleteRequest(Updates.ItemDeleteEventArgs e)
         {
             ItemDeleteRequest?.Invoke(this, e);
         }
@@ -490,7 +491,7 @@ namespace BAPSPresenter2
             AudioWallRequest?.Invoke(this, e);
         }
 
-        protected virtual void OnChannelResetRequest(ServerUpdates.ChannelResetEventArgs e)
+        protected virtual void OnChannelResetRequest(Updates.ChannelResetEventArgs e)
         {
             ChannelResetRequest?.Invoke(this, e);
         }

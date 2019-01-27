@@ -1,4 +1,5 @@
 using BAPSClientCommon;
+using BAPSClientCommon.Events;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
@@ -44,7 +45,7 @@ namespace BAPSPresenterNG.ViewModel
         public void Register(IMessenger messenger)
         {
             MessengerInstance = messenger;
-            messenger.Register(this, (Action<ServerUpdates.DirectoryPrepareArgs>)HandleDirectoryPrepare);
+            messenger.Register(this, (Action<Updates.DirectoryPrepareArgs>)HandleDirectoryPrepare);
         }
 
         /// <summary>
@@ -56,7 +57,7 @@ namespace BAPSPresenterNG.ViewModel
         /// </para>
         /// </summary>
         /// <param name="e"></param>
-        private void HandleDirectoryPrepare(ServerUpdates.DirectoryPrepareArgs e)
+        private void HandleDirectoryPrepare(Updates.DirectoryPrepareArgs e)
         {
             System.Windows.Application.Current.Dispatcher.Invoke(() =>
             {

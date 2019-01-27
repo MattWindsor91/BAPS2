@@ -3,6 +3,7 @@
 using System;
 using BAPSClientCommon;
 using BAPSClientCommon.BapsNet;
+using BAPSClientCommon.Events;
 
 namespace BAPSPresenter2
 {
@@ -16,7 +17,7 @@ namespace BAPSPresenter2
             {
                 if (InvokeRequired)
                 {
-                    Invoke((ServerUpdates.ConfigOptionHandler)processOption, sender, e);
+                    Invoke((Updates.ConfigOptionHandler)processOption, sender, e);
                 }
                 else processOption(sender, e);
             };
@@ -24,7 +25,7 @@ namespace BAPSPresenter2
             {
                 if (InvokeRequired)
                 {
-                    Invoke((ServerUpdates.ConfigChoiceHandler)processChoice, sender, e);
+                    Invoke((Updates.ConfigChoiceHandler)processChoice, sender, e);
                 }
                 else processChoice(sender, e);
             };
@@ -32,7 +33,7 @@ namespace BAPSPresenter2
             {
                 if (InvokeRequired)
                 {
-                    Invoke((ServerUpdates.ConfigSettingHandler)processConfigSetting, sender, e);
+                    Invoke((Updates.ConfigSettingHandler)processConfigSetting, sender, e);
                 }
                 else processConfigSetting(sender, e);
             };
@@ -82,7 +83,7 @@ namespace BAPSPresenter2
 	        update the configDialog... exceptions to the rule exist... read on
         **/
 
-        private void processChoice(object sender, ServerUpdates.ConfigChoiceArgs e)
+        private void processChoice(object sender, Updates.ConfigChoiceArgs e)
         {
             /** Ignore if the config dialog is closed **/
             var cd = configDialog;
@@ -134,7 +135,7 @@ namespace BAPSPresenter2
             }
         }
 
-        private void processOption(object sender, ServerUpdates.ConfigOptionArgs e)
+        private void processOption(object sender, Updates.ConfigOptionArgs e)
         {
             /** Pass onto the config dialog if available **/
             var cd = configDialog;
@@ -204,7 +205,7 @@ namespace BAPSPresenter2
             }
         }
 
-        private void processConfigSetting(object sender, ServerUpdates.ConfigSettingArgs e)
+        private void processConfigSetting(object sender, Updates.ConfigSettingArgs e)
         {
             var hasIndex = 0 <= e.Index;
             /** 

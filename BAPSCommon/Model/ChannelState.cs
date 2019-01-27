@@ -1,7 +1,7 @@
 ﻿using System;
 using BAPSClientCommon.BapsNet;
 
-namespace BAPSClientCommon
+namespace BAPSClientCommon.Model
 {
     /// <summary>
     ///     Enumeration of basic channel states.

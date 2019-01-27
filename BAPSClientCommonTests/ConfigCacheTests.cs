@@ -1,6 +1,7 @@
 using System;
 using BAPSClientCommon;
 using BAPSClientCommon.BapsNet;
+using BAPSClientCommon.Events;
 using NUnit.Framework;
 
 namespace BAPSClientCommonTests
@@ -87,31 +88,31 @@ namespace BAPSClientCommonTests
 
         public class MockReceiver : IConfigServerUpdater
         {
-            public event ServerUpdates.ConfigChoiceHandler ConfigChoice;
+            public event Updates.ConfigChoiceHandler ConfigChoice;
 
-            public event ServerUpdates.ConfigOptionHandler ConfigOption;
+            public event Updates.ConfigOptionHandler ConfigOption;
 
             public event EventHandler<(Command cmdReceived, uint optionID, ConfigResult result)> ConfigResult;
 
-            public event ServerUpdates.ConfigSettingHandler ConfigSetting;
-            public event ServerUpdates.ChannelStateEventHandler ChannelState;
+            public event Updates.ConfigSettingHandler ConfigSetting;
+            public event Updates.ChannelStateEventHandler ChannelState;
 
-            public void OnConfigChoice(ServerUpdates.ConfigChoiceArgs e)
+            public void OnConfigChoice(Updates.ConfigChoiceArgs e)
             {
                 ConfigChoice?.Invoke(this, e);
             }
 
-            public void OnConfigOption(ServerUpdates.ConfigOptionArgs e)
+            public void OnConfigOption(Updates.ConfigOptionArgs e)
             {
                 ConfigOption?.Invoke(this, e);
             }
 
-            public void OnConfigSetting(ServerUpdates.ConfigSettingArgs e)
+            public void OnConfigSetting(Updates.ConfigSettingArgs e)
             {
                 ConfigSetting?.Invoke(this, e);
             }
 
-            protected virtual void OnChannelState(ServerUpdates.ChannelStateEventArgs e)
+            protected virtual void OnChannelState(Updates.ChannelStateEventArgs e)
             {
                 ChannelState?.Invoke(this, e);
             }
@@ -127,24 +128,24 @@ namespace BAPSClientCommonTests
         [Test]
         public void TestReceiverString()
         {
-            _receiver.OnConfigOption(new ServerUpdates.ConfigOptionArgs(64, ConfigType.Str, "Barbaz", false));
+            _receiver.OnConfigOption(new Updates.ConfigOptionArgs(64, ConfigType.Str, "Barbaz", false));
             Assert.That(_cache.GetValue<string>("Barbaz"), Is.Null);
 
-            _receiver.OnConfigSetting(new ServerUpdates.ConfigSettingArgs(64, ConfigType.Str, "FrankerZ"));
+            _receiver.OnConfigSetting(new Updates.ConfigSettingArgs(64, ConfigType.Str, "FrankerZ"));
             Assert.That(_cache.GetValue<string>("Barbaz"), Is.EqualTo("FrankerZ"));
         }
 
         [Test]
         public void TestReceiverChoice()
         {
-            _receiver.OnConfigOption(new ServerUpdates.ConfigOptionArgs(99, ConfigType.Choice, "Keepo", false));
+            _receiver.OnConfigOption(new Updates.ConfigOptionArgs(99, ConfigType.Choice, "Keepo", false));
 
-            _receiver.OnConfigChoice(new ServerUpdates.ConfigChoiceArgs(99, 0, "Yes"));
-            _receiver.OnConfigChoice(new ServerUpdates.ConfigChoiceArgs(99, 1, "No"));
+            _receiver.OnConfigChoice(new Updates.ConfigChoiceArgs(99, 0, "Yes"));
+            _receiver.OnConfigChoice(new Updates.ConfigChoiceArgs(99, 1, "No"));
             Assert.That(_cache.FindChoiceIndexFor("Keepo", "Yes"), Is.EqualTo(0), "Choice index for 'yes' incorrect");
             Assert.That(_cache.FindChoiceIndexFor("Keepo", "No"), Is.EqualTo(1), "Choice index for 'no' incorrect");
 
-            _receiver.OnConfigSetting(new ServerUpdates.ConfigSettingArgs(99, ConfigType.Choice, 1));
+            _receiver.OnConfigSetting(new Updates.ConfigSettingArgs(99, ConfigType.Choice, 1));
             Assert.That(_cache.GetValue<int>("Keepo"), Is.EqualTo(1), "Choice hasn't changed");
         }
 

@@ -2,6 +2,7 @@
 
 using System;
 using BAPSClientCommon;
+using BAPSClientCommon.Events;
 using BAPSClientCommon.Model;
 
 namespace BAPSPresenter2
@@ -14,7 +15,7 @@ namespace BAPSPresenter2
             {
                 if (InvokeRequired)
                 {
-                    Invoke((ServerUpdates.ChannelStateEventHandler)showChannelOperation, sender, e);
+                    Invoke((Updates.ChannelStateEventHandler)showChannelOperation, sender, e);
                 }
                 else showChannelOperation(sender, e);
             };
@@ -22,7 +23,7 @@ namespace BAPSPresenter2
             {
                 if (InvokeRequired)
                 {
-                    Invoke((ServerUpdates.ChannelMarkerEventHandler)ShowPositionWithType, sender, e);
+                    Invoke((Updates.ChannelMarkerEventHandler)ShowPositionWithType, sender, e);
                 }
                 else ShowPositionWithType(sender, e);
             };
@@ -52,7 +53,7 @@ namespace BAPSPresenter2
             };
         }
 
-        private void ShowPositionWithType(object sender, ServerUpdates.ChannelMarkerEventArgs e)
+        private void ShowPositionWithType(object sender, Updates.ChannelMarkerEventArgs e)
         {
             switch (e.Marker)
             {
@@ -68,7 +69,7 @@ namespace BAPSPresenter2
             }
         }
 
-        private void showChannelOperation(object sender, ServerUpdates.ChannelStateEventArgs e)
+        private void showChannelOperation(object sender, Updates.ChannelStateEventArgs e)
         {
             if (ChannelOutOfBounds(e.ChannelId)) return;
             var chan = _channels[e.ChannelId];

@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Threading;
 using BAPSClientCommon;
+using BAPSClientCommon.Events;
 using BAPSClientCommon.Model;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -180,8 +181,8 @@ namespace BAPSPresenterNG.ViewModel
 
         private void SetupPlaybackReactions(IServerUpdater r, IMessenger messenger)
         {
-            messenger.Register<ServerUpdates.ChannelStateEventArgs>(this, HandleChannelState);
-            messenger.Register<ServerUpdates.ChannelMarkerEventArgs>(this, HandleMarker);
+            messenger.Register<Updates.ChannelStateEventArgs>(this, HandleChannelState);
+            messenger.Register<Updates.ChannelMarkerEventArgs>(this, HandleMarker);
             r.Duration += HandleDuration;
             r.LoadedItem += HandleLoadedItem;
             r.TextItem += HandleTextItem;
@@ -189,10 +190,10 @@ namespace BAPSPresenterNG.ViewModel
 
         private void SetupPlaylistReactions(IMessenger messenger)
         {
-            messenger.Register<ServerUpdates.ItemAddEventArgs>(this, HandleItemAdd);
-            messenger.Register<ServerUpdates.ItemMoveEventArgs>(this, HandleItemMove);
-            messenger.Register<ServerUpdates.ItemDeleteEventArgs>(this, HandleItemDelete);
-            messenger.Register<ServerUpdates.ChannelResetEventArgs>(this, HandleResetPlaylist);
+            messenger.Register<Updates.ItemAddEventArgs>(this, HandleItemAdd);
+            messenger.Register<Updates.ItemMoveEventArgs>(this, HandleItemMove);
+            messenger.Register<Updates.ItemDeleteEventArgs>(this, HandleItemDelete);
+            messenger.Register<Updates.ChannelResetEventArgs>(this, HandleResetPlaylist);
         }
 
         private void SetupConfigReactions()
@@ -268,7 +269,7 @@ namespace BAPSPresenterNG.ViewModel
             Duration = e.duration;
         }
 
-        private void HandleMarker(ServerUpdates.ChannelMarkerEventArgs e)
+        private void HandleMarker(Updates.ChannelMarkerEventArgs e)
         {
             if (ChannelId != e.ChannelId) return;
             switch (e.Marker)
@@ -287,7 +288,7 @@ namespace BAPSPresenterNG.ViewModel
             }
         }
 
-        private void HandleChannelState(ServerUpdates.ChannelStateEventArgs e)
+        private void HandleChannelState(Updates.ChannelStateEventArgs e)
         {
             if (ChannelId != e.ChannelId) return;
             State = e.State;
@@ -498,25 +499,25 @@ namespace BAPSPresenterNG.ViewModel
         // NB: Anything involving the TrackList has to be done on the
         // UI thread, hence the use of Dispatcher.
 
-        private void HandleItemAdd(ServerUpdates.ItemAddEventArgs e)
+        private void HandleItemAdd(Updates.ItemAddEventArgs e)
         {
             if (ChannelId != e.ChannelId) return;
             UiDispatcher.Invoke(() => TrackList.Add(e.Item));
         }
 
-        private void HandleItemMove(ServerUpdates.ItemMoveEventArgs e)
+        private void HandleItemMove(Updates.ItemMoveEventArgs e)
         {
             if (ChannelId != e.ChannelId) return;
             UiDispatcher.Invoke(() => TrackList.Move((int) e.Index, (int) e.NewIndex));
         }
 
-        private void HandleItemDelete(ServerUpdates.ItemDeleteEventArgs e)
+        private void HandleItemDelete(Updates.ItemDeleteEventArgs e)
         {
             if (ChannelId != e.ChannelId) return;
             UiDispatcher.Invoke(() => TrackList.RemoveAt((int) e.Index));
         }
 
-        private void HandleResetPlaylist(ServerUpdates.ChannelResetEventArgs e)
+        private void HandleResetPlaylist(Updates.ChannelResetEventArgs e)
         {
             if (ChannelId != e.ChannelId) return;
             UiDispatcher.Invoke(() => TrackList.Clear());

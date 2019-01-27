@@ -1,5 +1,6 @@
 ﻿using System;
 using BAPSClientCommon.BapsNet;
+using BAPSClientCommon.Events;
 using BAPSClientCommon.Model;
 
 namespace BAPSClientCommon
@@ -12,12 +13,12 @@ namespace BAPSClientCommon
         /// <summary>
         ///     Event raised when the server reports a change in channel state.
         /// </summary>
-        event ServerUpdates.ChannelStateEventHandler ChannelState;
+        event Updates.ChannelStateEventHandler ChannelState;
 
         /// <summary>
         ///     Event raised when the server reports a change in channel marker.
         /// </summary>
-        event ServerUpdates.ChannelMarkerEventHandler ChannelMarker;
+        event Updates.ChannelMarkerEventHandler ChannelMarker;
 
     }
 
@@ -26,8 +27,8 @@ namespace BAPSClientCommon
     /// </summary>
     public interface IDirectoryServerUpdater
     {
-        event ServerUpdates.DirectoryFileAddHandler DirectoryFileAdd;
-        event ServerUpdates.DirectoryPrepareHandler DirectoryPrepare;
+        event Updates.DirectoryFileAddHandler DirectoryFileAdd;
+        event Updates.DirectoryPrepareHandler DirectoryPrepare;
     }
 
     /// <summary>
@@ -38,18 +39,18 @@ namespace BAPSClientCommon
         /// <summary>
         /// Event raised when the server declares a config choice.
         /// </summary>
-        event ServerUpdates.ConfigChoiceHandler ConfigChoice;
+        event Updates.ConfigChoiceHandler ConfigChoice;
 
         /// <summary>
         /// Event raised when the server declares a config option.
         /// </summary>
-        event ServerUpdates.ConfigOptionHandler ConfigOption;
+        event Updates.ConfigOptionHandler ConfigOption;
 
         /// <summary>
         /// Event raised when the server declares that a setting on a
         /// config option has changed.
         /// </summary>
-        event ServerUpdates.ConfigSettingHandler ConfigSetting;
+        event Updates.ConfigSettingHandler ConfigSetting;
 
         event EventHandler<(Command cmdReceived, uint optionID, ConfigResult result)> ConfigResult;
     }
@@ -60,22 +61,22 @@ namespace BAPSClientCommon
     public interface IServerUpdater : IConfigServerUpdater, IDirectoryServerUpdater, IPlaybackServerUpdater
     {
         event EventHandler<(ushort channelID, uint duration)> Duration;
-        event ServerUpdates.ErrorEventHandler Error;
-        event ServerUpdates.CountEventHandler IncomingCount;
+        event Updates.ErrorEventHandler Error;
+        event Updates.CountEventHandler IncomingCount;
         event EventHandler<(Command cmdReceived, string ipAddress, uint mask)> IpRestriction;
-        event ServerUpdates.ItemAddEventHandler ItemAdd;
-        event ServerUpdates.ItemDeleteEventHandler ItemDelete;
-        event ServerUpdates.ItemMoveEventHandler ItemMove;
+        event Updates.ItemAddEventHandler ItemAdd;
+        event Updates.ItemDeleteEventHandler ItemDelete;
+        event Updates.ItemMoveEventHandler ItemMove;
         event EventHandler<(uint resultID, byte dirtyStatus, string description)> LibraryResult;
         event EventHandler<(uint listingID, uint channelID, string description)> ListingResult;
         event EventHandler<(ushort channelID, uint index, Track entry)> LoadedItem;
         event EventHandler<(uint permissionCode, string description)> Permission;
-        event ServerUpdates.ChannelResetEventHandler ResetPlaylist;
+        event Updates.ChannelResetEventHandler ResetPlaylist;
         event EventHandler<bool> ServerQuit;
         event EventHandler<(uint showID, string description)> ShowResult;
         event EventHandler<(ushort ChannelID, uint index, TextTrack entry)> TextItem;
-        event EventHandler<ServerUpdates.UpDown> TextScroll;
-        event EventHandler<ServerUpdates.UpDown> TextSizeChange;
+        event EventHandler<Updates.UpDown> TextScroll;
+        event EventHandler<Updates.UpDown> TextSizeChange;
         event EventHandler<(Command command, string description)> UnknownCommand;
         event EventHandler<(string username, uint permissions)> User;
         event EventHandler<(byte resultCode, string description)> UserResult;

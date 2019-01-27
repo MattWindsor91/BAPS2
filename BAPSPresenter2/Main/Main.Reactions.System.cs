@@ -2,6 +2,7 @@
 
 using BAPSClientCommon;
 using System;
+using BAPSClientCommon.Events;
 
 namespace BAPSPresenter2
 {
@@ -13,7 +14,7 @@ namespace BAPSPresenter2
             {
                 if (InvokeRequired)
                 {
-                    Invoke((ServerUpdates.DirectoryFileAddHandler)addFileToDirectoryList, sender, e);
+                    Invoke((Updates.DirectoryFileAddHandler)addFileToDirectoryList, sender, e);
                 }
                 else addFileToDirectoryList(sender, e);
             };
@@ -21,7 +22,7 @@ namespace BAPSPresenter2
             {
                 if (InvokeRequired)
                 {
-                    Invoke((ServerUpdates.DirectoryPrepareHandler)clearFiles, sender, e);
+                    Invoke((Updates.DirectoryPrepareHandler)clearFiles, sender, e);
                 }
                 else clearFiles(sender, e);
             };
@@ -65,7 +66,7 @@ namespace BAPSPresenter2
             };
         }
 
-        private void addFileToDirectoryList(object sender, ServerUpdates.DirectoryFileAddArgs e)
+        private void addFileToDirectoryList(object sender, Updates.DirectoryFileAddArgs e)
         {
             if (DirectoryOutOfBounds(e.DirectoryId)) return;
             // TODO(@MattWindsor91): file index?
@@ -73,7 +74,7 @@ namespace BAPSPresenter2
             _directories[e.DirectoryId].Add(e.Description);
         }
 
-        private void clearFiles(object sender, ServerUpdates.DirectoryPrepareArgs e)
+        private void clearFiles(object sender, Updates.DirectoryPrepareArgs e)
         {
             if (DirectoryOutOfBounds(e.DirectoryId)) return;
             /** Empty the list box ready for new entries (required due to implicit indexing) **/

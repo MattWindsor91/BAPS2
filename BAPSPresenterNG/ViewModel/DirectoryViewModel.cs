@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using BAPSClientCommon;
+using BAPSClientCommon.Events;
 using BAPSClientCommon.Model;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
@@ -42,11 +43,11 @@ namespace BAPSPresenterNG.ViewModel
 
         public void Register(IMessenger m)
         {
-            m.Register(this, (Action<ServerUpdates.DirectoryFileAddArgs>) HandleDirectoryFileAdd);
-            m.Register(this, (Action<ServerUpdates.DirectoryPrepareArgs>) HandleDirectoryPrepare);
+            m.Register(this, (Action<Updates.DirectoryFileAddArgs>) HandleDirectoryFileAdd);
+            m.Register(this, (Action<Updates.DirectoryPrepareArgs>) HandleDirectoryPrepare);
         }
 
-        private void HandleDirectoryFileAdd(ServerUpdates.DirectoryFileAddArgs e)
+        private void HandleDirectoryFileAdd(Updates.DirectoryFileAddArgs e)
         {
             if (e.DirectoryId != DirectoryId) return;
             Files.Insert((int) e.Index, new DirectoryEntry(DirectoryId, e.Description));
@@ -62,7 +63,7 @@ namespace BAPSPresenterNG.ViewModel
         ///     </para>
         /// </summary>
         /// <param name="e">The server update payload</param>
-        private void HandleDirectoryPrepare(ServerUpdates.DirectoryPrepareArgs e)
+        private void HandleDirectoryPrepare(Updates.DirectoryPrepareArgs e)
         {
             if (e.DirectoryId != DirectoryId) return;
             Files.Clear();

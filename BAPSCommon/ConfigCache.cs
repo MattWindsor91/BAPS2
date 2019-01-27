@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using BAPSClientCommon.BapsNet;
+using BAPSClientCommon.Events;
 
 namespace BAPSClientCommon
 {
@@ -187,10 +188,10 @@ namespace BAPSClientCommon
 
         /// <summary>
         ///     Updates the value for a given option ID directly from a
-        ///     <see cref="ServerUpdates.ConfigSettingArgs" /> struct.
+        ///     <see cref="Updates.ConfigSettingArgs" /> struct.
         /// </summary>
-        /// <param name="args">The <see cref="ServerUpdates.ConfigSettingArgs" /> struct to use.</param>
-        private void AddOptionValue(ServerUpdates.ConfigSettingArgs args)
+        /// <param name="args">The <see cref="Updates.ConfigSettingArgs" /> struct to use.</param>
+        private void AddOptionValue(Updates.ConfigSettingArgs args)
         {
             switch (args.Type)
             {
