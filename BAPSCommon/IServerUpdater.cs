@@ -17,7 +17,7 @@ namespace BAPSClientCommon
         /// <summary>
         ///     Event raised when the server reports a change in channel marker.
         /// </summary>
-        event ServerUpdates.ChannelMarkerEventHandler Marker;
+        event ServerUpdates.ChannelMarkerEventHandler ChannelMarker;
 
     }
 

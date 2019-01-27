@@ -65,11 +65,11 @@ namespace BAPSClientCommon
             TextItem?.Invoke(this, (channelId, index, entry));
         }
 
-        public event ServerUpdates.ChannelMarkerEventHandler Marker;
+        public event ServerUpdates.ChannelMarkerEventHandler ChannelMarker;
 
         private void OnMarker(ServerUpdates.ChannelMarkerEventArgs e)
         {
-            Marker?.Invoke(this, e);
+            ChannelMarker?.Invoke(this, e);
         }
 
         #endregion Playback events

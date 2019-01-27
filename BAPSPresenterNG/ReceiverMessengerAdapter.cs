@@ -28,20 +28,32 @@ namespace BAPSPresenterNG
         }
 
         /// <summary>
+        ///     Forwards an event's payload as a messenger message.
+        /// </summary>
+        /// <typeparam name="T">Type of event payload.</typeparam>
+        /// <param name="sender">Ignored.</param>
+        /// <param name="e">The object payload.</param>
+        private void Relay<T>(object sender, T e)
+        {
+            _messenger.Send(e);
+        }
+
+        /// <summary>
         ///     Attaches event handlers to the receiver that put the event's
         ///     payload on the messenger bus.
         /// </summary>
         public void Register()
         {
-            _receiver.ChannelState += (sender, e) => _messenger.Send(e);
+            _receiver.ChannelState += Relay;
+            _receiver.ChannelMarker += Relay; 
 
-            _receiver.ItemAdd += (sender, e) => _messenger.Send(e);
-            _receiver.ItemMove += (sender, e) => _messenger.Send(e);
-            _receiver.ItemDelete += (sender, e) => _messenger.Send(e);
-            _receiver.ResetPlaylist += (sender, e) => _messenger.Send(e);
+            _receiver.ItemAdd += Relay;
+            _receiver.ItemMove += Relay;
+            _receiver.ItemDelete += Relay;
+            _receiver.ResetPlaylist += Relay;
 
-            _receiver.DirectoryFileAdd += (sender, e) => _messenger.Send(e);
-            _receiver.DirectoryPrepare += (sender, e) => _messenger.Send(e);
+            _receiver.DirectoryFileAdd += Relay;
+            _receiver.DirectoryPrepare += Relay;
         }
     }
 }

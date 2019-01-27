@@ -180,9 +180,8 @@ namespace BAPSPresenterNG.ViewModel
 
         private void SetupPlaybackReactions(IServerUpdater r, IMessenger messenger)
         {
-            messenger.Register(this, (Action<ServerUpdates.ChannelStateEventArgs>) HandleChannelState);
-
-            r.Marker += HandleMarker;
+            messenger.Register<ServerUpdates.ChannelStateEventArgs>(this, HandleChannelState);
+            messenger.Register<ServerUpdates.ChannelMarkerEventArgs>(this, HandleMarker);
             r.Duration += HandleDuration;
             r.LoadedItem += HandleLoadedItem;
             r.TextItem += HandleTextItem;
@@ -190,10 +189,10 @@ namespace BAPSPresenterNG.ViewModel
 
         private void SetupPlaylistReactions(IMessenger messenger)
         {
-            messenger.Register(this, (Action<ServerUpdates.ItemAddEventArgs>) HandleItemAdd);
-            messenger.Register(this, (Action<ServerUpdates.ItemMoveEventArgs>) HandleItemMove);
-            messenger.Register(this, (Action<ServerUpdates.ItemDeleteEventArgs>) HandleItemDelete);
-            messenger.Register(this, (Action<ServerUpdates.ChannelResetEventArgs>) HandleResetPlaylist);
+            messenger.Register<ServerUpdates.ItemAddEventArgs>(this, HandleItemAdd);
+            messenger.Register<ServerUpdates.ItemMoveEventArgs>(this, HandleItemMove);
+            messenger.Register<ServerUpdates.ItemDeleteEventArgs>(this, HandleItemDelete);
+            messenger.Register<ServerUpdates.ChannelResetEventArgs>(this, HandleResetPlaylist);
         }
 
         private void SetupConfigReactions()
@@ -269,7 +268,7 @@ namespace BAPSPresenterNG.ViewModel
             Duration = e.duration;
         }
 
-        private void HandleMarker(object sender, ServerUpdates.ChannelMarkerEventArgs e)
+        private void HandleMarker(ServerUpdates.ChannelMarkerEventArgs e)
         {
             if (ChannelId != e.ChannelId) return;
             switch (e.Marker)

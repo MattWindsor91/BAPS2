@@ -18,7 +18,7 @@ namespace BAPSPresenter2
                 }
                 else showChannelOperation(sender, e);
             };
-            r.Marker += (sender, e) =>
+            r.ChannelMarker += (sender, e) =>
             {
                 if (InvokeRequired)
                 {

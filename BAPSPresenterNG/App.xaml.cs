@@ -2,7 +2,6 @@
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using System;
-using System.Threading;
 using System.Windows;
 
 namespace BAPSPresenterNG
@@ -10,7 +9,7 @@ namespace BAPSPresenterNG
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App : Application
+    public partial class App
     {
         private ClientCore _core;
         private MainWindow _main;
@@ -30,11 +29,8 @@ namespace BAPSPresenterNG
             _core.ReceiverCreated += ReceiverCreated;
 
             var launchedProperly = _core.Launch();
-            if (!launchedProperly)
-            {
-                Shutdown();
-                return;
-            }
+            if (launchedProperly) return;
+            Shutdown();
         }
 
         private Authenticator.Response LoginCallback()
@@ -104,13 +100,11 @@ namespace BAPSPresenterNG
                 MessageBox.Show(errorMessage, "Server error:", MessageBoxButton.OK);
                 //logError(errorMessage);
             };
-            e.UserError += (s, ErrorMessage) =>
+            e.UserError += (s, errorMessage) =>
             {
-                MessageBox.Show(ErrorMessage, "Login error:", MessageBoxButton.OK);
+                MessageBox.Show(errorMessage, "Login error:", MessageBoxButton.OK);
             };
         }
-
-        private CancellationTokenSource dead = new CancellationTokenSource();
 
         private void Application_Exit(object sender, ExitEventArgs e)
         {

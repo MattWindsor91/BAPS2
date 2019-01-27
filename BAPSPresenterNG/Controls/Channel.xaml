@@ -179,7 +179,7 @@
                                IsHighlighted="{Binding IsStopped}"
                                HighlightBrush="{StaticResource StopBrush}"
                                ToolTip="Stop"
-                               Command="{Binding PauseCommand}" />
+                               Command="{Binding StopCommand}" />
         <!-- Track name -->
         <Border Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3"
                 BorderThickness="1pt" Background="{StaticResource NameBgBrush}" BorderBrush="Black">
