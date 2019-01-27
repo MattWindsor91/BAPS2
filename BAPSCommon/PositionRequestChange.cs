@@ -4,44 +4,47 @@ using BAPSClientCommon.BapsNet;
 namespace BAPSClientCommon
 {
     /// <summary>
-    /// Enumeration of the various positions that a channel's track-line represents.
+    /// Enumeration of the various position markers that a channel's track-line contain.
     /// </summary>
-    public enum PositionType
+    public enum MarkerType
     {
         Position,
         Cue,
         Intro
     }
 
-    public static class PositionTypeExtensions
+    /// <summary>
+    ///     Extension methods for <see cref="MarkerType"/>, and conversion therefrom and thereto.
+    /// </summary>
+    public static class MarkerTypeExtensions
     {
-        public static Command AsCommand(this PositionType pt)
+        public static Command AsCommand(this MarkerType pt)
         {
             switch (pt)
             {
-                case PositionType.Position:
+                case MarkerType.Position:
                     return Command.Position;
-                case PositionType.Cue:
+                case MarkerType.Cue:
                     return Command.CuePosition;
-                case PositionType.Intro:
+                case MarkerType.Intro:
                     return Command.IntroPosition;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(pt), pt, "Not a valid position type");
+                    throw new ArgumentOutOfRangeException(nameof(pt), pt, "Not a valid marker type");
             }
         }
 
-        public static PositionType AsPositionType(this Command c)
+        public static MarkerType AsMarkerType(this Command c)
         {
             switch (c & Command.PlaybackOpMask)
             {
                 case Command.Position:
-                    return PositionType.Position;
+                    return MarkerType.Position;
                 case Command.CuePosition:
-                    return PositionType.Cue;
+                    return MarkerType.Cue;
                 case Command.IntroPosition:
-                    return PositionType.Intro;
+                    return MarkerType.Intro;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(c), c, "Command is not a valid position type");
+                    throw new ArgumentOutOfRangeException(nameof(c), c, "Command is not a valid marker type");
             }
         }
     }
@@ -61,14 +64,14 @@ namespace BAPSClientCommon
         /// <summary>
         /// The type of requested position change.
         /// </summary>
-        public PositionType ChangeType { get; }
+        public MarkerType ChangeType { get; }
 
         /// <summary>
         /// The new value that the timeline should adopt.
         /// </summary>
         public int Value { get; }
 
-        public PositionRequestChangeEventArgs(ushort channelId, PositionType type, int newValue)
+        public PositionRequestChangeEventArgs(ushort channelId, MarkerType type, int newValue)
         {
             ChannelId = channelId;
             ChangeType = type;

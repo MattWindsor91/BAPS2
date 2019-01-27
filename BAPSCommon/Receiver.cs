@@ -44,13 +44,6 @@ namespace BAPSClientCommon
             ChannelState?.Invoke(this, e);
         }
 
-        public event EventHandler<(ushort channelID, PositionType type, uint position)> Position;
-
-        private void OnPosition(ushort channelId, PositionType type, uint position)
-        {
-            Position?.Invoke(this, (channelID: channelId, type, position));
-        }
-
         public event EventHandler<(ushort channelID, uint duration)> Duration;
 
         private void OnDuration(ushort channelId, uint duration)
@@ -70,6 +63,13 @@ namespace BAPSClientCommon
         private void OnTextItem(ushort channelId, uint index, TextTrack entry)
         {
             TextItem?.Invoke(this, (channelId, index, entry));
+        }
+
+        public event ServerUpdates.ChannelMarkerEventHandler Marker;
+
+        private void OnMarker(ServerUpdates.ChannelMarkerEventArgs e)
+        {
+            Marker?.Invoke(this, e);
         }
 
         #endregion Playback events
@@ -318,7 +318,7 @@ namespace BAPSClientCommon
                 case Command.IntroPosition:
                 {
                     var position = _cs.ReceiveI();
-                    OnPosition(cmdReceived.Channel(), op.AsPositionType(), position);
+                    OnMarker(new ServerUpdates.ChannelMarkerEventArgs(cmdReceived.Channel(), op.AsMarkerType(), position));
                 }
                     break;
                 default:
@@ -336,7 +336,8 @@ namespace BAPSClientCommon
             var duration = 0U;
             if (type.HasAudio()) duration = _cs.ReceiveI();
             OnDuration(channelId, duration);
-            OnPosition(channelId, PositionType.Position, 0U);
+            OnMarker(new ServerUpdates.ChannelMarkerEventArgs(channelId, MarkerType.Position, 0U));
+
 
             var text = "";
             if (type.HasText()) text = _cs.ReceiveS();

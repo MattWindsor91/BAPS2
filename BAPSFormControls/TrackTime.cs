@@ -260,7 +260,7 @@ namespace BAPSFormControls
         private void SetPositionAndNotify(int newPosition)
         {
             position = newPosition;
-            PositionChanged.Invoke(this, new PositionRequestChangeEventArgs((ushort)Channel, PositionType.Position, position));
+            PositionChanged.Invoke(this, new PositionRequestChangeEventArgs((ushort)Channel, MarkerType.Position, position));
         }
 
         private void HandlePositionDrag(int newPosition)
@@ -274,7 +274,7 @@ namespace BAPSFormControls
             if (cuePosition == newPosition) return;
 
             cuePosition = newPosition;
-            PositionChanged.Invoke(this, new PositionRequestChangeEventArgs((ushort)Channel, PositionType.Cue, cuePosition));
+            PositionChanged.Invoke(this, new PositionRequestChangeEventArgs((ushort)Channel, MarkerType.Cue, cuePosition));
 
             if (cuePosition > position) SetPositionAndNotify(cuePosition);
         }
@@ -283,7 +283,7 @@ namespace BAPSFormControls
         {
             if (introPosition == newPosition) return;
             introPosition = newPosition;
-            PositionChanged.Invoke(this, new PositionRequestChangeEventArgs((ushort)Channel, PositionType.Intro, introPosition));
+            PositionChanged.Invoke(this, new PositionRequestChangeEventArgs((ushort)Channel, MarkerType.Intro, introPosition));
         }
 
         private void OnPossibleMouseOver(MouseEventArgs e)

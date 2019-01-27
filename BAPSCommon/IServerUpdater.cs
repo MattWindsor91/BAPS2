@@ -9,9 +9,21 @@ namespace BAPSClientCommon
     /// </summary>
     public interface IPlaybackServerUpdater
     {
+        /// <summary>
+        ///     Event raised when the server reports a change in channel state.
+        /// </summary>
         event ServerUpdates.ChannelStateEventHandler ChannelState;
+
+        /// <summary>
+        ///     Event raised when the server reports a change in channel marker.
+        /// </summary>
+        event ServerUpdates.ChannelMarkerEventHandler Marker;
+
     }
 
+    /// <summary>
+    /// Event interface for classes that send BapsNet server directory updates.
+    /// </summary>
     public interface IDirectoryServerUpdater
     {
         event ServerUpdates.DirectoryFileAddHandler DirectoryFileAdd;
@@ -58,7 +70,6 @@ namespace BAPSClientCommon
         event EventHandler<(uint listingID, uint channelID, string description)> ListingResult;
         event EventHandler<(ushort channelID, uint index, Track entry)> LoadedItem;
         event EventHandler<(uint permissionCode, string description)> Permission;
-        event EventHandler<(ushort channelID, PositionType type, uint position)> Position;
         event ServerUpdates.ChannelResetEventHandler ResetPlaylist;
         event EventHandler<bool> ServerQuit;
         event EventHandler<(uint showID, string description)> ShowResult;

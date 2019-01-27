@@ -23,6 +23,9 @@ namespace BAPSPresenterNG.ViewModel
 
         private uint _introPosition;
 
+        /// <summary>
+        ///     The currently loaded track.
+        /// </summary>
         private Track _loadedTrack;
 
         private uint _position;
@@ -179,7 +182,7 @@ namespace BAPSPresenterNG.ViewModel
         {
             messenger.Register(this, (Action<ServerUpdates.ChannelStateEventArgs>) HandleChannelState);
 
-            r.Position += HandlePosition;
+            r.Marker += HandleMarker;
             r.Duration += HandleDuration;
             r.LoadedItem += HandleLoadedItem;
             r.TextItem += HandleTextItem;
@@ -266,22 +269,22 @@ namespace BAPSPresenterNG.ViewModel
             Duration = e.duration;
         }
 
-        private void HandlePosition(object sender, (ushort channelID, PositionType type, uint position) e)
+        private void HandleMarker(object sender, ServerUpdates.ChannelMarkerEventArgs e)
         {
-            if (ChannelId != e.channelID) return;
-            switch (e.type)
+            if (ChannelId != e.ChannelId) return;
+            switch (e.Marker)
             {
-                case PositionType.Position:
-                    Position = e.position;
+                case MarkerType.Position:
+                    Position = e.NewValue;
                     break;
-
-                case PositionType.Cue:
-                    CuePosition = e.position;
+                case MarkerType.Cue:
+                    CuePosition = e.NewValue;
                     break;
-
-                case PositionType.Intro:
-                    IntroPosition = e.position;
+                case MarkerType.Intro:
+                    IntroPosition = e.NewValue;
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 

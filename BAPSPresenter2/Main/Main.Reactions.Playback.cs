@@ -18,13 +18,13 @@ namespace BAPSPresenter2
                 }
                 else showChannelOperation(sender, e);
             };
-            r.Position += (sender, e) =>
+            r.Marker += (sender, e) =>
             {
                 if (InvokeRequired)
                 {
-                    Invoke((Action<ushort, PositionType, uint>)ShowPositionWithType, e.channelID, e.type, e.position);
+                    Invoke((ServerUpdates.ChannelMarkerEventHandler)ShowPositionWithType, sender, e);
                 }
-                else ShowPositionWithType(e.channelID, e.type, e.position);
+                else ShowPositionWithType(sender, e);
             };
             r.Duration += (sender, e) =>
             {
@@ -52,18 +52,18 @@ namespace BAPSPresenter2
             };
         }
 
-        private void ShowPositionWithType(ushort channelID, PositionType type, uint position)
+        private void ShowPositionWithType(object sender, ServerUpdates.ChannelMarkerEventArgs e)
         {
-            switch (type)
+            switch (e.Marker)
             {
-                case PositionType.Cue:
-                    showCuePosition(channelID, position);
+                case MarkerType.Cue:
+                    showCuePosition(e.ChannelId, e.NewValue);
                     break;
-                case PositionType.Intro:
-                    showIntroPosition(channelID, position);
+                case MarkerType.Intro:
+                    showIntroPosition(e.ChannelId, e.NewValue);
                     break;
-                case PositionType.Position:
-                    showPosition(channelID, position);
+                case MarkerType.Position:
+                    showPosition(e.ChannelId, e.NewValue);
                     break;
             }
         }
