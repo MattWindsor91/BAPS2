@@ -60,7 +60,6 @@ namespace BAPSClientCommon
     /// </summary>
     public interface IServerUpdater : IConfigServerUpdater, IDirectoryServerUpdater, IPlaybackServerUpdater
     {
-        event EventHandler<(ushort channelID, uint duration)> Duration;
         event Updates.ErrorEventHandler Error;
         event Updates.CountEventHandler IncomingCount;
         event EventHandler<(Command cmdReceived, string ipAddress, uint mask)> IpRestriction;
@@ -69,12 +68,11 @@ namespace BAPSClientCommon
         event Updates.ItemMoveEventHandler ItemMove;
         event EventHandler<(uint resultID, byte dirtyStatus, string description)> LibraryResult;
         event EventHandler<(uint listingID, uint channelID, string description)> ListingResult;
-        event EventHandler<(ushort channelID, uint index, Track entry)> LoadedItem;
+        event Updates.TrackLoadEventHandler TrackLoad;
         event EventHandler<(uint permissionCode, string description)> Permission;
         event Updates.ChannelResetEventHandler ResetPlaylist;
         event EventHandler<bool> ServerQuit;
         event EventHandler<(uint showID, string description)> ShowResult;
-        event EventHandler<(ushort ChannelID, uint index, TextTrack entry)> TextItem;
         event EventHandler<Updates.UpDown> TextScroll;
         event EventHandler<Updates.UpDown> TextSizeChange;
         event EventHandler<(Command command, string description)> UnknownCommand;

@@ -44,21 +44,21 @@ namespace BAPSPresenter2
             };
         }
 
-        private void AddItem(object sender, Updates.ItemAddEventArgs e)
+        private void AddItem(object sender, Updates.TrackAddEventArgs e)
         {
             if (ChannelOutOfBounds(e.ChannelId)) return;
             _channels[e.ChannelId].AddTrack(e.Index, e.Item);
             RefreshAudioWall();
         }
 
-        private void MoveItemTo(object sender, Updates.ItemMoveEventArgs e)
+        private void MoveItemTo(object sender, Updates.TrackMoveEventArgs e)
         {
             if (ChannelOutOfBounds(e.ChannelId)) return;
             _channels[e.ChannelId].MoveTrack(e.Index, e.NewIndex);
             RefreshAudioWall();
         }
 
-        private void DeleteItem(object sender, Updates.ItemDeleteEventArgs e)
+        private void DeleteItem(object sender, Updates.TrackDeleteEventArgs e)
         {
             if (ChannelOutOfBounds(e.ChannelId)) return;
             _channels[e.ChannelId].RemoveTrack(e.Index);

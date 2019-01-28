@@ -15,16 +15,16 @@ namespace BAPSPresenterNG
         /// <summary>
         ///     Constructs a <see cref="ReceiverMessengerAdapter" />.
         ///     <para>
-        ///         This constructor doesn't register event handlers; use
-        ///         <see cref="Register" /> to do so.
+        ///         This constructor registers the appropriate event handlers
+        ///         on <paramref name="receiver" />.
         ///     </para>
         /// </summary>
-        /// <param name="r">The receiver to listen to.</param>
-        /// <param name="m">The messenger bus to forward onto.</param>
-        public ReceiverMessengerAdapter(Receiver r, IMessenger m)
+        /// <param name="receiver">The receiver to listen to.</param>
+        /// <param name="messenger">The messenger bus to forward onto.</param>
+        public ReceiverMessengerAdapter(Receiver receiver, IMessenger messenger)
         {
-            _receiver = r;
-            _messenger = m;
+            _receiver = receiver;
+            _messenger = messenger;
         }
 
         /// <summary>
@@ -44,8 +44,13 @@ namespace BAPSPresenterNG
         /// </summary>
         public void Register()
         {
+            // Each event has a distinct type, and therefore each of these
+            // uses of Relay is registering a separate message, despite
+            // appearances.
+
             _receiver.ChannelState += Relay;
-            _receiver.ChannelMarker += Relay; 
+            _receiver.ChannelMarker += Relay;
+            _receiver.TrackLoad += Relay;
 
             _receiver.ItemAdd += Relay;
             _receiver.ItemMove += Relay;

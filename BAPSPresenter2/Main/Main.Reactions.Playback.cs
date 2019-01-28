@@ -15,9 +15,9 @@ namespace BAPSPresenter2
             {
                 if (InvokeRequired)
                 {
-                    Invoke((Updates.ChannelStateEventHandler)showChannelOperation, sender, e);
+                    Invoke((Updates.ChannelStateEventHandler)ShowChannelOperation, sender, e);
                 }
-                else showChannelOperation(sender, e);
+                else ShowChannelOperation(sender, e);
             };
             r.ChannelMarker += (sender, e) =>
             {
@@ -27,29 +27,13 @@ namespace BAPSPresenter2
                 }
                 else ShowPositionWithType(sender, e);
             };
-            r.Duration += (sender, e) =>
+            r.TrackLoad += (sender, e) =>
             {
                 if (InvokeRequired)
                 {
-                    Invoke((Action<ushort, uint>)showDuration, e.channelID, e.duration);
+                    Invoke((Updates.TrackLoadEventHandler)ShowLoadedItem, this, e);
                 }
-                else showDuration(e.channelID, e.duration);
-            };
-            r.LoadedItem += (sender, e) =>
-            {
-                if (InvokeRequired)
-                {
-                    Invoke((Action<ushort, uint, Track>)showLoadedItem, e.channelID, e.index, e.entry);
-                }
-                else showLoadedItem(e.channelID, e.index, e.entry);
-            };
-            r.TextItem += (sender, e) =>
-            {
-                if (InvokeRequired)
-                {
-                    Invoke((Action<ushort, uint, TextTrack>)showText, e.ChannelID, e.index, e.entry);
-                }
-                else showText(e.ChannelID, e.index, e.entry);
+                else ShowLoadedItem(this, e);
             };
         }
 
@@ -58,18 +42,18 @@ namespace BAPSPresenter2
             switch (e.Marker)
             {
                 case MarkerType.Cue:
-                    showCuePosition(e.ChannelId, e.NewValue);
+                    ShowCuePosition(e.ChannelId, e.NewValue);
                     break;
                 case MarkerType.Intro:
-                    showIntroPosition(e.ChannelId, e.NewValue);
+                    ShowIntroPosition(e.ChannelId, e.NewValue);
                     break;
                 case MarkerType.Position:
-                    showPosition(e.ChannelId, e.NewValue);
+                    ShowPosition(e.ChannelId, e.NewValue);
                     break;
             }
         }
 
-        private void showChannelOperation(object sender, Updates.ChannelStateEventArgs e)
+        private void ShowChannelOperation(object sender, Updates.ChannelStateEventArgs e)
         {
             if (ChannelOutOfBounds(e.ChannelId)) return;
             var chan = _channels[e.ChannelId];
@@ -90,26 +74,31 @@ namespace BAPSPresenter2
             }
         }
 
-        private void showPosition(ushort channelID, uint value)
+        private void ShowPosition(ushort channelId, uint value)
         {
-            if (ChannelOutOfBounds(channelID)) return;
-            _channels[channelID].DisplayedPosition = (int)value;
+            if (ChannelOutOfBounds(channelId)) return;
+            _channels[channelId].DisplayedPosition = (int)value;
         }
 
-        private void showLoadedItem(ushort channelID, uint index, Track entry)
+        private void ShowLoadedItem(object sender, Updates.TrackLoadEventArgs args)
         {
-            if (ChannelOutOfBounds(channelID)) return;
-            _channels[channelID].ShowLoadedItem(index, entry);
-            RefreshAudioWall();
+            if (ChannelOutOfBounds(args.ChannelId)) return;
+            var channel = _channels[args.ChannelId];
+
+            var track = args.Track;
+            if (track.IsTextItem)
+            {
+                ShowText(args.ChannelId, args.Index, track);
+            }
+            else
+            {
+                channel.ShowLoadedItem(args.Index, args.Track);
+                channel.DisplayedDuration = (int)args.Track.Duration;
+                RefreshAudioWall();
+            }
         }
 
-        private void showDuration(ushort channelID, uint value)
-        {
-            if (ChannelOutOfBounds(channelID)) return;
-            _channels[channelID].DisplayedDuration = (int)value;
-        }
-
-        private void showText(ushort channel, uint index, TextTrack entry)
+        private void ShowText(ushort channel, uint index, Track entry)
         {
             if (ChannelOutOfBounds(channel)) return;
             foreach (var chan in _channels) chan.LoadedTextIndex = -1;
@@ -121,16 +110,16 @@ namespace BAPSPresenter2
             }
         }
 
-        private void showCuePosition(ushort channelID, uint cuePosition)
+        private void ShowCuePosition(ushort channelId, uint cuePosition)
         {
-            if (ChannelOutOfBounds(channelID)) return;
-            _channels[channelID].DisplayedCuePosition = (int)cuePosition;
+            if (ChannelOutOfBounds(channelId)) return;
+            _channels[channelId].DisplayedCuePosition = (int)cuePosition;
         }
 
-        private void showIntroPosition(ushort channelID, uint introPosition)
+        private void ShowIntroPosition(ushort channelId, uint introPosition)
         {
-            if (ChannelOutOfBounds(channelID)) return;
-            _channels[channelID].DisplayedIntroPosition = (int)introPosition;
+            if (ChannelOutOfBounds(channelId)) return;
+            _channels[channelId].DisplayedIntroPosition = (int)introPosition;
         }
     }
 }

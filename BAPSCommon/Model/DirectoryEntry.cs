@@ -17,7 +17,7 @@
         /// </summary>
         /// <param name="directoryId">The ID of the directory storing this entry.</param>
         /// <param name="description">The description of the entry (generally its filename).</param>
-        public DirectoryEntry(ushort directoryId, string description) : base(description)
+        public DirectoryEntry(ushort directoryId, string description) : base(description, 0)
         {
             DirectoryId = directoryId;
         }

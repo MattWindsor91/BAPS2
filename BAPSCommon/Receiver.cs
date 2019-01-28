@@ -45,25 +45,11 @@ namespace BAPSClientCommon
             ChannelState?.Invoke(this, e);
         }
 
-        public event EventHandler<(ushort channelID, uint duration)> Duration;
+        public event Updates.TrackLoadEventHandler TrackLoad;
 
-        private void OnDuration(ushort channelId, uint duration)
+        private void OnLoadedItem(Updates.TrackLoadEventArgs args)
         {
-            Duration?.Invoke(this, (channelID: channelId, duration));
-        }
-
-        public event EventHandler<(ushort channelID, uint index, Track entry)> LoadedItem;
-
-        private void OnLoadedItem(ushort channelId, uint index, Track entry)
-        {
-            LoadedItem?.Invoke(this, (channelID: channelId, index, entry));
-        }
-
-        public event EventHandler<(ushort ChannelID, uint index, TextTrack entry)> TextItem;
-
-        private void OnTextItem(ushort channelId, uint index, TextTrack entry)
-        {
-            TextItem?.Invoke(this, (channelId, index, entry));
+            TrackLoad?.Invoke(this, args);
         }
 
         public event Updates.ChannelMarkerEventHandler ChannelMarker;
@@ -79,21 +65,21 @@ namespace BAPSClientCommon
 
         public event Updates.ItemAddEventHandler ItemAdd;
 
-        private void OnItemAdd(Updates.ItemAddEventArgs e)
+        private void OnItemAdd(Updates.TrackAddEventArgs e)
         {
             ItemAdd?.Invoke(this, e);
         }
 
         public event Updates.ItemMoveEventHandler ItemMove;
 
-        private void OnItemMove(Updates.ItemMoveEventArgs e)
+        private void OnItemMove(Updates.TrackMoveEventArgs e)
         {
             ItemMove?.Invoke(this, e);
         }
 
         public event Updates.ItemDeleteEventHandler ItemDelete;
 
-        private void OnItemDelete(Updates.ItemDeleteEventArgs e)
+        private void OnItemDelete(Updates.TrackDeleteEventArgs e)
         {
             ItemDelete?.Invoke(this, e);
         }
@@ -336,22 +322,14 @@ namespace BAPSClientCommon
 
             var duration = 0U;
             if (type.HasAudio()) duration = _cs.ReceiveI();
-            OnDuration(channelId, duration);
-            OnMarker(new Updates.ChannelMarkerEventArgs(channelId, MarkerType.Position, 0U));
-
 
             var text = "";
             if (type.HasText()) text = _cs.ReceiveS();
 
-            var entry = TrackFactory.Create(type, description, duration, text);
-            if (entry.IsTextItem)
-            {
-                OnTextItem(channelId, index, entry as TextTrack);
-            }
-            else
-            {
-                OnLoadedItem(channelId, index, entry);
-            }
+            var track = TrackFactory.Create(type, description, duration, text);
+
+            OnMarker(new Updates.ChannelMarkerEventArgs(channelId, MarkerType.Position, 0U));
+            OnLoadedItem(new Updates.TrackLoadEventArgs(channelId, index, track));
         }
 
         private void DecodePlaylistCommand(Command cmdReceived)
@@ -366,7 +344,7 @@ namespace BAPSClientCommon
                         var type = (TrackType)_cs.ReceiveI();
                         var description = _cs.ReceiveS();
                         var entry = TrackFactory.Create(type, description);
-                        OnItemAdd(new Updates.ItemAddEventArgs(channelId, index, entry));
+                        OnItemAdd(new Updates.TrackAddEventArgs(channelId, index, entry));
                     }
                     else
                     {
@@ -380,14 +358,14 @@ namespace BAPSClientCommon
                     var channelId = cmdReceived.Channel();
                     var indexFrom = _cs.ReceiveI();
                     var indexTo = _cs.ReceiveI();
-                    OnItemMove(new Updates.ItemMoveEventArgs(channelId, indexFrom, indexTo));
+                    OnItemMove(new Updates.TrackMoveEventArgs(channelId, indexFrom, indexTo));
                 }
                     break;
                 case Command.DeleteItem:
                 {
                     var channelId = cmdReceived.Channel();
                     var index = _cs.ReceiveI();
-                    OnItemDelete(new Updates.ItemDeleteEventArgs(channelId, index));
+                    OnItemDelete(new Updates.TrackDeleteEventArgs(channelId, index));
                 }
                     break;
                 case Command.ResetPlaylist:

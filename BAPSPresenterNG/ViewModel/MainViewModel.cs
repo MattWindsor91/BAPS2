@@ -46,6 +46,11 @@ namespace BAPSPresenterNG.ViewModel
         {
             MessengerInstance = messenger;
             messenger.Register(this, (Action<Updates.DirectoryPrepareArgs>)HandleDirectoryPrepare);
+
+            foreach (var channel in Channels)
+            {
+                channel.Register(messenger);
+            }
         }
 
         /// <summary>

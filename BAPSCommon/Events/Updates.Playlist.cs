@@ -13,11 +13,11 @@ namespace BAPSClientCommon.Events
         /// <param name="e">The payload of this event.</param>
         public delegate void ChannelStateEventHandler(object sender, ChannelStateEventArgs e);
 
-        public delegate void ItemAddEventHandler(object sender, ItemAddEventArgs e);
+        public delegate void ItemAddEventHandler(object sender, TrackAddEventArgs e);
 
-        public delegate void ItemDeleteEventHandler(object sender, ItemDeleteEventArgs e);
+        public delegate void ItemDeleteEventHandler(object sender, TrackDeleteEventArgs e);
 
-        public delegate void ItemMoveEventHandler(object sender, ItemMoveEventArgs e);
+        public delegate void ItemMoveEventHandler(object sender, TrackMoveEventArgs e);
 
         /// <summary>
         ///     Payload for a channel track-list reset server update.
@@ -32,9 +32,9 @@ namespace BAPSClientCommon.Events
         /// <summary>
         ///     Payload for a track-list item add server update.
         /// </summary>
-        public class ItemAddEventArgs : ItemEventArgs
+        public class TrackAddEventArgs : TrackIndexEventArgs
         {
-            public ItemAddEventArgs(ushort channelId, uint index, Track item)
+            public TrackAddEventArgs(ushort channelId, uint index, Track item)
                 : base(channelId, index)
             {
                 Item = item;
@@ -46,9 +46,9 @@ namespace BAPSClientCommon.Events
         /// <summary>
         ///     Payload for a track-list item move server update.
         /// </summary>
-        public class ItemMoveEventArgs : ItemEventArgs
+        public class TrackMoveEventArgs : TrackIndexEventArgs
         {
-            public ItemMoveEventArgs(ushort channelId, uint fromIndex, uint toIndex)
+            public TrackMoveEventArgs(ushort channelId, uint fromIndex, uint toIndex)
                 : base(channelId, fromIndex)
             {
                 NewIndex = toIndex;
@@ -60,9 +60,9 @@ namespace BAPSClientCommon.Events
         /// <summary>
         ///     Payload for a track-list item delete server update.
         /// </summary>
-        public class ItemDeleteEventArgs : ItemEventArgs
+        public class TrackDeleteEventArgs : TrackIndexEventArgs
         {
-            public ItemDeleteEventArgs(ushort channelId, uint index) : base(channelId, index)
+            public TrackDeleteEventArgs(ushort channelId, uint index) : base(channelId, index)
             {
             }
         }

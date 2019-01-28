@@ -20,8 +20,6 @@ namespace BAPSPresenterNG.ViewModel
     {
         private uint _cuePosition;
 
-        private uint _duration;
-
         private uint _introPosition;
 
         /// <summary>
@@ -58,17 +56,7 @@ namespace BAPSPresenterNG.ViewModel
         /// <summary>
         ///     The duration of the currently loaded item (if any), in milliseconds.
         /// </summary>
-        public uint Duration
-        {
-            get => _duration;
-            set
-            {
-                if (_duration == value) return;
-                _duration = value;
-                RaisePropertyChanged(nameof(Duration));
-                RaisePropertyChanged(nameof(Remaining));
-            }
-        }
+        public uint Duration => LoadedTrack?.Duration ?? 0;
 
         /// <summary>
         ///     The position of the currently loaded item (if any), in milliseconds.
@@ -154,6 +142,8 @@ namespace BAPSPresenterNG.ViewModel
                 if (_loadedTrack == value) return;
                 _loadedTrack = value;
                 RaisePropertyChanged(nameof(LoadedTrack));
+                RaisePropertyChanged(nameof(Duration));
+                RaisePropertyChanged(nameof(Remaining));
             }
         }
 
@@ -167,32 +157,29 @@ namespace BAPSPresenterNG.ViewModel
             return TrackAt(index).IsTextItem || !IsPlaying;
         }
 
-        internal void SetupReactions(Receiver r)
+        internal void Register(IMessenger messenger)
         {
             // We use the messenger bus to receive server updates.
             // Assume that the main app attached the server update events to
             // the messenger below.
-            var messenger = MessengerInstance ?? Messenger.Default;
-
-            SetupPlaybackReactions(r, messenger);
+            MessengerInstance = messenger;
+            SetupPlaybackReactions(messenger);
             SetupPlaylistReactions(messenger);
             SetupConfigReactions();
         }
 
-        private void SetupPlaybackReactions(IServerUpdater r, IMessenger messenger)
+        private void SetupPlaybackReactions(IMessenger messenger)
         {
             messenger.Register<Updates.ChannelStateEventArgs>(this, HandleChannelState);
             messenger.Register<Updates.ChannelMarkerEventArgs>(this, HandleMarker);
-            r.Duration += HandleDuration;
-            r.LoadedItem += HandleLoadedItem;
-            r.TextItem += HandleTextItem;
+            messenger.Register<Updates.TrackLoadEventArgs>(this, HandleTrackLoad);
         }
 
         private void SetupPlaylistReactions(IMessenger messenger)
         {
-            messenger.Register<Updates.ItemAddEventArgs>(this, HandleItemAdd);
-            messenger.Register<Updates.ItemMoveEventArgs>(this, HandleItemMove);
-            messenger.Register<Updates.ItemDeleteEventArgs>(this, HandleItemDelete);
+            messenger.Register<Updates.TrackAddEventArgs>(this, HandleItemAdd);
+            messenger.Register<Updates.TrackMoveEventArgs>(this, HandleItemMove);
+            messenger.Register<Updates.TrackDeleteEventArgs>(this, HandleItemDelete);
             messenger.Register<Updates.ChannelResetEventArgs>(this, HandleResetPlaylist);
         }
 
@@ -263,12 +250,6 @@ namespace BAPSPresenterNG.ViewModel
             }
         }
 
-        private void HandleDuration(object sender, (ushort channelID, uint duration) e)
-        {
-            if (ChannelId != e.channelID) return;
-            Duration = e.duration;
-        }
-
         private void HandleMarker(Updates.ChannelMarkerEventArgs e)
         {
             if (ChannelId != e.ChannelId) return;
@@ -294,25 +275,25 @@ namespace BAPSPresenterNG.ViewModel
             State = e.State;
         }
 
-        private void HandleTextItem(object sender, (ushort channelID, uint index, TextTrack entry) e)
+        private void HandleTrackLoad(Updates.TrackLoadEventArgs args)
         {
+            if (ChannelId != args.ChannelId) return;
+
+            var track = args.Track;
+            LoadedTrack = track;
+            SelectedItemIndex = (int) args.Index;
+
+            if (!(track.IsAudioItem || track.IsTextItem)) ZeroMarkers();
         }
 
-        private void HandleLoadedItem(object sender, (ushort channelID, uint index, Track entry) e)
+        /// <summary>
+        ///     Sets all of the channel position markers to zero.
+        /// </summary>
+        private void ZeroMarkers()
         {
-            if (ChannelId != e.channelID) return;
-
-            var entry = e.entry;
-            LoadedTrack = entry;
-            SelectedItemIndex = (int) e.index;
-
-            if (!entry.IsAudioItem && !entry.IsTextItem)
-            {
-                Position = 0;
-                Duration = 0;
-                CuePosition = 0;
-                IntroPosition = 0;
-            }
+            Position = 0;
+            CuePosition = 0;
+            IntroPosition = 0;
         }
 
         #region Channel flags
@@ -499,19 +480,19 @@ namespace BAPSPresenterNG.ViewModel
         // NB: Anything involving the TrackList has to be done on the
         // UI thread, hence the use of Dispatcher.
 
-        private void HandleItemAdd(Updates.ItemAddEventArgs e)
+        private void HandleItemAdd(Updates.TrackAddEventArgs e)
         {
             if (ChannelId != e.ChannelId) return;
             UiDispatcher.Invoke(() => TrackList.Add(e.Item));
         }
 
-        private void HandleItemMove(Updates.ItemMoveEventArgs e)
+        private void HandleItemMove(Updates.TrackMoveEventArgs e)
         {
             if (ChannelId != e.ChannelId) return;
             UiDispatcher.Invoke(() => TrackList.Move((int) e.Index, (int) e.NewIndex));
         }
 
-        private void HandleItemDelete(Updates.ItemDeleteEventArgs e)
+        private void HandleItemDelete(Updates.TrackDeleteEventArgs e)
         {
             if (ChannelId != e.ChannelId) return;
             UiDispatcher.Invoke(() => TrackList.RemoveAt((int) e.Index));

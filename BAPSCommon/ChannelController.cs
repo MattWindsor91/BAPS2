@@ -139,5 +139,16 @@ namespace BAPSClientCommon
             var cmd = (Command.Playlist | Command.ResetPlaylist).WithChannel(_channelId);
             _msgQueue.Add(new Message(cmd));
         }
+
+        /// <summary>
+        ///     Asks the BAPS server to move one of this channel's markers.
+        /// </summary>
+        /// <param name="type">The type of marker to move.</param>
+        /// <param name="newValue">The requested new value.</param>
+        public void SetMarker(MarkerType type, uint newValue)
+        {
+            var cmd = (Command.Playback | type.AsCommand()).WithChannel(_channelId);
+            _msgQueue.Add(new Message(cmd).Add(newValue));
+        }
     }
 }

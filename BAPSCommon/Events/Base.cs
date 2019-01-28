@@ -16,14 +16,38 @@ namespace BAPSClientCommon.Events
         public ushort ChannelId { get; }
     }
 
-    public abstract class ItemEventArgs : ChannelEventArgs
+    /// <summary>
+    ///     Abstract base class of event payloads that reference
+    ///     indices in channel track lists.
+    /// </summary>
+    public abstract class TrackIndexEventArgs : ChannelEventArgs
     {
-        protected ItemEventArgs(ushort channelId, uint index) : base(channelId)
+        protected TrackIndexEventArgs(ushort channelId, uint index) : base(channelId)
         {
             Index = index;
         }
 
+        /// <summary>
+        ///     The track-list index being mentioned in the event.
+        /// </summary>
         public uint Index { get; }
+    }
+
+    /// <summary>
+    ///     Abstract base class of event payloads that reference track-list
+    ///     items, and contain track data.
+    /// </summary>
+    public abstract class TrackEventArgs : TrackIndexEventArgs
+    {
+        protected TrackEventArgs(ushort channelId, uint index, Track track) : base(channelId, index)
+        {
+            Track = track;
+        }
+
+        /// <summary>
+        ///     The track being mentioned in the event.
+        /// </summary>
+        public Track Track { get; }
     }
 
     /// <summary>

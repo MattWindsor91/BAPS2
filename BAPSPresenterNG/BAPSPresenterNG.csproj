@@ -82,6 +82,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ChannelControllerMessengerAdapter.cs" />
     <Compile Include="Controls\Directory.xaml.cs">
       <DependentUpon>Directory.xaml</DependentUpon>
     </Compile>

@@ -393,7 +393,7 @@ namespace BAPSPresenter2
             else if (e.ClickedItem == deleteItemToolStripMenuItem)
             {
                 var indexToDelete = (uint) trackList.LastIndexClicked;
-                OnItemDeleteRequest(new Updates.ItemDeleteEventArgs((ushort)ChannelId, indexToDelete));
+                OnItemDeleteRequest(new Updates.TrackDeleteEventArgs((ushort)ChannelId, indexToDelete));
             }
             else if (e.ClickedItem == resetChannelStripMenuItem)
             {
@@ -481,7 +481,7 @@ namespace BAPSPresenter2
 
         #endregion Timer events
 
-        protected virtual void OnItemDeleteRequest(Updates.ItemDeleteEventArgs e)
+        protected virtual void OnItemDeleteRequest(Updates.TrackDeleteEventArgs e)
         {
             ItemDeleteRequest?.Invoke(this, e);
         }

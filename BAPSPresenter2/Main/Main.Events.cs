@@ -278,7 +278,7 @@ namespace BAPSPresenter2
             _core.ControllerFor(e.ChannelId).SetState(e.State);
         }
 
-        private void HandleItemDeleteRequest(object sender, Updates.ItemDeleteEventArgs e)
+        private void HandleItemDeleteRequest(object sender, Updates.TrackDeleteEventArgs e)
         {
             _core.ControllerFor(e.ChannelId).DeleteItemAt(e.Index);
         }

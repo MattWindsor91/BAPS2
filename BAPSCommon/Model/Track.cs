@@ -75,6 +75,7 @@
         public abstract bool IsAudioItem { get; }
         public abstract bool IsTextItem { get; }
         public abstract bool IsFromLibrary { get; }
+        public abstract uint Duration { get; }
 
         public override string ToString() => Description;
     }
@@ -89,15 +90,18 @@
         public override bool IsAudioItem => false;
         public override bool IsTextItem => true;
         public override bool IsFromLibrary => false;
+        public override uint Duration => 0;
         public override string Text { get; }
     }
 
     public class FileTrack : Track
     {
-        public FileTrack(string description) : base(description)
+        public FileTrack(string description, uint duration) : base(description)
         {
+            Duration = duration;
         }
 
+        public override uint Duration { get; }
         public override bool IsAudioItem => true;
         public override bool IsTextItem => false;
         public override bool IsFromLibrary => false;
@@ -105,10 +109,12 @@
 
     public class LibraryTrack : Track
     {
-        public LibraryTrack(string description) : base(description)
+        public LibraryTrack(string description, uint duration) : base(description)
         {
+            Duration = duration;
         }
 
+        public override uint Duration { get; }
         public override bool IsAudioItem => true;
         public override bool IsTextItem => false;
         public override bool IsFromLibrary => true;
@@ -116,10 +122,11 @@
 
     public class NullTrack : Track
     {
-        public NullTrack() : base("NONE")
+        public NullTrack(string description = "NONE") : base(description)
         {
         }
 
+        public override uint Duration => 0;
         public override bool IsAudioItem => false;
         public override bool IsTextItem => false;
         public override bool IsFromLibrary => false;
@@ -141,17 +148,16 @@
         /// and description.</returns>
         public static Track Create(TrackType type, string description, uint duration = 0, string text = "")
         {
-            // TODO(@MattWindsor91): use duration here.
             switch (type)
             {
                 case TrackType.File:
-                    return new FileTrack(description);
+                    return new FileTrack(description, duration);
                 case TrackType.Text:
                     return new TextTrack(description, text);
                 case TrackType.Library:
-                    return new LibraryTrack(description);
+                    return new LibraryTrack(description, duration);
                 default:
-                    return new NullTrack();
+                    return new NullTrack(description);
             }
         }
     }

@@ -139,7 +139,7 @@ namespace BAPSClientCommon
             // Add the auto-update message onto the queue (chat(2) and general(1))
             var cmd = Command.System | Command.AutoUpdate | (Command) 2 | (Command) 1;
             SendQueue.Add(new Message(cmd));
-            for (var i = 0; i < 3; i++)
+            for (var i = 0; i < NumDirectories; i++)
             {
                 /** Add the refresh folder onto the queue **/
                 cmd = Command.System | Command.ListFiles | (Command) i;
