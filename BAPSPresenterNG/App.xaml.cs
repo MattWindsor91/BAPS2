@@ -23,7 +23,7 @@ namespace BAPSPresenterNG
             _main = new MainWindow();
             _main.Show();
 
-            _core = new ClientCore(LoginCallback);
+            _core = new ClientCore(LoginCallback, ConfigCache);
             _core.AboutToAuthenticate += AboutToAuthenticate;
             _core.Authenticated += Authenticated;
             _core.ReceiverCreated += ReceiverCreated;
@@ -70,7 +70,7 @@ namespace BAPSPresenterNG
             SetupConfigReactions(e);
         }
 
-        private void SetupConfigReactions(Receiver r)
+        private void SetupConfigReactions(IConfigServerUpdater r)
         {
             ConfigCache.InstallReceiverEventHandlers(r);
         }
@@ -82,11 +82,11 @@ namespace BAPSPresenterNG
             var config = SimpleIoc.Default.GetInstance<ConfigCache>();
             var mainViewModel = SimpleIoc.Default.GetInstance<ViewModel.MainViewModel>();
 
-            for (ushort i = 0; i < 3; i++)
+            for (ushort i = 0; i < ClientCore.NumChannels; i++)
             {
                 var channel = new ViewModel.ChannelViewModel(i)
                 {
-                    Controller = new ChannelController(i, _core.SendQueue, config)
+                    Controller = _core.ControllerFor(i)
                     // TODO: send the messenger to the channel here
                 };
                 mainViewModel.Channels.Add(channel);

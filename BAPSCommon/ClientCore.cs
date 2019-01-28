@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,10 +10,14 @@ namespace BAPSClientCommon
 {
     /// <inheritdoc />
     /// <summary>
-    ///     Object encapsulating the core features of a BAPSNet client.
+    ///     Object encapsulating the core features of a BapsNet client.
     /// </summary>
     public class ClientCore : IDisposable
     {
+        // TODO(@MattWindsor91): don't hard-code these
+        public const ushort NumChannels = 3;
+        private const ushort NumDirectories = 3;
+
         private const int CancelGracePeriodMilliseconds = 500;
         private readonly Authenticator _auth;
         private readonly CancellationTokenSource _dead = new CancellationTokenSource();
@@ -24,10 +29,26 @@ namespace BAPSClientCommon
         private Task _senderTask;
 
         private ClientSocket _socket;
+        private readonly ConfigCache _configCache;
 
-        public ClientCore(Func<Authenticator.Response> loginCallback)
+        /// <summary>
+        ///     The set of controllers used to translate channel requests to
+        ///     BapsNet commands.
+        /// </summary>
+        private readonly Dictionary<uint, ChannelController> _channelControllers = new Dictionary<uint, ChannelController>();
+
+        public ChannelController ControllerFor(ushort channelId)
+        {
+            if (!_channelControllers.TryGetValue(channelId, out var controller))
+                throw new IndexOutOfRangeException($"Invalid channel ID: {channelId}");
+            return controller;
+        }
+
+
+        public ClientCore(Func<Authenticator.Response> loginCallback, ConfigCache cache)
         {
             _auth = new Authenticator(loginCallback, _dead.Token);
+            _configCache = cache;
         }
 
         /// <summary>
@@ -77,10 +98,26 @@ namespace BAPSClientCommon
 
             var authenticated = Authenticate();
             if (!authenticated) return false;
+
+            SetupChannelControllers();
             OnAuthenticated();
 
             EnqueueAutoUpdate();
+            LaunchTasks();
 
+            return true;
+        }
+
+        private void SetupChannelControllers()
+        {
+            for (ushort i = 0; i < NumChannels; i++)
+            {
+                _channelControllers.Add(i, new ChannelController(i, SendQueue, _configCache));
+            }
+        }
+
+        private void LaunchTasks()
+        {
             var tf = new TaskFactory(_dead.Token, TaskCreationOptions.LongRunning, TaskContinuationOptions.None,
                 TaskScheduler.Current);
             _receiver = new Receiver(_socket, _dead.Token);
@@ -88,8 +125,6 @@ namespace BAPSClientCommon
             _receiverTask = tf.StartNew(_receiver.Run);
             _sender = new Sender(SendQueue, _dead.Token, _socket);
             _senderTask = tf.StartNew(_sender.Run);
-
-            return true;
         }
 
         private bool Authenticate()

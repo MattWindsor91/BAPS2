@@ -174,16 +174,16 @@ namespace BAPSClientCommon
         /** Generate an md5 sum of the raw argument **/
         private static string Md5Sum(string raw)
         {
-            var md5Serv = MD5.Create();
-            var stringbuff = new StringBuilder();
+            var md5 = MD5.Create();
+            var stringBuilder = new StringBuilder();
             var buffer = Encoding.ASCII.GetBytes(raw);
-            var hash = md5Serv.ComputeHash(buffer);
+            var hash = md5.ComputeHash(buffer);
 
             foreach (var h in hash)
             {
-                stringbuff.Append(h.ToString("x2"));
+                stringBuilder.Append(h.ToString("x2"));
             }
-            return stringbuff.ToString();
+            return stringBuilder.ToString();
         }
 
         private void TryLogin(string username, string password)

@@ -29,7 +29,6 @@ namespace BAPSPresenter2
         // Accessor for the crashed variable.
         public bool HasCrashed { get; private set; }
 
-        private ChannelController[] _controllers;
         private BAPSChannel[] _channels;
         private BAPSDirectory[] _directories;
 
@@ -83,7 +82,7 @@ namespace BAPSPresenter2
 
             ConfigManager.initConfigManager();
 
-            _core = new ClientCore(LoginCallback);
+            _core = new ClientCore(LoginCallback, Config);
             _core.AboutToAuthenticate += SetupAuthErrorReactions;
             _core.Authenticated += Setup;
             _core.ReceiverCreated += SetupReactions;
@@ -131,13 +130,11 @@ namespace BAPSPresenter2
         private void SetupChannels()
         {
             _channels = new BAPSChannel[3] { bapsChannel1, bapsChannel2, bapsChannel3 };
-            _controllers = new ChannelController[_channels.Length];
             foreach (var bc in _channels)
             {
                 Debug.Assert(0 <= bc.ChannelId, "Channel ID hasn't been set---check the channels' properties in the designer");
+                var cont = _core.ControllerFor((ushort) bc.ChannelId);
 
-                var cont = new ChannelController((ushort)bc.ChannelId, _core.SendQueue, Config);            
-                _controllers[bc.ChannelId] = cont;
                 bc.TrackListRequestChange += TrackList_RequestChange;
                 bc.OpRequest += HandleChannelStateRequest;
                 bc.PositionRequestChange += HandlePositionChanged;
