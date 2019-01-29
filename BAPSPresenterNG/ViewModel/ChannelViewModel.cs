@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
 using BAPSClientCommon;
@@ -25,11 +26,9 @@ namespace BAPSPresenterNG.ViewModel
         /// <summary>
         ///     The currently loaded track.
         /// </summary>
-        private Track _loadedTrack;
+        private TrackViewModel _loadedTrack;
 
         private uint _position;
-
-        private int _selectedItemIndex = -1;
 
         private uint _startTime;
 
@@ -45,7 +44,7 @@ namespace BAPSPresenterNG.ViewModel
         /// <summary>
         ///     The track list.
         /// </summary>
-        public ObservableCollection<Track> TrackList { get; } = new ObservableCollection<Track>();
+        public ObservableCollection<TrackViewModel> TrackList { get; } = new ObservableCollection<TrackViewModel>();
 
         /// <summary>
         ///     Shorthand for accessing the UI thread's dispatcher.
@@ -120,21 +119,10 @@ namespace BAPSPresenterNG.ViewModel
             }
         }
 
-        public int SelectedItemIndex
-        {
-            get => _selectedItemIndex;
-            set
-            {
-                if (_selectedItemIndex == value) return;
-                _selectedItemIndex = value;
-                RaisePropertyChanged(nameof(SelectedItemIndex));
-            }
-        }
-
         /// <summary>
         ///     The currently loaded item (if any).
         /// </summary>
-        public Track LoadedTrack
+        public TrackViewModel LoadedTrack
         {
             get => _loadedTrack;
             set
@@ -147,9 +135,9 @@ namespace BAPSPresenterNG.ViewModel
             }
         }
 
-        public Track TrackAt(int index)
+        public TrackViewModel TrackAt(int index)
         {
-            return TrackList[index] ?? new NullTrack();
+            return TrackList.ElementAtOrDefault(index) ?? new TrackViewModel(new NullTrack()) { IsLoaded = false };
         }
 
         public bool IsLoadPossible(int index)
@@ -280,10 +268,19 @@ namespace BAPSPresenterNG.ViewModel
             if (ChannelId != args.ChannelId) return;
 
             var track = args.Track;
-            LoadedTrack = track;
-            SelectedItemIndex = (int) args.Index;
+            LoadedTrack = new TrackViewModel(track) { IsLoaded = true };
+
+            UiDispatcher.Invoke(() => UpdateLoadedStatus(args.Index));
 
             if (!(track.IsAudioItem || track.IsTextItem)) ZeroMarkers();
+        }
+
+        private void UpdateLoadedStatus(uint index)
+        {
+            for (var i = 0; i < TrackList.Count; i++)
+            {
+                TrackList[i].IsLoaded = i == index;
+            }
         }
 
         /// <summary>
@@ -483,7 +480,7 @@ namespace BAPSPresenterNG.ViewModel
         private void HandleItemAdd(Updates.TrackAddEventArgs e)
         {
             if (ChannelId != e.ChannelId) return;
-            UiDispatcher.Invoke(() => TrackList.Add(e.Item));
+            UiDispatcher.Invoke(() => TrackList.Add(new TrackViewModel(e.Item)));
         }
 
         private void HandleItemMove(Updates.TrackMoveEventArgs e)

@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="BAPSPresenterNG.TransportButton"
+﻿<UserControl x:Class="BAPSPresenterNG.Controls.TransportButton"
              x:Name="TransportButtonControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"

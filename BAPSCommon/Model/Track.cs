@@ -62,7 +62,23 @@
         }
     }
 
-    public abstract class Track
+    /// <summary>
+    ///     Interface for tracks.
+    /// </summary>
+    public interface ITrack
+    {
+        string Description { get; }
+        string Text { get; }
+        bool IsAudioItem { get; }
+        bool IsTextItem { get; }
+        bool IsFromLibrary { get; }
+        uint Duration { get; }
+    }
+
+    /// <summary>
+    ///     Abstract base class for most track implementations.
+    /// </summary>
+    public abstract class Track : ITrack
     {
         public string Description { get; }
         public virtual string Text => "";

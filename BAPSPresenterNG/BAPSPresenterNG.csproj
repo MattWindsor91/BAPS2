@@ -102,6 +102,7 @@
     </Compile>
     <Compile Include="ViewModel\DirectoryViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="ViewModel\TrackViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Page Include="Controls\Directory.xaml">
       <Generator>MSBuild:Compile</Generator>

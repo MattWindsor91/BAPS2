@@ -7,13 +7,13 @@ using FontAwesome.WPF;
 namespace BAPSPresenterNG.Converters
 {
     /// <summary>
-    /// Converts the type of a tracklist entry to a Font Awesome icon.
+    /// Converts the type of a track-list entry to a Font Awesome icon.
     /// </summary>
     public class EntryTypeToIconConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (!(value is Track entry)) return FontAwesomeIcon.Question;
+            if (!(value is ITrack entry)) return FontAwesomeIcon.Question;
 
             if (entry.IsTextItem) return FontAwesomeIcon.CommentOutline;
             if (entry.IsAudioItem && entry.IsFromLibrary) return FontAwesomeIcon.Music;

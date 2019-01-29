@@ -7,10 +7,14 @@
              xmlns:local="clr-namespace:BAPSPresenterNG"
              xmlns:conv="clr-namespace:BAPSPresenterNG.Converters"
              xmlns:fa="http://schemas.fontawesome.io/icons/"
+             xmlns:models="clr-namespace:BAPSClientCommon.Model;assembly=BAPSClientCommon"
              xmlns:controls="clr-namespace:BAPSPresenterNG.Controls"
              xmlns:dd="urn:gong-wpf-dragdrop"
+             xmlns:viewModel="clr-namespace:BAPSPresenterNG.ViewModel"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" Width="360">
+             d:DesignHeight="450" d:DesignWidth="800" Width="360"
+             Name="ChannelControl"
+             >
     <UserControl.Resources>
         <conv:ChannelIDConverter x:Key="ChannelIdConverter" />
         <conv:MsecToPositionStringConverter x:Key="MsecToPositionStringConverter" />
@@ -138,8 +142,17 @@
                 </ContextMenu>
             </ListBox.ContextMenu>
             <ListBox.ItemTemplate>
-                <DataTemplate>
+                <DataTemplate DataType="{x:Type viewModel:TrackViewModel}">
                     <Grid>
+                        <Grid.Style>
+                            <Style TargetType="{x:Type Grid}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsLoaded}" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource AccentBg}"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="28px" />
                             <ColumnDefinition Width="*" />
@@ -162,24 +175,25 @@
             </ListBox.ItemTemplate>
         </ListBox>
         <!-- Transport controls -->
-        <local:TransportButton Grid.Row="2" Grid.Column="0"
-                               Icon="Play"
-                               IsHighlighted="{Binding IsPlaying}"
-                               HighlightBrush="{StaticResource PlayBrush}"
-                               ToolTip="Play"
-                               Command="{Binding PlayCommand}" />
-        <local:TransportButton Grid.Row="2" Grid.Column="1"
-                               Icon="Pause"
-                               IsHighlighted="{Binding IsPaused}"
-                               HighlightBrush="{StaticResource PauseBrush}"
-                               ToolTip="Pause"
-                               Command="{Binding PauseCommand}" />
-        <local:TransportButton Grid.Row="2" Grid.Column="2"
-                               Icon="Stop"
-                               IsHighlighted="{Binding IsStopped}"
-                               HighlightBrush="{StaticResource StopBrush}"
-                               ToolTip="Stop"
-                               Command="{Binding StopCommand}" />
+        <controls:TransportButton
+            Grid.Row="2" Grid.Column="0"
+            Icon="Play"
+            IsHighlighted="{Binding IsPlaying}"
+            HighlightBrush="{StaticResource PlayBrush}"
+            ToolTip="Play"
+            Command="{Binding PlayCommand}" />
+        <controls:TransportButton Grid.Row="2" Grid.Column="1"
+            Icon="Pause"
+            IsHighlighted="{Binding IsPaused}"
+            HighlightBrush="{StaticResource PauseBrush}"
+            ToolTip="Pause"
+            Command="{Binding PauseCommand}" />
+        <controls:TransportButton Grid.Row="2" Grid.Column="2"
+            Icon="Stop"
+            IsHighlighted="{Binding IsStopped}"
+            HighlightBrush="{StaticResource StopBrush}"
+            ToolTip="Stop"
+            Command="{Binding StopCommand}" />
         <!-- Track name -->
         <Border Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3"
                 BorderThickness="1pt" Background="{StaticResource NameBgBrush}" BorderBrush="Black">
