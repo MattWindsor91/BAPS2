@@ -110,10 +110,10 @@ namespace BAPSPresenterNG.ViewModel
         {
             switch (args.Key)
             {
-                case SettingKeys.NumChannels:
+                case SettingKey.ChannelCount:
                     HandleChannelCountChange(args.Value);
                     break;
-                case SettingKeys.NumDirectories:
+                case SettingKey.DirectoryCount:
                     HandleDirectoryCountChange(args.Value);
                     break;
             }

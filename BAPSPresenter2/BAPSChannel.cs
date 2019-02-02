@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using BAPSClientCommon.BapsNet;
 using BAPSClientCommon.Events;
 using BAPSClientCommon.Model;
+using BAPSClientCommon.ServerConfig;
 
 namespace BAPSPresenter2
 {
@@ -350,11 +351,11 @@ namespace BAPSPresenter2
         private void TrackListContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
             var config = Main.Config;
-            var testValue = config.GetChoice("Auto Advance", ChannelId);
+            var testValue = config.GetChoice(SettingKey.AutoAdvance, ChannelId);
             automaticAdvanceToolStripMenuItem.Checked = testValue == "Yes";
-            testValue = config.GetChoice("Play on load", ChannelId);
+            testValue = config.GetChoice(SettingKey.AutoPlay, ChannelId);
             playOnLoadToolStripMenuItem.Checked = testValue == "Yes";
-            testValue = config.GetChoice("Repeat", ChannelId);
+            testValue = config.GetChoice(SettingKey.Repeat, ChannelId);
             repeatNoneToolStripMenuItem.Checked = testValue == "No repeat";
             repeatOneToolStripMenuItem.Checked = testValue == "Repeat one";
             repeatAllToolStripMenuItem.Checked = testValue == "Repeat all";

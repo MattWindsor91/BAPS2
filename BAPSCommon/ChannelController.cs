@@ -65,14 +65,14 @@ namespace BAPSClientCommon
             _msgQueue.Add(new Message(cmd.WithChannel(_channelId)).Add(index));
         }
 
-        private string GetChannelConfigOption(ChannelConfigChangeType type)
+        private SettingKey GetChannelConfigOption(ChannelConfigChangeType type)
         {
             if (type.HasFlag(ChannelConfigChangeType.AutoAdvance))
             {
                 if (!(type.HasFlag(ChannelConfigChangeType.Off) ||
                       type.HasFlag(ChannelConfigChangeType.On)))
                     throw new ArgumentOutOfRangeException(nameof(type), type, "AutoAdvance must have Off or On flag");
-                return SettingKeys.AutoAdvance;
+                return SettingKey.AutoAdvance;
             }
 
             if (type.HasFlag(ChannelConfigChangeType.PlayOnLoad))
@@ -80,7 +80,7 @@ namespace BAPSClientCommon
                 if (!(type.HasFlag(ChannelConfigChangeType.Off) ||
                       type.HasFlag(ChannelConfigChangeType.On)))
                     throw new ArgumentOutOfRangeException(nameof(type), type, "PlayOnLoad must have Off or On flag");
-                return SettingKeys.PlayOnLoad;
+                return SettingKey.AutoPlay;
             }
 
             if (type.HasFlag(ChannelConfigChangeType.Repeat))
@@ -90,7 +90,7 @@ namespace BAPSClientCommon
                       type.HasFlag(ChannelConfigChangeType.None)))
                     throw new ArgumentOutOfRangeException(nameof(type), type,
                         "Repeat must have None, One, or All flag");
-                return SettingKeys.Repeat;
+                return SettingKey.Repeat;
             }
 
             throw new ArgumentOutOfRangeException(nameof(type), type, "No valid config category flag set");
@@ -108,10 +108,10 @@ namespace BAPSClientCommon
 
         public void Configure(ChannelConfigChangeType type)
         {
-            var optionDesc = GetChannelConfigOption(type);
+            var optionId = GetChannelConfigOption(type);
             var choiceDesc = GetChannelConfigChoice(type);
 
-            _msgQueue.Add(_cache.MakeConfigChoiceMessage(optionDesc, choiceDesc, _channelId));
+            _msgQueue.Add(_cache.MakeConfigChoiceMessage(optionId, choiceDesc, _channelId));
         }
 
         public void AddFile(DirectoryEntry file)

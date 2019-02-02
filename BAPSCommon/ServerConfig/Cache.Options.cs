@@ -46,6 +46,17 @@ namespace BAPSClientCommon.ServerConfig
             public uint OptionId { get; }
             public string Description { get; }
 
+
+            /// <summary>
+            ///     Gets the known BapsNet key of this setting.
+            ///     <para>
+            ///         If the setting's option ID isn't recognised, this returns
+            ///         <see cref="SettingKey.Invalid"/>.
+            ///     </para>
+            /// </summary>
+            public SettingKey Key =>
+                Enum.IsDefined(typeof(SettingKey), OptionId) ? (SettingKey) OptionId : SettingKey.Invalid;
+            
             public abstract ConfigType Type { get; }
 
             public T ValueAt(int index)
@@ -106,7 +117,7 @@ namespace BAPSClientCommon.ServerConfig
 
             protected override void SendChangeEvent(int index)
             {
-                Parent.OnStringChanged(new StringChangeEventArgs(Description, ValueAt(index), index));
+                Parent.OnStringChanged(new StringChangeEventArgs(Key, ValueAt(index), index));
             }
         }
 
@@ -130,7 +141,7 @@ namespace BAPSClientCommon.ServerConfig
 
             protected override void SendChangeEvent(int index)
             {
-                Parent.OnIntChanged(new IntChangeEventArgs(Description, ValueAt(index), index));
+                Parent.OnIntChanged(new IntChangeEventArgs(Key, ValueAt(index), index));
             }
         }
 
@@ -178,7 +189,7 @@ namespace BAPSClientCommon.ServerConfig
 
             protected override void SendChangeEvent(int index)
             {
-                Parent.OnChoiceChanged(new ChoiceChangeEventArgs(Description, ChoiceAt(index), index));
+                Parent.OnChoiceChanged(new ChoiceChangeEventArgs(Key, ChoiceAt(index), index));
             }
         }
     }

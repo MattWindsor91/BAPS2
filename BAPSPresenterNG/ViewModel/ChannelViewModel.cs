@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
@@ -139,13 +140,13 @@ namespace BAPSPresenterNG.ViewModel
         {
             switch (e.Key)
             {
-                case SettingKeys.AutoAdvance:
+                case SettingKey.AutoAdvance:
                     HandleAutoAdvance(e);
                     break;
-                case SettingKeys.PlayOnLoad:
+                case SettingKey.AutoPlay:
                     HandlePlayOnLoad(e);
                     break;
-                case SettingKeys.Repeat:
+                case SettingKey.Repeat:
                     HandleRepeat(e);
                     break;
             }

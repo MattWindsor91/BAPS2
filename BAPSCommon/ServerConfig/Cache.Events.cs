@@ -45,7 +45,7 @@ namespace BAPSClientCommon.ServerConfig
 
         public abstract class ChangeEventArgs
         {
-            protected ChangeEventArgs(string key, int index)
+            protected ChangeEventArgs(SettingKey key, int index)
             {
                 Key = key;
                 Index = index;
@@ -53,8 +53,10 @@ namespace BAPSClientCommon.ServerConfig
 
             /// <summary>
             ///     The key of the config setting that has changed.
+            ///     If this is <see cref="SettingKey.Invalid"/>, the changed
+            ///     option's ID has no known meaning in BapsNet.
             /// </summary>
-            public string Key { get; }
+            public SettingKey Key { get; }
 
             /// <summary>
             ///     The index, if applicable, inside the config setting that has changed.
@@ -70,7 +72,7 @@ namespace BAPSClientCommon.ServerConfig
         /// </summary>
         public class IntChangeEventArgs : ChangeEventArgs
         {
-            public IntChangeEventArgs(string key, int value, int index = NoIndex) : base(key, index)
+            public IntChangeEventArgs(SettingKey key, int value, int index = NoIndex) : base(key, index)
             {
                 Value = value;
             }
@@ -86,7 +88,7 @@ namespace BAPSClientCommon.ServerConfig
         /// </summary>
         public class StringChangeEventArgs : ChangeEventArgs
         {
-            public StringChangeEventArgs(string key, string value, int index = NoIndex) : base(key, index)
+            public StringChangeEventArgs(SettingKey key, string value, int index = NoIndex) : base(key, index)
             {
                 Value = value;
             }
@@ -102,7 +104,7 @@ namespace BAPSClientCommon.ServerConfig
         /// </summary>
         public class ChoiceChangeEventArgs : ChangeEventArgs
         {
-            public ChoiceChangeEventArgs(string key, string choice, int index = NoIndex) : base(key, index)
+            public ChoiceChangeEventArgs(SettingKey key, string choice, int index = NoIndex) : base(key, index)
             {
                 Choice = choice;
             }

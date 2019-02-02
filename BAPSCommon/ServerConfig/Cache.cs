@@ -41,17 +41,17 @@ namespace BAPSClientCommon.ServerConfig
         /// <summary>
         ///     Creates a BAPSNet message to set an option to one of its choices.
         /// </summary>
-        /// <param name="optionDesc">The option to set.</param>
+        /// <param name="key">The key of the option to set.</param>
         /// <param name="choiceDesc">The choice to use.</param>
         /// <param name="index">If present and valid, the index of the option to set.</param>
         /// <returns>A message that effects the described config change.</returns>
-        public Message MakeConfigChoiceMessage(string optionDesc, string choiceDesc, int index = NoIndex)
+        public Message MakeConfigChoiceMessage(SettingKey key, string choiceDesc, int index = NoIndex)
         {
-            var oci = GetOption(optionDesc);
-            if (oci == null) throw new ArgumentOutOfRangeException(nameof(optionDesc), optionDesc, "Unknown option.");
+            var oci = GetOption((uint)key);
+            if (oci == null) throw new ArgumentOutOfRangeException(nameof(key), key, "Unknown option.");
 
             if (!(oci is ChoiceOption cci))
-                throw new ArgumentException("Option doesn't have choices.", nameof(optionDesc));
+                throw new ArgumentException("Option doesn't have choices.", nameof(key));
 
             var cid = cci.ChoiceIndexFor(choiceDesc);
             if (cid == NoIndex)
@@ -79,14 +79,14 @@ namespace BAPSClientCommon.ServerConfig
             (option as ChoiceOption)?.AddChoice(choiceId, description);
         }
 
-        private IOption GetOption(string optionDescription)
+        private IOption GetOption(uint optionId)
         {
-            return _descLookup.TryGetValue(optionDescription, out var x) ? x : null;
+            return _idLookup.TryGetValue(optionId, out var x) ? x : null;
         }
 
-        public int FindChoiceIndexFor(string optionDesc, string description)
+        public int FindChoiceIndexFor(uint optionId, string description)
         {
-            if (GetOption(optionDesc) is ChoiceOption c) return c.ChoiceIndexFor(description);
+            if (GetOption(optionId) is ChoiceOption c) return c.ChoiceIndexFor(description);
             return -1;
         }
 
@@ -102,22 +102,33 @@ namespace BAPSClientCommon.ServerConfig
             if (_idLookup.TryGetValue(optionId, out var option)) (option as Option<T>)?.AddValue(value, index);
         }
 
-        public void SetChoice(string optionDescription, string choiceDescription, int index = NoIndex)
+        public void SetChoice(uint optionId, string choiceDescription, int index = NoIndex)
         {
-            if (!(GetOption(optionDescription) is ChoiceOption o)) return;
-            var choice = FindChoiceIndexFor(optionDescription, choiceDescription);
+            if (!(GetOption(optionId) is ChoiceOption o)) return;
+            var choice = FindChoiceIndexFor(optionId, choiceDescription);
             if (choice != -1) o.AddValue(choice, index);
         }
-
-        public string GetChoice(string optionDescription, int index = NoIndex)
+        
+        public string GetChoice(SettingKey sk, int index = NoIndex)
         {
-            if (GetOption(optionDescription) is ChoiceOption option) return option.ChoiceAt(index);
-            return null;
+            return GetChoice((uint) sk, index);
         }
 
-        public T GetValue<T>(string optionDescription, int index = -1)
+        public string GetChoice(uint optionId, int index = NoIndex)
         {
-            if (GetOption(optionDescription) is Option<T> option) return option.ValueAt(index);
+            if (GetOption(optionId) is ChoiceOption option) return option.ChoiceAt(index);
+            return null;
+        }
+        
+        
+        public T GetValue<T>(SettingKey sk, int index = NoIndex)
+        {
+            return GetValue<T>((uint)sk, index);
+        }
+
+        public T GetValue<T>(uint optionId, int index = NoIndex)
+        {
+            if (GetOption(optionId) is Option<T> option) return option.ValueAt(index);
             return default;
         }
 
