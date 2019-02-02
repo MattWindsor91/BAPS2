@@ -7,9 +7,8 @@ namespace BAPSPresenterNG
     ///     An object that listens to events from a <see cref="Receiver" />
     ///     and forwards them onto the messenger bus.
     /// </summary>
-    public class ReceiverMessengerAdapter
+    public class ReceiverMessengerAdapter : EventMessengerAdapterBase
     {
-        private readonly IMessenger _messenger;
         private readonly Receiver _receiver;
 
         /// <summary>
@@ -21,22 +20,10 @@ namespace BAPSPresenterNG
         /// </summary>
         /// <param name="receiver">The receiver to listen to.</param>
         /// <param name="messenger">The messenger bus to forward onto.</param>
-        public ReceiverMessengerAdapter(Receiver receiver, IMessenger messenger)
+        public ReceiverMessengerAdapter(Receiver receiver, IMessenger messenger) : base(messenger)
         {
             _receiver = receiver;
-            _messenger = messenger;
             Register();
-        }
-
-        /// <summary>
-        ///     Forwards an event's payload as a messenger message.
-        /// </summary>
-        /// <typeparam name="T">Type of event payload.</typeparam>
-        /// <param name="sender">Ignored.</param>
-        /// <param name="e">The object payload.</param>
-        private void Relay<T>(object sender, T e)
-        {
-            _messenger.Send(e);
         }
 
         /// <summary>

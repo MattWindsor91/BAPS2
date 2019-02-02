@@ -1,4 +1,5 @@
 ﻿using BAPSClientCommon.Model;
+using BAPSClientCommon.ServerConfig;
 
 namespace BAPSClientCommon.Events
 {

@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using BAPSClientCommon.BapsNet;
+using BAPSClientCommon.ServerConfig;
 
 namespace BAPSClientCommon
 {
@@ -29,7 +30,7 @@ namespace BAPSClientCommon
         private Task _senderTask;
 
         private ClientSocket _socket;
-        private readonly ConfigCache _configCache;
+        private readonly Cache _cache;
 
         /// <summary>
         ///     The set of controllers used to translate channel requests to
@@ -45,11 +46,11 @@ namespace BAPSClientCommon
         }
 
 
-        public ClientCore(Authenticator auth, ConfigCache cache)
+        public ClientCore(Authenticator auth, Cache cache)
         {
             _auth = auth;
             _auth.Token = _dead.Token;
-            _configCache = cache;
+            _cache = cache;
         }
 
         /// <summary>
@@ -113,7 +114,7 @@ namespace BAPSClientCommon
         {
             for (ushort i = 0; i < NumChannels; i++)
             {
-                _channelControllers.Add(i, new ChannelController(i, SendQueue, _configCache));
+                _channelControllers.Add(i, new ChannelController(i, SendQueue, _cache));
             }
         }
 

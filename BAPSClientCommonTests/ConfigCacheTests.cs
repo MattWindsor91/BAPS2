@@ -2,22 +2,23 @@ using System;
 using BAPSClientCommon;
 using BAPSClientCommon.BapsNet;
 using BAPSClientCommon.Events;
+using BAPSClientCommon.ServerConfig;
 using NUnit.Framework;
 
 namespace BAPSClientCommonTests
 {
     /// <summary>
-    ///     Tests for the <see cref="ConfigCache" />.
+    ///     Tests for the <see cref="Cache" />.
     /// </summary>
     public class ConfigCacheTests
     {
-        private ConfigCache _cache;
+        private Cache _cache;
         private MockReceiver _receiver;
 
         [SetUp]
         public void Setup()
         {
-            _cache = new ConfigCache();
+            _cache = new Cache();
             _receiver = new MockReceiver();
             _cache.InstallReceiverEventHandlers(_receiver);
         }
@@ -28,7 +29,7 @@ namespace BAPSClientCommonTests
             ConfigType type, [Values(true, false)] bool isIndexed)
         {
             _cache.AddOptionDescription(0, type, "Foo", isIndexed);
-            Assert.That(_cache.GetValue<int>("Foo", isIndexed ? 0 : ConfigCache.NoIndex), Is.EqualTo(0));
+            Assert.That(_cache.GetValue<int>("Foo", isIndexed ? 0 : Cache.NoIndex), Is.EqualTo(0));
         }
 
         [Test]
@@ -36,7 +37,7 @@ namespace BAPSClientCommonTests
         public void TestAddStringOptionDescription([Values(true, false)] bool isIndexed)
         {
             _cache.AddOptionDescription(0, ConfigType.Str, "Foo", isIndexed);
-            Assert.That(_cache.GetValue<string>("Foo", isIndexed ? 0 : ConfigCache.NoIndex), Is.Null);
+            Assert.That(_cache.GetValue<string>("Foo", isIndexed ? 0 : Cache.NoIndex), Is.Null);
         }
 
         [Test]

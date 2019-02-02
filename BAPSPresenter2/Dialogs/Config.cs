@@ -3,6 +3,7 @@ using BAPSClientCommon.BapsNet;
 using System;
 using System.Linq; // for collection queries
 using System.Windows.Forms;
+using BAPSClientCommon.ServerConfig;
 using Message = BAPSClientCommon.BapsNet.Message;
 
 namespace BAPSPresenter2.Dialogs
@@ -448,7 +449,7 @@ namespace BAPSPresenter2.Dialogs
             options[optionid].setResult(res == ConfigResult.Success);
             if (res != ConfigResult.Success)
             {
-                statusLabel.Text = string.Concat("Failed to set: ", options[optionid].getDescription(), ". Error: ", BAPSClientCommon.ConfigResultText.Text[(int)res]);
+                statusLabel.Text = string.Concat("Failed to set: ", options[optionid].getDescription(), ". Error: ", ConfigResultText.Text[(int)res]);
             }
             var allReceived = options.Values.All(op => op.hasReceivedResult());
             if (!allReceived) return;

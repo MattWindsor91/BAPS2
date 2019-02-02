@@ -16,7 +16,7 @@ namespace BAPSPresenterNG.ViewModel
     {
         private string _name;
 
-        public DirectoryViewModel(IMessenger messenger, ushort directoryId) : base(messenger)
+        public DirectoryViewModel(ushort directoryId, IMessenger messenger) : base(messenger)
         {
             DirectoryId = directoryId;
             Register();

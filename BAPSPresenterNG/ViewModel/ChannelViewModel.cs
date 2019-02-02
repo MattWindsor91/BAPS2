@@ -5,6 +5,7 @@ using System.Windows.Threading;
 using BAPSClientCommon;
 using BAPSClientCommon.Events;
 using BAPSClientCommon.Model;
+using BAPSClientCommon.ServerConfig;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Ioc;
@@ -21,10 +22,7 @@ namespace BAPSPresenterNG.ViewModel
     /// </summary>
     public class ChannelViewModel : ViewModelBase, IDropTarget
     {
-        private uint _startTime;
-
         private RelayCommand _toggleAutoAdvanceCommand;
-
         private RelayCommand _togglePlayOnLoadCommand;
 
         public ChannelViewModel(ushort channelId, IMessenger messenger, PlayerViewModel player,
@@ -57,21 +55,6 @@ namespace BAPSPresenterNG.ViewModel
         /// </summary>
         private static Dispatcher UiDispatcher =>
             Application.Current.Dispatcher;
-
-        /// <summary>
-        ///     The expected start time of the currently loaded item (if any).
-        /// </summary>
-        public uint StartTime
-        {
-            get => _startTime;
-            set
-            {
-                if (_startTime == value) return;
-                _startTime = value;
-                RaisePropertyChanged(nameof(StartTime));
-            }
-        }
-
 
         /// <summary>
         ///     A command that, when fired, checks the current auto advance
@@ -148,66 +131,66 @@ namespace BAPSPresenterNG.ViewModel
 
         private void SetupConfigReactions()
         {
-            var config = SimpleIoc.Default.GetInstance<ConfigCache>();
-            config.ConfigChoiceChanged += HandleConfigChoiceChanged;
+            var config = SimpleIoc.Default.GetInstance<Cache>();
+            config.ChoiceChanged += HandleConfigChoiceChanged;
         }
 
-        private void HandleConfigChoiceChanged(object sender, ConfigChoiceChangeArgs e)
+        private void HandleConfigChoiceChanged(object sender, Cache.ChoiceChangeEventArgs e)
         {
-            switch (e.Description)
+            switch (e.Key)
             {
-                case ConfigDescriptions.AutoAdvance:
+                case SettingKeys.AutoAdvance:
                     HandleAutoAdvance(e);
                     break;
-                case ConfigDescriptions.PlayOnLoad:
+                case SettingKeys.PlayOnLoad:
                     HandlePlayOnLoad(e);
                     break;
-                case ConfigDescriptions.Repeat:
+                case SettingKeys.Repeat:
                     HandleRepeat(e);
                     break;
             }
         }
 
-        private void HandleAutoAdvance(ConfigChoiceChangeArgs e)
+        private void HandleAutoAdvance(Cache.ChoiceChangeEventArgs e)
         {
             if (ChannelId != e.Index) return;
             switch (e.Choice)
             {
-                case ChoiceDescriptions.Yes:
+                case ChoiceKeys.Yes:
                     IsAutoAdvance = true;
                     break;
-                case ChoiceDescriptions.No:
+                case ChoiceKeys.No:
                     IsAutoAdvance = false;
                     break;
             }
         }
 
-        private void HandlePlayOnLoad(ConfigChoiceChangeArgs e)
+        private void HandlePlayOnLoad(Cache.ChoiceChangeEventArgs e)
         {
             if (ChannelId != e.Index) return;
             switch (e.Choice)
             {
-                case ChoiceDescriptions.Yes:
+                case ChoiceKeys.Yes:
                     IsPlayOnLoad = true;
                     break;
-                case ChoiceDescriptions.No:
+                case ChoiceKeys.No:
                     IsPlayOnLoad = false;
                     break;
             }
         }
 
-        private void HandleRepeat(ConfigChoiceChangeArgs e)
+        private void HandleRepeat(Cache.ChoiceChangeEventArgs e)
         {
             if (ChannelId != e.Index) return;
             switch (e.Choice)
             {
-                case ChoiceDescriptions.RepeatAll:
+                case ChoiceKeys.RepeatAll:
                     RepeatMode = RepetitionMode.All;
                     break;
-                case ChoiceDescriptions.RepeatNone:
+                case ChoiceKeys.RepeatNone:
                     RepeatMode = RepetitionMode.None;
                     break;
-                case ChoiceDescriptions.RepeatOne:
+                case ChoiceKeys.RepeatOne:
                     RepeatMode = RepetitionMode.One;
                     break;
             }

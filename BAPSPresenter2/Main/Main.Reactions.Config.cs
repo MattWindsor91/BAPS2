@@ -4,6 +4,7 @@ using System;
 using BAPSClientCommon;
 using BAPSClientCommon.BapsNet;
 using BAPSClientCommon.Events;
+using BAPSClientCommon.ServerConfig;
 
 namespace BAPSPresenter2
 {

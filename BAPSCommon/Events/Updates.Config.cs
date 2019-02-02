@@ -1,4 +1,6 @@
-﻿namespace BAPSClientCommon.Events
+﻿using BAPSClientCommon.ServerConfig;
+
+namespace BAPSClientCommon.Events
 {
     public static partial class Updates
     {

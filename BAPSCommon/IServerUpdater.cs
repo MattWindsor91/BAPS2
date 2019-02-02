@@ -2,6 +2,7 @@
 using BAPSClientCommon.BapsNet;
 using BAPSClientCommon.Events;
 using BAPSClientCommon.Model;
+using BAPSClientCommon.ServerConfig;
 
 namespace BAPSClientCommon
 {

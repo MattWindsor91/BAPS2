@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using BAPSClientCommon;
 using BAPSClientCommon.BapsNet;
 using BAPSClientCommon.Events;
+using BAPSClientCommon.ServerConfig;
 using BAPSPresenter2.Dialogs;
 using Timer = System.Windows.Forms.Timer;
 // Legacy
@@ -17,8 +18,8 @@ namespace BAPSPresenter2
         /// <summary>
         /// Singleton for the config cache.
         /// </summary>
-        public static ConfigCache Config => _config ?? (_config = new ConfigCache());
-        private static ConfigCache _config;
+        public static Cache Config => _config ?? (_config = new Cache());
+        private static Cache _config;
 
         /** This flag is used to cleanly exit the send/receive loops
             in the case of the receive loop, the flag will not take effect

@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using BAPSClientCommon.BapsNet;
 using BAPSClientCommon.Model;
+using BAPSClientCommon.ServerConfig;
 
 namespace BAPSClientCommon
 {
@@ -14,11 +15,11 @@ namespace BAPSClientCommon
     /// </summary>
     public class ChannelController
     {
-        private readonly ConfigCache _cache;
+        private readonly Cache _cache;
         private readonly ushort _channelId;
         private readonly BlockingCollection<Message> _msgQueue;
 
-        public ChannelController(ushort channelId, BlockingCollection<Message> msgQueue, ConfigCache cache)
+        public ChannelController(ushort channelId, BlockingCollection<Message> msgQueue, Cache cache)
         {
             _channelId = channelId;
             _msgQueue = msgQueue;
@@ -71,7 +72,7 @@ namespace BAPSClientCommon
                 if (!(type.HasFlag(ChannelConfigChangeType.Off) ||
                       type.HasFlag(ChannelConfigChangeType.On)))
                     throw new ArgumentOutOfRangeException(nameof(type), type, "AutoAdvance must have Off or On flag");
-                return ConfigDescriptions.AutoAdvance;
+                return SettingKeys.AutoAdvance;
             }
 
             if (type.HasFlag(ChannelConfigChangeType.PlayOnLoad))
@@ -79,7 +80,7 @@ namespace BAPSClientCommon
                 if (!(type.HasFlag(ChannelConfigChangeType.Off) ||
                       type.HasFlag(ChannelConfigChangeType.On)))
                     throw new ArgumentOutOfRangeException(nameof(type), type, "PlayOnLoad must have Off or On flag");
-                return ConfigDescriptions.PlayOnLoad;
+                return SettingKeys.PlayOnLoad;
             }
 
             if (type.HasFlag(ChannelConfigChangeType.Repeat))
@@ -89,7 +90,7 @@ namespace BAPSClientCommon
                       type.HasFlag(ChannelConfigChangeType.None)))
                     throw new ArgumentOutOfRangeException(nameof(type), type,
                         "Repeat must have None, One, or All flag");
-                return ConfigDescriptions.Repeat;
+                return SettingKeys.Repeat;
             }
 
             throw new ArgumentOutOfRangeException(nameof(type), type, "No valid config category flag set");

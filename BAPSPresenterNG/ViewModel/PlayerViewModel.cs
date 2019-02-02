@@ -17,6 +17,24 @@ namespace BAPSPresenterNG.ViewModel
     {
         private readonly ushort _id;
 
+        private uint _cuePosition;
+        private uint _introPosition;
+
+        /// <summary>
+        ///     The currently loaded track.
+        /// </summary>
+        private ITrack _loadedTrack = new NullTrack();
+
+        private RelayCommand _pauseCommand;
+
+        private RelayCommand _playCommand;
+        private uint _position;
+
+        private uint _startTime;
+        private ChannelState _state;
+
+        private RelayCommand _stopCommand;
+
         public PlayerViewModel(ushort id)
         {
             _id = id;
@@ -26,15 +44,20 @@ namespace BAPSPresenterNG.ViewModel
         {
         }
 
-        private uint _cuePosition;
-        private uint _introPosition;
-        private uint _position;
-
         /// <summary>
-        ///     The currently loaded track.
+        ///     The expected start time of the currently loaded item (if any).
         /// </summary>
-        private ITrack _loadedTrack = new NullTrack();
- 
+        public uint StartTime
+        {
+            get => _startTime;
+            set
+            {
+                if (_startTime == value) return;
+                _startTime = value;
+                RaisePropertyChanged(nameof(StartTime));
+            }
+        }
+
         /// <summary>
         ///     The currently loaded item (if any).
         /// </summary>
@@ -45,7 +68,7 @@ namespace BAPSPresenterNG.ViewModel
             {
                 if (value == null) throw new ArgumentNullException(nameof(value));
                 if (_loadedTrack == value) return;
-                
+
                 _loadedTrack = value;
                 RaisePropertyChanged(nameof(LoadedTrack));
                 RaisePropertyChanged(nameof(Duration));
@@ -53,10 +76,9 @@ namespace BAPSPresenterNG.ViewModel
                 RaisePropertyChanged(nameof(Remaining));
                 RaisePropertyChanged(nameof(PositionScale));
                 RaisePropertyChanged(nameof(CuePositionScale));
-                RaisePropertyChanged(nameof(IntroPositionScale));               
+                RaisePropertyChanged(nameof(IntroPositionScale));
             }
         }
-        private ChannelState _state;
 
         public ChannelState State
         {
@@ -156,7 +178,7 @@ namespace BAPSPresenterNG.ViewModel
         ///     The cue position of the currently loaded item (if any),
         ///     as a multiple of the duration.
         /// </summary>
-        public double CuePositionScale => (double)CuePosition / Duration;
+        public double CuePositionScale => (double) CuePosition / Duration;
 
         /// <summary>
         ///     The intro position of the currently loaded item (if any).
@@ -177,7 +199,35 @@ namespace BAPSPresenterNG.ViewModel
         ///     The intro position of the currently loaded item (if any),
         ///     as a multiple of the duration.
         /// </summary>
-        public double IntroPositionScale => (double)IntroPosition / Duration;
+        public double IntroPositionScale => (double) IntroPosition / Duration;
+
+        /// <summary>
+        ///     A command that, when fired, asks the server to start playing
+        ///     on this channel.
+        /// </summary>
+        public RelayCommand PlayCommand => _playCommand
+                                           ?? (_playCommand = new RelayCommand(
+                                               RequestPlay,
+                                               () => !IsPlaying));
+
+        /// <summary>
+        ///     A command that, when fired, asks the server to pause
+        ///     this channel.
+        /// </summary>
+        public RelayCommand PauseCommand => _pauseCommand
+                                            ?? (_pauseCommand = new RelayCommand(
+                                                RequestPause));
+
+        private ChannelController Controller =>
+            ServiceLocator.Current.GetInstance<ClientCore>().ControllerFor(_id);
+
+        /// <summary>
+        ///     A command that, when fired, asks the server to stop
+        ///     this channel.
+        /// </summary>
+        public RelayCommand StopCommand => _stopCommand
+                                           ?? (_stopCommand = new RelayCommand(
+                                               RequestStop));
 
         public void Register(IMessenger messenger)
         {
@@ -186,17 +236,17 @@ namespace BAPSPresenterNG.ViewModel
             messenger.Register<Updates.MarkerEventArgs>(this, HandleMarker);
             messenger.Register<Updates.TrackLoadEventArgs>(this, HandleTrackLoad);
         }
-        
+
         private void HandlePlayerState(Updates.PlayerStateEventArgs id)
         {
             if (id.ChannelId != _id) return;
             State = id.State;
         }
-        
+
         private void HandleMarker(Updates.MarkerEventArgs args)
         {
             if (args.ChannelId != _id) return;
-            
+
             switch (args.Marker)
             {
                 case MarkerType.Position:
@@ -213,49 +263,15 @@ namespace BAPSPresenterNG.ViewModel
             }
         }
 
-        /// <summary>
-        ///     A command that, when fired, asks the server to start playing
-        ///     on this channel.
-        /// </summary>
-        public RelayCommand PlayCommand => _playCommand
-                                           ?? (_playCommand = new RelayCommand(
-                                               RequestPlay,
-                                               () => !IsPlaying));
-
         private void RequestPlay()
         {
             Controller.Play();
         }
-        
-        private RelayCommand _playCommand;
 
-        /// <summary>
-        ///     A command that, when fired, asks the server to pause
-        ///     this channel.
-        /// </summary>
-        public RelayCommand PauseCommand => _pauseCommand
-                                            ?? (_pauseCommand = new RelayCommand(
-                                                RequestPause));
-
-        private RelayCommand _pauseCommand;
-
-        private ChannelController Controller =>
-            ServiceLocator.Current.GetInstance<ClientCore>().ControllerFor(_id);
-        
         private void RequestPause()
         {
             Controller.Pause();
         }
-
-        /// <summary>
-        ///     A command that, when fired, asks the server to stop
-        ///     this channel.
-        /// </summary>
-        public RelayCommand StopCommand => _stopCommand
-                                           ?? (_stopCommand = new RelayCommand(
-                                               RequestStop));
-
-        private RelayCommand _stopCommand;
 
         private void RequestStop()
         {
@@ -276,7 +292,7 @@ namespace BAPSPresenterNG.ViewModel
         private void HandleTrackLoad(Updates.TrackLoadEventArgs args)
         {
             if (args.ChannelId != _id) return;
-            
+
             var track = args.Track;
             LoadedTrack = track;
             if (!(track.IsAudioItem || track.IsTextItem)) Zero();

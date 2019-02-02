@@ -88,8 +88,7 @@ The main channel control.
              ItemsSource="{Binding TrackList,UpdateSourceTrigger=PropertyChanged}"
              dd:DragDrop.IsDropTarget="True"
              dd:DragDrop.DropHandler="{Binding}"
-             SelectionChanged="TrackList_SelectionChanged" SelectedIndex="{Binding SelectedItemIndex, Mode=OneWay}"
-             >
+             SelectionChanged="TrackList_SelectionChanged"><!--SelectedIndex="{Binding SelectedItemIndex, Mode=OneWay}"-->
             <ListBox.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="_Reset Channel"/>
