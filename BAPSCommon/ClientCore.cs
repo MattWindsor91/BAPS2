@@ -45,9 +45,9 @@ namespace BAPSClientCommon
         }
 
 
-        public ClientCore(Func<Authenticator.Response> loginCallback, ConfigCache cache)
+        public ClientCore(Authenticator auth, ConfigCache cache)
         {
-            _auth = new Authenticator(loginCallback, _dead.Token);
+            _auth = auth;
             _configCache = cache;
         }
 

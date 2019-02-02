@@ -31,16 +31,16 @@ namespace BAPSPresenterNG.ViewModel
        
         private uint _startTime;
 
-        public ChannelViewModel(ushort channelId)
+        public ChannelViewModel(ushort channelId, PlayerViewModel player, ChannelController controller)
         {
             ChannelId = channelId;
-            Player = new PlayerViewModel(channelId);
+            Player = player;
+            Controller = controller;
         }
 
         public ushort ChannelId { get; }
 
-        public ChannelController Controller =>
-            ServiceLocator.Current.GetInstance<ClientCore>().ControllerFor(ChannelId);
+        public ChannelController Controller { get; }
 
         /// <summary>
         ///     The track list.

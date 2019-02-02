@@ -2,7 +2,13 @@
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using System;
+using System.Diagnostics;
+using System.Linq;
 using System.Windows;
+using BAPSPresenterNG.Controls;
+using BAPSPresenterNG.ViewModel;
+using CommonServiceLocator;
+using GalaSoft.MvvmLight.Threading;
 
 namespace BAPSPresenterNG
 {
@@ -16,11 +22,17 @@ namespace BAPSPresenterNG
         private ReceiverMessengerAdapter _rma;
         private ChannelControllerMessengerAdapter _cma;
 
+        static App()
+        {
+            DispatcherHelper.Initialize();
+        }
+        
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             SimpleIoc.Default.Register<BAPSClientWindows.ConfigManager>();
             SimpleIoc.Default.Register<ConfigCache>();
-            SimpleIoc.Default.Register(MakeClientCore);
+            SimpleIoc.Default.Register(MakeAuthenticator);
+            SimpleIoc.Default.Register<ClientCore>();
             
             _main = new MainWindow();
             _main.Show();
@@ -31,13 +43,12 @@ namespace BAPSPresenterNG
             _core.ReceiverCreated += ReceiverCreated;
 
             var launchedProperly = _core.Launch();
-            if (launchedProperly) return;
-            Shutdown();
+            if (!launchedProperly) Shutdown();
         }
 
-        private ClientCore MakeClientCore()
+        private Authenticator MakeAuthenticator()
         {
-            return new ClientCore(LoginCallback, SimpleIoc.Default.GetInstance<ConfigCache>());            
+            return new Authenticator(LoginCallback);
         }
 
         private Authenticator.Response LoginCallback()
@@ -81,17 +92,16 @@ namespace BAPSPresenterNG
 
         private void Authenticated(object sender, EventArgs e)
         {
+            var locator = (ViewModel.ViewModelLocator) Resources["Locator"];
+            locator.RegisterChannels(ClientCore.NumChannels);
+            
             var mainViewModel = SimpleIoc.Default.GetInstance<ViewModel.MainViewModel>();
             var messenger = Messenger.Default;
 
             _cma = new ChannelControllerMessengerAdapter(_core.ControllerFor, messenger);
             _cma.Register();
 
-            for (ushort i = 0; i < ClientCore.NumChannels; i++)
-            {
-                var channel = new ViewModel.ChannelViewModel(i);
-                mainViewModel.Channels.Add(channel);
-            }
+            foreach (var c in locator.Channels) mainViewModel.Channels.Add(c);
         }
 
         private void AboutToAuthenticate(object sender, Authenticator e)

@@ -6,6 +6,7 @@ using GalaSoft.MvvmLight.Messaging;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using GalaSoft.MvvmLight.Threading;
 
 namespace BAPSPresenterNG.ViewModel
 {
@@ -64,7 +65,7 @@ namespace BAPSPresenterNG.ViewModel
         /// <param name="e"></param>
         private void HandleDirectoryPrepare(Updates.DirectoryPrepareArgs e)
         {
-            System.Windows.Application.Current.Dispatcher.Invoke(() =>
+            DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
                 // Assume that, since this is the only thing that inserts into
                 // the directories list, the list is always sorted by

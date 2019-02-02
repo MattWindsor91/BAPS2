@@ -50,10 +50,9 @@ namespace BAPSClientCommon
         /// </summary>
         /// <param name="loginCallback">A callback that will be executed every time the authenticator needs data.</param>
         /// <param name="token">The cancellation token to pass to any constructed client sockets.</param>
-        public Authenticator(Func<Response> loginCallback, CancellationToken token)
+        public Authenticator(Func<Response> loginCallback)
         {
             _loginCallback = loginCallback;
-            _token = token;
         }
 
         /// <summary>
@@ -67,7 +66,11 @@ namespace BAPSClientCommon
         public event EventHandler<string> UserError;
 
         private readonly Func<Response> _loginCallback;
-        private readonly CancellationToken _token;
+        
+        /// <summary>
+        ///     The cancellation token that this <<see cref="Authenticator"/> will send to any constructed sockets.
+        /// </summary>
+        public CancellationToken Token { private get; set; }
 
         private bool _done;
         private string _lastServer;
@@ -109,7 +112,7 @@ namespace BAPSClientCommon
         {
             try
             {
-                _sock = new ClientSocket(server, port, _token, _token);
+                _sock = new ClientSocket(server, port, Token, Token);
             } catch (SocketException e)
             {
                 /** If an error occurs just give the exception message and start again **/
