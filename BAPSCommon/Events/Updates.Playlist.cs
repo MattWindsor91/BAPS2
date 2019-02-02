@@ -11,7 +11,7 @@ namespace BAPSClientCommon.Events
         /// </summary>
         /// <param name="sender">The sender of this event.</param>
         /// <param name="e">The payload of this event.</param>
-        public delegate void ChannelStateEventHandler(object sender, ChannelStateEventArgs e);
+        public delegate void ChannelStateEventHandler(object sender, PlayerStateEventArgs e);
 
         public delegate void ItemAddEventHandler(object sender, TrackAddEventArgs e);
 

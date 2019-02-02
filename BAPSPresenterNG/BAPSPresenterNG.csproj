@@ -25,6 +25,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <LangVersion>7.2</LangVersion>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -89,8 +90,16 @@
     <Compile Include="Controls\Channel.xaml.cs">
       <DependentUpon>Channel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Player.xaml.cs">
+      <DependentUpon>Player.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\TrackBarBackground.cs" />
+    <Compile Include="Controls\TrackBar.xaml.cs">
+      <DependentUpon>TrackBar.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Converters\ChannelIDConverter.cs" />
     <Compile Include="Controls\Header.cs" />
+    <Compile Include="Converters\PositionScaleConverter.cs" />
     <Compile Include="ReceiverMessengerAdapter.cs" />
     <Compile Include="Controls\TransportButton.xaml.cs">
       <DependentUpon>TransportButton.xaml</DependentUpon>
@@ -102,6 +111,7 @@
     </Compile>
     <Compile Include="ViewModel\DirectoryViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="ViewModel\PlayerViewModel.cs" />
     <Compile Include="ViewModel\TrackViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Page Include="Controls\Directory.xaml">
@@ -112,6 +122,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Player.xaml" />
+    <Page Include="Controls\TrackBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <DesignData Include="DesignData\MarkerSetViewModel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </DesignData>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

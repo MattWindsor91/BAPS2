@@ -112,7 +112,7 @@ namespace BAPSClientCommonTests
                 ConfigSetting?.Invoke(this, e);
             }
 
-            protected virtual void OnChannelState(Updates.ChannelStateEventArgs e)
+            protected virtual void OnChannelState(Updates.PlayerStateEventArgs e)
             {
                 ChannelState?.Invoke(this, e);
             }

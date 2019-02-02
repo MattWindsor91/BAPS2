@@ -30,7 +30,7 @@ namespace BAPSPresenter2
         }
 
         /** functions to receive events from the custom TrackTime class */
-        private void HandlePositionChanged(object sender, Requests.ChannelMarkerEventArgs e)
+        private void HandlePositionChanged(object sender, Requests.MarkerEventArgs e)
         {
             var cmd = Command.Playback | e.Marker.AsCommand() | (Command)e.ChannelId;
             _core.SendQueue.Add(new Message(cmd).Add(e.NewValue));
@@ -273,7 +273,7 @@ namespace BAPSPresenter2
             _ = lb.DoDragDrop(fts, DragDropEffects.Copy);
         }
 
-        private void HandleChannelStateRequest(object sender, Updates.ChannelStateEventArgs e)
+        private void HandleChannelStateRequest(object sender, Updates.PlayerStateEventArgs e)
         {
             _core.ControllerFor(e.ChannelId).SetState(e.State);
         }

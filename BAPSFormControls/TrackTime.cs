@@ -18,7 +18,7 @@ namespace BAPSFormControls
 
     public partial class TrackTime : Control
     {
-        public event Requests.ChannelMarkerEventHandler PositionChanged;
+        public event Requests.MarkerEventHandler PositionChanged;
 
         private const int BASE_Y_LINE = 44;
         private const int BASE_Y_INTRO_ARROW = 8;
@@ -262,7 +262,7 @@ namespace BAPSFormControls
         private void SetPositionAndNotify(int newPosition)
         {
             position = newPosition;
-            PositionChanged.Invoke(this, new Requests.ChannelMarkerEventArgs((ushort)Channel, MarkerType.Position, (uint)position));
+            PositionChanged.Invoke(this, new Requests.MarkerEventArgs((ushort)Channel, MarkerType.Position, (uint)position));
         }
 
         private void HandlePositionDrag(int newPosition)
@@ -276,7 +276,7 @@ namespace BAPSFormControls
             if (cuePosition == newPosition) return;
 
             cuePosition = newPosition;
-            PositionChanged.Invoke(this, new Requests.ChannelMarkerEventArgs((ushort)Channel, MarkerType.Cue, (uint)cuePosition));
+            PositionChanged.Invoke(this, new Requests.MarkerEventArgs((ushort)Channel, MarkerType.Cue, (uint)cuePosition));
 
             if (cuePosition > position) SetPositionAndNotify(cuePosition);
         }
@@ -285,7 +285,7 @@ namespace BAPSFormControls
         {
             if (introPosition == newPosition) return;
             introPosition = newPosition;
-            PositionChanged.Invoke(this, new Requests.ChannelMarkerEventArgs((ushort)Channel, MarkerType.Intro, (uint)introPosition));
+            PositionChanged.Invoke(this, new Requests.MarkerEventArgs((ushort)Channel, MarkerType.Intro, (uint)introPosition));
         }
 
         private void OnPossibleMouseOver(MouseEventArgs e)

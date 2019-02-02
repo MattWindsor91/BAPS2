@@ -119,7 +119,7 @@ namespace BAPSPresenter2
             this.trackTime.Size = new System.Drawing.Size(384, 72);
             this.trackTime.TabIndex = 227;
             this.trackTime.Text = "trackTime0";
-            this.trackTime.PositionChanged += new Requests.ChannelMarkerEventHandler(this.OnPositionChanged);
+            this.trackTime.PositionChanged += new Requests.MarkerEventHandler(this.OnPositionChanged);
             // 
             // trackList
             // 

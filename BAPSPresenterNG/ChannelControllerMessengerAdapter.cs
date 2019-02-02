@@ -34,10 +34,10 @@ namespace BAPSPresenterNG
         /// </summary>
         public void Register()
         {
-            _messenger.Register<Requests.ChannelMarkerEventArgs>(this, HandleChannelMarker);
+            _messenger.Register<Requests.MarkerEventArgs>(this, HandleChannelMarker);
         }
 
-        private void HandleChannelMarker(Requests.ChannelMarkerEventArgs args)
+        private void HandleChannelMarker(Requests.MarkerEventArgs args)
         {
             _controllerFunc(args.ChannelId).SetMarker(args.Marker, args.NewValue);
         }

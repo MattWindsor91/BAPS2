@@ -102,13 +102,13 @@ namespace BAPSClientCommon.Events
     /// <summary>
     ///     Payload for a channel marker (position/cue/intro) server update.
     /// <para>
-    ///     Two concrete classes extend this one: <see cref="Updates.ChannelMarkerEventArgs"/>
+    ///     Two concrete classes extend this one: <see cref="Updates.MarkerEventArgs"/>
     ///     for when a server is telling the client that a marker has moved, and
-    ///     <see cref="Requests.ChannelMarkerEventArgs"/> for when a client is telling the
+    ///     <see cref="Requests.MarkerEventArgs"/> for when a client is telling the
     ///     server to move a marker.
     /// </para>
     /// </summary>
-    public abstract class ChannelMarkerEventArgs : ChannelEventArgs
+    public abstract class MarkerEventArgs : ChannelEventArgs
     {
         /// <summary>
         ///     Constructs a channel marker server update.
@@ -116,7 +116,7 @@ namespace BAPSClientCommon.Events
         /// <param name="channelId">The ID of the channel whose marker is being moved.</param>
         /// <param name="marker">The marker being moved.</param>
         /// <param name="newValue">The new value of the marker.</param>
-        protected ChannelMarkerEventArgs(ushort channelId, MarkerType marker, uint newValue) : base(channelId)
+        protected MarkerEventArgs(ushort channelId, MarkerType marker, uint newValue) : base(channelId)
         {
             Marker = marker;
             NewValue = newValue;

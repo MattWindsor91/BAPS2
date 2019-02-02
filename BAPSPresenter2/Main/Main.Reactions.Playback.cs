@@ -23,7 +23,7 @@ namespace BAPSPresenter2
             {
                 if (InvokeRequired)
                 {
-                    Invoke((Updates.ChannelMarkerEventHandler)ShowPositionWithType, sender, e);
+                    Invoke((Updates.MarkerEventHandler)ShowPositionWithType, sender, e);
                 }
                 else ShowPositionWithType(sender, e);
             };
@@ -37,7 +37,7 @@ namespace BAPSPresenter2
             };
         }
 
-        private void ShowPositionWithType(object sender, Updates.ChannelMarkerEventArgs e)
+        private void ShowPositionWithType(object sender, Updates.MarkerEventArgs e)
         {
             switch (e.Marker)
             {
@@ -53,7 +53,7 @@ namespace BAPSPresenter2
             }
         }
 
-        private void ShowChannelOperation(object sender, Updates.ChannelStateEventArgs e)
+        private void ShowChannelOperation(object sender, Updates.PlayerStateEventArgs e)
         {
             if (ChannelOutOfBounds(e.ChannelId)) return;
             var chan = _channels[e.ChannelId];

@@ -20,11 +20,12 @@ namespace BAPSPresenterNG
         {
             SimpleIoc.Default.Register<BAPSClientWindows.ConfigManager>();
             SimpleIoc.Default.Register<ConfigCache>();
-
+            SimpleIoc.Default.Register(MakeClientCore);
+            
             _main = new MainWindow();
             _main.Show();
 
-            _core = new ClientCore(LoginCallback, ConfigCache);
+            _core = SimpleIoc.Default.GetInstance<ClientCore>();
             _core.AboutToAuthenticate += AboutToAuthenticate;
             _core.Authenticated += Authenticated;
             _core.ReceiverCreated += ReceiverCreated;
@@ -32,6 +33,11 @@ namespace BAPSPresenterNG
             var launchedProperly = _core.Launch();
             if (launchedProperly) return;
             Shutdown();
+        }
+
+        private ClientCore MakeClientCore()
+        {
+            return new ClientCore(LoginCallback, SimpleIoc.Default.GetInstance<ConfigCache>());            
         }
 
         private Authenticator.Response LoginCallback()
@@ -83,12 +89,7 @@ namespace BAPSPresenterNG
 
             for (ushort i = 0; i < ClientCore.NumChannels; i++)
             {
-                var controller = _core.ControllerFor(i);
-
-                var channel = new ViewModel.ChannelViewModel(i)
-                {
-                    Controller = controller
-                };
+                var channel = new ViewModel.ChannelViewModel(i);
                 mainViewModel.Channels.Add(channel);
             }
         }

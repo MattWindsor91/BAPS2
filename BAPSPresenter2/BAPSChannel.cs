@@ -76,7 +76,7 @@ namespace BAPSPresenter2
         ///     </para>
         /// </summary>
         public event Updates.ChannelStateEventHandler OpRequest;
-        public event Requests.ChannelMarkerEventHandler PositionRequestChange;
+        public event Requests.MarkerEventHandler PositionRequestChange;
         public event TimelineChangeEventHandler TimelineChanged;
         public event EventHandler<uint> TrackBarMoved;
         public event ChannelConfigChangeHandler ChannelConfigChange;
@@ -229,7 +229,7 @@ namespace BAPSPresenter2
 
         private void RequestStateChange(ChannelState state)
         {
-            OpRequest?.Invoke(this, new Updates.ChannelStateEventArgs((ushort)ChannelId, state));
+            OpRequest?.Invoke(this, new Updates.PlayerStateEventArgs((ushort)ChannelId, state));
         }
 
         private void playButton_Click(object sender, EventArgs e) => RequestStateChange(ChannelState.Playing);
@@ -315,7 +315,7 @@ namespace BAPSPresenter2
 
         #region Position movement events
 
-        private void OnPositionChanged(object sender, Requests.ChannelMarkerEventArgs e)
+        private void OnPositionChanged(object sender, Requests.MarkerEventArgs e)
         {
             Debug.Assert(sender == trackTime, "Got position change request from unexpected place");
             Debug.Assert(e.ChannelId == ChannelId, "Got position change request for unexpected channel");

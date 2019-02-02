@@ -99,10 +99,10 @@ namespace BAPSPresenterNG.ViewModel
                   ?? (_forwardPlayCommand = new RelayCommand<ushort>(
                       execute: channelID =>
                       {
-                          ChannelAt(channelID)?.PlayCommand?.Execute(null);
+                          ChannelAt(channelID)?.Player?.PlayCommand?.Execute(null);
                       },
                       canExecute: channelID =>
-                        ChannelAt(channelID)?.PlayCommand?.CanExecute(null) ?? false
+                        ChannelAt(channelID)?.Player?.PlayCommand?.CanExecute(null) ?? false
                       ));
 
         private RelayCommand<ushort> _forwardPauseCommand = null;
@@ -116,10 +116,10 @@ namespace BAPSPresenterNG.ViewModel
                   ?? (_forwardPauseCommand = new RelayCommand<ushort>(
                       execute: channelID =>
                       {
-                          ChannelAt(channelID)?.PauseCommand?.Execute(null);
+                          ChannelAt(channelID)?.Player?.PauseCommand?.Execute(null);
                       },
                       canExecute: channelID =>
-                        ChannelAt(channelID)?.PauseCommand?.CanExecute(null) ?? false
+                        ChannelAt(channelID)?.Player?.PauseCommand?.CanExecute(null) ?? false
                       ));
 
         private RelayCommand<ushort> _forwardStopCommand = null;
@@ -133,10 +133,10 @@ namespace BAPSPresenterNG.ViewModel
                   ?? (_forwardStopCommand = new RelayCommand<ushort>(
                       execute: channelID =>
                       {
-                          ChannelAt(channelID)?.StopCommand?.Execute(null);
+                          ChannelAt(channelID)?.Player?.StopCommand?.Execute(null);
                       },
                       canExecute: channelID =>
-                        ChannelAt(channelID)?.StopCommand?.CanExecute(null) ?? false
+                        ChannelAt(channelID)?.Player?.StopCommand?.CanExecute(null) ?? false
                       ));
 
         public string Text

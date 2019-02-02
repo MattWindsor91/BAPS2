@@ -40,7 +40,7 @@ namespace BAPSClientCommon
 
         public event Updates.ChannelStateEventHandler ChannelState;
 
-        private void OnChannelOperation(Updates.ChannelStateEventArgs e)
+        private void OnChannelOperation(Updates.PlayerStateEventArgs e)
         {
             ChannelState?.Invoke(this, e);
         }
@@ -52,9 +52,9 @@ namespace BAPSClientCommon
             TrackLoad?.Invoke(this, args);
         }
 
-        public event Updates.ChannelMarkerEventHandler ChannelMarker;
+        public event Updates.MarkerEventHandler ChannelMarker;
 
-        private void OnMarker(Updates.ChannelMarkerEventArgs e)
+        private void OnMarker(Updates.MarkerEventArgs e)
         {
             ChannelMarker?.Invoke(this, e);
         }
@@ -286,7 +286,7 @@ namespace BAPSClientCommon
                 case Command.Pause:
                 case Command.Stop:
                 {
-                    OnChannelOperation(new Updates.ChannelStateEventArgs(cmdReceived.Channel(), cmdReceived.AsChannelState()));
+                    OnChannelOperation(new Updates.PlayerStateEventArgs(cmdReceived.Channel(), cmdReceived.AsChannelState()));
                 }
                     break;
                 case Command.Volume:
@@ -305,7 +305,7 @@ namespace BAPSClientCommon
                 case Command.IntroPosition:
                 {
                     var position = _cs.ReceiveI();
-                    OnMarker(new Updates.ChannelMarkerEventArgs(cmdReceived.Channel(), op.AsMarkerType(), position));
+                    OnMarker(new Updates.MarkerEventArgs(cmdReceived.Channel(), op.AsMarkerType(), position));
                 }
                     break;
                 default:
@@ -328,7 +328,7 @@ namespace BAPSClientCommon
 
             var track = TrackFactory.Create(type, description, duration, text);
 
-            OnMarker(new Updates.ChannelMarkerEventArgs(channelId, MarkerType.Position, 0U));
+            OnMarker(new Updates.MarkerEventArgs(channelId, MarkerType.Position, 0U));
             OnLoadedItem(new Updates.TrackLoadEventArgs(channelId, index, track));
         }
 

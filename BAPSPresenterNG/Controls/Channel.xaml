@@ -4,34 +4,24 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
-             xmlns:local="clr-namespace:BAPSPresenterNG"
              xmlns:conv="clr-namespace:BAPSPresenterNG.Converters"
              xmlns:fa="http://schemas.fontawesome.io/icons/"
-             xmlns:models="clr-namespace:BAPSClientCommon.Model;assembly=BAPSClientCommon"
              xmlns:controls="clr-namespace:BAPSPresenterNG.Controls"
              xmlns:dd="urn:gong-wpf-dragdrop"
              xmlns:viewModel="clr-namespace:BAPSPresenterNG.ViewModel"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Width="360"
-             Name="ChannelControl"
-             >
+             d:DataContext="{d:DesignInstance viewModel:ChannelViewModel}">
     <UserControl.Resources>
         <conv:ChannelIDConverter x:Key="ChannelIdConverter" />
-        <conv:MsecToPositionStringConverter x:Key="MsecToPositionStringConverter" />
         <conv:EntryTypeToIconConverter x:Key="EntryTypeToIconConverter" />
-        <GridLength x:Key="ChannelBarHeightGrid">32<!-- px --></GridLength>
         <Thickness x:Key="ChannelBarMargin">6px</Thickness>
         <!-- ChannelBarHeight - (2*ChannelBarMargin) -->
         <sys:Double x:Key="ChannelBarHeightMinusMargin">20</sys:Double>
         <!-- Tango colours (for now) -->
-        <SolidColorBrush x:Key="PlayBrush" Color="#FF60ABA2"></SolidColorBrush>
-        <SolidColorBrush x:Key="PauseBrush" Color="#FFFEB93A"></SolidColorBrush>
-        <SolidColorBrush x:Key="StopBrush" Color="#FFE2293A"></SolidColorBrush>
         <SolidColorBrush x:Key="ChannelLegendLampOut" Color="#FF888a85"></SolidColorBrush>
         <SolidColorBrush x:Key="ChannelLegendLampOn" Color="#FFEEEEEC"></SolidColorBrush>
         <SolidColorBrush x:Key="ChannelLegendLampAlt" Color="#FFEF2929"></SolidColorBrush>
-        <SolidColorBrush x:Key="NameFgBrush" Color="#FFE1E1E1"></SolidColorBrush>
-        <SolidColorBrush x:Key="NameBgBrush" Color="#FF0073E6"></SolidColorBrush>
         <!-- Styles -->
         <Style x:Key="ChannelLampStyle" TargetType="{x:Type fa:ImageAwesome}">
             <Setter Property="Height" Value="{StaticResource ChannelBarHeightMinusMargin}"/>
@@ -40,32 +30,14 @@
             <Setter Property="Foreground" Value="{StaticResource ChannelLegendLampOut}"/>
         </Style>
     </UserControl.Resources>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Name="nameRow" Height="{StaticResource ChannelBarHeightGrid}" />
-            <RowDefinition Name="trackListRow"/>
-            <RowDefinition Name="transportRow" MinHeight="32pt" Height="Auto" />
-            <RowDefinition Name="trackDisplayRow" Height="Auto" />
-            <RowDefinition Name="trackLineRow" Height="Auto" />
-            <RowDefinition Name="positionRow" Height="Auto"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition />
-            <ColumnDefinition />
-        </Grid.ColumnDefinitions>
+    <DockPanel>
         <controls:Header
-            Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
-            x:Name="channelHeader"
+            DockPanel.Dock="Top"
             Icon="Music"
             Text="{Binding ChannelId, Converter={StaticResource ChannelIdConverter},StringFormat='Channel {0}'}"
             >
-            <StackPanel
-                    Orientation="Horizontal"
-                    FlowDirection="RightToLeft">
-                <fa:ImageAwesome Name="RepeatLamp"
-                             Icon="Repeat"
-                             ToolTip="Repeat mode">
+            <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
+                <fa:ImageAwesome Icon="Repeat" ToolTip="Repeat mode">
                     <fa:ImageAwesome.Style>
                         <Style TargetType="{x:Type fa:ImageAwesome}"
                            BasedOn="{StaticResource ChannelLampStyle}">
@@ -80,9 +52,7 @@
                         </Style>
                     </fa:ImageAwesome.Style>
                 </fa:ImageAwesome>
-                <fa:ImageAwesome Name="autoAdvanceLamp"
-                             Icon="AngleDoubleDown"
-                             ToolTip="Auto Advance">
+                <fa:ImageAwesome Icon="AngleDoubleDown" ToolTip="Auto Advance">
                     <fa:ImageAwesome.Style>
                         <Style TargetType="{x:Type fa:ImageAwesome}"
                            BasedOn="{StaticResource ChannelLampStyle}">
@@ -110,13 +80,13 @@
                 </fa:ImageAwesome>
             </StackPanel>
         </controls:Header>
-
-        <ListBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Name="TrackList"
-                 ItemsSource="{Binding TrackList,UpdateSourceTrigger=PropertyChanged}"
-                 dd:DragDrop.IsDropTarget="True"
-                 dd:DragDrop.DropHandler="{Binding}"
-                 SelectionChanged="TrackList_SelectionChanged" SelectedIndex="{Binding SelectedItemIndex, Mode=OneWay}"
-                 >
+        <controls:Player DockPanel.Dock="Bottom" DataContext="{Binding Player}"/>
+        <ListBox 
+             ItemsSource="{Binding TrackList,UpdateSourceTrigger=PropertyChanged}"
+             dd:DragDrop.IsDropTarget="True"
+             dd:DragDrop.DropHandler="{Binding}"
+             SelectionChanged="TrackList_SelectionChanged" SelectedIndex="{Binding SelectedItemIndex, Mode=OneWay}"
+             >
             <ListBox.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="_Reset Channel"/>
@@ -174,50 +144,5 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <!-- Transport controls -->
-        <controls:TransportButton
-            Grid.Row="2" Grid.Column="0"
-            Icon="Play"
-            IsHighlighted="{Binding IsPlaying}"
-            HighlightBrush="{StaticResource PlayBrush}"
-            ToolTip="Play"
-            Command="{Binding PlayCommand}" />
-        <controls:TransportButton Grid.Row="2" Grid.Column="1"
-            Icon="Pause"
-            IsHighlighted="{Binding IsPaused}"
-            HighlightBrush="{StaticResource PauseBrush}"
-            ToolTip="Pause"
-            Command="{Binding PauseCommand}" />
-        <controls:TransportButton Grid.Row="2" Grid.Column="2"
-            Icon="Stop"
-            IsHighlighted="{Binding IsStopped}"
-            HighlightBrush="{StaticResource StopBrush}"
-            ToolTip="Stop"
-            Command="{Binding StopCommand}" />
-        <!-- Track name -->
-        <Border Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3"
-                BorderThickness="1pt" Background="{StaticResource NameBgBrush}" BorderBrush="Black">
-            <TextBlock Name="trackName"
-                       Foreground="{StaticResource NameFgBrush}"
-                       TextTrimming="CharacterEllipsis"
-                       Height="24pt"
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Stretch"
-                       TextAlignment="Center"
-                       FontSize="14pt"
-                       Padding="4pt"
-                       FontFamily="Consolas"
-                       ToolTip="{Binding LoadedTrack}"
-                       Text="{Binding LoadedTrack, FallbackValue=UNKNOWN, TargetNullValue=NONE}" />
-        </Border>
-        <!-- Position displays -->
-        <controls:PositionDisplay Grid.Row="4" Grid.Column="0" x:Name="ElapsedDisplay" SubText="Elapsed"
-                               MainText="{Binding Position, Converter={StaticResource MsecToPositionStringConverter}}"/>
-        <controls:PositionDisplay Grid.Row="4" Grid.Column="1"
-                               x:Name="RemainingDisplay" SubText="Remaining"
-                               MainText="{Binding Remaining, Converter={StaticResource MsecToPositionStringConverter}}"/>
-        <controls:PositionDisplay Grid.Row="4" Grid.Column="2" x:Name="StartDisplay"
-                               SubText="Start at:"
-                               MainText="{Binding StartTime, Converter={StaticResource MsecToPositionStringConverter}}"/>
-    </Grid>
+    </DockPanel>
 </UserControl>

@@ -9,7 +9,7 @@ namespace BAPSClientCommon.Events
         /// </summary>
         /// <param name="sender">The sender of this event.</param>
         /// <param name="e">The payload of this event.</param>
-        public delegate void ChannelMarkerEventHandler(object sender, ChannelMarkerEventArgs args);
+        public delegate void MarkerEventHandler(object sender, MarkerEventArgs args);
 
         /// <summary>
         ///     Event handler for track load server updates.
@@ -21,7 +21,7 @@ namespace BAPSClientCommon.Events
         /// <summary>
         ///     Payload for a channel marker (position/cue/intro) server update.
         /// </summary>
-        public class ChannelMarkerEventArgs : Events.ChannelMarkerEventArgs
+        public class MarkerEventArgs : Events.MarkerEventArgs
         {
             /// <summary>
             ///     Constructs a channel marker server update.
@@ -29,7 +29,7 @@ namespace BAPSClientCommon.Events
             /// <param name="channelId">The ID of the channel whose marker is being moved.</param>
             /// <param name="marker">The marker being moved.</param>
             /// <param name="newValue">The new value of the marker.</param>
-            public ChannelMarkerEventArgs(ushort channelId, MarkerType marker, uint newValue) : base(channelId, marker,
+            public MarkerEventArgs(ushort channelId, MarkerType marker, uint newValue) : base(channelId, marker,
                 newValue)
             {
             }
@@ -38,9 +38,9 @@ namespace BAPSClientCommon.Events
         /// <summary>
         ///     Payload for a channel state (play/pause/stop) server update.
         /// </summary>
-        public class ChannelStateEventArgs : ChannelEventArgs
+        public class PlayerStateEventArgs : ChannelEventArgs
         {
-            public ChannelStateEventArgs(ushort channelId, ChannelState state) : base(channelId)
+            public PlayerStateEventArgs(ushort channelId, ChannelState state) : base(channelId)
             {
                 State = state;
             }

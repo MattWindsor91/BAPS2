@@ -40,5 +40,17 @@ namespace BAPSPresenterNG.ViewModel
                 RaisePropertyChanged(nameof(IsLoaded));
             }
         }
+
+        /// <summary>
+        ///     Makes a track view model for a null track.
+        /// </summary>
+        /// <returns>
+        ///     A <see cref="TrackViewModel"/> whose underlying track is a
+        ///     <see cref="NullTrack"/>.
+        /// </returns>
+        public static TrackViewModel MakeNull()
+        {
+            return new TrackViewModel(new NullTrack());
+        }
     }
 }
