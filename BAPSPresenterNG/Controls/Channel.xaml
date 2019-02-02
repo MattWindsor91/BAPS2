@@ -16,7 +16,6 @@ The main channel control.
              d:DesignHeight="450" d:DesignWidth="800" Width="360"
              d:DataContext="{d:DesignInstance viewModel:ChannelViewModel}">
     <UserControl.Resources>
-        <conv:ChannelIDConverter x:Key="ChannelIdConverter" />
         <conv:EntryTypeToIconConverter x:Key="EntryTypeToIconConverter" />
         <Thickness x:Key="ChannelBarMargin">6px</Thickness>
         <!-- ChannelBarHeight - (2*ChannelBarMargin) -->
@@ -37,7 +36,7 @@ The main channel control.
         <controls:Header
             DockPanel.Dock="Top"
             Icon="Music"
-            Text="{Binding ChannelId, Converter={StaticResource ChannelIdConverter},StringFormat='Channel {0}'}">
+            Text="{Binding Name}">
             <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
                 <fa:ImageAwesome Icon="Repeat" ToolTip="Repeat mode">
                     <fa:ImageAwesome.Style>

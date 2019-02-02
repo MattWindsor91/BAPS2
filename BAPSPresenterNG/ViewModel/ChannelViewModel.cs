@@ -42,6 +42,25 @@ namespace BAPSPresenterNG.ViewModel
         /// </summary>
         public PlayerViewModel Player { get; }
 
+        /// <summary>
+        ///     The name of the channel.
+        ///     <para>
+        ///         If not set manually, this is 'Channel X', where X
+        ///         is the channel's ID plus one.
+        ///     </para>
+        /// </summary>
+        public string Name
+        {
+            get => _name ?? $"Channel {ChannelId + 1}";
+            set
+            {
+                if (value == _name) return;
+                _name = value;
+                RaisePropertyChanged(nameof(Name));
+            }
+        }
+        private string _name;
+        
         public ushort ChannelId { get; }
 
         public ChannelController Controller { get; }

@@ -97,7 +97,6 @@
     <Compile Include="Controls\TrackBar.xaml.cs">
       <DependentUpon>TrackBar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Converters\ChannelIDConverter.cs" />
     <Compile Include="Controls\Header.cs" />
     <Compile Include="Converters\PositionScaleConverter.cs" />
     <Compile Include="EventMessengerAdapterBase.cs" />
