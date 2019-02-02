@@ -25,6 +25,7 @@ namespace BAPSPresenterNG
         {
             _receiver = receiver;
             _messenger = messenger;
+            Register();
         }
 
         /// <summary>
@@ -42,7 +43,7 @@ namespace BAPSPresenterNG
         ///     Attaches event handlers to the receiver that put the event's
         ///     payload on the messenger bus.
         /// </summary>
-        public void Register()
+        private void Register()
         {
             // Each event has a distinct type, and therefore each of these
             // uses of Relay is registering a separate message, despite

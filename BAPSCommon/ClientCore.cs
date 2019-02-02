@@ -48,6 +48,7 @@ namespace BAPSClientCommon
         public ClientCore(Authenticator auth, ConfigCache cache)
         {
             _auth = auth;
+            _auth.Token = _dead.Token;
             _configCache = cache;
         }
 

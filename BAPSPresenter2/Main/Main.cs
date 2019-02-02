@@ -82,7 +82,9 @@ namespace BAPSPresenter2
 
             ConfigManager.initConfigManager();
 
-            _core = new ClientCore(LoginCallback, Config);
+            var auth = new Authenticator(LoginCallback);
+            _core = new ClientCore(auth, Config);
+            
             _core.AboutToAuthenticate += SetupAuthErrorReactions;
             _core.Authenticated += Setup;
             _core.ReceiverCreated += SetupReactions;

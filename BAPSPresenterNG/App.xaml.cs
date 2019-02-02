@@ -72,14 +72,9 @@ namespace BAPSPresenterNG
 
         private void ReceiverCreated(object sender, Receiver e)
         {
-            var messenger = Messenger.Default;
-
+            var messenger = ServiceLocator.Current.GetInstance<IMessenger>();
             _rma = new ReceiverMessengerAdapter(e, messenger);
-            _rma.Register();
 
-            // TODO(@MattWindsor91): replace this with messages
-            var mainViewModel = SimpleIoc.Default.GetInstance<ViewModel.MainViewModel>();
-            mainViewModel.Register(messenger);            
             SetupConfigReactions(e);
         }
 
@@ -92,10 +87,10 @@ namespace BAPSPresenterNG
 
         private void Authenticated(object sender, EventArgs e)
         {
-            var locator = (ViewModel.ViewModelLocator) Resources["Locator"];
+            var locator = (ViewModelLocator) Resources["Locator"];
             locator.RegisterChannels(ClientCore.NumChannels);
             
-            var mainViewModel = SimpleIoc.Default.GetInstance<ViewModel.MainViewModel>();
+            var mainViewModel = SimpleIoc.Default.GetInstance<MainViewModel>();
             var messenger = Messenger.Default;
 
             _cma = new ChannelControllerMessengerAdapter(_core.ControllerFor, messenger);

@@ -22,11 +22,13 @@ namespace BAPSPresenterNG.ViewModel
     /// See http://www.galasoft.ch/mvvm
     /// </para>
     /// </summary>
+    // ReSharper disable once ClassNeverInstantiated.Global
     public class MainViewModel : ViewModelBase
     {
-        public MainViewModel()
+        public MainViewModel(IMessenger messenger) : base(messenger)
         {
             Text = "<You can type notes here>";
+            Register();
         }
 
         /// <summary>
@@ -43,15 +45,10 @@ namespace BAPSPresenterNG.ViewModel
 
         public ObservableCollection<DirectoryViewModel> Directories { get; } = new ObservableCollection<DirectoryViewModel>();
 
-        public void Register(IMessenger messenger)
+        private void Register()
         {
-            MessengerInstance = messenger;
+            var messenger = MessengerInstance;
             messenger.Register(this, (Action<Updates.DirectoryPrepareArgs>)HandleDirectoryPrepare);
-
-            foreach (var channel in Channels)
-            {
-                channel.Register(messenger);
-            }
         }
 
         /// <summary>
@@ -65,28 +62,20 @@ namespace BAPSPresenterNG.ViewModel
         /// <param name="e"></param>
         private void HandleDirectoryPrepare(Updates.DirectoryPrepareArgs e)
         {
+            var dir = new DirectoryViewModel(MessengerInstance, e.DirectoryId)
+            {
+                Name = e.Name
+            };
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
                 // Assume that, since this is the only thing that inserts into
                 // the directories list, the list is always sorted by
                 // directory ID.
-                var count = Directories.Count;
-                int i;
-                for (i = 0; i < count; i++)
-                {
-                    var id = Directories[i].DirectoryId;
-                    if (id == e.DirectoryId) return; // Already present.
-                    if (id > e.DirectoryId) break; // This is where we need to insert.
-                }
-
-                var dir = new DirectoryViewModel(e.DirectoryId)
-                {
-                    Name = e.Name
-                };
-                dir.Register(MessengerInstance ?? Messenger.Default);
+                var above = Directories.TakeWhile(x => x.DirectoryId <= e.DirectoryId);
+                if (above.LastOrDefault()?.DirectoryId == e.DirectoryId) return; // Already present.
+                var i = above.Count();
                 Directories.Insert(i, dir);
-            }
-            );
+            });
         }
 
         private RelayCommand<ushort> _forwardPlayCommand = null;

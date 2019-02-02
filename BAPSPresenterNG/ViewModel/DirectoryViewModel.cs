@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using BAPSClientCommon;
 using BAPSClientCommon.Events;
@@ -15,9 +16,10 @@ namespace BAPSPresenterNG.ViewModel
     {
         private string _name;
 
-        public DirectoryViewModel(ushort directoryId)
+        public DirectoryViewModel(IMessenger messenger, ushort directoryId) : base(messenger)
         {
             DirectoryId = directoryId;
+            Register();
         }
 
         public ushort DirectoryId { get; }
@@ -41,10 +43,11 @@ namespace BAPSPresenterNG.ViewModel
         /// </summary>
         public ObservableCollection<DirectoryEntry> Files { get; } = new ObservableCollection<DirectoryEntry>();
 
-        public void Register(IMessenger m)
+        private void Register()
         {
-            m.Register(this, (Action<Updates.DirectoryFileAddArgs>) HandleDirectoryFileAdd);
-            m.Register(this, (Action<Updates.DirectoryPrepareArgs>) HandleDirectoryPrepare);
+            var m = MessengerInstance;
+            m.Register<Updates.DirectoryFileAddArgs>(this, HandleDirectoryFileAdd);
+            m.Register<Updates.DirectoryPrepareArgs>(this, HandleDirectoryPrepare);
         }
 
         private void HandleDirectoryFileAdd(Updates.DirectoryFileAddArgs e)

@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
 using BAPSClientCommon;
 using BAPSClientCommon.Events;
 using BAPSClientCommon.Model;
-using CommonServiceLocator;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Ioc;
@@ -23,20 +21,27 @@ namespace BAPSPresenterNG.ViewModel
     /// </summary>
     public class ChannelViewModel : ViewModelBase, IDropTarget
     {
+        private uint _startTime;
+
+        private RelayCommand _toggleAutoAdvanceCommand;
+
+        private RelayCommand _togglePlayOnLoadCommand;
+
+        public ChannelViewModel(ushort channelId, IMessenger messenger, PlayerViewModel player,
+            ChannelController controller) : base(messenger)
+        {
+            ChannelId = channelId;
+            Player = player;
+            Controller = controller;
+
+            Register();
+        }
+
         /// <summary>
         ///     The part of the channel containing the loaded track and its
         ///     position markers.
         /// </summary>
         public PlayerViewModel Player { get; }
-       
-        private uint _startTime;
-
-        public ChannelViewModel(ushort channelId, PlayerViewModel player, ChannelController controller)
-        {
-            ChannelId = channelId;
-            Player = player;
-            Controller = controller;
-        }
 
         public ushort ChannelId { get; }
 
@@ -67,9 +72,49 @@ namespace BAPSPresenterNG.ViewModel
             }
         }
 
+
+        /// <summary>
+        ///     A command that, when fired, checks the current auto advance
+        ///     status and asks the server to invert it.
+        /// </summary>
+        public RelayCommand ToggleAutoAdvanceCommand => _toggleAutoAdvanceCommand
+                                                        ?? (_toggleAutoAdvanceCommand = new RelayCommand(
+                                                            () => ToggleConfig(ChannelConfigChangeType.AutoAdvance,
+                                                                IsAutoAdvance)));
+
+        /// <summary>
+        ///     A command that, when fired, checks the current play-on-load
+        ///     status and asks the server to invert it.
+        /// </summary>
+        public RelayCommand TogglePlayOnLoadCommand => _togglePlayOnLoadCommand
+                                                       ?? (_togglePlayOnLoadCommand = new RelayCommand(
+                                                           () => ToggleConfig(ChannelConfigChangeType.PlayOnLoad,
+                                                               IsPlayOnLoad)));
+
+        public void DragOver(IDropInfo dropInfo)
+        {
+            switch (dropInfo.Data)
+            {
+                case DirectoryEntry _:
+                    dropInfo.DropTargetAdorner = DropTargetAdorners.Insert;
+                    dropInfo.Effects = DragDropEffects.Copy;
+                    break;
+            }
+        }
+
+        public void Drop(IDropInfo dropInfo)
+        {
+            switch (dropInfo.Data)
+            {
+                case DirectoryEntry dirEntry:
+                    Controller.AddFile(dirEntry);
+                    break;
+            }
+        }
+
         public TrackViewModel TrackAt(int index)
         {
-            return TrackList.ElementAtOrDefault(index) ?? new TrackViewModel(new NullTrack()) { IsLoaded = false };
+            return TrackList.ElementAtOrDefault(index) ?? new TrackViewModel(new NullTrack()) {IsLoaded = false};
         }
 
         public bool IsLoadPossible(int index)
@@ -77,23 +122,24 @@ namespace BAPSPresenterNG.ViewModel
             return TrackAt(index).IsTextItem || !Player.IsPlaying;
         }
 
-        internal void Register(IMessenger messenger)
+        private void Register()
         {
             // We use the messenger bus to receive server updates.
             // Assume that the main app attached the server update events to
             // the messenger below.
-            MessengerInstance = messenger;
+            var messenger = MessengerInstance;
             Player.Register(messenger);
 
             // NB: the Player also registers this event.
             messenger.Register<Updates.TrackLoadEventArgs>(this, HandleTrackLoad);
-            
-            SetupPlaylistReactions(messenger);
+
+            SetupPlaylistReactions();
             SetupConfigReactions();
         }
 
-        private void SetupPlaylistReactions(IMessenger messenger)
+        private void SetupPlaylistReactions()
         {
+            var messenger = MessengerInstance;
             messenger.Register<Updates.TrackAddEventArgs>(this, HandleItemAdd);
             messenger.Register<Updates.TrackMoveEventArgs>(this, HandleItemMove);
             messenger.Register<Updates.TrackDeleteEventArgs>(this, HandleItemDelete);
@@ -175,14 +221,17 @@ namespace BAPSPresenterNG.ViewModel
 
         private void UpdateLoadedStatus(uint index)
         {
-            for (var i = 0; i < TrackList.Count; i++)
-            {
-                TrackList[i].IsLoaded = i == index;
-            }
+            for (var i = 0; i < TrackList.Count; i++) TrackList[i].IsLoaded = i == index;
+        }
+
+
+        private void ToggleConfig(ChannelConfigChangeType configurable, bool lastValue)
+        {
+            var nextValue = lastValue ? ChannelConfigChangeType.Off : ChannelConfigChangeType.On;
+            Controller.Configure(configurable | nextValue);
         }
 
         #region Channel flags
-
 
         /// <summary>
         ///     Whether play-on-load is active, according to the server.
@@ -249,36 +298,6 @@ namespace BAPSPresenterNG.ViewModel
 
         #endregion Channel flags
 
-
-        /// <summary>
-        ///     A command that, when fired, checks the current auto advance
-        ///     status and asks the server to invert it.
-        /// </summary>
-        public RelayCommand ToggleAutoAdvanceCommand => _toggleAutoAdvanceCommand
-                                                        ?? (_toggleAutoAdvanceCommand = new RelayCommand(
-                                                            () => ToggleConfig(ChannelConfigChangeType.AutoAdvance,
-                                                                IsAutoAdvance)));
-
-        private RelayCommand _toggleAutoAdvanceCommand;
-
-        /// <summary>
-        ///     A command that, when fired, checks the current play-on-load
-        ///     status and asks the server to invert it.
-        /// </summary>
-        public RelayCommand TogglePlayOnLoadCommand => _togglePlayOnLoadCommand
-                                                       ?? (_togglePlayOnLoadCommand = new RelayCommand(
-                                                           () => ToggleConfig(ChannelConfigChangeType.PlayOnLoad,
-                                                               IsPlayOnLoad)));
-
-        private RelayCommand _togglePlayOnLoadCommand;
-
-
-        private void ToggleConfig(ChannelConfigChangeType configurable, bool lastValue)
-        {
-            var nextValue = lastValue ? ChannelConfigChangeType.Off : ChannelConfigChangeType.On;
-            Controller.Configure(configurable | nextValue);
-        }
-
         #region Tracklist event handlers
 
         // NB: Anything involving the TrackList has to be done on the
@@ -309,26 +328,5 @@ namespace BAPSPresenterNG.ViewModel
         }
 
         #endregion Tracklist event handlers
-
-        public void DragOver(IDropInfo dropInfo)
-        {
-            switch (dropInfo.Data)
-            {
-                case DirectoryEntry _:
-                    dropInfo.DropTargetAdorner = DropTargetAdorners.Insert;
-                    dropInfo.Effects = DragDropEffects.Copy;
-                    break;
-            }
-        }
-
-        public void Drop(IDropInfo dropInfo)
-        {
-            switch (dropInfo.Data)
-            {
-                case DirectoryEntry dirEntry:
-                    Controller.AddFile(dirEntry);
-                    break;
-            }
-        }
     }
 }

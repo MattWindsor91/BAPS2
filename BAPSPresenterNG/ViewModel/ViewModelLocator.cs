@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using BAPSClientCommon;
 using CommonServiceLocator;
 using GalaSoft.MvvmLight.Ioc;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace BAPSPresenterNG.ViewModel
 {
@@ -17,12 +18,15 @@ namespace BAPSPresenterNG.ViewModel
         public ViewModelLocator()
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
-            
+
+            SimpleIoc.Default.Register(() => GalaSoft.MvvmLight.Messaging.Messenger.Default, true);
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<LoginViewModel>();
             
             // We register ChannelViewModels later, once we know how many to expect.
         }
+
+        public IMessenger Messenger => ServiceLocator.Current.GetInstance<IMessenger>();
 
         public LoginViewModel Login => ServiceLocator.Current.GetInstance<LoginViewModel>();
         public MainViewModel Main => ServiceLocator.Current.GetInstance<MainViewModel>();
@@ -67,14 +71,14 @@ namespace BAPSPresenterNG.ViewModel
             for (ushort i = 0; i < numChannels; i++)
             {
                 var n = i;  // needed to make sure the right channel ID gets captured by the lambdas below.
-                SimpleIoc.Default.Register<PlayerViewModel>(() => new PlayerViewModel(n), n.ToString());
-                SimpleIoc.Default.Register<ChannelViewModel>(() => MakeChannelViewModel(n), n.ToString());
+                SimpleIoc.Default.Register(() => new PlayerViewModel(n), n.ToString());
+                SimpleIoc.Default.Register(() => MakeChannelViewModel(n), n.ToString());
             }
         }
 
-        public ChannelViewModel MakeChannelViewModel(ushort channelId)
+        private ChannelViewModel MakeChannelViewModel(ushort channelId)
         {
-            return new ChannelViewModel(channelId, Player(channelId), ClientCore.ControllerFor(channelId));
+            return new ChannelViewModel(channelId, Messenger, Player(channelId), ClientCore.ControllerFor(channelId));
         }
     }
 }
