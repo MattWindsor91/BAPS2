@@ -1,13 +1,12 @@
 ﻿using System;
 using BAPSClientCommon.BapsNet;
 using BAPSClientCommon.Events;
-using BAPSClientCommon.Model;
 using BAPSClientCommon.ServerConfig;
 
 namespace BAPSClientCommon
 {
     /// <summary>
-    /// Event interface for classes that send BapsNet server playback updates.
+    ///     Event interface for classes that send BapsNet server playback updates.
     /// </summary>
     public interface IPlaybackServerUpdater
     {
@@ -20,11 +19,10 @@ namespace BAPSClientCommon
         ///     Event raised when the server reports a change in channel marker.
         /// </summary>
         event Updates.MarkerEventHandler ChannelMarker;
-
     }
 
     /// <summary>
-    /// Event interface for classes that send BapsNet server directory updates.
+    ///     Event interface for classes that send BapsNet server directory updates.
     /// </summary>
     public interface IDirectoryServerUpdater
     {
@@ -33,23 +31,23 @@ namespace BAPSClientCommon
     }
 
     /// <summary>
-    /// Event interface for classes that send BapsNet server config updates.
+    ///     Event interface for classes that send BapsNet server config updates.
     /// </summary>
     public interface IConfigServerUpdater
     {
         /// <summary>
-        /// Event raised when the server declares a config choice.
+        ///     Event raised when the server declares a config choice.
         /// </summary>
         event Updates.ConfigChoiceHandler ConfigChoice;
 
         /// <summary>
-        /// Event raised when the server declares a config option.
+        ///     Event raised when the server declares a config option.
         /// </summary>
         event Updates.ConfigOptionHandler ConfigOption;
 
         /// <summary>
-        /// Event raised when the server declares that a setting on a
-        /// config option has changed.
+        ///     Event raised when the server declares that a setting on a
+        ///     config option has changed.
         /// </summary>
         event Updates.ConfigSettingHandler ConfigSetting;
 
@@ -57,7 +55,7 @@ namespace BAPSClientCommon
     }
 
     /// <summary>
-    /// Event interface for classes that send BAPSNet server updates.
+    ///     Event interface for classes that send BAPSNet server updates.
     /// </summary>
     public interface IServerUpdater : IConfigServerUpdater, IDirectoryServerUpdater, IPlaybackServerUpdater
     {

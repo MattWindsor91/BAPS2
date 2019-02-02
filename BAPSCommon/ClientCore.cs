@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using BAPSClientCommon.BapsNet;
+using BAPSClientCommon.Events;
 using BAPSClientCommon.ServerConfig;
 
 namespace BAPSClientCommon
@@ -15,12 +16,20 @@ namespace BAPSClientCommon
     /// </summary>
     public class ClientCore : IDisposable
     {
-        // TODO(@MattWindsor91): don't hard-code these
-        public const ushort NumChannels = 3;
-        private const ushort NumDirectories = 3;
-
+        private const int CountPrefetchTimeoutMilliseconds = 500;
         private const int CancelGracePeriodMilliseconds = 500;
         private readonly Authenticator _auth;
+        private readonly Cache _cache;
+
+        private readonly object _channelControllerLock = new object();
+
+        /// <summary>
+        ///     The set of controllers used to translate channel requests to
+        ///     BapsNet commands.
+        /// </summary>
+        private readonly Dictionary<uint, ChannelController> _channelControllers =
+            new Dictionary<uint, ChannelController>();
+
         private readonly CancellationTokenSource _dead = new CancellationTokenSource();
 
         private Receiver _receiver;
@@ -30,20 +39,6 @@ namespace BAPSClientCommon
         private Task _senderTask;
 
         private ClientSocket _socket;
-        private readonly Cache _cache;
-
-        /// <summary>
-        ///     The set of controllers used to translate channel requests to
-        ///     BapsNet commands.
-        /// </summary>
-        private readonly Dictionary<uint, ChannelController> _channelControllers = new Dictionary<uint, ChannelController>();
-
-        public ChannelController ControllerFor(ushort channelId)
-        {
-            if (!_channelControllers.TryGetValue(channelId, out var controller))
-                throw new IndexOutOfRangeException($"Invalid channel ID: {channelId}");
-            return controller;
-        }
 
 
         public ClientCore(Authenticator auth, Cache cache)
@@ -58,6 +53,18 @@ namespace BAPSClientCommon
         /// </summary>
         public BlockingCollection<Message> SendQueue { get; } = new BlockingCollection<Message>();
 
+        public ChannelController ControllerFor(ushort channelId)
+        {
+            lock (_channelControllerLock)
+            {
+                if (_channelControllers.TryGetValue(channelId, out var controller)) return controller;
+
+                controller = new ChannelController(channelId, SendQueue, _cache);
+                _channelControllers[channelId] = controller;
+                return controller;
+            }
+        }
+
         /// <summary>
         ///     Event raised just before authentication.
         ///     Subscribe to this to install any event handlers needed for the authenticator.
@@ -70,14 +77,13 @@ namespace BAPSClientCommon
         }
 
         /// <summary>
-        ///     Event raised when the <see cref="ClientCore" /> has just authenticated.
+        ///     Event raised when the <see cref="ClientCore" /> is about to start
+        ///     auto-updating.
+        ///     <para>
+        ///         This event supplies any pre-fetched counts in advance of the auto-update.
+        ///     </para>
         /// </summary>
-        public event EventHandler Authenticated;
-
-        private void OnAuthenticated()
-        {
-            Authenticated?.Invoke(this, EventArgs.Empty);
-        }
+        public event EventHandler<(int numChannelsPrefetch, int numDirectoriesPrefetch)> AboutToAutoUpdate;
 
         /// <summary>
         ///     Event raised when the <see cref="ClientCore" /> has created a receiver.
@@ -101,22 +107,52 @@ namespace BAPSClientCommon
             var authenticated = Authenticate();
             if (!authenticated) return false;
 
-            SetupChannelControllers();
-            OnAuthenticated();
-
-            EnqueueAutoUpdate();
             LaunchTasks();
+
+            var numChannels = PrefetchCount(OptionKey.ChannelCount);
+            var numDirectories = PrefetchCount(OptionKey.DirectoryCount);
+
+            OnAboutToAutoUpdate((numChannels, numDirectories));
+            EnqueueAutoUpdate(numDirectories);
 
             return true;
         }
 
-        private void SetupChannelControllers()
+        /// <summary>
+        ///     Synchronously polls the BAPS server for an integer config
+        ///     setting (eg, a channel or directory count).
+        ///     <para>
+        ///         This is intended as a workaround for certain BAPS server
+        ///         versions, whose auto-update runs require up-front directory
+        ///         counts, and send channel information before sending the
+        ///         channel count itself.
+        ///     </para>
+        /// </summary>
+        /// <param name="key">The key of the count option to poll.</param>
+        /// <returns>The value (or 0 if the prefetch timed out).</returns>
+        private int PrefetchCount(OptionKey key)
         {
-            for (ushort i = 0; i < NumChannels; i++)
+            var count = 0;
+            var optionId = (uint) key;
+
+            using (var wait = new EventWaitHandle(false, EventResetMode.AutoReset))
             {
-                _channelControllers.Add(i, new ChannelController(i, SendQueue, _cache));
+                void Waiter(object sender, Updates.ConfigSettingArgs args)
+                {
+                    if (args.OptionId != optionId) return;
+                    if (args.Value is int v) count = v;
+                    _receiver.ConfigSetting -= Waiter;
+                    wait.Set();
+                }
+
+                _receiver.ConfigSetting += Waiter;
+                SendQueue.Add(new Message(Command.Config | Command.GetConfigSetting).Add(optionId));
+                wait.WaitOne(CountPrefetchTimeoutMilliseconds);
             }
+
+            return count;
         }
+
 
         private void LaunchTasks()
         {
@@ -136,12 +172,12 @@ namespace BAPSClientCommon
             return _socket != null;
         }
 
-        private void EnqueueAutoUpdate()
+        private void EnqueueAutoUpdate(int numDirectories)
         {
             // Add the auto-update message onto the queue (chat(2) and general(1))
             var cmd = Command.System | Command.AutoUpdate | (Command) 2 | (Command) 1;
             SendQueue.Add(new Message(cmd));
-            for (var i = 0; i < NumDirectories; i++)
+            for (var i = 0; i < numDirectories; i++)
             {
                 /** Add the refresh folder onto the queue **/
                 cmd = Command.System | Command.ListFiles | (Command) i;
@@ -189,6 +225,11 @@ namespace BAPSClientCommon
             }
 
             task.Dispose();
+        }
+
+        protected virtual void OnAboutToAutoUpdate((int numChannelsPrefetch, int numDirectoriesPrefetch) e)
+        {
+            AboutToAutoUpdate?.Invoke(this, e);
         }
 
         #region IDisposable Support

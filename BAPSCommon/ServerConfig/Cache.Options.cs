@@ -43,20 +43,21 @@ namespace BAPSClientCommon.ServerConfig
 
             private bool IsIndexed { get; }
             protected T Value => ValueAt(NoIndex);
-            public uint OptionId { get; }
-            public string Description { get; }
 
 
             /// <summary>
             ///     Gets the known BapsNet key of this setting.
             ///     <para>
             ///         If the setting's option ID isn't recognised, this returns
-            ///         <see cref="SettingKey.Invalid"/>.
+            ///         <see cref="OptionKey.Invalid" />.
             ///     </para>
             /// </summary>
-            public SettingKey Key =>
-                Enum.IsDefined(typeof(SettingKey), OptionId) ? (SettingKey) OptionId : SettingKey.Invalid;
-            
+            public OptionKey Key =>
+                Enum.IsDefined(typeof(OptionKey), OptionId) ? (OptionKey) OptionId : OptionKey.Invalid;
+
+            public uint OptionId { get; }
+            public string Description { get; }
+
             public abstract ConfigType Type { get; }
 
             public T ValueAt(int index)

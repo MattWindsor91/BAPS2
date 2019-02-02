@@ -9,44 +9,24 @@ using BAPSClientCommon.BapsNet;
 namespace BAPSClientCommon
 {
     /// <summary>
-    /// Represents an attempt to create an authenticated BAPSNet connection.
-    /// <para>
-    /// Objects of this class are not thread-safe; only call
-    /// <see cref="Run"/> in one thread.
-    /// </para>
+    ///     Represents an attempt to create an authenticated BAPSNet connection.
+    ///     <para>
+    ///         Objects of this class are not thread-safe; only call
+    ///         <see cref="Run" /> in one thread.
+    ///     </para>
     /// </summary>
     public class Authenticator
     {
-        /// <summary>
-        /// Type of responses that login callbacks should give.
-        /// </summary>
-        public struct Response
-        {
-            /// <summary>
-            /// If true, the login attempt has been abandoned, and all other
-            /// fields are undefined.
-            /// </summary>
-            public bool IsGivingUp;
-            /// <summary>
-            /// The server hostname to connect to.
-            /// </summary>
-            public string Server;
-            /// <summary>
-            /// The server TCP port to connect to.
-            /// </summary>
-            public int Port;
-            /// <summary>
-            /// The username to connect with.
-            /// </summary>
-            public string Username;
-            /// <summary>
-            /// The (unencrypted) password to connect with.
-            /// </summary>
-            public string Password;
-        }
+        private readonly Func<Response> _loginCallback;
+
+        private bool _done;
+        private int _lastPort = -1;
+        private string _lastServer;
+        private string _seed;
+        private ClientSocket _sock;
 
         /// <summary>
-        /// Constructs a <see cref="Authenticator"/>.
+        ///     Constructs a <see cref="Authenticator" />.
         /// </summary>
         /// <param name="loginCallback">A callback that will be executed every time the authenticator needs data.</param>
         /// <param name="token">The cancellation token to pass to any constructed client sockets.</param>
@@ -56,30 +36,24 @@ namespace BAPSClientCommon
         }
 
         /// <summary>
-        /// Raised with a description when a server error occurs.
+        ///     The cancellation token that this <<see cref="Authenticator" /> will send to any constructed sockets.
+        /// </summary>
+        public CancellationToken Token { private get; set; }
+
+        private bool ConnectionReady => _sock != null && _seed != null;
+
+        /// <summary>
+        ///     Raised with a description when a server error occurs.
         /// </summary>
         public event EventHandler<string> ServerError;
 
         /// <summary>
-        /// Raised with a description when a user error occurs.
+        ///     Raised with a description when a user error occurs.
         /// </summary>
         public event EventHandler<string> UserError;
 
-        private readonly Func<Response> _loginCallback;
-        
         /// <summary>
-        ///     The cancellation token that this <<see cref="Authenticator"/> will send to any constructed sockets.
-        /// </summary>
-        public CancellationToken Token { private get; set; }
-
-        private bool _done;
-        private string _lastServer;
-        private int _lastPort = -1;
-        private string _seed;
-        private ClientSocket _sock;
-
-        /// <summary>
-        /// Tries to construct an authenticated <see cref="ClientSocket"/>.
+        ///     Tries to construct an authenticated <see cref="ClientSocket" />.
         /// </summary>
         /// <returns>Null, if we gave up trying to log in; a connected and ready client socket, otherwise.</returns>
         public ClientSocket Run()
@@ -113,7 +87,8 @@ namespace BAPSClientCommon
             try
             {
                 _sock = new ClientSocket(server, port, Token, Token);
-            } catch (SocketException e)
+            }
+            catch (SocketException e)
             {
                 /** If an error occurs just give the exception message and start again **/
                 var errorMessage = $"System Error:\n{e.Message}\nStack Trace:\n{e.StackTrace}";
@@ -152,8 +127,6 @@ namespace BAPSClientCommon
             _seed = null;
         }
 
-        private bool ConnectionReady => _sock != null && _seed != null;
-
         private void Attempt()
         {
             var result = _loginCallback();
@@ -182,10 +155,7 @@ namespace BAPSClientCommon
             var buffer = Encoding.ASCII.GetBytes(raw);
             var hash = md5.ComputeHash(buffer);
 
-            foreach (var h in hash)
-            {
-                stringBuilder.Append(h.ToString("x2"));
-            }
+            foreach (var h in hash) stringBuilder.Append(h.ToString("x2"));
             return stringBuilder.ToString();
         }
 
@@ -219,6 +189,38 @@ namespace BAPSClientCommon
 
             Debug.Assert(ConnectionReady, "was about to hand over a non-ready connection");
             _done = true;
+        }
+
+        /// <summary>
+        ///     Type of responses that login callbacks should give.
+        /// </summary>
+        public struct Response
+        {
+            /// <summary>
+            ///     If true, the login attempt has been abandoned, and all other
+            ///     fields are undefined.
+            /// </summary>
+            public bool IsGivingUp;
+
+            /// <summary>
+            ///     The server hostname to connect to.
+            /// </summary>
+            public string Server;
+
+            /// <summary>
+            ///     The server TCP port to connect to.
+            /// </summary>
+            public int Port;
+
+            /// <summary>
+            ///     The username to connect with.
+            /// </summary>
+            public string Username;
+
+            /// <summary>
+            ///     The (unencrypted) password to connect with.
+            /// </summary>
+            public string Password;
         }
     }
 }

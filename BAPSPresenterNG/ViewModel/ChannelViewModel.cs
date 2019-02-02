@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
@@ -9,7 +8,6 @@ using BAPSClientCommon.Model;
 using BAPSClientCommon.ServerConfig;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using GongSolutions.Wpf.DragDrop;
 
@@ -60,8 +58,8 @@ namespace BAPSPresenterNG.ViewModel
             }
         }
         private string _name;
-        
-        public ushort ChannelId { get; }
+
+        private ushort ChannelId { get; }
 
         public ChannelController Controller { get; }
 
@@ -115,7 +113,7 @@ namespace BAPSPresenterNG.ViewModel
             }
         }
 
-        public TrackViewModel TrackAt(int index)
+        private TrackViewModel TrackAt(int index)
         {
             return TrackList.ElementAtOrDefault(index) ?? new TrackViewModel(new NullTrack()) {IsLoaded = false};
         }
@@ -151,21 +149,38 @@ namespace BAPSPresenterNG.ViewModel
 
         private void SetupConfigReactions()
         {
-            var config = SimpleIoc.Default.GetInstance<Cache>();
-            config.ChoiceChanged += HandleConfigChoiceChanged;
+            var messenger = MessengerInstance;
+            messenger.Register<Cache.ChoiceChangeEventArgs>(this, HandleConfigChoiceChanged);
+            messenger.Register<Cache.StringChangeEventArgs>(this, HandleConfigStringChanged);
         }
 
-        private void HandleConfigChoiceChanged(object sender, Cache.ChoiceChangeEventArgs e)
+        private void HandleConfigStringChanged(Cache.StringChangeEventArgs args)
+        {
+            switch (args.Key)
+            {
+                case OptionKey.ChannelName:
+                    HandleNameChange(args);
+                    break;
+            }
+        }
+
+        private void HandleNameChange(Cache.StringChangeEventArgs args)
+        {
+            if (ChannelId != args.Index) return;
+            Name = args.Value;
+        }
+
+        private void HandleConfigChoiceChanged(Cache.ChoiceChangeEventArgs e)
         {
             switch (e.Key)
             {
-                case SettingKey.AutoAdvance:
+                case OptionKey.AutoAdvance:
                     HandleAutoAdvance(e);
                     break;
-                case SettingKey.AutoPlay:
+                case OptionKey.AutoPlay:
                     HandlePlayOnLoad(e);
                     break;
-                case SettingKey.Repeat:
+                case OptionKey.Repeat:
                     HandleRepeat(e);
                     break;
             }

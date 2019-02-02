@@ -9,9 +9,9 @@ namespace BAPSClientCommon.ServerConfig
     {
         public delegate void ChoiceChangeEventHandler(object sender, ChoiceChangeEventArgs e);
 
-        public delegate void StringChangeEventHandler(object sender, StringChangeEventArgs e);
-
         public delegate void IntChangeEventHandler(object sender, IntChangeEventArgs e);
+
+        public delegate void StringChangeEventHandler(object sender, StringChangeEventArgs e);
 
         /// <summary>
         ///     Event raised when a choice-type config option changes.
@@ -45,7 +45,7 @@ namespace BAPSClientCommon.ServerConfig
 
         public abstract class ChangeEventArgs
         {
-            protected ChangeEventArgs(SettingKey key, int index)
+            protected ChangeEventArgs(OptionKey key, int index)
             {
                 Key = key;
                 Index = index;
@@ -53,10 +53,10 @@ namespace BAPSClientCommon.ServerConfig
 
             /// <summary>
             ///     The key of the config setting that has changed.
-            ///     If this is <see cref="SettingKey.Invalid"/>, the changed
+            ///     If this is <see cref="OptionKey.Invalid" />, the changed
             ///     option's ID has no known meaning in BapsNet.
             /// </summary>
-            public SettingKey Key { get; }
+            public OptionKey Key { get; }
 
             /// <summary>
             ///     The index, if applicable, inside the config setting that has changed.
@@ -72,7 +72,7 @@ namespace BAPSClientCommon.ServerConfig
         /// </summary>
         public class IntChangeEventArgs : ChangeEventArgs
         {
-            public IntChangeEventArgs(SettingKey key, int value, int index = NoIndex) : base(key, index)
+            public IntChangeEventArgs(OptionKey key, int value, int index = NoIndex) : base(key, index)
             {
                 Value = value;
             }
@@ -88,7 +88,7 @@ namespace BAPSClientCommon.ServerConfig
         /// </summary>
         public class StringChangeEventArgs : ChangeEventArgs
         {
-            public StringChangeEventArgs(SettingKey key, string value, int index = NoIndex) : base(key, index)
+            public StringChangeEventArgs(OptionKey key, string value, int index = NoIndex) : base(key, index)
             {
                 Value = value;
             }
@@ -104,7 +104,7 @@ namespace BAPSClientCommon.ServerConfig
         /// </summary>
         public class ChoiceChangeEventArgs : ChangeEventArgs
         {
-            public ChoiceChangeEventArgs(SettingKey key, string choice, int index = NoIndex) : base(key, index)
+            public ChoiceChangeEventArgs(OptionKey key, string choice, int index = NoIndex) : base(key, index)
             {
                 Choice = choice;
             }

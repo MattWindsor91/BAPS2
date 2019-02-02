@@ -1,8 +1,8 @@
 namespace BAPSClientCommon.ServerConfig
 {
     /// <summary>
-    /// String constants corresponding to choice descriptions used in the bapsnet
-    /// config system.
+    ///     String constants corresponding to choice descriptions used in the bapsnet
+    ///     config system.
     /// </summary>
     public static class ChoiceKeys
     {

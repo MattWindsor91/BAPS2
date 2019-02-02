@@ -87,7 +87,7 @@ namespace BAPSPresenter2
             _core = new ClientCore(auth, Config);
             
             _core.AboutToAuthenticate += SetupAuthErrorReactions;
-            _core.Authenticated += Setup;
+            _core.AboutToAutoUpdate += Setup;
             _core.ReceiverCreated += SetupReactions;
             var launched = _core.Launch();
             if (!launched)
@@ -96,7 +96,7 @@ namespace BAPSPresenter2
             }
         }
 
-        private void Setup(object sender, EventArgs e)
+        private void Setup(object sender, (int numChannelsPrefetch, int numDirectoriesPrefetch) args /* ignored for now */)
         {
             SetupChannels();
             SetupDirectories();

@@ -4,7 +4,7 @@ using BAPSClientCommon.BapsNet;
 namespace BAPSClientCommon.Model
 {
     /// <summary>
-    /// Enumeration of the various position markers that a channel's track-line contain.
+    ///     Enumeration of the various position markers that a channel's track-line contain.
     /// </summary>
     public enum MarkerType
     {
@@ -14,7 +14,7 @@ namespace BAPSClientCommon.Model
     }
 
     /// <summary>
-    ///     Extension methods for <see cref="MarkerType"/>, and conversion therefrom and thereto.
+    ///     Extension methods for <see cref="MarkerType" />, and conversion therefrom and thereto.
     /// </summary>
     public static class MarkerTypeExtensions
     {

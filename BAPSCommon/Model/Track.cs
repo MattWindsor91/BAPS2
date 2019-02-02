@@ -14,18 +14,21 @@
         ///     Absence of track type, used in erroneous circumstances.
         /// </summary>
         Void = 0,
+
         /// <summary>
         ///     An audio track taken from a local directory file.
         /// </summary>
         File = 1,
+
         /// <summary>
         ///     An audio track taken from the central library.
         /// </summary>
         Library = 2,
+
         /// <summary>
         ///     A text item.
         /// </summary>
-        Text = 3,
+        Text = 3
     }
 
     public static class TrackTypeExtensions
@@ -38,7 +41,7 @@
         /// </summary>
         /// <param name="tt">The track type to inspect.</param>
         /// <returns>
-        ///     True if, and only if, <see cref="tt"/> references a file or
+        ///     True if, and only if, <see cref="tt" /> references a file or
         ///     library item.
         /// </returns>
         public static bool HasAudio(this TrackType tt)
@@ -54,7 +57,7 @@
         /// </summary>
         /// <param name="tt">The track type to inspect.</param>
         /// <returns>
-        ///     True if, and only if, <see cref="tt"/> references a text item.
+        ///     True if, and only if, <see cref="tt" /> references a text item.
         /// </returns>
         public static bool HasText(this TrackType tt)
         {
@@ -80,20 +83,23 @@
     /// </summary>
     public abstract class Track : ITrack
     {
-        public string Description { get; }
-        public virtual string Text => "";
-
         protected Track(string description)
         {
             Description = description;
         }
+
+        public string Description { get; }
+        public virtual string Text => "";
 
         public abstract bool IsAudioItem { get; }
         public abstract bool IsTextItem { get; }
         public abstract bool IsFromLibrary { get; }
         public abstract uint Duration { get; }
 
-        public override string ToString() => Description;
+        public override string ToString()
+        {
+            return Description;
+        }
     }
 
     public class TextTrack : Track
@@ -149,19 +155,21 @@
     }
 
     /// <summary>
-    /// Allows the creation of entries from BapsNet commands.
+    ///     Allows the creation of entries from BapsNet commands.
     /// </summary>
     public static class TrackFactory
     {
         /// <summary>
-        /// Creates a <see cref="Track"/> with the given type and description.
+        ///     Creates a <see cref="Track" /> with the given type and description.
         /// </summary>
         /// <param name="type">The BapsNet type of the entry.</param>
         /// <param name="description">The description of the entry.</param>
         /// <param name="duration">If given, the duration to use for any constructed audio items.</param>
         /// <param name="text">If given, the text to use for any constructed text items.</param>
-        /// <returns>A <see cref="Track"/> with the correct type
-        /// and description.</returns>
+        /// <returns>
+        ///     A <see cref="Track" /> with the correct type
+        ///     and description.
+        /// </returns>
         public static Track Create(TrackType type, string description, uint duration = 0, string text = "")
         {
             switch (type)

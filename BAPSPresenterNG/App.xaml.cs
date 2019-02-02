@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using BAPSClientCommon;
 using BAPSClientCommon.ServerConfig;
 using BAPSClientWindows;
@@ -37,10 +38,20 @@ namespace BAPSPresenterNG
 
             _core = SimpleIoc.Default.GetInstance<ClientCore>();
             _core.AboutToAuthenticate += AboutToAuthenticate;
+            _core.AboutToAutoUpdate += ChannelCountReady;
             _core.ReceiverCreated += HandleReceiverCreated;
 
             var launchedProperly = _core.Launch();
             if (!launchedProperly) Shutdown();
+        }
+
+        private void ChannelCountReady(object sender, (int numChannelsPrefetch, int numDirectoriesPrefetch) args)
+        {
+            // Manually pumping 'count changed' messages.
+            var messenger = ServiceLocator.Current.GetInstance<IMessenger>();
+            var (numChannelsPrefetch, numDirectoriesPrefetch) = args;
+            messenger.Send(new Cache.IntChangeEventArgs(OptionKey.ChannelCount, numChannelsPrefetch));
+            messenger.Send(new Cache.IntChangeEventArgs(OptionKey.ChannelCount, numDirectoriesPrefetch));
         }
 
         private Authenticator MakeAuthenticator()

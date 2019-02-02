@@ -65,14 +65,14 @@ namespace BAPSClientCommon
             _msgQueue.Add(new Message(cmd.WithChannel(_channelId)).Add(index));
         }
 
-        private SettingKey GetChannelConfigOption(ChannelConfigChangeType type)
+        private OptionKey GetChannelConfigOption(ChannelConfigChangeType type)
         {
             if (type.HasFlag(ChannelConfigChangeType.AutoAdvance))
             {
                 if (!(type.HasFlag(ChannelConfigChangeType.Off) ||
                       type.HasFlag(ChannelConfigChangeType.On)))
                     throw new ArgumentOutOfRangeException(nameof(type), type, "AutoAdvance must have Off or On flag");
-                return SettingKey.AutoAdvance;
+                return OptionKey.AutoAdvance;
             }
 
             if (type.HasFlag(ChannelConfigChangeType.PlayOnLoad))
@@ -80,7 +80,7 @@ namespace BAPSClientCommon
                 if (!(type.HasFlag(ChannelConfigChangeType.Off) ||
                       type.HasFlag(ChannelConfigChangeType.On)))
                     throw new ArgumentOutOfRangeException(nameof(type), type, "PlayOnLoad must have Off or On flag");
-                return SettingKey.AutoPlay;
+                return OptionKey.AutoPlay;
             }
 
             if (type.HasFlag(ChannelConfigChangeType.Repeat))
@@ -90,7 +90,7 @@ namespace BAPSClientCommon
                       type.HasFlag(ChannelConfigChangeType.None)))
                     throw new ArgumentOutOfRangeException(nameof(type), type,
                         "Repeat must have None, One, or All flag");
-                return SettingKey.Repeat;
+                return OptionKey.Repeat;
             }
 
             throw new ArgumentOutOfRangeException(nameof(type), type, "No valid config category flag set");
@@ -117,12 +117,12 @@ namespace BAPSClientCommon
         public void AddFile(DirectoryEntry file)
         {
             var cmd = (Command.Playlist | Command.AddItem).WithChannel(_channelId);
-            _msgQueue.Add(new Message(cmd).Add((uint)TrackType.File).Add(file.DirectoryId).Add(file.Description));
+            _msgQueue.Add(new Message(cmd).Add((uint) TrackType.File).Add(file.DirectoryId).Add(file.Description));
         }
 
         /// <summary>
         ///     Asks the BAPS server to delete the track-list item for this
-        ///     channel at index <see cref="index"/>.
+        ///     channel at index <see cref="index" />.
         /// </summary>
         /// <param name="index">The 0-based index of the item to delete.</param>
         public void DeleteItemAt(uint index)

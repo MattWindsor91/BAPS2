@@ -1,6 +1,3 @@
-using System;
-using BAPSClientCommon.BapsNet;
-
 namespace BAPSClientCommon.ServerConfig
 {
 	/// <summary>
@@ -10,7 +7,7 @@ namespace BAPSClientCommon.ServerConfig
 	///         they should correspond to the on-the-wire BapsNet setting ID.
 	///     </para>
 	/// </summary>
-	public enum SettingKey : uint
+	public enum OptionKey : uint
     {
         ChannelCount = 0,
         Device = 1,
@@ -50,6 +47,6 @@ namespace BAPSClientCommon.ServerConfig
         Controller2Offset = 34,
         Controller2ButtonCount = 35,
         Controller2ButtonCode = 36,
-        Invalid = uint.MaxValue,
+        Invalid = uint.MaxValue
     }
 }

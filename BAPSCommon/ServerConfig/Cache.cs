@@ -45,9 +45,9 @@ namespace BAPSClientCommon.ServerConfig
         /// <param name="choiceDesc">The choice to use.</param>
         /// <param name="index">If present and valid, the index of the option to set.</param>
         /// <returns>A message that effects the described config change.</returns>
-        public Message MakeConfigChoiceMessage(SettingKey key, string choiceDesc, int index = NoIndex)
+        public Message MakeConfigChoiceMessage(OptionKey key, string choiceDesc, int index = NoIndex)
         {
-            var oci = GetOption((uint)key);
+            var oci = GetOption((uint) key);
             if (oci == null) throw new ArgumentOutOfRangeException(nameof(key), key, "Unknown option.");
 
             if (!(oci is ChoiceOption cci))
@@ -108,8 +108,8 @@ namespace BAPSClientCommon.ServerConfig
             var choice = FindChoiceIndexFor(optionId, choiceDescription);
             if (choice != -1) o.AddValue(choice, index);
         }
-        
-        public string GetChoice(SettingKey sk, int index = NoIndex)
+
+        public string GetChoice(OptionKey sk, int index = NoIndex)
         {
             return GetChoice((uint) sk, index);
         }
@@ -119,11 +119,11 @@ namespace BAPSClientCommon.ServerConfig
             if (GetOption(optionId) is ChoiceOption option) return option.ChoiceAt(index);
             return null;
         }
-        
-        
-        public T GetValue<T>(SettingKey sk, int index = NoIndex)
+
+
+        public T GetValue<T>(OptionKey sk, int index = NoIndex)
         {
-            return GetValue<T>((uint)sk, index);
+            return GetValue<T>((uint) sk, index);
         }
 
         public T GetValue<T>(uint optionId, int index = NoIndex)

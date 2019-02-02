@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel;
 
 namespace BAPSClientCommon.BapsNet
 {
@@ -10,11 +9,6 @@ namespace BAPSClientCommon.BapsNet
     public class DebugSink : ISink
     {
         private readonly Queue<object> _items = new Queue<object>();
-
-        public void Clear()
-        {
-            _items.Clear();
-        }
 
         public object[] Items => _items.ToArray();
 
@@ -36,6 +30,11 @@ namespace BAPSClientCommon.BapsNet
         public void SendU32(uint i)
         {
             _items.Enqueue(i);
+        }
+
+        public void Clear()
+        {
+            _items.Clear();
         }
     }
 }

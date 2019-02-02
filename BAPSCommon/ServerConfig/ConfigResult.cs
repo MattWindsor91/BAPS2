@@ -17,12 +17,14 @@ namespace BAPSClientCommon.ServerConfig
     public static class ConfigResultText
     {
         public static string[] Text =
-        {"Success",
-         "Incorrect type for option",
-         "Option does not exist",
-         "Incorrect indexing for option",
-         "Specified index exceeds limit",
-         "Setting failed validation check",
-         "You do not have permission"};
+        {
+            "Success",
+            "Incorrect type for option",
+            "Option does not exist",
+            "Incorrect indexing for option",
+            "Specified index exceeds limit",
+            "Setting failed validation check",
+            "You do not have permission"
+        };
     }
 }

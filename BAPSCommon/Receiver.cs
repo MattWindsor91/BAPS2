@@ -25,6 +25,7 @@ namespace BAPSClientCommon
                 var cmdReceived = _cs.ReceiveC();
                 DecodeCommand(cmdReceived);
             }
+
             _token.ThrowIfCancellationRequested();
         }
 
@@ -287,7 +288,8 @@ namespace BAPSClientCommon
                 case Command.Pause:
                 case Command.Stop:
                 {
-                    OnChannelOperation(new Updates.PlayerStateEventArgs(cmdReceived.Channel(), cmdReceived.AsChannelState()));
+                    OnChannelOperation(new Updates.PlayerStateEventArgs(cmdReceived.Channel(),
+                        cmdReceived.AsChannelState()));
                 }
                     break;
                 case Command.Volume:
@@ -300,7 +302,7 @@ namespace BAPSClientCommon
                 {
                     DecodeLoad(cmdReceived.Channel());
                 }
-                break;
+                    break;
                 case Command.Position:
                 case Command.CuePosition:
                 case Command.IntroPosition:
@@ -342,7 +344,7 @@ namespace BAPSClientCommon
                     {
                         var channelId = cmdReceived.Channel();
                         var index = _cs.ReceiveI();
-                        var type = (TrackType)_cs.ReceiveI();
+                        var type = (TrackType) _cs.ReceiveI();
                         var description = _cs.ReceiveS();
                         var entry = TrackFactory.Create(type, description);
                         OnItemAdd(new Updates.TrackAddEventArgs(channelId, index, entry));
@@ -455,7 +457,8 @@ namespace BAPSClientCommon
                         var optionId = _cs.ReceiveI();
                         var description = _cs.ReceiveS();
                         var type = _cs.ReceiveI();
-                        OnConfigOption(new Updates.ConfigOptionArgs(optionId, (ConfigType) type, description, hasIndex, index));
+                        OnConfigOption(new Updates.ConfigOptionArgs(optionId, (ConfigType) type, description, hasIndex,
+                            index));
                     }
                     else
                     {

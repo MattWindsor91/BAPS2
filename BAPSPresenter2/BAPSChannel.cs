@@ -351,11 +351,11 @@ namespace BAPSPresenter2
         private void TrackListContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
             var config = Main.Config;
-            var testValue = config.GetChoice(SettingKey.AutoAdvance, ChannelId);
+            var testValue = config.GetChoice(OptionKey.AutoAdvance, ChannelId);
             automaticAdvanceToolStripMenuItem.Checked = testValue == "Yes";
-            testValue = config.GetChoice(SettingKey.AutoPlay, ChannelId);
+            testValue = config.GetChoice(OptionKey.AutoPlay, ChannelId);
             playOnLoadToolStripMenuItem.Checked = testValue == "Yes";
-            testValue = config.GetChoice(SettingKey.Repeat, ChannelId);
+            testValue = config.GetChoice(OptionKey.Repeat, ChannelId);
             repeatNoneToolStripMenuItem.Checked = testValue == "No repeat";
             repeatOneToolStripMenuItem.Checked = testValue == "Repeat one";
             repeatAllToolStripMenuItem.Checked = testValue == "Repeat all";
