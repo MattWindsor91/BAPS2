@@ -1,21 +1,22 @@
 ﻿using System.Windows;
+using BAPSPresenterNG.ViewModel;
 
 namespace BAPSPresenterNG
 {
     /// <summary>
-    /// Interaction logic for Login.xaml
+    ///     Interaction logic for Login.xaml
     /// </summary>
     public partial class Login : Window
     {
-        /// <summary>
-        /// Exposes the login view model.
-        /// </summary>
-        public ViewModel.LoginViewModel ViewModel => DataContext as ViewModel.LoginViewModel;
-
         public Login()
         {
             InitializeComponent();
         }
+
+        /// <summary>
+        ///     Exposes the login view model.
+        /// </summary>
+        public LoginViewModel ViewModel => DataContext as LoginViewModel;
 
         private void LoginBtn_Click(object sender, RoutedEventArgs e)
         {

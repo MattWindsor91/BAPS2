@@ -12,11 +12,11 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <converters:MsecToPositionStringConverter x:Key="MsecToPositionStringConverter" />
-            <SolidColorBrush x:Key="PlayBrush" Color="#FF60ABA2"></SolidColorBrush>
-            <SolidColorBrush x:Key="PauseBrush" Color="#FFFEB93A"></SolidColorBrush>
-            <SolidColorBrush x:Key="StopBrush" Color="#FFE2293A"></SolidColorBrush>       
-            <SolidColorBrush x:Key="NameFgBrush" Color="#FFE1E1E1"></SolidColorBrush>
-            <SolidColorBrush x:Key="NameBgBrush" Color="#FF0073E6"></SolidColorBrush>
+            <SolidColorBrush x:Key="PlayBrush" Color="#FF60ABA2" />
+            <SolidColorBrush x:Key="PauseBrush" Color="#FFFEB93A" />
+            <SolidColorBrush x:Key="StopBrush" Color="#FFE2293A" />
+            <SolidColorBrush x:Key="NameFgBrush" Color="#FFE1E1E1" />
+            <SolidColorBrush x:Key="NameBgBrush" Color="#FF0073E6" />
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
@@ -25,11 +25,11 @@
             <RowDefinition Height="Auto" /> <!-- Track name -->
             <RowDefinition Height="Auto" /> <!-- Track bar -->
             <RowDefinition Height="64px" /> <!-- Position displays -->
-        </Grid.RowDefinitions>       
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/> <!-- Play/Elapsed -->
-            <ColumnDefinition Width="*"/> <!-- Pause/Remaining -->
-            <ColumnDefinition Width="*"/> <!-- Stop/Start-At -->
+            <ColumnDefinition Width="*" /> <!-- Play/Elapsed -->
+            <ColumnDefinition Width="*" /> <!-- Pause/Remaining -->
+            <ColumnDefinition Width="*" /> <!-- Stop/Start-At -->
         </Grid.ColumnDefinitions>
         <!-- Transport controls -->
         <local:TransportButton
@@ -72,18 +72,18 @@
                 Text="{Binding Description, FallbackValue=UNKNOWN, TargetNullValue=NONE}" />
         </Border>
         <!-- Track bar -->
-        <local:TrackBar Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" DataContext="{Binding}"/>
+        <local:TrackBar Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" DataContext="{Binding}" />
         <!-- Position displays -->
         <local:PositionDisplay
             Grid.Row="3" Grid.Column="0"
             SubText="Elapsed"
-            MainText="{Binding Position, Converter={StaticResource MsecToPositionStringConverter}}"/>
+            MainText="{Binding Position, Converter={StaticResource MsecToPositionStringConverter}}" />
         <local:PositionDisplay Grid.Row="3" Grid.Column="1"
-                                  SubText="Remaining"
-                                  MainText="{Binding Remaining, Converter={StaticResource MsecToPositionStringConverter}}"/>
+                               SubText="Remaining"
+                               MainText="{Binding Remaining, Converter={StaticResource MsecToPositionStringConverter}}" />
         <local:PositionDisplay Grid.Row="3" Grid.Column="2"
 
-                                  SubText="Start at:"
-                               MainText="{Binding StartTime, Converter={StaticResource MsecToPositionStringConverter}}"/>
+                               SubText="Start at:"
+                               MainText="{Binding StartTime, Converter={StaticResource MsecToPositionStringConverter}}" />
     </Grid>
 </UserControl>

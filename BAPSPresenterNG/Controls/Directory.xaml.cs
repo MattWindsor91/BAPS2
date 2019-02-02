@@ -1,9 +1,7 @@
-﻿using System.Windows.Controls;
-
-namespace BAPSPresenterNG.Controls
+﻿namespace BAPSPresenterNG.Controls
 {
     /// <summary>
-    /// Interaction logic for Directory.xaml
+    ///     Interaction logic for Directory.xaml
     /// </summary>
     public partial class Directory
     {

@@ -6,14 +6,6 @@ namespace BAPSPresenterNG.Converters
 {
     public class PositionScaleConverter : IMultiValueConverter
     {
-        public double ConvertTyped(double scale, double totalWidth)
-        {
-            var markerWidth = totalWidth * scale;
-            if (totalWidth < markerWidth) return totalWidth;
-            if (markerWidth < 0) return 0;
-            return markerWidth;
-        }
-
         public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
         {
             if (!(value[0] is double scale)) return 0.0;
@@ -23,7 +15,15 @@ namespace BAPSPresenterNG.Converters
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
-            return new object[]{};
+            return new object[] { };
+        }
+
+        public double ConvertTyped(double scale, double totalWidth)
+        {
+            var markerWidth = totalWidth * scale;
+            if (totalWidth < markerWidth) return totalWidth;
+            if (markerWidth < 0) return 0;
+            return markerWidth;
         }
     }
 }

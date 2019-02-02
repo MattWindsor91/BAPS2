@@ -1,9 +1,10 @@
 ﻿using System.Windows.Controls;
+using BAPSPresenterNG.ViewModel;
 
 namespace BAPSPresenterNG.Controls
 {
     /// <summary>
-    /// Interaction logic for Channel.xaml
+    ///     Interaction logic for Channel.xaml
     /// </summary>
     public partial class Channel : UserControl
     {
@@ -15,7 +16,7 @@ namespace BAPSPresenterNG.Controls
         private void TrackList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // TODO(@MattWindsor91): MVVM?
-            if (!(DataContext is ViewModel.ChannelViewModel viewModel)) return;
+            if (!(DataContext is ChannelViewModel viewModel)) return;
             if (!(sender is ListBox box)) return;
 
             var index = box.SelectedIndex;
@@ -23,7 +24,7 @@ namespace BAPSPresenterNG.Controls
             // BAPS doesn't really support the notion of deselecting.
             if (!viewModel.IsLoadPossible(index)) return;
 
-            var uindex = (uint)index;
+            var uindex = (uint) index;
             viewModel.Controller?.Select(uindex);
         }
     }

@@ -19,7 +19,7 @@
         <sys:UInt16 x:Key="Chan1">1</sys:UInt16>
         <sys:UInt16 x:Key="Chan2">2</sys:UInt16>
         <!-- Brushes -->
-        <SolidColorBrush x:Key="SideBg" Color="#FFE1E1E1"/>
+        <SolidColorBrush x:Key="SideBg" Color="#FFE1E1E1" />
         <!-- Styles -->
         <Style x:Key="MainTextBoxStyle" TargetType="{x:Type TextBox}">
             <Setter Property="FontSize" Value="18pt" />
@@ -27,17 +27,17 @@
     </Window.Resources>
     <Window.InputBindings>
         <!-- F1-3 control the first channel, if it exists -->
-        <KeyBinding Key="F1" Command="{Binding ForwardPlayCommand}" CommandParameter="{StaticResource Chan0}"/>
-        <KeyBinding Key="F2" Command="{Binding ForwardPauseCommand}" CommandParameter="{StaticResource Chan0}"/>
-        <KeyBinding Key="F3" Command="{Binding ForwardStopCommand}" CommandParameter="{StaticResource Chan0}"/>
+        <KeyBinding Key="F1" Command="{Binding ForwardPlayCommand}" CommandParameter="{StaticResource Chan0}" />
+        <KeyBinding Key="F2" Command="{Binding ForwardPauseCommand}" CommandParameter="{StaticResource Chan0}" />
+        <KeyBinding Key="F3" Command="{Binding ForwardStopCommand}" CommandParameter="{StaticResource Chan0}" />
         <!-- F5-7 control the second channel, if it exists -->
-        <KeyBinding Key="F5" Command="{Binding ForwardPlayCommand}" CommandParameter="{StaticResource Chan1}"/>
-        <KeyBinding Key="F6" Command="{Binding ForwardPauseCommand}" CommandParameter="{StaticResource Chan1}"/>
-        <KeyBinding Key="F7" Command="{Binding ForwardStopCommand}" CommandParameter="{StaticResource Chan1}"/>
+        <KeyBinding Key="F5" Command="{Binding ForwardPlayCommand}" CommandParameter="{StaticResource Chan1}" />
+        <KeyBinding Key="F6" Command="{Binding ForwardPauseCommand}" CommandParameter="{StaticResource Chan1}" />
+        <KeyBinding Key="F7" Command="{Binding ForwardStopCommand}" CommandParameter="{StaticResource Chan1}" />
         <!-- F9-11 control the third channel, if it exists -->
-        <KeyBinding Key="F9" Command="{Binding ForwardPlayCommand}" CommandParameter="{StaticResource Chan2}"/>
-        <KeyBinding Key="F10" Command="{Binding ForwardPauseCommand}" CommandParameter="{StaticResource Chan2}"/>
-        <KeyBinding Key="F11" Command="{Binding ForwardStopCommand}" CommandParameter="{StaticResource Chan2}"/>
+        <KeyBinding Key="F9" Command="{Binding ForwardPlayCommand}" CommandParameter="{StaticResource Chan2}" />
+        <KeyBinding Key="F10" Command="{Binding ForwardPauseCommand}" CommandParameter="{StaticResource Chan2}" />
+        <KeyBinding Key="F11" Command="{Binding ForwardStopCommand}" CommandParameter="{StaticResource Chan2}" />
     </Window.InputBindings>
     <DockPanel>
         <!-- Order is significant here: the text box and timeline should take
@@ -45,27 +45,27 @@
         <StackPanel DockPanel.Dock="Top" Height="72px"
                     Name="headerPanel"
                     Background="{StaticResource MainBg}" Orientation="Horizontal">
-            <Image Width="64px" Height="64px" Margin="4px" Source="{DynamicResource Logo}"/>
+            <Image Width="64px" Height="64px" Margin="4px" Source="{DynamicResource Logo}" />
             <TextBlock Foreground="{StaticResource MainFg}"
                        FontSize="20px"
                        VerticalAlignment="Center"
                        FontWeight="Bold"
                        Margin="12px 0">
                 Broadcasting and
-                <LineBreak/>
+                <LineBreak />
                 Presenting Suite
             </TextBlock>
             <Button Width="64px" Margin="4px">
-                <TextBlock TextAlignment="Center">Load<LineBreak/>Show</TextBlock>
+                <TextBlock TextAlignment="Center">Load<LineBreak />Show</TextBlock>
             </Button>
             <Button Width="64px" Margin="4px">
-                <TextBlock TextAlignment="Center">Search<LineBreak/>Library</TextBlock>
+                <TextBlock TextAlignment="Center">Search<LineBreak />Library</TextBlock>
             </Button>
         </StackPanel>
         <TextBox DockPanel.Dock="Bottom" Name="textBox" MinHeight="72pt"
                  Style="{StaticResource MainTextBoxStyle}"
-                 Text="{Binding Text, Mode=TwoWay}"/>
-        <TextBox DockPanel.Dock="Bottom" Name="timeLine"/>
+                 Text="{Binding Text, Mode=TwoWay}" />
+        <TextBox DockPanel.Dock="Bottom" Name="timeLine" />
         <ListView
             Name="directoryList"
             DockPanel.Dock="Left"
@@ -75,7 +75,7 @@
             Background="{StaticResource SideBg}">
             <ListBox.ItemContainerStyle>
                 <Style TargetType="ListBoxItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                 </Style>
             </ListBox.ItemContainerStyle>
             <ListView.ItemTemplate>

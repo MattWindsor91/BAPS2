@@ -5,16 +5,13 @@ using System.Windows.Data;
 namespace BAPSPresenterNG.Converters
 {
     /// <summary>
-    /// A value converter that maps from internal channel IDs to human-friendly channel numbers.
+    ///     A value converter that maps from internal channel IDs to human-friendly channel numbers.
     /// </summary>
     public class ChannelIDConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is ushort channelID)
-            {
-                return (channelID + 1).ToString();
-            }
+            if (value is ushort channelID) return (channelID + 1).ToString();
             return "??";
         }
 

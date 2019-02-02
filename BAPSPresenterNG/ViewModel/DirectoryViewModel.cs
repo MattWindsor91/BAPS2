@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using BAPSClientCommon;
+﻿using System.Collections.ObjectModel;
 using BAPSClientCommon.Events;
 using BAPSClientCommon.Model;
 using GalaSoft.MvvmLight;

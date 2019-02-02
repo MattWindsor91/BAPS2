@@ -7,7 +7,7 @@ using FontAwesome.WPF;
 namespace BAPSPresenterNG.Converters
 {
     /// <summary>
-    /// Converts the type of a track-list entry to a Font Awesome icon.
+    ///     Converts the type of a track-list entry to a Font Awesome icon.
     /// </summary>
     public class EntryTypeToIconConverter : IValueConverter
     {

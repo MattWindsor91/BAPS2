@@ -1,5 +1,3 @@
-using System;
-using BAPSClientCommon;
 using BAPSClientCommon.ServerConfig;
 using GalaSoft.MvvmLight.Messaging;
 

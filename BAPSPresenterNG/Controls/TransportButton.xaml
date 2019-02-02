@@ -2,32 +2,35 @@
              x:Name="TransportButtonControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              mc:Ignorable="d" d:DesignWidth="64" Height="48px">
     <Border BorderThickness="1px" BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}">
-    <Border BorderThickness="1px 1px 1px 8px"
-            >
-        <Border.Style>
-            <Style TargetType="{x:Type Border}">
-                <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"/>
-                <Style.Triggers>
-                    <DataTrigger Binding="{Binding Path=IsHighlighted, ElementName=TransportButtonControl}" Value="true">
-                        <Setter Property="BorderBrush" Value="{Binding HighlightBrush, ElementName=TransportButtonControl}" />
-                    </DataTrigger>
-                </Style.Triggers>
-            </Style>
-        </Border.Style>
-        <Button 
-            Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
-            Padding="8px"
-            MinWidth="32px"
-            Command="{Binding Command, ElementName=TransportButtonControl}"
-            ToolTip="{Binding ToolTip, ElementName=TransportButtonControl}">
-                <fa:ImageAwesome                
-                Icon="{Binding Icon, ElementName=TransportButtonControl, FallbackValue=Question}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+        <Border BorderThickness="1px 1px 1px 8px">
+            <Border.Style>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="BorderBrush"
+                            Value="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Path=IsHighlighted, ElementName=TransportButtonControl}"
+                                     Value="true">
+                            <Setter Property="BorderBrush"
+                                    Value="{Binding HighlightBrush, ElementName=TransportButtonControl}" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <Button
+                Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+                Padding="8px"
+                MinWidth="32px"
+                Command="{Binding Command, ElementName=TransportButtonControl}"
+                ToolTip="{Binding ToolTip, ElementName=TransportButtonControl}">
+                <fa:ImageAwesome
+                    Icon="{Binding Icon, ElementName=TransportButtonControl, FallbackValue=Question}"
+                    HorizontalAlignment="Center" VerticalAlignment="Center" />
             </Button>
-    </Border>
+        </Border>
     </Border>
 </UserControl>

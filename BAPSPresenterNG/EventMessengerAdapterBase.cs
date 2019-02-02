@@ -14,7 +14,7 @@ namespace BAPSPresenterNG
         {
             Messenger = messenger;
         }
-        
+
         /// <summary>
         ///     Forwards an event's payload as a messenger message.
         /// </summary>
