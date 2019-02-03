@@ -1,4 +1,6 @@
+using System;
 using GalaSoft.MvvmLight.Messaging;
+using JetBrains.Annotations;
 
 namespace BAPSPresenterNG
 {
@@ -8,11 +10,11 @@ namespace BAPSPresenterNG
     /// </summary>
     public abstract class EventMessengerAdapterBase
     {
-        protected IMessenger Messenger;
+        [NotNull] private readonly IMessenger _messenger;
 
-        protected EventMessengerAdapterBase(IMessenger messenger)
+        protected EventMessengerAdapterBase([CanBeNull] IMessenger messenger)
         {
-            Messenger = messenger;
+            _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
         }
 
         /// <summary>
@@ -21,9 +23,9 @@ namespace BAPSPresenterNG
         /// <typeparam name="T">Type of event payload.</typeparam>
         /// <param name="sender">Ignored.</param>
         /// <param name="e">The object payload.</param>
-        protected void Relay<T>(object sender, T e)
+        protected void Relay<T>([CanBeNull] object sender, T e)
         {
-            Messenger.Send(e);
+            _messenger.Send(e);
         }
     }
 }

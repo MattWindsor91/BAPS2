@@ -24,17 +24,17 @@ namespace BAPSPresenterNG.ViewModel
     [UsedImplicitly]
     public class MainViewModel : ViewModelBase
     {
-        private RelayCommand<ushort> _forwardPauseCommand;
+        [CanBeNull] private RelayCommand<ushort> _forwardPauseCommand;
 
-        private RelayCommand<ushort> _forwardPlayCommand;
+        [CanBeNull] private RelayCommand<ushort> _forwardPlayCommand;
 
-        private RelayCommand<ushort> _forwardStopCommand;
+        [CanBeNull] private RelayCommand<ushort> _forwardStopCommand;
         private string _text;
-        private readonly ChannelControllerSet _controllerSet;
+        [NotNull] private readonly ChannelControllerSet _controllerSet;
 
-        public MainViewModel([NotNull] IMessenger messenger, [NotNull] ChannelControllerSet controllerSet) : base(messenger)
+        public MainViewModel([CanBeNull] IMessenger messenger, [CanBeNull] ChannelControllerSet controllerSet) : base(messenger)
         {
-            _controllerSet = controllerSet;
+            _controllerSet = controllerSet ?? throw new ArgumentNullException(nameof(controllerSet));
             
             Text = "<You can type notes here>";
             Register();
@@ -54,6 +54,7 @@ namespace BAPSPresenterNG.ViewModel
         ///     A command that, when executed, sends a play command to the channel
         ///     with the given index.
         /// </summary>
+        [NotNull]
         public RelayCommand<ushort> ForwardPlayCommand =>
             _forwardPlayCommand
             ?? (_forwardPlayCommand = new RelayCommand<ushort>(
@@ -66,6 +67,7 @@ namespace BAPSPresenterNG.ViewModel
         ///     A command that, when executed, sends a pause command to the channel
         ///     with the given index.
         /// </summary>
+        [NotNull]
         public RelayCommand<ushort> ForwardPauseCommand =>
             _forwardPauseCommand
             ?? (_forwardPauseCommand = new RelayCommand<ushort>(
@@ -78,6 +80,7 @@ namespace BAPSPresenterNG.ViewModel
         ///     A command that, when executed, sends a stop command to the channel
         ///     with the given index.
         /// </summary>
+        [NotNull]
         public RelayCommand<ushort> ForwardStopCommand =>
             _forwardStopCommand
             ?? (_forwardStopCommand = new RelayCommand<ushort>(
@@ -105,7 +108,7 @@ namespace BAPSPresenterNG.ViewModel
         [CanBeNull]
         private ChannelViewModel ChannelAt(ushort channelId)
         {
-            return Channels?.ElementAtOrDefault(channelId);
+            return Channels.ElementAtOrDefault(channelId);
         }
 
         private void Register()
@@ -127,13 +130,13 @@ namespace BAPSPresenterNG.ViewModel
             }
         }
 
-        private void UpdateObservable<T>(IEnumerable<T> objects, ICollection<T> target)
+        private static void UpdateObservable<T>(IEnumerable<T> objects, ICollection<T> target)
         {
             target.Clear();
             foreach (var o in objects) target.Add(o);
         }
 
-        private void HandleCountChange<T>(int newCount, ICollection<T> observableTarget, Func<ushort, T> factory)
+        private static void HandleCountChange<T>(int newCount, ICollection<T> observableTarget, Func<ushort, T> factory)
         {
             if (newCount == observableTarget.Count) return;
             var newObjects = new T[newCount];

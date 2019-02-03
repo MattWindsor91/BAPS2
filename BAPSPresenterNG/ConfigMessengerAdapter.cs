@@ -1,5 +1,7 @@
+using System;
 using BAPSClientCommon.ServerConfig;
 using GalaSoft.MvvmLight.Messaging;
+using JetBrains.Annotations;
 
 namespace BAPSPresenterNG
 {
@@ -9,7 +11,7 @@ namespace BAPSPresenterNG
     /// </summary>
     public class ConfigMessengerAdapter : EventMessengerAdapterBase
     {
-        private readonly ConfigCache _configCache;
+        [NotNull] private readonly ConfigCache _configCache;
 
         /// <summary>
         ///     Constructs a <see cref="ConfigMessengerAdapter" />.
@@ -20,9 +22,9 @@ namespace BAPSPresenterNG
         /// </summary>
         /// <param name="configCache">The server config cache to listen to.</param>
         /// <param name="messenger">The messenger bus to forward onto.</param>
-        public ConfigMessengerAdapter(ConfigCache configCache, IMessenger messenger) : base(messenger)
+        public ConfigMessengerAdapter([CanBeNull] ConfigCache configCache, IMessenger messenger) : base(messenger)
         {
-            _configCache = configCache;
+            _configCache = configCache ?? throw new ArgumentNullException(nameof(configCache));
             Register();
         }
 

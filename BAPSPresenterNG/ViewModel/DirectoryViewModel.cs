@@ -3,6 +3,7 @@ using BAPSClientCommon.Events;
 using BAPSClientCommon.Model;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
+using JetBrains.Annotations;
 
 namespace BAPSPresenterNG.ViewModel
 {
@@ -13,7 +14,7 @@ namespace BAPSPresenterNG.ViewModel
     {
         private string _name;
 
-        public DirectoryViewModel(ushort directoryId, IMessenger messenger) : base(messenger)
+        public DirectoryViewModel(ushort directoryId, [CanBeNull] IMessenger messenger) : base(messenger)
         {
             DirectoryId = directoryId;
             Register();

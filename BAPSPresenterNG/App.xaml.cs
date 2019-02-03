@@ -1,12 +1,15 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows;
 using BAPSClientCommon;
 using BAPSClientCommon.ServerConfig;
 using BAPSClientWindows;
+using BAPSPresenterNG.ViewModel;
 using CommonServiceLocator;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
+using JetBrains.Annotations;
 
 namespace BAPSPresenterNG
 {
@@ -15,10 +18,10 @@ namespace BAPSPresenterNG
     /// </summary>
     public partial class App
     {
-        private ConfigMessengerAdapter _cma;
-        private ClientCore _core;
-        private MainWindow _main;
-        private ReceiverMessengerAdapter _rma;
+        [CanBeNull, UsedImplicitly]  private ConfigMessengerAdapter _cma;
+        [CanBeNull] private ClientCore _core;
+        [CanBeNull] private MainWindow _main;
+        [CanBeNull, UsedImplicitly]  private ReceiverMessengerAdapter _rma;
 
         static App()
         {
@@ -37,6 +40,7 @@ namespace BAPSPresenterNG
             _main.Show();
 
             _core = SimpleIoc.Default.GetInstance<ClientCore>();
+            Debug.Assert(_core != null, nameof(_core) + " != null");
             _core.AboutToAuthenticate += AboutToAuthenticate;
             _core.AboutToAutoUpdate += ChannelCountReady;
             _core.ReceiverCreated += HandleReceiverCreated;
@@ -45,10 +49,10 @@ namespace BAPSPresenterNG
             if (!launchedProperly) Shutdown();
         }
 
-        private void ChannelCountReady(object sender, (int numChannelsPrefetch, int numDirectoriesPrefetch) args)
+        private static void ChannelCountReady(object sender, (int numChannelsPrefetch, int numDirectoriesPrefetch) args)
         {
             // Manually pumping 'count changed' messages.
-            var messenger = ServiceLocator.Current.GetInstance<IMessenger>();
+            var messenger = ViewModelLocator.Messenger;
             var (numChannelsPrefetch, numDirectoriesPrefetch) = args;
             messenger.Send(new ConfigCache.IntChangeEventArgs(OptionKey.ChannelCount, numChannelsPrefetch));
             messenger.Send(new ConfigCache.IntChangeEventArgs(OptionKey.ChannelCount, numDirectoriesPrefetch));
@@ -99,12 +103,12 @@ namespace BAPSPresenterNG
             // The various view models then register onto the bus, meaning that
             // they receive server and config updates without directly wiring
             // them together.
-            var messenger = ServiceLocator.Current.GetInstance<IMessenger>();
+            var messenger = ViewModelLocator.Messenger;
             _rma = new ReceiverMessengerAdapter(e, messenger);
             _cma = new ConfigMessengerAdapter(ConfigCache, messenger);
         }
 
-        private void AboutToAuthenticate(object sender, Authenticator e)
+        private void AboutToAuthenticate(object sender, [NotNull] Authenticator e)
         {
             e.ServerError += (s, errorMessage) =>
             {

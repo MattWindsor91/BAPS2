@@ -1,3 +1,5 @@
+using JetBrains.Annotations;
+
 namespace BAPSClientCommon.ServerConfig
 {
     /// <summary>
@@ -26,7 +28,7 @@ namespace BAPSClientCommon.ServerConfig
         ///     The Boolean equivalent of <paramref name="choice" />, or <paramref name="fallback" /> if the choice
         ///     doesn't correspond to a Boolean value.
         /// </returns>
-        public static bool ChoiceToBoolean(string choice, bool fallback)
+        public static bool ChoiceToBoolean([CanBeNull] string choice, bool fallback)
         {
             switch (choice)
             {
@@ -44,6 +46,7 @@ namespace BAPSClientCommon.ServerConfig
         /// </summary>
         /// <param name="value">The Boolean to convert.</param>
         /// <returns><see cref="Yes" /> if <paramref name="value" /> is true; else <see cref="No" />.</returns>
+        [NotNull]
         public static string BooleanToChoice(bool value)
         {
             return value ? Yes : No;

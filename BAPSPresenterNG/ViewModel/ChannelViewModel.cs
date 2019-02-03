@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
@@ -10,7 +11,9 @@ using BAPSClientCommon.ServerConfig;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using GalaSoft.MvvmLight.Threading;
 using GongSolutions.Wpf.DragDrop;
+using JetBrains.Annotations;
 
 namespace BAPSPresenterNG.ViewModel
 {
@@ -22,14 +25,14 @@ namespace BAPSPresenterNG.ViewModel
     /// </summary>
     public class ChannelViewModel : ViewModelBase, IDropTarget
     {
-        private RelayCommand _toggleAutoAdvanceCommand;
-        private RelayCommand _togglePlayOnLoadCommand;
+        [CanBeNull] private RelayCommand _toggleAutoAdvanceCommand;
+        [CanBeNull] private RelayCommand _togglePlayOnLoadCommand;
 
-        public ChannelViewModel(ushort channelId, IMessenger messenger, PlayerViewModel player,
-            ChannelController controller) : base(messenger)
+        public ChannelViewModel(ushort channelId, [CanBeNull] IMessenger messenger, [CanBeNull] PlayerViewModel player,
+            [CanBeNull] ChannelController controller) : base(messenger)
         {
             ChannelId = channelId;
-            Player = player;
+            Player = player ?? throw new ArgumentNullException(nameof(player));
             Controller = controller;
 
             Register();
@@ -39,6 +42,7 @@ namespace BAPSPresenterNG.ViewModel
         ///     The part of the channel containing the loaded track and its
         ///     position markers.
         /// </summary>
+        [NotNull]
         public PlayerViewModel Player { get; }
 
         /// <summary>
@@ -62,18 +66,13 @@ namespace BAPSPresenterNG.ViewModel
 
         private ushort ChannelId { get; }
 
-        public ChannelController Controller { get; }
+        [CanBeNull] public ChannelController Controller { get; }
 
         /// <summary>
         ///     The track list.
         /// </summary>
+        [NotNull]
         public ObservableCollection<TrackViewModel> TrackList { get; } = new ObservableCollection<TrackViewModel>();
-
-        /// <summary>
-        ///     Shorthand for accessing the UI thread's dispatcher.
-        /// </summary>
-        private static Dispatcher UiDispatcher =>
-            Application.Current.Dispatcher;
 
         /// <summary>
         ///     A command that, when fired, checks the current auto advance
@@ -109,7 +108,7 @@ namespace BAPSPresenterNG.ViewModel
             switch (dropInfo.Data)
             {
                 case DirectoryEntry dirEntry:
-                    Controller.AddFile(dirEntry);
+                    Controller?.AddFile(dirEntry);
                     break;
             }
         }
@@ -219,7 +218,7 @@ namespace BAPSPresenterNG.ViewModel
         private void HandleTrackLoad(Updates.TrackLoadEventArgs args)
         {
             if (ChannelId != args.ChannelId) return;
-            UiDispatcher.Invoke(() => UpdateLoadedStatus(args.Index));
+            DispatcherHelper.CheckBeginInvokeOnUI(() => UpdateLoadedStatus(args.Index));
         }
 
         private void UpdateLoadedStatus(uint index)
@@ -231,7 +230,7 @@ namespace BAPSPresenterNG.ViewModel
         private void ToggleConfig(ChannelConfigChangeType configurable, bool lastValue)
         {
             var nextValue = lastValue ? ChannelConfigChangeType.Off : ChannelConfigChangeType.On;
-            Controller.Configure(configurable | nextValue);
+            Controller?.Configure(configurable | nextValue);
         }
 
         #region Channel flags
@@ -309,25 +308,25 @@ namespace BAPSPresenterNG.ViewModel
         private void HandleItemAdd(Updates.TrackAddEventArgs e)
         {
             if (ChannelId != e.ChannelId) return;
-            UiDispatcher.Invoke(() => TrackList.Add(new TrackViewModel(e.Item)));
+            DispatcherHelper.CheckBeginInvokeOnUI(() => TrackList.Add(new TrackViewModel(e.Item)));
         }
 
         private void HandleItemMove(Updates.TrackMoveEventArgs e)
         {
             if (ChannelId != e.ChannelId) return;
-            UiDispatcher.Invoke(() => TrackList.Move((int) e.Index, (int) e.NewIndex));
+            DispatcherHelper.CheckBeginInvokeOnUI(() => TrackList.Move((int) e.Index, (int) e.NewIndex));
         }
 
         private void HandleItemDelete(Updates.TrackDeleteEventArgs e)
         {
             if (ChannelId != e.ChannelId) return;
-            UiDispatcher.Invoke(() => TrackList.RemoveAt((int) e.Index));
+            DispatcherHelper.CheckBeginInvokeOnUI(() => TrackList.RemoveAt((int) e.Index));
         }
 
         private void HandleResetPlaylist(Updates.ChannelResetEventArgs e)
         {
             if (ChannelId != e.ChannelId) return;
-            UiDispatcher.Invoke(() => TrackList.Clear());
+            DispatcherHelper.CheckBeginInvokeOnUI(() => TrackList.Clear());
         }
 
         #endregion Tracklist event handlers

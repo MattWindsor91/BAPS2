@@ -1,5 +1,7 @@
-﻿using BAPSClientCommon;
+﻿using System;
+using BAPSClientCommon;
 using GalaSoft.MvvmLight.Messaging;
+using JetBrains.Annotations;
 
 namespace BAPSPresenterNG
 {
@@ -9,7 +11,7 @@ namespace BAPSPresenterNG
     /// </summary>
     public class ReceiverMessengerAdapter : EventMessengerAdapterBase
     {
-        private readonly Receiver _receiver;
+        [NotNull] private readonly Receiver _receiver;
 
         /// <summary>
         ///     Constructs a <see cref="ReceiverMessengerAdapter" />.
@@ -20,9 +22,9 @@ namespace BAPSPresenterNG
         /// </summary>
         /// <param name="receiver">The receiver to listen to.</param>
         /// <param name="messenger">The messenger bus to forward onto.</param>
-        public ReceiverMessengerAdapter(Receiver receiver, IMessenger messenger) : base(messenger)
+        public ReceiverMessengerAdapter([CanBeNull] Receiver receiver, [CanBeNull] IMessenger messenger) : base(messenger)
         {
-            _receiver = receiver;
+            _receiver = receiver ?? throw new ArgumentNullException(nameof(receiver));
             Register();
         }
 

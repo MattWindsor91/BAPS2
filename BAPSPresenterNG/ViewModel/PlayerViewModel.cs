@@ -24,17 +24,17 @@ namespace BAPSPresenterNG.ViewModel
         /// <summary>
         ///     The currently loaded track.
         /// </summary>
-        private ITrack _loadedTrack = new NullTrack();
+        [NotNull] private ITrack _loadedTrack = new NullTrack();
 
-        private RelayCommand _pauseCommand;
+        [CanBeNull] private RelayCommand _pauseCommand;
 
-        private RelayCommand _playCommand;
+        [CanBeNull] private RelayCommand _playCommand;
         private uint _position;
 
         private uint _startTime;
         private ChannelState _state;
 
-        private RelayCommand _stopCommand;
+        [CanBeNull] private RelayCommand _stopCommand;
 
         public PlayerViewModel(ushort id, [CanBeNull] ChannelController controller)
         {
@@ -207,6 +207,7 @@ namespace BAPSPresenterNG.ViewModel
         ///     A command that, when fired, asks the server to start playing
         ///     on this channel.
         /// </summary>
+        [NotNull]
         public RelayCommand PlayCommand => _playCommand
                                            ?? (_playCommand = new RelayCommand(
                                                RequestPlay,
@@ -218,6 +219,7 @@ namespace BAPSPresenterNG.ViewModel
         ///     A command that, when fired, asks the server to pause
         ///     this channel.
         /// </summary>
+        [NotNull]
         public RelayCommand PauseCommand => _pauseCommand
                                             ?? (_pauseCommand = new RelayCommand(
                                                 RequestPause,
@@ -229,6 +231,7 @@ namespace BAPSPresenterNG.ViewModel
         ///     A command that, when fired, asks the server to stop
         ///     this channel.
         /// </summary>
+        [NotNull]
         public RelayCommand StopCommand => _stopCommand
                                            ?? (_stopCommand = new RelayCommand(
                                                RequestStop,

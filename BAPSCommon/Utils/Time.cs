@@ -9,7 +9,7 @@ namespace BAPSClientCommon.Utils
             return TimeSpanOfMilliseconds(milliseconds).ToString("hh\\:mm\\:ss");
         }
 
-        public static TimeSpan TimeSpanOfMilliseconds(int milliseconds)
+        private static TimeSpan TimeSpanOfMilliseconds(int milliseconds)
         {
             return TimeSpan.FromTicks(milliseconds * TimeSpan.TicksPerMillisecond);
         }

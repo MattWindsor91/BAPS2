@@ -18,7 +18,7 @@ namespace BAPSPresenterNG.Converters
             return new object[] { };
         }
 
-        public double ConvertTyped(double scale, double totalWidth)
+        private static double ConvertTyped(double scale, double totalWidth)
         {
             var markerWidth = totalWidth * scale;
             if (totalWidth < markerWidth) return totalWidth;

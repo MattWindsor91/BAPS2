@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 
 namespace BAPSClientCommon.ServerConfig
 {
@@ -25,24 +26,24 @@ namespace BAPSClientCommon.ServerConfig
         /// <typeparam name="T">The basic type of the values.</typeparam>
         private abstract class Option<T> : IOption
         {
-            private readonly Dictionary<int, T> _values = new Dictionary<int, T>();
+            [NotNull] private readonly Dictionary<int, T> _values = new Dictionary<int, T>();
 
             /// <summary>
             ///     The cache whose event handlers should be invoked whenever
             ///     this option changes value.
             /// </summary>
-            protected readonly ConfigCache Parent;
+            [CanBeNull] protected readonly ConfigCache Parent;
 
-            protected Option(ConfigCache parent, uint optionId, string description, bool isIndexed)
+            protected Option([CanBeNull] ConfigCache parent, uint optionId, [CanBeNull] string description, bool isIndexed)
             {
                 Parent = parent;
                 OptionId = optionId;
-                Description = description;
+                Description = description ?? throw new ArgumentNullException(nameof(description));
                 IsIndexed = isIndexed;
             }
 
             private bool IsIndexed { get; }
-            protected T Value => ValueAt(NoIndex);
+            [CanBeNull] protected T Value => ValueAt(NoIndex);
 
 
             /// <summary>
@@ -56,7 +57,7 @@ namespace BAPSClientCommon.ServerConfig
                 Enum.IsDefined(typeof(OptionKey), OptionId) ? (OptionKey) OptionId : OptionKey.Invalid;
 
             public uint OptionId { get; }
-            public string Description { get; }
+            [NotNull] public string Description { get; }
 
             public abstract ConfigType Type { get; }
 
@@ -104,7 +105,7 @@ namespace BAPSClientCommon.ServerConfig
         /// </summary>
         private class StringOption : Option<string>
         {
-            public StringOption(ConfigCache parent, uint optionId, string description, bool isIndexed)
+            public StringOption(ConfigCache parent, uint optionId, [CanBeNull] string description, bool isIndexed)
                 : base(parent, optionId, description, isIndexed)
             {
             }
@@ -118,7 +119,7 @@ namespace BAPSClientCommon.ServerConfig
 
             protected override void SendChangeEvent(int index)
             {
-                Parent.OnStringChanged(new StringChangeEventArgs(Key, ValueAt(index), index));
+                Parent?.OnStringChanged(new StringChangeEventArgs(Key, ValueAt(index), index));
             }
         }
 
@@ -128,7 +129,7 @@ namespace BAPSClientCommon.ServerConfig
         /// </summary>
         private class IntOption : Option<int>
         {
-            public IntOption(ConfigCache parent, uint optionId, string description, bool isIndexed)
+            public IntOption([CanBeNull] ConfigCache parent, uint optionId, string description, bool isIndexed)
                 : base(parent, optionId, description, isIndexed)
             {
             }
@@ -142,7 +143,7 @@ namespace BAPSClientCommon.ServerConfig
 
             protected override void SendChangeEvent(int index)
             {
-                Parent.OnIntChanged(new IntChangeEventArgs(Key, ValueAt(index), index));
+                Parent?.OnIntChanged(new IntChangeEventArgs(Key, ValueAt(index), index));
             }
         }
 
@@ -152,26 +153,27 @@ namespace BAPSClientCommon.ServerConfig
         /// </summary>
         private class ChoiceOption : Option<int>
         {
-            private readonly Dictionary<string, int> _choiceList = new Dictionary<string, int>();
+            [NotNull] private readonly Dictionary<string, int> _choiceList = new Dictionary<string, int>();
 
-            public ChoiceOption(ConfigCache parent, uint optionId, string description, bool isIndexed)
+            public ChoiceOption([CanBeNull] ConfigCache parent, uint optionId, string description, bool isIndexed)
                 : base(parent, optionId, description, isIndexed)
             {
             }
 
             public override ConfigType Type => ConfigType.Choice;
-            public string Choice => ChoiceDescriptionFor(Value);
+            [CanBeNull] public string Choice => ChoiceDescriptionFor(Value);
 
             public void AddChoice(int choiceId, string description)
             {
                 _choiceList[description] = choiceId;
             }
 
-            public int ChoiceIndexFor(string description)
+            public int ChoiceIndexFor([CanBeNull] string description)
             {
-                return _choiceList.TryGetValue(description, out var v) ? v : NoIndex;
+                return description != null && _choiceList.TryGetValue(description, out var v) ? v : NoIndex;
             }
 
+            [CanBeNull]
             private string ChoiceDescriptionFor(int index)
             {
                 return _choiceList.FirstOrDefault(pair => index == pair.Value).Key;
@@ -183,6 +185,7 @@ namespace BAPSClientCommon.ServerConfig
                     throw new ArgumentOutOfRangeException(nameof(value), value, "Value not a valid choice ID.");
             }
 
+            [CanBeNull]
             public string ChoiceAt(int index)
             {
                 return ChoiceDescriptionFor(ValueAt(index));
@@ -190,7 +193,7 @@ namespace BAPSClientCommon.ServerConfig
 
             protected override void SendChangeEvent(int index)
             {
-                Parent.OnChoiceChanged(new ChoiceChangeEventArgs(Key, ChoiceAt(index), index));
+                Parent?.OnChoiceChanged(new ChoiceChangeEventArgs(Key, ChoiceAt(index), index));
             }
         }
     }

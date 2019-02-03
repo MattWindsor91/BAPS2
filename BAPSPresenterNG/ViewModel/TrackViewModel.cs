@@ -1,4 +1,5 @@
-﻿using BAPSClientCommon.Model;
+﻿using System;
+using BAPSClientCommon.Model;
 using GalaSoft.MvvmLight;
 using JetBrains.Annotations;
 
@@ -10,13 +11,13 @@ namespace BAPSPresenterNG.ViewModel
     /// </summary>
     public class TrackViewModel : ViewModelBase, ITrack
     {
-        private readonly Track _underlyingTrack;
+        [NotNull] private readonly Track _underlyingTrack;
 
         private bool _isLoaded;
 
-        public TrackViewModel(Track underlyingTrack)
+        public TrackViewModel([CanBeNull] Track underlyingTrack)
         {
-            _underlyingTrack = underlyingTrack;
+            _underlyingTrack = underlyingTrack ?? throw new ArgumentNullException(nameof(underlyingTrack));
         }
 
         /// <summary>
@@ -54,6 +55,7 @@ namespace BAPSPresenterNG.ViewModel
         ///     A <see cref="TrackViewModel" /> whose underlying track is a
         ///     <see cref="NullTrack" />.
         /// </returns>
+        [NotNull]
         public static TrackViewModel MakeNull()
         {
             return new TrackViewModel(new NullTrack());
