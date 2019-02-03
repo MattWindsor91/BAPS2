@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using BAPSClientCommon.BapsNet;
+using JetBrains.Annotations;
 
 namespace BAPSClientCommon
 {
@@ -23,20 +24,19 @@ namespace BAPSClientCommon
         private int _lastPort = -1;
         private string _lastServer;
         private string _seed;
-        private ClientSocket _sock;
+        [CanBeNull] private ClientSocket _sock;
 
         /// <summary>
         ///     Constructs a <see cref="Authenticator" />.
         /// </summary>
         /// <param name="loginCallback">A callback that will be executed every time the authenticator needs data.</param>
-        /// <param name="token">The cancellation token to pass to any constructed client sockets.</param>
         public Authenticator(Func<Response> loginCallback)
         {
             _loginCallback = loginCallback;
         }
 
         /// <summary>
-        ///     The cancellation token that this <<see cref="Authenticator" /> will send to any constructed sockets.
+        ///     The cancellation token that this <see cref="Authenticator" /> will send to any constructed sockets.
         /// </summary>
         public CancellationToken Token { private get; set; }
 
@@ -68,6 +68,7 @@ namespace BAPSClientCommon
             _sock = null;
         }
 
+        [Pure]
         private bool NeedNewConnection(Response response)
         {
             if (!ConnectionReady) return true;
@@ -162,6 +163,8 @@ namespace BAPSClientCommon
         private void TryLogin(string username, string password)
         {
             Debug.Assert(ConnectionReady, "tried to login without a waiting connection");
+            if (_sock == null) return;
+
             var securedPassword = Md5Sum(string.Concat(_seed, Md5Sum(password)));
 
             var loginCmd = new Message(Command.System | Command.Login).Add(username).Add(securedPassword);

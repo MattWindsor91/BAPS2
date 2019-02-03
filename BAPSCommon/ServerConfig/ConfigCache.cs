@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using BAPSClientCommon.BapsNet;
 using BAPSClientCommon.Events;
+using JetBrains.Annotations;
 
 namespace BAPSClientCommon.ServerConfig
 {
@@ -38,29 +38,19 @@ namespace BAPSClientCommon.ServerConfig
             }
         }
 
-        /// <summary>
-        ///     Creates a BAPSNet message to set an option to one of its choices.
-        /// </summary>
-        /// <param name="key">The key of the option to set.</param>
-        /// <param name="choiceDesc">The choice to use.</param>
-        /// <param name="index">If present and valid, the index of the option to set.</param>
-        /// <returns>A message that effects the described config change.</returns>
-        public Message MakeConfigChoiceMessage(OptionKey key, string choiceDesc, int index = NoIndex)
+        public int ChoiceIndexFor(uint optionId, [ValueProvider("ChoiceKeys")] string choiceKey)
         {
-            var oci = GetOption((uint) key);
-            if (oci == null) throw new ArgumentOutOfRangeException(nameof(key), key, "Unknown option.");
+            var oci = GetOption(optionId);
+            if (oci == null) throw new ArgumentOutOfRangeException(nameof(optionId), optionId, "Unknown option.");
 
             if (!(oci is ChoiceOption cci))
-                throw new ArgumentException("Option doesn't have choices.", nameof(key));
+                throw new ArgumentException("Option doesn't have choices.", nameof(optionId));
 
-            var cid = cci.ChoiceIndexFor(choiceDesc);
+            var cid = cci.ChoiceIndexFor(choiceKey);
             if (cid == NoIndex)
-                throw new ArgumentOutOfRangeException(nameof(choiceDesc), choiceDesc, "Unknown choice.");
+                throw new ArgumentOutOfRangeException(nameof(choiceKey), choiceKey, "Unknown choice.");
 
-            var cmd = Command.Config | Command.SetConfigValue;
-            if (index != NoIndex) cmd |= Command.ConfigUseValueMask | (Command) index;
-
-            return new Message(cmd).Add(oci.OptionId).Add((uint) cci.Type).Add((uint) cid);
+            return cid;
         }
 
         /** add an option **/
@@ -84,9 +74,9 @@ namespace BAPSClientCommon.ServerConfig
             return _idLookup.TryGetValue(optionId, out var x) ? x : null;
         }
 
-        public int FindChoiceIndexFor(uint optionId, string description)
+        public int FindChoiceIndexFor(uint optionId, [ValueProvider("ChoiceKeys")] string choiceKey)
         {
-            if (GetOption(optionId) is ChoiceOption c) return c.ChoiceIndexFor(description);
+            if (GetOption(optionId) is ChoiceOption c) return c.ChoiceIndexFor(choiceKey);
             return -1;
         }
 
@@ -102,10 +92,10 @@ namespace BAPSClientCommon.ServerConfig
             if (_idLookup.TryGetValue(optionId, out var option)) (option as Option<T>)?.AddValue(value, index);
         }
 
-        public void SetChoice(uint optionId, string choiceDescription, int index = NoIndex)
+        public void SetChoice(uint optionId, [ValueProvider("ChoiceKeys")] string choiceKey, int index = NoIndex)
         {
             if (!(GetOption(optionId) is ChoiceOption o)) return;
-            var choice = FindChoiceIndexFor(optionId, choiceDescription);
+            var choice = FindChoiceIndexFor(optionId, choiceKey);
             if (choice != -1) o.AddValue(choice, index);
         }
 
@@ -118,12 +108,6 @@ namespace BAPSClientCommon.ServerConfig
         {
             if (GetOption(optionId) is ChoiceOption option) return option.ChoiceAt(index);
             return null;
-        }
-
-
-        public T GetValue<T>(OptionKey sk, int index = NoIndex)
-        {
-            return GetValue<T>((uint) sk, index);
         }
 
         public T GetValue<T>(uint optionId, int index = NoIndex)

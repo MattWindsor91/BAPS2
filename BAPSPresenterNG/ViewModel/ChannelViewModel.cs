@@ -187,42 +187,16 @@ namespace BAPSPresenterNG.ViewModel
             }
         }
 
-        /// <summary>
-        ///     Converts a choice string to a Boolean.
-        /// </summary>
-        /// <param name="choice">
-        ///     The choice to convert to a Boolean value.
-        /// </param>
-        /// <param name="fallback">
-        ///     The value to return if <paramref name="choice"/> is neither <see cref="ChoiceKeys.Yes"/> nor <see cref="ChoiceKeys.No"/>.
-        /// </param>
-        /// <returns>
-        ///     The Boolean equivalent of <paramref name="choice"/>, or <paramref name="fallback"/> if the choice
-        ///     doesn't correspond to a Boolean value.
-        /// </returns>
-        private bool ChoiceToBoolean(string choice, bool fallback)
-        {
-            switch (choice)
-            {
-                case ChoiceKeys.Yes:
-                    return true;
-                case ChoiceKeys.No:
-                    return false;
-                default:
-                    return fallback;
-            }
-        }
-        
         private void HandleAutoAdvance(ConfigCache.ChoiceChangeEventArgs e)
         {
             if (ChannelId != e.Index) return;
-            IsAutoAdvance = ChoiceToBoolean(e.Choice, _isAutoAdvance);
+            IsAutoAdvance = ChoiceKeys.ChoiceToBoolean(e.Choice, _isAutoAdvance);
         }
 
         private void HandlePlayOnLoad(ConfigCache.ChoiceChangeEventArgs e)
         {
             if (ChannelId != e.Index) return;
-            IsPlayOnLoad = ChoiceToBoolean(e.Choice, _isPlayOnLoad);
+            IsPlayOnLoad = ChoiceKeys.ChoiceToBoolean(e.Choice, _isPlayOnLoad);
         }
 
         private void HandleRepeat(ConfigCache.ChoiceChangeEventArgs e)

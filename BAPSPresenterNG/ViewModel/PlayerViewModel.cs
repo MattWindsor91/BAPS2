@@ -1,13 +1,13 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows;
-using BAPSClientCommon;
 using BAPSClientCommon.Controllers;
 using BAPSClientCommon.Events;
 using BAPSClientCommon.Model;
-using CommonServiceLocator;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using JetBrains.Annotations;
 
 namespace BAPSPresenterNG.ViewModel
 {
@@ -36,12 +36,13 @@ namespace BAPSPresenterNG.ViewModel
 
         private RelayCommand _stopCommand;
 
-        public PlayerViewModel(ushort id)
+        public PlayerViewModel(ushort id, [CanBeNull] ChannelController controller)
         {
             _id = id;
+            Controller = controller;
         }
 
-        public PlayerViewModel() : this(0)
+        public PlayerViewModel() : this(0, null)
         {
         }
 
@@ -209,7 +210,9 @@ namespace BAPSPresenterNG.ViewModel
         public RelayCommand PlayCommand => _playCommand
                                            ?? (_playCommand = new RelayCommand(
                                                RequestPlay,
-                                               () => !IsPlaying));
+                                               CanRequestPlay));
+
+        private bool HasController => Controller != null;
 
         /// <summary>
         ///     A command that, when fired, asks the server to pause
@@ -217,10 +220,10 @@ namespace BAPSPresenterNG.ViewModel
         /// </summary>
         public RelayCommand PauseCommand => _pauseCommand
                                             ?? (_pauseCommand = new RelayCommand(
-                                                RequestPause));
+                                                RequestPause,
+                                                CanRequestPause));
 
-        private ChannelController Controller =>
-            ServiceLocator.Current.GetInstance<ClientCore>().ControllerFor(_id);
+        [CanBeNull] private ChannelController Controller { get; }
 
         /// <summary>
         ///     A command that, when fired, asks the server to stop
@@ -228,7 +231,38 @@ namespace BAPSPresenterNG.ViewModel
         /// </summary>
         public RelayCommand StopCommand => _stopCommand
                                            ?? (_stopCommand = new RelayCommand(
-                                               RequestStop));
+                                               RequestStop,
+                                               CanRequestStop));
+
+        /// <summary>
+        ///     Whether it is ok to ask the server to start playing on this channel.
+        /// </summary>
+        /// <returns>True provided that the <see cref="PlayCommand" /> can fire.</returns>
+        [Pure]
+        private bool CanRequestPlay()
+        {
+            return HasController && !IsPlaying;
+        }
+
+        /// <summary>
+        ///     Whether it is ok to ask the server to pause this channel.
+        /// </summary>
+        /// <returns>True provided that the <see cref="PlayCommand" /> can fire.</returns>
+        [Pure]
+        private bool CanRequestPause()
+        {
+            return HasController;
+        }
+
+        /// <summary>
+        ///     Whether it is ok to ask the server to stop this channel.
+        /// </summary>
+        /// <returns>True provided that the <see cref="PlayCommand" /> can fire.</returns>
+        [Pure]
+        private bool CanRequestStop()
+        {
+            return HasController;
+        }
 
         public void Register(IMessenger messenger)
         {
@@ -266,16 +300,19 @@ namespace BAPSPresenterNG.ViewModel
 
         private void RequestPlay()
         {
+            Debug.Assert(Controller != null, nameof(Controller) + " != null");
             Controller.Play();
         }
 
         private void RequestPause()
         {
+            Debug.Assert(Controller != null, nameof(Controller) + " != null");
             Controller.Pause();
         }
 
         private void RequestStop()
         {
+            Debug.Assert(Controller != null, nameof(Controller) + " != null");
             Controller.Stop();
         }
 

@@ -275,18 +275,18 @@ namespace BAPSPresenter2
 
         private void HandleChannelStateRequest(object sender, Updates.PlayerStateEventArgs e)
         {
-            _core.ControllerFor(e.ChannelId).SetState(e.State);
+            _controllers.ControllerFor(e.ChannelId).SetState(e.State);
         }
 
         private void HandleItemDeleteRequest(object sender, Updates.TrackDeleteEventArgs e)
         {
-            _core.ControllerFor(e.ChannelId).DeleteItemAt(e.Index);
+            _controllers.ControllerFor(e.ChannelId).DeleteItemAt(e.Index);
         }
 
         internal void TrackList_RequestChange(object sender, RequestChangeEventArgs e)
         {
             var channelId = e.channel & (ushort)Command.ChannelMask;
-            var controller = _core.ControllerFor((ushort)channelId);
+            var controller = _controllers.ControllerFor((ushort)channelId);
 
             switch (e.ct)
             {
@@ -322,7 +322,7 @@ namespace BAPSPresenter2
         }
 
         private void HandleChannelConfigChange(object sender, ChannelConfigChangeArgs e) =>
-            _core.ControllerFor(e.ChannelId).Configure(e.Type);
+            _controllers.ControllerFor(e.ChannelId).Configure(e.Type);
 
 
 #if false // @MattWindsor91

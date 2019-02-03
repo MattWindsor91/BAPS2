@@ -8,6 +8,7 @@ using BAPSClientCommon.BapsNet;
 using BAPSClientCommon.Controllers;
 using BAPSClientCommon.Events;
 using BAPSClientCommon.ServerConfig;
+using JetBrains.Annotations;
 
 namespace BAPSClientCommon
 {
@@ -20,7 +21,6 @@ namespace BAPSClientCommon
         private const int CountPrefetchTimeoutMilliseconds = 500;
         private const int CancelGracePeriodMilliseconds = 500;
         private readonly Authenticator _auth;
-        private readonly ConfigCache _configCache;
 
         private readonly object _channelControllerLock = new object();
 
@@ -42,29 +42,16 @@ namespace BAPSClientCommon
         private ClientSocket _socket;
 
 
-        public ClientCore(Authenticator auth, ConfigCache configCache)
+        public ClientCore([NotNull] Authenticator auth)
         {
             _auth = auth;
             _auth.Token = _dead.Token;
-            _configCache = configCache;
         }
 
         /// <summary>
         ///     A thread-safe queue for outgoing BAPSNet messages.
         /// </summary>
         public BlockingCollection<Message> SendQueue { get; } = new BlockingCollection<Message>();
-
-        public ChannelController ControllerFor(ushort channelId)
-        {
-            lock (_channelControllerLock)
-            {
-                if (_channelControllers.TryGetValue(channelId, out var controller)) return controller;
-
-                controller = new ChannelController(channelId, SendQueue, _configCache);
-                _channelControllers[channelId] = controller;
-                return controller;
-            }
-        }
 
         /// <summary>
         ///     Event raised just before authentication.

@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Threading;
 using BAPSClientCommon.BapsNet;
+using JetBrains.Annotations;
 
 namespace BAPSClientCommon
 {
@@ -10,9 +11,9 @@ namespace BAPSClientCommon
     /// </summary>
     public class Sender
     {
-        private readonly BlockingCollection<Message> _queue;
+        [NotNull] private readonly BlockingCollection<Message> _queue;
 
-        private readonly ClientSocket _socket;
+        [NotNull] private readonly ClientSocket _socket;
         private readonly CancellationToken _token;
 
         /// <summary>

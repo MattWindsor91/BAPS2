@@ -2,15 +2,16 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using JetBrains.Annotations;
 
 namespace BAPSClientCommon.BapsNet
 {
     /// <summary>
-    ///     A BAPSNet message.
+    ///     A BapsNet message.
     /// </summary>
     public class Message
     {
-        private readonly Queue<IArgument> _args = new Queue<IArgument>();
+        [NotNull] private readonly Queue<IArgument> _args = new Queue<IArgument>();
 
         private readonly Command _cmd;
 
@@ -80,7 +81,9 @@ namespace BAPSClientCommon.BapsNet
 
         private interface IArgument
         {
+            [Pure]
             int Length();
+
             void Send(ISink sock);
         }
 
@@ -88,6 +91,7 @@ namespace BAPSClientCommon.BapsNet
         {
             public string Value;
 
+            [Pure]
             public int Length()
             {
                 return Encoding.UTF8.GetByteCount(Value) + sizeof(uint);
@@ -103,6 +107,7 @@ namespace BAPSClientCommon.BapsNet
         {
             public uint Value;
 
+            [Pure]
             public int Length()
             {
                 return sizeof(uint);
@@ -118,6 +123,7 @@ namespace BAPSClientCommon.BapsNet
         {
             public float Value;
 
+            [Pure]
             public int Length()
             {
                 return sizeof(float);

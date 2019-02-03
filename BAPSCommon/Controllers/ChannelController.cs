@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using BAPSClientCommon.BapsNet;
 using BAPSClientCommon.Model;
 using BAPSClientCommon.ServerConfig;
@@ -15,13 +14,13 @@ namespace BAPSClientCommon.Controllers
     /// </summary>
     public class ChannelController : BapsNetControllerBase
     {
-        private readonly ConfigCache _configCache;
         private readonly ushort _channelId;
+        private readonly ConfigController _config;
 
-        public ChannelController(ushort channelId, BlockingCollection<Message> msgQueue, ConfigCache configCache) : base(msgQueue)
+        public ChannelController(ushort channelId, ClientCore core, ConfigController config) : base(core)
         {
             _channelId = channelId;
-            _configCache = configCache;
+            _config = config;
         }
 
         /// <summary>
@@ -109,7 +108,7 @@ namespace BAPSClientCommon.Controllers
             var optionId = GetChannelConfigOption(type);
             var choiceDesc = GetChannelConfigChoice(type);
 
-            Send(_configCache.MakeConfigChoiceMessage(optionId, choiceDesc, _channelId));
+            _config.SetChoice(optionId, choiceDesc, _channelId);
         }
 
         public void AddFile(DirectoryEntry file)

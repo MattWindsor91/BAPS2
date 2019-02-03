@@ -1,5 +1,6 @@
 ﻿using BAPSClientCommon.Model;
 using GalaSoft.MvvmLight;
+using JetBrains.Annotations;
 
 namespace BAPSPresenterNG.ViewModel
 {
@@ -40,6 +41,7 @@ namespace BAPSPresenterNG.ViewModel
         public bool IsFromLibrary => _underlyingTrack.IsFromLibrary;
         public uint Duration => _underlyingTrack.Duration;
 
+        [Pure]
         public override string ToString()
         {
             return _underlyingTrack.ToString();

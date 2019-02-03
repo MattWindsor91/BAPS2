@@ -1,8 +1,10 @@
 using BAPSClientCommon;
+using BAPSClientCommon.Controllers;
 using BAPSClientCommon.ServerConfig;
 using CommonServiceLocator;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
+using JetBrains.Annotations;
 
 namespace BAPSPresenterNG.ViewModel
 {
@@ -24,18 +26,28 @@ namespace BAPSPresenterNG.ViewModel
             SimpleIoc.Default.Register<LoginViewModel>();
         }
 
+        [ProvidesContext]
         public IMessenger Messenger => ServiceLocator.Current.GetInstance<IMessenger>();
 
+        [ProvidesContext]
         public ClientCore ClientCore =>
             ServiceLocator.Current.GetInstance<ClientCore>();
 
-        public LoginViewModel Login => ServiceLocator.Current.GetInstance<LoginViewModel>();
-        public MainViewModel Main => ServiceLocator.Current.GetInstance<MainViewModel>();
+        [ProvidesContext]
+        public static LoginViewModel Login => ServiceLocator.Current.GetInstance<LoginViewModel>();
+        
+        [ProvidesContext]
+        public static MainViewModel Main => ServiceLocator.Current.GetInstance<MainViewModel>();
 
-        private void RegisterServices()
+        [ProvidesContext]
+        public static ChannelControllerSet ControllerSet => ServiceLocator.Current.GetInstance<ChannelControllerSet>();
+        
+        private static void RegisterServices()
         {
             SimpleIoc.Default.Register(() => GalaSoft.MvvmLight.Messaging.Messenger.Default, true);
             SimpleIoc.Default.Register<ConfigCache>();
+            SimpleIoc.Default.Register<ConfigController>();
+            SimpleIoc.Default.Register<ChannelControllerSet>();
         }
     }
 }

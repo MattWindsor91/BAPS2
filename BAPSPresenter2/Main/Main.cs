@@ -5,6 +5,7 @@ using System.Threading;
 using System.Windows.Forms;
 using BAPSClientCommon;
 using BAPSClientCommon.BapsNet;
+using BAPSClientCommon.Controllers;
 using BAPSClientCommon.Events;
 using BAPSClientCommon.ServerConfig;
 using BAPSPresenter2.Dialogs;
@@ -37,6 +38,7 @@ namespace BAPSPresenter2
  
         /** Whether or not the timers are enabled **/
         private bool _timersEnabled = true;
+        private ChannelControllerSet _controllers;
 
         private bool ChannelOutOfBounds(ushort channel) => _channels.Length <= channel;
         private bool DirectoryOutOfBounds(ushort directory) => _directories.Length <= directory;
@@ -84,7 +86,7 @@ namespace BAPSPresenter2
             ConfigManager.initConfigManager();
 
             var auth = new Authenticator(LoginCallback);
-            _core = new ClientCore(auth, Config);
+            _core = new ClientCore(auth);
             
             _core.AboutToAuthenticate += SetupAuthErrorReactions;
             _core.AboutToAutoUpdate += Setup;
@@ -133,10 +135,11 @@ namespace BAPSPresenter2
         private void SetupChannels()
         {
             _channels = new BAPSChannel[3] { bapsChannel1, bapsChannel2, bapsChannel3 };
+            _controllers = new ChannelControllerSet(_core, new ConfigController(_core, _config));
             foreach (var bc in _channels)
             {
                 Debug.Assert(0 <= bc.ChannelId, "Channel ID hasn't been set---check the channels' properties in the designer");
-                var cont = _core.ControllerFor((ushort) bc.ChannelId);
+                var cont = _controllers.ControllerFor((ushort) bc.ChannelId);
 
                 bc.TrackListRequestChange += TrackList_RequestChange;
                 bc.OpRequest += HandleChannelStateRequest;

@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using BAPSClientCommon;
+using BAPSClientCommon.Controllers;
 using BAPSClientCommon.ServerConfig;
 using CommonServiceLocator;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
+using JetBrains.Annotations;
 
 namespace BAPSPresenterNG.ViewModel
 {
@@ -19,7 +21,7 @@ namespace BAPSPresenterNG.ViewModel
     ///         channels, directories, and text.
     ///     </para>
     /// </summary>
-    // ReSharper disable once ClassNeverInstantiated.Global
+    [UsedImplicitly]
     public class MainViewModel : ViewModelBase
     {
         private RelayCommand<ushort> _forwardPauseCommand;
@@ -28,9 +30,12 @@ namespace BAPSPresenterNG.ViewModel
 
         private RelayCommand<ushort> _forwardStopCommand;
         private string _text;
+        private readonly ChannelControllerSet _controllerSet;
 
-        public MainViewModel(IMessenger messenger) : base(messenger)
+        public MainViewModel([NotNull] IMessenger messenger, [NotNull] ChannelControllerSet controllerSet) : base(messenger)
         {
+            _controllerSet = controllerSet;
+            
             Text = "<You can type notes here>";
             Register();
         }
@@ -38,8 +43,10 @@ namespace BAPSPresenterNG.ViewModel
         /// <summary>
         ///     The set of channels currently in use.
         /// </summary>
+        [NotNull]
         public ObservableCollection<ChannelViewModel> Channels { get; } = new ObservableCollection<ChannelViewModel>();
 
+        [NotNull]
         public ObservableCollection<DirectoryViewModel> Directories { get; } =
             new ObservableCollection<DirectoryViewModel>();
 
@@ -50,9 +57,9 @@ namespace BAPSPresenterNG.ViewModel
         public RelayCommand<ushort> ForwardPlayCommand =>
             _forwardPlayCommand
             ?? (_forwardPlayCommand = new RelayCommand<ushort>(
-                channelID => { ChannelAt(channelID)?.Player?.PlayCommand?.Execute(null); },
-                channelID =>
-                    ChannelAt(channelID)?.Player?.PlayCommand?.CanExecute(null) ?? false
+                channelId => { ChannelAt(channelId)?.Player?.PlayCommand?.Execute(null); },
+                channelId =>
+                    ChannelAt(channelId)?.Player?.PlayCommand?.CanExecute(null) ?? false
             ));
 
         /// <summary>
@@ -62,9 +69,9 @@ namespace BAPSPresenterNG.ViewModel
         public RelayCommand<ushort> ForwardPauseCommand =>
             _forwardPauseCommand
             ?? (_forwardPauseCommand = new RelayCommand<ushort>(
-                channelID => { ChannelAt(channelID)?.Player?.PauseCommand?.Execute(null); },
-                channelID =>
-                    ChannelAt(channelID)?.Player?.PauseCommand?.CanExecute(null) ?? false
+                channelId => { ChannelAt(channelId)?.Player?.PauseCommand?.Execute(null); },
+                channelId =>
+                    ChannelAt(channelId)?.Player?.PauseCommand?.CanExecute(null) ?? false
             ));
 
         /// <summary>
@@ -74,9 +81,9 @@ namespace BAPSPresenterNG.ViewModel
         public RelayCommand<ushort> ForwardStopCommand =>
             _forwardStopCommand
             ?? (_forwardStopCommand = new RelayCommand<ushort>(
-                channelID => { ChannelAt(channelID)?.Player?.StopCommand?.Execute(null); },
-                channelID =>
-                    ChannelAt(channelID)?.Player?.StopCommand?.CanExecute(null) ?? false
+                channelId => { ChannelAt(channelId)?.Player?.StopCommand?.Execute(null); },
+                channelId =>
+                    ChannelAt(channelId)?.Player?.StopCommand?.CanExecute(null) ?? false
             ));
 
         public string Text
@@ -93,11 +100,12 @@ namespace BAPSPresenterNG.ViewModel
         /// <summary>
         ///     Shorthand for getting the channel at the given channel ID.
         /// </summary>
-        /// <param name="channelID">The ID of the channel to get.</param>
-        /// <returns>The channel at <paramref name="channelID" />, or null if one doesn't exist.</returns>
-        public ChannelViewModel ChannelAt(ushort channelID)
+        /// <param name="channelId">The ID of the channel to get.</param>
+        /// <returns>The channel at <paramref name="channelId" />, or null if one doesn't exist.</returns>
+        [CanBeNull]
+        private ChannelViewModel ChannelAt(ushort channelId)
         {
-            return Channels?.ElementAtOrDefault(channelID);
+            return Channels?.ElementAtOrDefault(channelId);
         }
 
         private void Register()
@@ -145,12 +153,12 @@ namespace BAPSPresenterNG.ViewModel
 
         private ChannelViewModel MakeChannelViewModel(ushort channelId)
         {
-            var player = new PlayerViewModel(channelId);
-            var core = ServiceLocator.Current.GetInstance<ClientCore>();
-            var controller = core.ControllerFor(channelId);
+            var controller = _controllerSet.ControllerFor(channelId);
+            var player = new PlayerViewModel(channelId, controller);
             return new ChannelViewModel(channelId, MessengerInstance, player, controller);
         }
 
+        [Pure]
         private DirectoryViewModel MakeDirectoryViewModel(ushort directoryId)
         {
             return new DirectoryViewModel(directoryId, MessengerInstance);

@@ -12,21 +12,21 @@ namespace BAPSClientCommon.Controllers
         private readonly BlockingCollection<Message> _messageQueue;
 
         /// <summary>
+        ///     Base constructor for BapsNet controllers.
+        /// </summary>
+        /// <param name="core">The client core to use to send messages.</param>
+        protected BapsNetControllerBase(ClientCore core)
+        {
+            _messageQueue = core.SendQueue;
+        }
+
+        /// <summary>
         ///     Sends a BapsNet message through this controller's queue.
         /// </summary>
         /// <param name="message">The message to send.</param>
         protected void Send(Message message)
         {
             _messageQueue.Add(message);
-        }
-        
-        /// <summary>
-        ///     Base constructor for BapsNet controllers. 
-        /// </summary>
-        /// <param name="messageQueue">The queue to use to send messages.</param>
-        protected BapsNetControllerBase(BlockingCollection<Message> messageQueue)
-        {
-            _messageQueue = messageQueue;
         }
     }
 }
