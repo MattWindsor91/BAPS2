@@ -4,26 +4,24 @@ using BAPSClientCommon.BapsNet;
 using BAPSClientCommon.Model;
 using BAPSClientCommon.ServerConfig;
 
-namespace BAPSClientCommon
+namespace BAPSClientCommon.Controllers
 {
     /// <summary>
-    ///     Abstraction between a channel user interface and the BAPSNet protocol.
+    ///     Abstraction between a channel user interface and the BapsNet protocol.
     ///     <para>
     ///         This class uses a blocking queue to talk to the
     ///         <see cref="Sender" />, and thus should be thread-safe.
     ///     </para>
     /// </summary>
-    public class ChannelController
+    public class ChannelController : BapsNetControllerBase
     {
-        private readonly Cache _cache;
+        private readonly ConfigCache _configCache;
         private readonly ushort _channelId;
-        private readonly BlockingCollection<Message> _msgQueue;
 
-        public ChannelController(ushort channelId, BlockingCollection<Message> msgQueue, Cache cache)
+        public ChannelController(ushort channelId, BlockingCollection<Message> msgQueue, ConfigCache configCache) : base(msgQueue)
         {
             _channelId = channelId;
-            _msgQueue = msgQueue;
-            _cache = cache;
+            _configCache = configCache;
         }
 
         /// <summary>
@@ -56,13 +54,13 @@ namespace BAPSClientCommon
         /// <param name="state">The intended new state of the channel.</param>
         public void SetState(ChannelState state)
         {
-            _msgQueue.Add(new Message(state.AsCommand().WithChannel(_channelId)));
+            Send(new Message(state.AsCommand().WithChannel(_channelId)));
         }
 
         public void Select(uint index)
         {
             const Command cmd = Command.Playback | Command.Load;
-            _msgQueue.Add(new Message(cmd.WithChannel(_channelId)).Add(index));
+            Send(new Message(cmd.WithChannel(_channelId)).Add(index));
         }
 
         private OptionKey GetChannelConfigOption(ChannelConfigChangeType type)
@@ -111,13 +109,13 @@ namespace BAPSClientCommon
             var optionId = GetChannelConfigOption(type);
             var choiceDesc = GetChannelConfigChoice(type);
 
-            _msgQueue.Add(_cache.MakeConfigChoiceMessage(optionId, choiceDesc, _channelId));
+            Send(_configCache.MakeConfigChoiceMessage(optionId, choiceDesc, _channelId));
         }
 
         public void AddFile(DirectoryEntry file)
         {
             var cmd = (Command.Playlist | Command.AddItem).WithChannel(_channelId);
-            _msgQueue.Add(new Message(cmd).Add((uint) TrackType.File).Add(file.DirectoryId).Add(file.Description));
+            Send(new Message(cmd).Add((uint) TrackType.File).Add(file.DirectoryId).Add(file.Description));
         }
 
         /// <summary>
@@ -128,7 +126,7 @@ namespace BAPSClientCommon
         public void DeleteItemAt(uint index)
         {
             var cmd = (Command.Playlist | Command.DeleteItem).WithChannel(_channelId);
-            _msgQueue.Add(new Message(cmd).Add(index));
+            Send(new Message(cmd).Add(index));
         }
 
         /// <summary>
@@ -138,7 +136,7 @@ namespace BAPSClientCommon
         public void Reset()
         {
             var cmd = (Command.Playlist | Command.ResetPlaylist).WithChannel(_channelId);
-            _msgQueue.Add(new Message(cmd));
+            Send(new Message(cmd));
         }
 
         /// <summary>
@@ -149,7 +147,7 @@ namespace BAPSClientCommon
         public void SetMarker(MarkerType type, uint newValue)
         {
             var cmd = (Command.Playback | type.AsCommand()).WithChannel(_channelId);
-            _msgQueue.Add(new Message(cmd).Add(newValue));
+            Send(new Message(cmd).Add(newValue));
         }
     }
 }

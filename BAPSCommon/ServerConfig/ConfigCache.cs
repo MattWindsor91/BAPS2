@@ -12,7 +12,7 @@ namespace BAPSClientCommon.ServerConfig
     ///     option from the server. It will then associate the result with the
     ///     name you asked for.
     /// </summary>
-    public partial class Cache
+    public partial class ConfigCache
     {
         /// <summary>
         ///     The (rather paradoxically named) integer that represents a lack of index.

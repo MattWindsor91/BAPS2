@@ -17,6 +17,7 @@
             <SolidColorBrush x:Key="StopBrush" Color="#FFE2293A" />
             <SolidColorBrush x:Key="NameFgBrush" Color="#FFE1E1E1" />
             <SolidColorBrush x:Key="NameBgBrush" Color="#FF0073E6" />
+            <SolidColorBrush x:Key="NameWarningBgBrush" Color="#FFE2293A" />
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
@@ -69,7 +70,26 @@
                 Padding="4pt"
                 FontFamily="Consolas"
                 ToolTip="{Binding Description}"
-                Text="{Binding Description, FallbackValue=UNKNOWN, TargetNullValue=NONE}" />
+                Text="{Binding Description, FallbackValue=UNKNOWN, TargetNullValue=NONE}">
+                <!-- Change background when the track appears to have failed to load.
+                     (The BAPS server isn't explicit about this, so we have to do some guesswork. -->
+                <TextBlock.Style>
+                    <Style TargetType="{x:Type TextBlock}">
+                        <Style.Triggers>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding Description}" Value="--LOAD FAILED--"/>
+                                    <Condition Binding="{Binding IsAudioItem}" Value="False"/>
+                                </MultiDataTrigger.Conditions>
+                                <MultiDataTrigger.Setters>
+                                    <Setter Property="Background" Value="{StaticResource NameWarningBgBrush}"/>
+                                </MultiDataTrigger.Setters>
+                            </MultiDataTrigger>
+
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style> 
+            </TextBlock>
         </Border>
         <!-- Track bar -->
         <local:TrackBar Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" DataContext="{Binding}" />

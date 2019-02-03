@@ -9,28 +9,28 @@ namespace BAPSPresenterNG
     /// </summary>
     public class ConfigMessengerAdapter : EventMessengerAdapterBase
     {
-        private readonly Cache _cache;
+        private readonly ConfigCache _configCache;
 
         /// <summary>
         ///     Constructs a <see cref="ConfigMessengerAdapter" />.
         ///     <para>
         ///         This constructor registers the appropriate event handlers
-        ///         on <paramref name="cache" />.
+        ///         on <paramref name="configCache" />.
         ///     </para>
         /// </summary>
-        /// <param name="cache">The server config cache to listen to.</param>
+        /// <param name="configCache">The server config cache to listen to.</param>
         /// <param name="messenger">The messenger bus to forward onto.</param>
-        public ConfigMessengerAdapter(Cache cache, IMessenger messenger) : base(messenger)
+        public ConfigMessengerAdapter(ConfigCache configCache, IMessenger messenger) : base(messenger)
         {
-            _cache = cache;
+            _configCache = configCache;
             Register();
         }
 
         private void Register()
         {
-            _cache.IntChanged += Relay;
-            _cache.StringChanged += Relay;
-            _cache.ChoiceChanged += Relay;
+            _configCache.IntChanged += Relay;
+            _configCache.StringChanged += Relay;
+            _configCache.ChoiceChanged += Relay;
         }
     }
 }

@@ -103,10 +103,10 @@ namespace BAPSPresenterNG.ViewModel
         private void Register()
         {
             var messenger = MessengerInstance;
-            messenger.Register<Cache.IntChangeEventArgs>(this, HandleConfigIntChange);
+            messenger.Register<ConfigCache.IntChangeEventArgs>(this, HandleConfigIntChange);
         }
 
-        private void HandleConfigIntChange(Cache.IntChangeEventArgs args)
+        private void HandleConfigIntChange(ConfigCache.IntChangeEventArgs args)
         {
             switch (args.Key)
             {

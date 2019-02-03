@@ -25,7 +25,7 @@ namespace BAPSPresenterNG
             DispatcherHelper.Initialize();
         }
 
-        private static Cache ConfigCache => SimpleIoc.Default.GetInstance<Cache>();
+        private static ConfigCache ConfigCache => SimpleIoc.Default.GetInstance<ConfigCache>();
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
@@ -50,8 +50,8 @@ namespace BAPSPresenterNG
             // Manually pumping 'count changed' messages.
             var messenger = ServiceLocator.Current.GetInstance<IMessenger>();
             var (numChannelsPrefetch, numDirectoriesPrefetch) = args;
-            messenger.Send(new Cache.IntChangeEventArgs(OptionKey.ChannelCount, numChannelsPrefetch));
-            messenger.Send(new Cache.IntChangeEventArgs(OptionKey.ChannelCount, numDirectoriesPrefetch));
+            messenger.Send(new ConfigCache.IntChangeEventArgs(OptionKey.ChannelCount, numChannelsPrefetch));
+            messenger.Send(new ConfigCache.IntChangeEventArgs(OptionKey.ChannelCount, numDirectoriesPrefetch));
         }
 
         private Authenticator MakeAuthenticator()

@@ -5,7 +5,7 @@ namespace BAPSClientCommon.ServerConfig
     // Compared to the events in Events.Updates.Config, these events abstract slightly better over the BapsNet wire
     // representation of settings.
 
-    public partial class Cache
+    public partial class ConfigCache
     {
         public delegate void ChoiceChangeEventHandler(object sender, ChoiceChangeEventArgs e);
 
@@ -61,7 +61,7 @@ namespace BAPSClientCommon.ServerConfig
             /// <summary>
             ///     The index, if applicable, inside the config setting that has changed.
             ///     <para>
-            ///         This will be <see cref="Cache.NoIndex" /> if the setting is not indexed.
+            ///         This will be <see cref="ConfigCache.NoIndex" /> if the setting is not indexed.
             ///     </para>
             /// </summary>
             public int Index { get; }

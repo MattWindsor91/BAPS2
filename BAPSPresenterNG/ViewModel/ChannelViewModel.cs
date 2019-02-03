@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
 using BAPSClientCommon;
+using BAPSClientCommon.Controllers;
 using BAPSClientCommon.Events;
 using BAPSClientCommon.Model;
 using BAPSClientCommon.ServerConfig;
@@ -115,7 +116,7 @@ namespace BAPSPresenterNG.ViewModel
 
         private TrackViewModel TrackAt(int index)
         {
-            return TrackList.ElementAtOrDefault(index) ?? new TrackViewModel(new NullTrack()) {IsLoaded = false};
+            return TrackList.ElementAtOrDefault(index) ?? TrackViewModel.MakeNull();
         }
 
         public bool IsLoadPossible(int index)
@@ -150,11 +151,11 @@ namespace BAPSPresenterNG.ViewModel
         private void SetupConfigReactions()
         {
             var messenger = MessengerInstance;
-            messenger.Register<Cache.ChoiceChangeEventArgs>(this, HandleConfigChoiceChanged);
-            messenger.Register<Cache.StringChangeEventArgs>(this, HandleConfigStringChanged);
+            messenger.Register<ConfigCache.ChoiceChangeEventArgs>(this, HandleConfigChoiceChanged);
+            messenger.Register<ConfigCache.StringChangeEventArgs>(this, HandleConfigStringChanged);
         }
 
-        private void HandleConfigStringChanged(Cache.StringChangeEventArgs args)
+        private void HandleConfigStringChanged(ConfigCache.StringChangeEventArgs args)
         {
             switch (args.Key)
             {
@@ -164,13 +165,13 @@ namespace BAPSPresenterNG.ViewModel
             }
         }
 
-        private void HandleNameChange(Cache.StringChangeEventArgs args)
+        private void HandleNameChange(ConfigCache.StringChangeEventArgs args)
         {
             if (ChannelId != args.Index) return;
             Name = args.Value;
         }
 
-        private void HandleConfigChoiceChanged(Cache.ChoiceChangeEventArgs e)
+        private void HandleConfigChoiceChanged(ConfigCache.ChoiceChangeEventArgs e)
         {
             switch (e.Key)
             {
@@ -186,35 +187,45 @@ namespace BAPSPresenterNG.ViewModel
             }
         }
 
-        private void HandleAutoAdvance(Cache.ChoiceChangeEventArgs e)
+        /// <summary>
+        ///     Converts a choice string to a Boolean.
+        /// </summary>
+        /// <param name="choice">
+        ///     The choice to convert to a Boolean value.
+        /// </param>
+        /// <param name="fallback">
+        ///     The value to return if <paramref name="choice"/> is neither <see cref="ChoiceKeys.Yes"/> nor <see cref="ChoiceKeys.No"/>.
+        /// </param>
+        /// <returns>
+        ///     The Boolean equivalent of <paramref name="choice"/>, or <paramref name="fallback"/> if the choice
+        ///     doesn't correspond to a Boolean value.
+        /// </returns>
+        private bool ChoiceToBoolean(string choice, bool fallback)
         {
-            if (ChannelId != e.Index) return;
-            switch (e.Choice)
+            switch (choice)
             {
                 case ChoiceKeys.Yes:
-                    IsAutoAdvance = true;
-                    break;
+                    return true;
                 case ChoiceKeys.No:
-                    IsAutoAdvance = false;
-                    break;
+                    return false;
+                default:
+                    return fallback;
             }
         }
-
-        private void HandlePlayOnLoad(Cache.ChoiceChangeEventArgs e)
+        
+        private void HandleAutoAdvance(ConfigCache.ChoiceChangeEventArgs e)
         {
             if (ChannelId != e.Index) return;
-            switch (e.Choice)
-            {
-                case ChoiceKeys.Yes:
-                    IsPlayOnLoad = true;
-                    break;
-                case ChoiceKeys.No:
-                    IsPlayOnLoad = false;
-                    break;
-            }
+            IsAutoAdvance = ChoiceToBoolean(e.Choice, _isAutoAdvance);
         }
 
-        private void HandleRepeat(Cache.ChoiceChangeEventArgs e)
+        private void HandlePlayOnLoad(ConfigCache.ChoiceChangeEventArgs e)
+        {
+            if (ChannelId != e.Index) return;
+            IsPlayOnLoad = ChoiceToBoolean(e.Choice, _isPlayOnLoad);
+        }
+
+        private void HandleRepeat(ConfigCache.ChoiceChangeEventArgs e)
         {
             if (ChannelId != e.Index) return;
             switch (e.Choice)

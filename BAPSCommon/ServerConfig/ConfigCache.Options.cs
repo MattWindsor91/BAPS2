@@ -6,7 +6,7 @@ namespace BAPSClientCommon.ServerConfig
 {
     // Internal classes for storing options in the cache.
 
-    public partial class Cache
+    public partial class ConfigCache
     {
         /// <summary>
         ///     Non-parametric interface onto options.
@@ -31,9 +31,9 @@ namespace BAPSClientCommon.ServerConfig
             ///     The cache whose event handlers should be invoked whenever
             ///     this option changes value.
             /// </summary>
-            protected readonly Cache Parent;
+            protected readonly ConfigCache Parent;
 
-            protected Option(Cache parent, uint optionId, string description, bool isIndexed)
+            protected Option(ConfigCache parent, uint optionId, string description, bool isIndexed)
             {
                 Parent = parent;
                 OptionId = optionId;
@@ -104,7 +104,7 @@ namespace BAPSClientCommon.ServerConfig
         /// </summary>
         private class StringOption : Option<string>
         {
-            public StringOption(Cache parent, uint optionId, string description, bool isIndexed)
+            public StringOption(ConfigCache parent, uint optionId, string description, bool isIndexed)
                 : base(parent, optionId, description, isIndexed)
             {
             }
@@ -128,7 +128,7 @@ namespace BAPSClientCommon.ServerConfig
         /// </summary>
         private class IntOption : Option<int>
         {
-            public IntOption(Cache parent, uint optionId, string description, bool isIndexed)
+            public IntOption(ConfigCache parent, uint optionId, string description, bool isIndexed)
                 : base(parent, optionId, description, isIndexed)
             {
             }
@@ -154,7 +154,7 @@ namespace BAPSClientCommon.ServerConfig
         {
             private readonly Dictionary<string, int> _choiceList = new Dictionary<string, int>();
 
-            public ChoiceOption(Cache parent, uint optionId, string description, bool isIndexed)
+            public ChoiceOption(ConfigCache parent, uint optionId, string description, bool isIndexed)
                 : base(parent, optionId, description, isIndexed)
             {
             }

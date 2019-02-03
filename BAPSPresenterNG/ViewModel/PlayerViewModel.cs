@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using BAPSClientCommon;
+using BAPSClientCommon.Controllers;
 using BAPSClientCommon.Events;
 using BAPSClientCommon.Model;
 using CommonServiceLocator;

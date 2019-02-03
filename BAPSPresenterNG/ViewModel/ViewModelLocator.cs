@@ -35,7 +35,7 @@ namespace BAPSPresenterNG.ViewModel
         private void RegisterServices()
         {
             SimpleIoc.Default.Register(() => GalaSoft.MvvmLight.Messaging.Messenger.Default, true);
-            SimpleIoc.Default.Register<Cache>();
+            SimpleIoc.Default.Register<ConfigCache>();
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using BAPSClientCommon.BapsNet;
+using BAPSClientCommon.Controllers;
 using BAPSClientCommon.Events;
 using BAPSClientCommon.ServerConfig;
 
@@ -19,7 +20,7 @@ namespace BAPSClientCommon
         private const int CountPrefetchTimeoutMilliseconds = 500;
         private const int CancelGracePeriodMilliseconds = 500;
         private readonly Authenticator _auth;
-        private readonly Cache _cache;
+        private readonly ConfigCache _configCache;
 
         private readonly object _channelControllerLock = new object();
 
@@ -41,11 +42,11 @@ namespace BAPSClientCommon
         private ClientSocket _socket;
 
 
-        public ClientCore(Authenticator auth, Cache cache)
+        public ClientCore(Authenticator auth, ConfigCache configCache)
         {
             _auth = auth;
             _auth.Token = _dead.Token;
-            _cache = cache;
+            _configCache = configCache;
         }
 
         /// <summary>
@@ -59,7 +60,7 @@ namespace BAPSClientCommon
             {
                 if (_channelControllers.TryGetValue(channelId, out var controller)) return controller;
 
-                controller = new ChannelController(channelId, SendQueue, _cache);
+                controller = new ChannelController(channelId, SendQueue, _configCache);
                 _channelControllers[channelId] = controller;
                 return controller;
             }

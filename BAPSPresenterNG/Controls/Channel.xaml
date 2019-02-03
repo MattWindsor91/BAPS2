@@ -65,8 +65,8 @@ The main channel control.
                         </Style>
                     </fa:ImageAwesome.Style>
                 </fa:ImageAwesome>
-                <fa:ImageAwesome Name="playOnLoadLamp"
-                                 Icon="PlayCircleOutline"
+                <fa:ImageAwesome
+                    Icon="PlayCircleOutline"
                                  ToolTip="Play on load">
                     <fa:ImageAwesome.Style>
                         <Style TargetType="{x:Type fa:ImageAwesome}"
@@ -83,6 +83,8 @@ The main channel control.
         </controls:Header>
         <controls:Player DockPanel.Dock="Bottom" DataContext="{Binding Player}" />
         <ListBox
+            HorizontalContentAlignment="Stretch"
+            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
             ItemsSource="{Binding TrackList,UpdateSourceTrigger=PropertyChanged}"
             dd:DragDrop.IsDropTarget="True"
             dd:DragDrop.DropHandler="{Binding}"
@@ -111,34 +113,36 @@ The main channel control.
             </ListBox.ContextMenu>
             <ListBox.ItemTemplate>
                 <DataTemplate DataType="{x:Type viewModel:TrackViewModel}">
-                    <Grid>
-                        <Grid.Style>
-                            <Style TargetType="{x:Type Grid}">
+                    <Border BorderThickness="2px" CornerRadius="4">
+                        <Border.Style>
+                            <Style TargetType="{x:Type Border}">
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsLoaded}" Value="True">
-                                        <Setter Property="Background" Value="{StaticResource AccentBg}" />
+                                        <Setter Property="BorderBrush" Value="{StaticResource AccentBg}" />
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
-                        </Grid.Style>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="28px" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="28px" />
-                        </Grid.RowDefinitions>
-                        <fa:ImageAwesome Grid.Row="0" Grid.Column="0"
-                                         Foreground="Black"
-                                         Margin="2px"
-                                         Icon="{Binding Converter={StaticResource EntryTypeToIconConverter}}" />
-                        <TextBlock Grid.Row="0" Grid.Column="1"
-                                   VerticalAlignment="Center"
-                                   Margin="2px"
-                                   FontSize="10pt"
-                                   ToolTip="{Binding Description}"
-                                   Text="{Binding Description}" />
-                    </Grid>
+                        </Border.Style>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="24px" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="24px" />
+                            </Grid.RowDefinitions>
+                            <fa:ImageAwesome Grid.Row="0" Grid.Column="0"
+                                             Foreground="Black"
+                                             Margin="2px"
+                                             Icon="{Binding Converter={StaticResource EntryTypeToIconConverter}}" />
+                            <TextBlock Grid.Row="0" Grid.Column="1"
+                                       VerticalAlignment="Center"
+                                       Margin="2px"
+                                       FontSize="10pt"
+                                       ToolTip="{Binding Description}"
+                                       Text="{Binding Description}" />
+                        </Grid>
+                    </Border>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
