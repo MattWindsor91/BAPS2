@@ -30,8 +30,8 @@ namespace BAPSPresenterNG.ViewModel
         public static IMessenger Messenger => ServiceLocator.Current.GetInstance<IMessenger>();
 
         [ProvidesContext]
-        public static ClientCore ClientCore =>
-            ServiceLocator.Current.GetInstance<ClientCore>();
+        public static IClientCore ClientCore =>
+            ServiceLocator.Current.GetInstance<IClientCore>();
 
         [ProvidesContext]
         public static LoginViewModel Login => ServiceLocator.Current.GetInstance<LoginViewModel>();

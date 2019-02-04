@@ -2,6 +2,7 @@
 using BAPSClientCommon.BapsNet;
 using BAPSClientCommon.Model;
 using BAPSClientCommon.ServerConfig;
+using JetBrains.Annotations;
 
 namespace BAPSClientCommon.Controllers
 {
@@ -15,12 +16,12 @@ namespace BAPSClientCommon.Controllers
     public class ChannelController : BapsNetControllerBase
     {
         private readonly ushort _channelId;
-        private readonly ConfigController _config;
+        [NotNull] private readonly ConfigController _config;
 
-        public ChannelController(ushort channelId, ClientCore core, ConfigController config) : base(core)
+        public ChannelController(ushort channelId, [CanBeNull] IClientCore core, [CanBeNull] ConfigController config) : base(core)
         {
             _channelId = channelId;
-            _config = config;
+            _config = config ?? throw new ArgumentNullException(nameof(config));
         }
 
         /// <summary>
@@ -53,13 +54,13 @@ namespace BAPSClientCommon.Controllers
         /// <param name="state">The intended new state of the channel.</param>
         public void SetState(ChannelState state)
         {
-            Send(new Message(state.AsCommand().WithChannel(_channelId)));
+            SendAsync(new Message(state.AsCommand().WithChannel(_channelId)));
         }
 
         public void Select(uint index)
         {
             const Command cmd = Command.Playback | Command.Load;
-            Send(new Message(cmd.WithChannel(_channelId)).Add(index));
+            SendAsync(new Message(cmd.WithChannel(_channelId)).Add(index));
         }
 
         private OptionKey GetChannelConfigOption(ChannelConfigChangeType type)
@@ -114,7 +115,7 @@ namespace BAPSClientCommon.Controllers
         public void AddFile(DirectoryEntry file)
         {
             var cmd = (Command.Playlist | Command.AddItem).WithChannel(_channelId);
-            Send(new Message(cmd).Add((uint) TrackType.File).Add(file.DirectoryId).Add(file.Description));
+            SendAsync(new Message(cmd).Add((uint) TrackType.File).Add(file.DirectoryId).Add(file.Description));
         }
 
         /// <summary>
@@ -125,7 +126,7 @@ namespace BAPSClientCommon.Controllers
         public void DeleteItemAt(uint index)
         {
             var cmd = (Command.Playlist | Command.DeleteItem).WithChannel(_channelId);
-            Send(new Message(cmd).Add(index));
+            SendAsync(new Message(cmd).Add(index));
         }
 
         /// <summary>
@@ -135,7 +136,7 @@ namespace BAPSClientCommon.Controllers
         public void Reset()
         {
             var cmd = (Command.Playlist | Command.ResetPlaylist).WithChannel(_channelId);
-            Send(new Message(cmd));
+            SendAsync(new Message(cmd));
         }
 
         /// <summary>
@@ -146,7 +147,7 @@ namespace BAPSClientCommon.Controllers
         public void SetMarker(MarkerType type, uint newValue)
         {
             var cmd = (Command.Playback | type.AsCommand()).WithChannel(_channelId);
-            Send(new Message(cmd).Add(newValue));
+            SendAsync(new Message(cmd).Add(newValue));
         }
     }
 }

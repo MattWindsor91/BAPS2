@@ -16,8 +16,7 @@ namespace BAPSClientCommon.ServerConfig
 
     public static class ConfigResultText
     {
-        public static string[] Text =
-        {
+        public static readonly string[] Text = {
             "Success",
             "Incorrect type for option",
             "Option does not exist",

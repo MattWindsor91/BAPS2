@@ -37,11 +37,11 @@ namespace BAPSPresenter2.Dialogs
         /// </summary>
         public System.Threading.Mutex closeMutex = new System.Threading.Mutex();
 
-        private System.Collections.Concurrent.BlockingCollection<Message> msgQueue = null;
+        private ClientCore _core;
 
-        public Config(System.Collections.Concurrent.BlockingCollection<Message> msgQueue)
+        public Config(ClientCore core)
         {
-            this.msgQueue = msgQueue;
+            _core = core;
 
             InitializeComponent();
 
@@ -107,7 +107,7 @@ namespace BAPSPresenter2.Dialogs
             if ((ConfigType)option.getType() == ConfigType.Choice)
             {
                 var cmd = Command.Config | Command.GetOptionChoices;
-                msgQueue.Add(new Message(cmd).Add((uint)option.getOptionid()));
+                _core.SendAsync(new Message(cmd).Add((uint)option.getOptionid()));
             }
         }
 
@@ -508,7 +508,7 @@ namespace BAPSPresenter2.Dialogs
             if (!(optionCountSet && (numberOfOptions == 0))) return;
             if (options.Values.Any(op => !op.isValid())) return;
             Command cmd = Command.Config | Command.GetConfigSettings;
-            msgQueue.Add(new Message(cmd));
+            _core.SendAsync(new Message(cmd));
             optionCountSet = false;
         }
 
@@ -542,14 +542,14 @@ namespace BAPSPresenter2.Dialogs
                         {
                             case ConfigType.Str:
                                 {
-                                    msgQueue.Add(new Message(cmd).Add((uint)coi.getOptionid()).Add((uint)coi.getType()).Add(coi.getValueStr(j)));
+                                    _core.SendAsync(new Message(cmd).Add((uint)coi.getOptionid()).Add((uint)coi.getType()).Add(coi.getValueStr(j)));
                                 }
                                 break;
 
                             case ConfigType.Int:
                             case ConfigType.Choice:
                                 {
-                                    msgQueue.Add(new Message(cmd).Add((uint)coi.getOptionid()).Add((uint)coi.getType()).Add((uint)coi.getValueInt(j)));
+                                    _core.SendAsync(new Message(cmd).Add((uint)coi.getOptionid()).Add((uint)coi.getType()).Add((uint)coi.getValueInt(j)));
                                 }
                                 break;
 
@@ -565,14 +565,14 @@ namespace BAPSPresenter2.Dialogs
                     {
                         case ConfigType.Str:
                             {
-                                msgQueue.Add(new Message(cmd).Add((uint)coi.getOptionid()).Add((uint)coi.getType()).Add(coi.getValueStr()));
+                                _core.SendAsync(new Message(cmd).Add((uint)coi.getOptionid()).Add((uint)coi.getType()).Add(coi.getValueStr()));
                             }
                             break;
 
                         case ConfigType.Int:
                         case ConfigType.Choice:
                             {
-                                msgQueue.Add(new Message(cmd).Add((uint)coi.getOptionid()).Add((uint)coi.getType()).Add(coi.getValueInt()));
+                                _core.SendAsync(new Message(cmd).Add((uint)coi.getOptionid()).Add((uint)coi.getType()).Add(coi.getValueInt()));
                             }
                             break;
 
@@ -587,7 +587,7 @@ namespace BAPSPresenter2.Dialogs
         {
             restartButton.Enabled = false;
             Command cmd = Command.System | Command.Quit;
-            msgQueue.Add(new Message(cmd));
+            _core.SendAsync(new Message(cmd));
         }
 
         private void ConfigDialog_KeyDown(object sender, KeyEventArgs e)
@@ -606,7 +606,7 @@ namespace BAPSPresenter2.Dialogs
         private void ConfigDialog_Load(object sender, EventArgs e)
         {
             Command cmd = Command.Config | Command.GetOptions;
-            msgQueue.Add(new Message(cmd));
+            _core.SendAsync(new Message(cmd));
         }
 
         #endregion Event handlers

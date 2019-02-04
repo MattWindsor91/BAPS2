@@ -15,10 +15,10 @@ namespace BAPSPresenter2
         /// </summary>
         public event KeyEventHandler KeyDownForward;
 
-        public AudioWall(System.Collections.Concurrent.BlockingCollection<Message> msgQueue, TrackList tl)
+        public AudioWall(ClientCore core, TrackList tl)
         {
-            this.msgQueue = msgQueue;
-            this.tl = tl;
+            this._core = core;
+            this._tl = tl;
 
             InitializeComponent();
 
@@ -56,22 +56,22 @@ namespace BAPSPresenter2
 
         public void setChannel(TrackList _tl)
         {
-            tl = _tl;
+            this._tl = _tl;
         }
 
         public void refreshWall()
         {
-            Text = string.Concat("Audio Wall for Channel ", tl.Channel.ToString());
+            Text = string.Concat("Audio Wall for Channel ", _tl.Channel.ToString());
             int walli = 0;
 
-            for (int i = 0; i < tl.TrackCount && walli < 20; i++)
+            for (int i = 0; i < _tl.TrackCount && walli < 20; i++)
             {
-                var ei = tl.GetTrack(i);
+                var ei = _tl.GetTrack(i);
                 if (!ei.IsAudioItem) continue;
                 buttons[walli].Text = ei.Description;
                 buttons[walli].Tag = i;
                 buttons[walli].Enabled = true;
-                buttons[walli].Highlighted = i == tl.LoadedIndex;
+                buttons[walli].Highlighted = i == _tl.LoadedIndex;
                 walli++;
             }
             for (; walli < 20; walli++)
@@ -107,11 +107,11 @@ namespace BAPSPresenter2
             var index = (uint)(int)bb.Tag;  // These two casts are deliberate.
             if (!bb.Highlighted)
             {
-                var lcmd = Command.Playback | Command.Load | (Command)tl.Channel;
-                msgQueue.Add(new Message(lcmd).Add(index));
+                var lcmd = Command.Playback | Command.Load | (Command)_tl.Channel;
+                _core.SendAsync(new Message(lcmd).Add(index));
             }
-            var pcmd = Command.Playback | Command.Play | (Command)tl.Channel;
-            msgQueue.Add(new Message(pcmd));
+            var pcmd = Command.Playback | Command.Play | (Command)_tl.Channel;
+            _core.SendAsync(new Message(pcmd));
         }
 
         void AudioWall_KeyDown(object sender, KeyEventArgs e)
@@ -148,8 +148,8 @@ namespace BAPSPresenter2
 
         #endregion Events
 
-        System.Collections.Concurrent.BlockingCollection<Message> msgQueue = null;
-        private TrackList tl = null;
+        private readonly ClientCore _core;
+        private TrackList _tl;
 
         private BAPSFormControls.BAPSButton[] buttons = null;
     }

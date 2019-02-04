@@ -35,9 +35,9 @@ namespace BAPSPresenter2.Dialogs
         /// </summary>
         public event KeyEventHandler KeyDownForward;
 
-        public Security(System.Collections.Concurrent.BlockingCollection<Message> msgQueue)
+        public Security(ClientCore core)
         {
-            this.msgQueue = msgQueue;
+            _core = core;
 
             InitializeComponent();
 
@@ -124,7 +124,7 @@ namespace BAPSPresenter2.Dialogs
             {
                 status = SecurityStatus.GETUSERS;
                 var cmd = Command.Config | Command.GetUsers;
-                msgQueue.Add(new Message(cmd));
+                _core.SendAsync(new Message(cmd));
             }
         }
 
@@ -152,7 +152,7 @@ namespace BAPSPresenter2.Dialogs
                         tempStatus = SecurityStatus.GETUSERS;
                         status = SecurityStatus.GETUSERS;
                         var cmd = Command.Config | Command.GetUsers;
-                        msgQueue.Add(new Message(cmd));
+                        _core.SendAsync(new Message(cmd));
                     }
                     else
                     {
@@ -177,7 +177,7 @@ namespace BAPSPresenter2.Dialogs
                         tempStatus = SecurityStatus.GETUSERS;
                         status = SecurityStatus.GETUSERS;
                         Command cmd = Command.Config | Command.GetUsers;
-                        msgQueue.Add(new Message(cmd));
+                        _core.SendAsync(new Message(cmd));
                     }
                     else
                     {
@@ -190,7 +190,7 @@ namespace BAPSPresenter2.Dialogs
                         tempStatus = SecurityStatus.GETUSERS;
                         status = SecurityStatus.GETUSERS;
                         Command cmd = Command.Config | Command.GetUsers;
-                        msgQueue.Add(new Message(cmd));
+                        _core.SendAsync(new Message(cmd));
                     }
                     else
                     {
@@ -203,7 +203,7 @@ namespace BAPSPresenter2.Dialogs
                         tempStatus = SecurityStatus.GETUSERS;
                         status = SecurityStatus.GETUSERS;
                         Command cmd = Command.Config | Command.GetUsers;
-                        msgQueue.Add(new Message(cmd));
+                        _core.SendAsync(new Message(cmd));
                     }
                     else
                     {
@@ -221,7 +221,7 @@ namespace BAPSPresenter2.Dialogs
                 addUserButton.Enabled = false;
                 status = SecurityStatus.GETUSERS;
                 Command cmd = Command.Config | Command.GetUsers;
-                msgQueue.Add(new Message(cmd));
+                _core.SendAsync(new Message(cmd));
             }
             else
             {
@@ -239,7 +239,7 @@ namespace BAPSPresenter2.Dialogs
                 {
                     status = SecurityStatus.REMOVEUSER;
                     Command cmd = Command.Config | Command.RemoveUser;
-                    msgQueue.Add(new Message(cmd).Add(selectedUserLabel.Text));
+                    _core.SendAsync(new Message(cmd).Add(selectedUserLabel.Text));
                 }
             }
             else
@@ -283,7 +283,7 @@ namespace BAPSPresenter2.Dialogs
                 addUserButton.Enabled = false;
                 status = SecurityStatus.ADDUSER;
                 Command cmd = Command.Config | Command.AddUser;
-                msgQueue.Add(new Message(cmd).Add(newUsernameText.Text).Add(passwordText.Text));
+                _core.SendAsync(new Message(cmd).Add(newUsernameText.Text).Add(passwordText.Text));
             }
             else
             {
@@ -297,7 +297,7 @@ namespace BAPSPresenter2.Dialogs
                 setPasswordButton.Enabled = false;
                 status = SecurityStatus.SETPASSWORD;
                 Command cmd = Command.Config | Command.SetPassword;
-                msgQueue.Add(new Message(cmd).Add(selectedUserLabel.Text).Add(newPasswordText.Text));
+                _core.SendAsync(new Message(cmd).Add(selectedUserLabel.Text).Add(newPasswordText.Text));
             }
             else
             {
@@ -364,7 +364,7 @@ namespace BAPSPresenter2.Dialogs
                 status = SecurityStatus.REVOKEPERMISSION;
                 var permission = ((PermissionInfo) permissionList.Items[permissionList.SelectedIndex]).permissionCode;
                 Command cmd = Command.Config | Command.RevokePermission;
-                msgQueue.Add(new Message(cmd).Add(selectedUserLabel.Text).Add(permission));
+                _core.SendAsync(new Message(cmd).Add(selectedUserLabel.Text).Add(permission));
             }
             else
             {
@@ -378,7 +378,7 @@ namespace BAPSPresenter2.Dialogs
                 status = SecurityStatus.GRANTPERMISSION;
                 var permission = ((PermissionInfo) availablePermissionList.Items[availablePermissionList.SelectedIndex]).permissionCode;
                 Command cmd = Command.Config | Command.GrantPermission;
-                msgQueue.Add(new Message(cmd).Add(selectedUserLabel.Text).Add(permission));
+                _core.SendAsync(new Message(cmd).Add(selectedUserLabel.Text).Add(permission));
             }
             else
             {
@@ -466,7 +466,7 @@ namespace BAPSPresenter2.Dialogs
                 {
                     status = SecurityStatus.GETUSERS;
                     Command cmd = Command.Config | Command.GetUsers;
-                    msgQueue.Add(new Message(cmd));
+                    _core.SendAsync(new Message(cmd));
                 }
                 else
                 {
@@ -479,7 +479,7 @@ namespace BAPSPresenter2.Dialogs
                 {
                     status = SecurityStatus.GETIPRESTRICTIONS;
                     Command cmd = Command.Config | Command.GetIpRestrictions;
-                    msgQueue.Add(new Message(cmd));
+                    _core.SendAsync(new Message(cmd));
                 }
                 else
                 {
@@ -496,7 +496,7 @@ namespace BAPSPresenter2.Dialogs
             }
             status = SecurityStatus.GETIPRESTRICTIONS;
             Command cmd = Command.Config | Command.GetIpRestrictions;
-            msgQueue.Add(new Message(cmd));
+            _core.SendAsync(new Message(cmd));
         }
 
         private void alterRestrictionButton_Click(object sender, EventArgs e)
@@ -508,7 +508,7 @@ namespace BAPSPresenter2.Dialogs
                     int cmdMask = (int)((Button)sender).Tag;
                     status = SecurityStatus.ALTERIPRESTRICTION;
                     var cmd = Command.Config | Command.AlterIpRestriction | (Command)cmdMask;
-                    msgQueue.Add(new Message(cmd).Add(ipAddressText.Text).Add(Convert.ToUInt32(maskText.Text)));
+                    _core.SendAsync(new Message(cmd).Add(ipAddressText.Text).Add(Convert.ToUInt32(maskText.Text)));
                 }
                 catch (FormatException)
         		{
@@ -530,7 +530,7 @@ namespace BAPSPresenter2.Dialogs
 
         private PermissionInfo[] permissionInfo = null;
 
-        private System.Collections.Concurrent.BlockingCollection<Message> msgQueue;
+        private ClientCore _core;
 		private SecurityStatus status = SecurityStatus.AWAITING_INIT;
         private uint userCount = 0;
         private uint permissionCount = 0;

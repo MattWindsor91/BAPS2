@@ -1,5 +1,7 @@
+using System;
 using BAPSClientCommon.BapsNet;
 using BAPSClientCommon.ServerConfig;
+using JetBrains.Annotations;
 
 namespace BAPSClientCommon.Controllers
 {
@@ -11,11 +13,11 @@ namespace BAPSClientCommon.Controllers
         /// <summary>
         ///     The config cache, used for looking up details about configuration options.
         /// </summary>
-        private readonly ConfigCache _cache;
+        [NotNull] private readonly ConfigCache _cache;
 
-        public ConfigController(ClientCore core, ConfigCache cache) : base(core)
+        public ConfigController([CanBeNull] IClientCore core, [CanBeNull] ConfigCache cache) : base(core)
         {
-            _cache = cache;
+            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
         }
 
         /// <summary>
@@ -41,7 +43,7 @@ namespace BAPSClientCommon.Controllers
             var choiceIndex = _cache.ChoiceIndexFor(optionId, choiceKey);
             var cmd = Command.Config | Command.SetConfigValue;
             if (index != ConfigCache.NoIndex) cmd |= Command.ConfigUseValueMask | (Command) index;
-            Send(new Message(cmd).Add(optionId).Add((uint) ConfigType.Choice).Add((uint) choiceIndex));
+            SendAsync(new Message(cmd).Add(optionId).Add((uint) ConfigType.Choice).Add((uint) choiceIndex));
         }
     }
 }

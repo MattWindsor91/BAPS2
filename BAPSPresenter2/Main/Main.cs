@@ -320,7 +320,7 @@ namespace BAPSPresenter2
         {
             if (audioWall == null || !audioWall.Visible)
             {
-                audioWall = new AudioWall(_core.SendQueue, tl);
+                audioWall = new AudioWall(_core, tl);
                 audioWall.KeyDownForward += BAPSPresenterMain_KeyDown;
                 audioWall.Show();
             }

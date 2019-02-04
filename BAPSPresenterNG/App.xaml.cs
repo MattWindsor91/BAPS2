@@ -19,7 +19,7 @@ namespace BAPSPresenterNG
     public partial class App
     {
         [CanBeNull, UsedImplicitly]  private ConfigMessengerAdapter _cma;
-        [CanBeNull] private ClientCore _core;
+        [CanBeNull] private IClientCore _core;
         [CanBeNull] private MainWindow _main;
         [CanBeNull, UsedImplicitly]  private ReceiverMessengerAdapter _rma;
 
@@ -34,12 +34,12 @@ namespace BAPSPresenterNG
         {
             SimpleIoc.Default.Register<ConfigManager>();
             SimpleIoc.Default.Register(MakeAuthenticator);
-            SimpleIoc.Default.Register<ClientCore>();
+            SimpleIoc.Default.Register<IClientCore, ClientCore>();
 
             _main = new MainWindow();
             _main.Show();
 
-            _core = SimpleIoc.Default.GetInstance<ClientCore>();
+            _core = ViewModelLocator.ClientCore;
             Debug.Assert(_core != null, nameof(_core) + " != null");
             _core.AboutToAuthenticate += AboutToAuthenticate;
             _core.AboutToAutoUpdate += ChannelCountReady;

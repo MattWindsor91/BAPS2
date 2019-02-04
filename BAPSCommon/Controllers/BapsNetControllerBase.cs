@@ -1,5 +1,6 @@
-using System.Collections.Concurrent;
+using System;
 using BAPSClientCommon.BapsNet;
+using JetBrains.Annotations;
 
 namespace BAPSClientCommon.Controllers
 {
@@ -9,24 +10,24 @@ namespace BAPSClientCommon.Controllers
     /// </summary>
     public abstract class BapsNetControllerBase
     {
-        private readonly BlockingCollection<Message> _messageQueue;
+        [NotNull] private readonly IClientCore _core;
 
         /// <summary>
         ///     Base constructor for BapsNet controllers.
         /// </summary>
         /// <param name="core">The client core to use to send messages.</param>
-        protected BapsNetControllerBase(ClientCore core)
+        protected BapsNetControllerBase([CanBeNull] IClientCore core)
         {
-            _messageQueue = core.SendQueue;
+            _core = core ?? throw new ArgumentNullException(nameof(core));
         }
 
         /// <summary>
         ///     Sends a BapsNet message through this controller's queue.
         /// </summary>
         /// <param name="message">The message to send.</param>
-        protected void Send(Message message)
+        protected void SendAsync([CanBeNull] Message message)
         {
-            _messageQueue.Add(message);
+            _core.SendAsync(message);
         }
     }
 }

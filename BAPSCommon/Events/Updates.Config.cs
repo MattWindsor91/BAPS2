@@ -41,7 +41,7 @@ namespace BAPSClientCommon.Events
         public class ConfigSettingArgs : ConfigTypeIndexArgs
         {
             /// <summary>The new value to apply.</summary>
-            public object Value;
+            public readonly object Value;
 
             public ConfigSettingArgs(uint optionId, ConfigType type, object value, int index = -1)
                 : base(optionId, type, index)

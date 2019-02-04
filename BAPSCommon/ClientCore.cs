@@ -10,11 +10,10 @@ using JetBrains.Annotations;
 
 namespace BAPSClientCommon
 {
-    /// <inheritdoc />
     /// <summary>
     ///     Object encapsulating the core features of a BapsNet client.
     /// </summary>
-    public class ClientCore : IDisposable
+    public class ClientCore : IClientCore
     {
         private const int CountPrefetchTimeoutMilliseconds = 500;
         private const int CancelGracePeriodMilliseconds = 500;
@@ -40,9 +39,19 @@ namespace BAPSClientCommon
         /// <summary>
         ///     A thread-safe queue for outgoing BAPSNet messages.
         /// </summary>
-        [NotNull]
-        public BlockingCollection<Message> SendQueue { get; } = new BlockingCollection<Message>();
+        [ItemNotNull, NotNull]
+        private BlockingCollection<Message> SendQueue { get; } = new BlockingCollection<Message>();
 
+        /// <summary>
+        ///     Sends a BapsNet message asynchronously through this client's
+        ///     BapsNet connection.
+        /// </summary>
+        /// <param name="message">The message to send.  If null, nothing is sent.</param>
+        public void SendAsync(Message message)
+        {
+            if (message != null) SendQueue.Add(message);
+        }
+        
         /// <summary>
         ///     Event raised just before authentication.
         ///     Subscribe to this to install any event handlers needed for the authenticator.

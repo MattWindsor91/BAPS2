@@ -13,9 +13,9 @@ namespace BAPSClientCommon.Controllers
         [NotNull] private readonly ConcurrentDictionary<ushort, ChannelController> _controllers =
             new ConcurrentDictionary<ushort, ChannelController>();
 
-        [NotNull] private readonly ClientCore _coreForMakingChannels;
+        [NotNull] private readonly IClientCore _coreForMakingChannels;
 
-        public ChannelControllerSet([NotNull] ClientCore core, [NotNull] ConfigController config)
+        public ChannelControllerSet([NotNull] IClientCore core, [NotNull] ConfigController config)
         {
             _coreForMakingChannels = core;
             _config = config;
