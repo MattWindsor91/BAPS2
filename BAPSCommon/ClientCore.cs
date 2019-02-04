@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using BAPSClientCommon.BapsNet;
-using BAPSClientCommon.Controllers;
 using BAPSClientCommon.Events;
 using BAPSClientCommon.ServerConfig;
 using JetBrains.Annotations;
@@ -21,15 +19,6 @@ namespace BAPSClientCommon
         private const int CountPrefetchTimeoutMilliseconds = 500;
         private const int CancelGracePeriodMilliseconds = 500;
         private readonly Authenticator _auth;
-
-        private readonly object _channelControllerLock = new object();
-
-        /// <summary>
-        ///     The set of controllers used to translate channel requests to
-        ///     BapsNet commands.
-        /// </summary>
-        private readonly Dictionary<uint, ChannelController> _channelControllers =
-            new Dictionary<uint, ChannelController>();
 
         private readonly CancellationTokenSource _dead = new CancellationTokenSource();
 
@@ -51,6 +40,7 @@ namespace BAPSClientCommon
         /// <summary>
         ///     A thread-safe queue for outgoing BAPSNet messages.
         /// </summary>
+        [NotNull]
         public BlockingCollection<Message> SendQueue { get; } = new BlockingCollection<Message>();
 
         /// <summary>

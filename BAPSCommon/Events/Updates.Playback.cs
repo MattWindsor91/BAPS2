@@ -8,7 +8,7 @@ namespace BAPSClientCommon.Events
         ///     Event handler for channel marker server updates.
         /// </summary>
         /// <param name="sender">The sender of this event.</param>
-        /// <param name="e">The payload of this event.</param>
+        /// <param name="args">The payload of this event.</param>
         public delegate void MarkerEventHandler(object sender, MarkerEventArgs args);
 
         /// <summary>

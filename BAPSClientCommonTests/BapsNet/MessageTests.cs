@@ -1,7 +1,7 @@
 ﻿using BAPSClientCommon.BapsNet;
 using NUnit.Framework;
 
-namespace BAPSClientCommonTests
+namespace BAPSClientCommonTests.BapsNet
 {
     /// <summary>
     ///     Tests that <see cref="Message" />'s construction and sending methods behave properly.
