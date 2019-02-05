@@ -7,7 +7,7 @@ namespace BAPSPresenter2
 {
     partial class Main
     {
-        private void SetupDatabaseReactions(Receiver r)
+        private void SetupDatabaseReactions(IServerUpdater r)
         {
             r.LibraryResult += (sender, e) =>
             {

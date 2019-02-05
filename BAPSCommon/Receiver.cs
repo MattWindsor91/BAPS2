@@ -7,6 +7,10 @@ using BAPSClientCommon.ServerConfig;
 
 namespace BAPSClientCommon
 {
+    /// <summary>
+    ///     Listens on a <see cref="ClientSocket" /> for incoming BapsNet commands, decodes them, and sends server update
+    ///     events.
+    /// </summary>
     public class Receiver : IServerUpdater
     {
         private readonly ClientSocket _cs;

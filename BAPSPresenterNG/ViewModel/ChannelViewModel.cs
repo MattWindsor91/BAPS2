@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Threading;
 using BAPSClientCommon;
@@ -23,19 +24,26 @@ namespace BAPSPresenterNG.ViewModel
     ///         The channel view model combines a player view model and a track-list.
     ///     </para>
     /// </summary>
-    public class ChannelViewModel : ViewModelBase, IDropTarget
+    public class ChannelViewModel : ViewModelBase, IDropTarget, IDisposable
     {
         [CanBeNull] private RelayCommand _toggleAutoAdvanceCommand;
         [CanBeNull] private RelayCommand _togglePlayOnLoadCommand;
 
-        public ChannelViewModel(ushort channelId, [CanBeNull] IMessenger messenger, [CanBeNull] PlayerViewModel player,
-            [CanBeNull] ChannelController controller) : base(messenger)
+        public ChannelViewModel(ushort channelId,
+            [CanBeNull] ConfigCache config,
+            [CanBeNull] IServerUpdater updater,
+            [CanBeNull] PlayerViewModel player,
+            [CanBeNull] ChannelController controller)
         {
             ChannelId = channelId;
             Player = player ?? throw new ArgumentNullException(nameof(player));
             Controller = controller;
 
-            Register();
+            _config = config;
+            _updater = updater;
+
+            RegisterForServerUpdates();
+            RegisterForConfigUpdates();
         }
 
         /// <summary>
@@ -123,38 +131,57 @@ namespace BAPSPresenterNG.ViewModel
             return TrackAt(index).IsTextItem || !Player.IsPlaying;
         }
 
-        private void Register()
+        /// <summary>
+        ///     Registers the view model against server update events.
+        ///     <para>
+        ///         This view model can be disposed during run-time, so <see cref="UnregisterForServerUpdates"/>
+        ///         (called during <see cref="Dispose"/>) should be kept in sync with it.
+        ///     </para>
+        /// </summary>
+        private void RegisterForServerUpdates()
         {
-            // We use the messenger bus to receive server updates.
-            // Assume that the main app attached the server update events to
-            // the messenger below.
-            var messenger = MessengerInstance;
-            Player.Register(messenger);
-
-            // NB: the Player also registers this event.
-            messenger.Register<Updates.TrackLoadEventArgs>(this, HandleTrackLoad);
-
-            SetupPlaylistReactions();
-            SetupConfigReactions();
+            _updater.TrackLoad += HandleTrackLoad; // NB: the Player also registers this event.
+            _updater.ItemAdd += HandleItemAdd;
+            _updater.ItemMove += HandleItemMove;
+            _updater.ItemDelete += HandleItemDelete;
+            _updater.ResetPlaylist += HandleResetPlaylist;
+        }
+        
+        /// <summary>
+        ///     Registers the view model against the config cache's config update events.
+        ///     <para>
+        ///         This view model can be disposed during run-time, so <see cref="UnregisterForConfigUpdates"/>
+        ///         (called during <see cref="Dispose"/>) should be kept in sync with it.
+        ///     </para>
+        /// </summary>
+        private void RegisterForConfigUpdates()
+        {
+            _config.ChoiceChanged += HandleConfigChoiceChanged;
+            _config.StringChanged += HandleConfigStringChanged;
         }
 
-        private void SetupPlaylistReactions()
+        /// <summary>
+        ///     Unregisters the view model from all server update events.
+        /// </summary>
+        private void UnregisterForServerUpdates()
         {
-            var messenger = MessengerInstance;
-            messenger.Register<Updates.TrackAddEventArgs>(this, HandleItemAdd);
-            messenger.Register<Updates.TrackMoveEventArgs>(this, HandleItemMove);
-            messenger.Register<Updates.TrackDeleteEventArgs>(this, HandleItemDelete);
-            messenger.Register<Updates.ChannelResetEventArgs>(this, HandleResetPlaylist);
+            _updater.TrackLoad -= HandleTrackLoad;
+            _updater.ItemAdd -= HandleItemAdd;
+            _updater.ItemMove -= HandleItemMove;
+            _updater.ItemDelete -= HandleItemDelete;
+            _updater.ResetPlaylist -= HandleResetPlaylist;
+        }
+        
+        /// <summary>
+        ///     Unregisters the view model from all config update events.
+        /// </summary>
+        private void UnregisterForConfigUpdates()
+        {
+            _config.ChoiceChanged -= HandleConfigChoiceChanged;
+            _config.StringChanged -= HandleConfigStringChanged;
         }
 
-        private void SetupConfigReactions()
-        {
-            var messenger = MessengerInstance;
-            messenger.Register<ConfigCache.ChoiceChangeEventArgs>(this, HandleConfigChoiceChanged);
-            messenger.Register<ConfigCache.StringChangeEventArgs>(this, HandleConfigStringChanged);
-        }
-
-        private void HandleConfigStringChanged(ConfigCache.StringChangeEventArgs args)
+        private void HandleConfigStringChanged(object sender, ConfigCache.StringChangeEventArgs args)
         {
             switch (args.Key)
             {
@@ -170,7 +197,7 @@ namespace BAPSPresenterNG.ViewModel
             Name = args.Value;
         }
 
-        private void HandleConfigChoiceChanged(ConfigCache.ChoiceChangeEventArgs e)
+        private void HandleConfigChoiceChanged(object sender, ConfigCache.ChoiceChangeEventArgs e)
         {
             switch (e.Key)
             {
@@ -215,7 +242,7 @@ namespace BAPSPresenterNG.ViewModel
             }
         }
 
-        private void HandleTrackLoad(Updates.TrackLoadEventArgs args)
+        private void HandleTrackLoad(object sender, Updates.TrackLoadEventArgs args)
         {
             if (ChannelId != args.ChannelId) return;
             DispatcherHelper.CheckBeginInvokeOnUI(() => UpdateLoadedStatus(args.Index));
@@ -297,6 +324,8 @@ namespace BAPSPresenterNG.ViewModel
         }
 
         private RepetitionMode _repeatMode;
+        private readonly IServerUpdater _updater;
+        private readonly ConfigCache _config;
 
         #endregion Channel flags
 
@@ -305,30 +334,36 @@ namespace BAPSPresenterNG.ViewModel
         // NB: Anything involving the TrackList has to be done on the
         // UI thread, hence the use of Dispatcher.
 
-        private void HandleItemAdd(Updates.TrackAddEventArgs e)
+        private void HandleItemAdd(object sender, Updates.TrackAddEventArgs e)
         {
             if (ChannelId != e.ChannelId) return;
             DispatcherHelper.CheckBeginInvokeOnUI(() => TrackList.Add(new TrackViewModel(e.Item)));
         }
 
-        private void HandleItemMove(Updates.TrackMoveEventArgs e)
+        private void HandleItemMove(object sender, Updates.TrackMoveEventArgs e)
         {
             if (ChannelId != e.ChannelId) return;
             DispatcherHelper.CheckBeginInvokeOnUI(() => TrackList.Move((int) e.Index, (int) e.NewIndex));
         }
 
-        private void HandleItemDelete(Updates.TrackDeleteEventArgs e)
+        private void HandleItemDelete(object sender, Updates.TrackDeleteEventArgs e)
         {
             if (ChannelId != e.ChannelId) return;
             DispatcherHelper.CheckBeginInvokeOnUI(() => TrackList.RemoveAt((int) e.Index));
         }
 
-        private void HandleResetPlaylist(Updates.ChannelResetEventArgs e)
+        private void HandleResetPlaylist(object sender, Updates.ChannelResetEventArgs e)
         {
             if (ChannelId != e.ChannelId) return;
             DispatcherHelper.CheckBeginInvokeOnUI(() => TrackList.Clear());
         }
 
         #endregion Tracklist event handlers
+
+        public void Dispose()
+        {
+            UnregisterForServerUpdates();
+            UnregisterForConfigUpdates();
+        }
     }
 }

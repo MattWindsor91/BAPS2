@@ -10,7 +10,7 @@ namespace BAPSPresenter2
 {
     partial class Main
     {
-        private void SetupConfigReactions(Receiver r)
+        private void SetupConfigReactions(IServerUpdater r)
         {
             Config.InstallReceiverEventHandlers(r);
 

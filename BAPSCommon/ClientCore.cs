@@ -10,10 +10,11 @@ using JetBrains.Annotations;
 
 namespace BAPSClientCommon
 {
+    /// <inheritdoc />
     /// <summary>
     ///     Object encapsulating the core features of a BapsNet client.
     /// </summary>
-    public class ClientCore : IClientCore
+    public partial class ClientCore : IClientCore
     {
         private const int CountPrefetchTimeoutMilliseconds = 500;
         private const int CancelGracePeriodMilliseconds = 500;
@@ -36,20 +37,14 @@ namespace BAPSClientCommon
             _auth.Token = _dead.Token;
         }
 
+        /// <inheritdoc />
         /// <summary>
-        ///     A thread-safe queue for outgoing BAPSNet messages.
-        /// </summary>
-        [ItemNotNull, NotNull]
-        private BlockingCollection<Message> SendQueue { get; } = new BlockingCollection<Message>();
-
-        /// <summary>
-        ///     Sends a BapsNet message asynchronously through this client's
-        ///     BapsNet connection.
+        ///     Sends a message to the BapsNet server.
         /// </summary>
         /// <param name="message">The message to send.  If null, nothing is sent.</param>
         public void SendAsync(Message message)
         {
-            if (message != null) SendQueue.Add(message);
+            if (message != null) _sender?.SendAsync(message);
         }
         
         /// <summary>
@@ -71,17 +66,6 @@ namespace BAPSClientCommon
         ///     </para>
         /// </summary>
         public event EventHandler<(int numChannelsPrefetch, int numDirectoriesPrefetch)> AboutToAutoUpdate;
-
-        /// <summary>
-        ///     Event raised when the <see cref="ClientCore" /> has created a receiver.
-        ///     Subscribe to this in order to attach reactions to receiver events.
-        /// </summary>
-        public event EventHandler<Receiver> ReceiverCreated;
-
-        private void OnReceiverCreated()
-        {
-            ReceiverCreated?.Invoke(this, _receiver);
-        }
 
         /// <summary>
         ///     Tries to authenticate and launch a BAPS client.
@@ -133,7 +117,7 @@ namespace BAPSClientCommon
                 }
 
                 _receiver.ConfigSetting += Waiter;
-                SendQueue.Add(new Message(Command.Config | Command.GetConfigSetting).Add(optionId));
+                SendAsync(new Message(Command.Config | Command.GetConfigSetting).Add(optionId));
                 wait.WaitOne(CountPrefetchTimeoutMilliseconds);
             }
 
@@ -145,10 +129,20 @@ namespace BAPSClientCommon
         {
             var tf = new TaskFactory(_dead.Token, TaskCreationOptions.LongRunning, TaskContinuationOptions.None,
                 TaskScheduler.Current);
+            CreateAndLaunchReceiver(tf);
+            CreateAndLaunchSender(tf);
+        }
+
+        private void CreateAndLaunchReceiver(TaskFactory tf)
+        {
             _receiver = new Receiver(_socket, _dead.Token);
-            OnReceiverCreated();
+            AttachReceiverEvents();
             _receiverTask = tf.StartNew(_receiver.Run);
-            _sender = new Sender(SendQueue, _dead.Token, _socket);
+        }
+
+        private void CreateAndLaunchSender(TaskFactory tf)
+        {
+            _sender = new Sender(_dead.Token, _socket);
             _senderTask = tf.StartNew(_sender.Run);
         }
 
@@ -163,12 +157,12 @@ namespace BAPSClientCommon
         {
             // Add the auto-update message onto the queue (chat(2) and general(1))
             var cmd = Command.System | Command.AutoUpdate | (Command) 2 | (Command) 1;
-            SendQueue.Add(new Message(cmd));
+            SendAsync(new Message(cmd));
             for (var i = 0; i < numDirectories; i++)
             {
                 /** Add the refresh folder onto the queue **/
                 cmd = Command.System | Command.ListFiles | (Command) i;
-                SendQueue.Add(new Message(cmd));
+                SendAsync(new Message(cmd));
             }
         }
 
@@ -178,7 +172,7 @@ namespace BAPSClientCommon
         private void NotifyServerOfQuit()
         {
             const Command cmd = Command.System | Command.End;
-            SendQueue.Add(new Message(cmd).Add("Normal Termination"));
+            SendAsync(new Message(cmd).Add("Normal Termination"));
         }
 
         /// <summary>

@@ -8,7 +8,7 @@ namespace BAPSPresenter2
 {
     partial class Main
     {
-        private void SetupSystemReactions(Receiver r)
+        private void SetupSystemReactions(IServerUpdater r)
         {
             r.DirectoryFileAdd += (sender, e) =>
             {

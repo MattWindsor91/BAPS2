@@ -18,10 +18,8 @@ namespace BAPSPresenterNG
     /// </summary>
     public partial class App
     {
-        [CanBeNull, UsedImplicitly]  private ConfigMessengerAdapter _cma;
         [CanBeNull] private IClientCore _core;
         [CanBeNull] private MainWindow _main;
-        [CanBeNull, UsedImplicitly]  private ReceiverMessengerAdapter _rma;
 
         static App()
         {
@@ -38,13 +36,13 @@ namespace BAPSPresenterNG
 
             _main = new MainWindow();
             _main.Show();
-
+            
             _core = ViewModelLocator.ClientCore;
             Debug.Assert(_core != null, nameof(_core) + " != null");
+            ConfigCache.InstallReceiverEventHandlers(_core);
             _core.AboutToAuthenticate += AboutToAuthenticate;
             _core.AboutToAutoUpdate += ChannelCountReady;
-            _core.ReceiverCreated += HandleReceiverCreated;
-
+            
             var launchedProperly = _core.Launch();
             if (!launchedProperly) Shutdown();
         }
@@ -52,10 +50,11 @@ namespace BAPSPresenterNG
         private static void ChannelCountReady(object sender, (int numChannelsPrefetch, int numDirectoriesPrefetch) args)
         {
             // Manually pumping 'count changed' messages.
-            var messenger = ViewModelLocator.Messenger;
             var (numChannelsPrefetch, numDirectoriesPrefetch) = args;
-            messenger.Send(new ConfigCache.IntChangeEventArgs(OptionKey.ChannelCount, numChannelsPrefetch));
-            messenger.Send(new ConfigCache.IntChangeEventArgs(OptionKey.ChannelCount, numDirectoriesPrefetch));
+            ConfigCache.AddOptionDescription((uint)OptionKey.ChannelCount, ConfigType.Int, "Number of channels", false);
+            ConfigCache.AddOptionValue((uint)OptionKey.ChannelCount, numChannelsPrefetch);
+            ConfigCache.AddOptionDescription((uint)OptionKey.DirectoryCount, ConfigType.Int, "Number of directories", false);
+            ConfigCache.AddOptionValue((uint)OptionKey.DirectoryCount, numDirectoriesPrefetch);
         }
 
         private Authenticator MakeAuthenticator()
@@ -80,32 +79,6 @@ namespace BAPSPresenterNG
                 Server = login.ViewModel.Server,
                 Port = login.ViewModel.Port
             };
-        }
-
-        /// <summary>
-        ///     Handle the client core's <see cref="ClientCore.ReceiverCreated" />
-        ///     event.
-        ///     <para>
-        ///         This does two things: first, it tells the config cache to
-        ///         listen to server updates involving server configuration;
-        ///         second, it installs some objects that convert server and
-        ///         config updates to message bus messages.
-        ///     </para>
-        /// </summary>
-        /// <param name="sender">Ignored.</param>
-        /// <param name="e">The newly-created <see cref="Receiver" />.</param>
-        private void HandleReceiverCreated(object sender, Receiver e)
-        {
-            ConfigCache.InstallReceiverEventHandlers(e);
-
-            // These objects listen to events on various parts of the BAPS
-            // client, and convert them to messages on the messenger bus.
-            // The various view models then register onto the bus, meaning that
-            // they receive server and config updates without directly wiring
-            // them together.
-            var messenger = ViewModelLocator.Messenger;
-            _rma = new ReceiverMessengerAdapter(e, messenger);
-            _cma = new ConfigMessengerAdapter(ConfigCache, messenger);
         }
 
         private void AboutToAuthenticate(object sender, [NotNull] Authenticator e)

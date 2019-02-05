@@ -30,14 +30,23 @@ namespace BAPSPresenterNG.ViewModel
 
         [CanBeNull] private RelayCommand<ushort> _forwardStopCommand;
         private string _text;
+
+        [NotNull] private readonly IServerUpdater _updater;
+        [NotNull] private readonly ConfigCache _config;
         [NotNull] private readonly ChannelControllerSet _controllerSet;
 
-        public MainViewModel([CanBeNull] IMessenger messenger, [CanBeNull] ChannelControllerSet controllerSet) : base(messenger)
+        public MainViewModel(
+            [CanBeNull] ConfigCache config,
+            // TODO(@MattWindsor91): this should be IServerUpdater, but I'm not sure how to get SimpleIoC to inject it otherwise.
+            [CanBeNull] IClientCore updater,
+            [CanBeNull] ChannelControllerSet controllerSet)
         {
+            _config = config ?? throw new ArgumentNullException(nameof(config));
             _controllerSet = controllerSet ?? throw new ArgumentNullException(nameof(controllerSet));
+            _updater = updater ?? throw new ArgumentNullException(nameof(updater));
             
             Text = "<You can type notes here>";
-            Register();
+            RegisterForConfigUpdates();
         }
 
         /// <summary>
@@ -111,13 +120,18 @@ namespace BAPSPresenterNG.ViewModel
             return Channels.ElementAtOrDefault(channelId);
         }
 
-        private void Register()
+        /// <summary>
+        ///     Registers the view model against the config cache's config update events.
+        ///     <para>
+        ///         This view model lasts until the presenter quits, so we don't manually unregister from these events.
+        ///     </para>
+        /// </summary>
+        private void RegisterForConfigUpdates()
         {
-            var messenger = MessengerInstance;
-            messenger.Register<ConfigCache.IntChangeEventArgs>(this, HandleConfigIntChange);
+            _config.IntChanged += HandleConfigIntChange;
         }
 
-        private void HandleConfigIntChange(ConfigCache.IntChangeEventArgs args)
+        private void HandleConfigIntChange(object sender, ConfigCache.IntChangeEventArgs args)
         {
             switch (args.Key)
             {
@@ -131,12 +145,15 @@ namespace BAPSPresenterNG.ViewModel
         }
 
         private static void UpdateObservable<T>(IEnumerable<T> objects, ICollection<T> target)
+            where T : IDisposable
         {
+            foreach (var o in target) o.Dispose();
             target.Clear();
             foreach (var o in objects) target.Add(o);
         }
 
         private static void HandleCountChange<T>(int newCount, ICollection<T> observableTarget, Func<ushort, T> factory)
+            where T : IDisposable
         {
             if (newCount == observableTarget.Count) return;
             var newObjects = new T[newCount];
@@ -154,17 +171,18 @@ namespace BAPSPresenterNG.ViewModel
             HandleCountChange(newDirectoryCount, Directories, MakeDirectoryViewModel);
         }
 
+        [Pure]
         private ChannelViewModel MakeChannelViewModel(ushort channelId)
         {
             var controller = _controllerSet.ControllerFor(channelId);
-            var player = new PlayerViewModel(channelId, controller);
-            return new ChannelViewModel(channelId, MessengerInstance, player, controller);
+            var player = new PlayerViewModel(channelId, _updater, controller);
+            return new ChannelViewModel(channelId, _config, _updater, player, controller);
         }
 
         [Pure]
         private DirectoryViewModel MakeDirectoryViewModel(ushort directoryId)
         {
-            return new DirectoryViewModel(directoryId, MessengerInstance);
+            return new DirectoryViewModel(directoryId, _updater);
         }
     }
 }

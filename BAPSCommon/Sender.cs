@@ -7,22 +7,27 @@ using JetBrains.Annotations;
 namespace BAPSClientCommon
 {
     /// <summary>
-    ///     A message-send loop for BAPSnet.
+    ///     A message-send loop for BapsNet.
     /// </summary>
     public class Sender
     {
-        [NotNull] private readonly BlockingCollection<Message> _queue;
+        [ItemNotNull, NotNull]  private readonly BlockingCollection<Message> _queue = new BlockingCollection<Message>();
 
         [NotNull] private readonly ClientSocket _socket;
         private readonly CancellationToken _token;
 
         /// <summary>
+        ///     Asynchronously sends a message through this <see cref="Sender"/>.
+        /// </summary>
+        /// <param name="message">The message to send.</param>
+        public void SendAsync([CanBeNull] Message message)
+        {
+            if (message != null) _queue.Add(message, _token);
+        }
+        
+        /// <summary>
         ///     Constructs a new <see cref="Sender" />.
         /// </summary>
-        /// <param name="queue">
-        ///     The message queue from which the <see cref="Sender" /> will receive
-        ///     BAPSnet messages.
-        /// </param>
         /// <param name="token">
         ///     The cancellation token that the <see cref="Sender" /> will check
         ///     to see if it should shut down.
@@ -31,10 +36,9 @@ namespace BAPSClientCommon
         ///     The <see cref="ClientSocket" /> that the <see cref="Sender" /> will
         ///     send packed BAPSnet messages on.
         /// </param>
-        public Sender(BlockingCollection<Message> queue, CancellationToken token, ClientSocket socket)
+        public Sender(CancellationToken token, ClientSocket socket)
         {
             _token = token;
-            _queue = queue ?? throw new ArgumentNullException(nameof(queue));
             _socket = socket ?? throw new ArgumentNullException(nameof(socket));
         }
 

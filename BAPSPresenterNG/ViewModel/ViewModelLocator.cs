@@ -27,9 +27,6 @@ namespace BAPSPresenterNG.ViewModel
         }
 
         [ProvidesContext]
-        public static IMessenger Messenger => ServiceLocator.Current.GetInstance<IMessenger>();
-
-        [ProvidesContext]
         public static IClientCore ClientCore =>
             ServiceLocator.Current.GetInstance<IClientCore>();
 
@@ -44,7 +41,6 @@ namespace BAPSPresenterNG.ViewModel
         
         private static void RegisterServices()
         {
-            SimpleIoc.Default.Register(() => GalaSoft.MvvmLight.Messaging.Messenger.Default, true);
             SimpleIoc.Default.Register<ConfigCache>();
             SimpleIoc.Default.Register<ConfigController>();
             SimpleIoc.Default.Register<ChannelControllerSet>();

@@ -1,8 +1,10 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using BAPSClientCommon;
 using BAPSClientCommon.Events;
 using BAPSClientCommon.Model;
 using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Messaging;
+using GalaSoft.MvvmLight.Threading;
 using JetBrains.Annotations;
 
 namespace BAPSPresenterNG.ViewModel
@@ -10,14 +12,16 @@ namespace BAPSPresenterNG.ViewModel
     /// <summary>
     ///     The view model for a directory.
     /// </summary>
-    public class DirectoryViewModel : ViewModelBase
+    public class DirectoryViewModel : ViewModelBase, IDisposable
     {
         private string _name;
+        private readonly IServerUpdater _updater;
 
-        public DirectoryViewModel(ushort directoryId, [CanBeNull] IMessenger messenger) : base(messenger)
+        public DirectoryViewModel(ushort directoryId, [CanBeNull] IServerUpdater updater)
         {
+            _updater = updater;
             DirectoryId = directoryId;
-            Register();
+            RegisterForServerUpdates();
         }
 
         public ushort DirectoryId { get; }
@@ -41,17 +45,23 @@ namespace BAPSPresenterNG.ViewModel
         /// </summary>
         public ObservableCollection<DirectoryEntry> Files { get; } = new ObservableCollection<DirectoryEntry>();
 
-        private void Register()
+        private void RegisterForServerUpdates()
         {
-            var m = MessengerInstance;
-            m.Register<Updates.DirectoryFileAddArgs>(this, HandleDirectoryFileAdd);
-            m.Register<Updates.DirectoryPrepareArgs>(this, HandleDirectoryPrepare);
+            _updater.DirectoryFileAdd += HandleDirectoryFileAdd;
+            _updater.DirectoryPrepare += HandleDirectoryPrepare;
         }
 
-        private void HandleDirectoryFileAdd(Updates.DirectoryFileAddArgs e)
+        private void UnregisterForServerUpdates()
+        {
+            _updater.DirectoryFileAdd -= HandleDirectoryFileAdd;
+            _updater.DirectoryPrepare -= HandleDirectoryPrepare;
+        }
+
+        private void HandleDirectoryFileAdd(object sender, Updates.DirectoryFileAddArgs e)
         {
             if (e.DirectoryId != DirectoryId) return;
-            Files.Insert((int) e.Index, new DirectoryEntry(DirectoryId, e.Description));
+            var entry = new DirectoryEntry(DirectoryId, e.Description);
+            DispatcherHelper.CheckBeginInvokeOnUI(() => Files.Insert((int) e.Index, entry));
         }
 
         /// <summary>
@@ -63,12 +73,18 @@ namespace BAPSPresenterNG.ViewModel
         ///         previously been used.
         ///     </para>
         /// </summary>
-        /// <param name="e">The server update payload</param>
-        private void HandleDirectoryPrepare(Updates.DirectoryPrepareArgs e)
+        /// <param name="sender">Ignored.</param>
+        /// <param name="e">The server update payload.</param>
+        private void HandleDirectoryPrepare(object sender, Updates.DirectoryPrepareArgs e)
         {
             if (e.DirectoryId != DirectoryId) return;
-            Files.Clear();
             Name = e.Name;
+            DispatcherHelper.CheckBeginInvokeOnUI(Files.Clear);
+        }
+
+        public void Dispose()
+        {
+            UnregisterForServerUpdates();
         }
     }
 }

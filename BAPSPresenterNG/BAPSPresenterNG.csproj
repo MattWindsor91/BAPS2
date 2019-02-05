@@ -87,7 +87,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ConfigMessengerAdapter.cs" />
     <Compile Include="Controls\Directory.xaml.cs">
       <DependentUpon>Directory.xaml</DependentUpon>
     </Compile>
@@ -103,8 +102,6 @@
     </Compile>
     <Compile Include="Controls\Header.cs" />
     <Compile Include="Converters\PositionScaleConverter.cs" />
-    <Compile Include="EventMessengerAdapterBase.cs" />
-    <Compile Include="ReceiverMessengerAdapter.cs" />
     <Compile Include="Controls\TransportButton.xaml.cs">
       <DependentUpon>TransportButton.xaml</DependentUpon>
     </Compile>

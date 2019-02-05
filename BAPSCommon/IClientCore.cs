@@ -7,7 +7,7 @@ namespace BAPSClientCommon
     /// <summary>
     ///     Interface for objects encapsulating the core features of a BapsNet client.
     /// </summary>
-    public interface IClientCore : IDisposable
+    public interface IClientCore : IDisposable, IServerUpdater
     {
         /// <summary>
         ///     Sends a BapsNet message asynchronously through this client's
@@ -30,12 +30,6 @@ namespace BAPSClientCommon
         ///     </para>
         /// </summary>
         event EventHandler<(int numChannelsPrefetch, int numDirectoriesPrefetch)> AboutToAutoUpdate;
-
-        /// <summary>
-        ///     Event raised when the <see cref="ClientCore" /> has created a receiver.
-        ///     Subscribe to this in order to attach reactions to receiver events.
-        /// </summary>
-        event EventHandler<Receiver> ReceiverCreated;
 
         /// <summary>
         ///     Tries to authenticate and launch a BAPS client.

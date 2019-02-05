@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows;
+using BAPSClientCommon;
 using BAPSClientCommon.Controllers;
 using BAPSClientCommon.Events;
 using BAPSClientCommon.Model;
@@ -14,7 +15,7 @@ namespace BAPSPresenterNG.ViewModel
     /// <summary>
     ///     View model governing the player head of a channel.
     /// </summary>
-    public class PlayerViewModel : ViewModelBase
+    public class PlayerViewModel : ViewModelBase, IDisposable
     {
         private readonly ushort _id;
 
@@ -35,14 +36,20 @@ namespace BAPSPresenterNG.ViewModel
         private ChannelState _state;
 
         [CanBeNull] private RelayCommand _stopCommand;
+        [CanBeNull] private IServerUpdater _updater;
 
-        public PlayerViewModel(ushort id, [CanBeNull] ChannelController controller)
+        public PlayerViewModel(ushort id,
+            [CanBeNull] IServerUpdater updater,
+            [CanBeNull] ChannelController controller)
         {
             _id = id;
+            _updater = updater;
             Controller = controller;
+
+            RegisterForServerUpdates();
         }
 
-        public PlayerViewModel() : this(0, null)
+        public PlayerViewModel() : this(0, null, null)
         {
         }
 
@@ -267,21 +274,29 @@ namespace BAPSPresenterNG.ViewModel
             return HasController;
         }
 
-        public void Register(IMessenger messenger)
+        private void RegisterForServerUpdates()
         {
-            MessengerInstance = messenger;
-            messenger.Register<Updates.PlayerStateEventArgs>(this, HandlePlayerState);
-            messenger.Register<Updates.MarkerEventArgs>(this, HandleMarker);
-            messenger.Register<Updates.TrackLoadEventArgs>(this, HandleTrackLoad);
+            if (_updater == null) return;
+            _updater.ChannelState += HandlePlayerState;
+            _updater.ChannelMarker += HandleMarker;
+            _updater.TrackLoad += HandleTrackLoad;
+        }
+        
+        private void UnregisterForServerUpdates()
+        {
+            if (_updater == null) return;
+            _updater.ChannelState -= HandlePlayerState;
+            _updater.ChannelMarker -= HandleMarker;
+            _updater.TrackLoad -= HandleTrackLoad;
         }
 
-        private void HandlePlayerState(Updates.PlayerStateEventArgs id)
+        private void HandlePlayerState(object sender, Updates.PlayerStateEventArgs id)
         {
             if (id.ChannelId != _id) return;
             State = id.State;
         }
 
-        private void HandleMarker(Updates.MarkerEventArgs args)
+        private void HandleMarker(object sender, Updates.MarkerEventArgs args)
         {
             if (args.ChannelId != _id) return;
 
@@ -330,13 +345,18 @@ namespace BAPSPresenterNG.ViewModel
             IntroPosition = 0;
         }
 
-        private void HandleTrackLoad(Updates.TrackLoadEventArgs args)
+        private void HandleTrackLoad(object sender, Updates.TrackLoadEventArgs args)
         {
             if (args.ChannelId != _id) return;
 
             var track = args.Track;
             LoadedTrack = track;
             if (!(track.IsAudioItem || track.IsTextItem)) Zero();
+        }
+
+        public void Dispose()
+        {
+            UnregisterForServerUpdates();
         }
     }
 }

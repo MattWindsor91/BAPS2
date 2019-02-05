@@ -8,7 +8,7 @@ namespace BAPSPresenter2
 {
     partial class Main
     {
-        private void SetupPlaylistReactions(Receiver r)
+        private void SetupPlaylistReactions(IServerUpdater r)
         {
             r.ItemAdd += (sender, e) =>
             {

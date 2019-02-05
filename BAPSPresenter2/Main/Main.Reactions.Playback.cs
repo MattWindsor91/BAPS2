@@ -9,7 +9,7 @@ namespace BAPSPresenter2
 {
     partial class Main
     {
-        private void SetupPlaybackReactions(Receiver r)
+        private void SetupPlaybackReactions(IServerUpdater r)
         {
             r.ChannelState += (sender, e) =>
             {

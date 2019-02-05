@@ -87,10 +87,10 @@ namespace BAPSPresenter2
 
             var auth = new Authenticator(LoginCallback);
             _core = new ClientCore(auth);
+            SetupReactions(_core);
             
             _core.AboutToAuthenticate += SetupAuthErrorReactions;
             _core.AboutToAutoUpdate += Setup;
-            _core.ReceiverCreated += SetupReactions;
             var launched = _core.Launch();
             if (!launched)
             {
@@ -208,7 +208,7 @@ namespace BAPSPresenter2
             }
         }
 
-        private void SetupReactions(object sender, Receiver r)
+        private void SetupReactions(IServerUpdater r)
         {
             SetupPlaybackReactions(r);
             SetupPlaylistReactions(r);
@@ -218,7 +218,7 @@ namespace BAPSPresenter2
             SetupGeneralReactions(r);
         }
 
-        private void SetupGeneralReactions(Receiver r)
+        private void SetupGeneralReactions(IServerUpdater r)
         {
             r.IncomingCount += (sender, e) =>
             {
