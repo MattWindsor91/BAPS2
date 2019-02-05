@@ -304,19 +304,19 @@ namespace BAPSPresenterNG.ViewModel
         private void RequestPlay()
         {
             Debug.Assert(Controller != null, nameof(Controller) + " != null");
-            Controller.Play();
+            Controller.SetState(ChannelState.Playing);
         }
 
         private void RequestPause()
         {
             Debug.Assert(Controller != null, nameof(Controller) + " != null");
-            Controller.Pause();
+            Controller.SetState(ChannelState.Paused);
         }
 
         private void RequestStop()
         {
             Debug.Assert(Controller != null, nameof(Controller) + " != null");
-            Controller.Stop();
+            Controller.SetState(ChannelState.Stopped);
         }
 
 

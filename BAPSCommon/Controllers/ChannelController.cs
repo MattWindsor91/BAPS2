@@ -25,30 +25,6 @@ namespace BAPSClientCommon.Controllers
         }
 
         /// <summary>
-        ///     Asks the server to set this channel's state to 'playing'.
-        /// </summary>
-        public void Play()
-        {
-            SetState(ChannelState.Playing);
-        }
-
-        /// <summary>
-        ///     Asks the server to set this channel's state to 'paused'.
-        /// </summary>
-        public void Pause()
-        {
-            SetState(ChannelState.Paused);
-        }
-
-        /// <summary>
-        ///     Asks the server to set this channel's state to 'stopped'.
-        /// </summary>
-        public void Stop()
-        {
-            SetState(ChannelState.Stopped);
-        }
-
-        /// <summary>
         ///     Asks the server to set this channel's state to <see cref="state" />.
         /// </summary>
         /// <param name="state">The intended new state of the channel.</param>
