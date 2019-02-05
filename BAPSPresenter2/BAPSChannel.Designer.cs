@@ -1,4 +1,5 @@
-﻿using BAPSClientCommon.Events;
+﻿using System;
+using BAPSClientCommon.Events;
 
 namespace BAPSPresenter2
 {
@@ -119,7 +120,7 @@ namespace BAPSPresenter2
             this.trackTime.Size = new System.Drawing.Size(384, 72);
             this.trackTime.TabIndex = 227;
             this.trackTime.Text = "trackTime0";
-            this.trackTime.PositionChanged += new Requests.MarkerEventHandler(this.OnPositionChanged);
+            this.trackTime.PositionChanged += new EventHandler<Requests.MarkerEventArgs>(this.OnPositionChanged);
             // 
             // trackList
             // 

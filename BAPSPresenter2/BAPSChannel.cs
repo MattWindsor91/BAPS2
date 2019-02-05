@@ -77,7 +77,7 @@ namespace BAPSPresenter2
         ///     </para>
         /// </summary>
         public event Updates.ChannelStateEventHandler OpRequest;
-        public event Requests.MarkerEventHandler PositionRequestChange;
+        public event EventHandler<Requests.MarkerEventArgs> PositionRequestChange;
         public event TimelineChangeEventHandler TimelineChanged;
         public event EventHandler<uint> TrackBarMoved;
         public event ChannelConfigChangeHandler ChannelConfigChange;

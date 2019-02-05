@@ -18,7 +18,7 @@ namespace BAPSPresenter2
             {
                 if (InvokeRequired)
                 {
-                    Invoke((Updates.ConfigOptionHandler)processOption, sender, e);
+                    Invoke((EventHandler<Updates.ConfigOptionArgs>)processOption, sender, e);
                 }
                 else processOption(sender, e);
             };
@@ -26,7 +26,7 @@ namespace BAPSPresenter2
             {
                 if (InvokeRequired)
                 {
-                    Invoke((Updates.ConfigChoiceHandler)processChoice, sender, e);
+                    Invoke((EventHandler<Updates.ConfigChoiceArgs>)processChoice, sender, e);
                 }
                 else processChoice(sender, e);
             };
@@ -34,7 +34,7 @@ namespace BAPSPresenter2
             {
                 if (InvokeRequired)
                 {
-                    Invoke((Updates.ConfigSettingHandler)processConfigSetting, sender, e);
+                    Invoke((EventHandler<Updates.ConfigSettingArgs>)processConfigSetting, sender, e);
                 }
                 else processConfigSetting(sender, e);
             };

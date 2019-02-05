@@ -1,3 +1,5 @@
+using System;
+
 namespace BAPSClientCommon.ServerConfig
 {
     // Events sent by the config cache when it updates config options.
@@ -7,16 +9,10 @@ namespace BAPSClientCommon.ServerConfig
 
     public partial class ConfigCache
     {
-        public delegate void ChoiceChangeEventHandler(object sender, ChoiceChangeEventArgs e);
-
-        public delegate void IntChangeEventHandler(object sender, IntChangeEventArgs e);
-
-        public delegate void StringChangeEventHandler(object sender, StringChangeEventArgs e);
-
         /// <summary>
         ///     Event raised when a choice-type config option changes.
         /// </summary>
-        public event ChoiceChangeEventHandler ChoiceChanged;
+        public event EventHandler<ChoiceChangeEventArgs> ChoiceChanged;
 
         protected virtual void OnChoiceChanged(ChoiceChangeEventArgs e)
         {
@@ -26,12 +22,12 @@ namespace BAPSClientCommon.ServerConfig
         /// <summary>
         ///     Event raised when an integer-type config option changes.
         /// </summary>
-        public event IntChangeEventHandler IntChanged;
+        public event EventHandler<IntChangeEventArgs> IntChanged;
 
         /// <summary>
         ///     Event raised when a string-type config option changes.
         /// </summary>
-        public event StringChangeEventHandler StringChanged;
+        public event EventHandler<StringChangeEventArgs> StringChanged;
 
         protected virtual void OnIntChanged(IntChangeEventArgs e)
         {

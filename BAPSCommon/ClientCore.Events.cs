@@ -7,9 +7,9 @@ namespace BAPSClientCommon
 {
     public partial class ClientCore
     {
-        public event Updates.ConfigChoiceHandler ConfigChoice;
-        public event Updates.ConfigOptionHandler ConfigOption;
-        public event Updates.ConfigSettingHandler ConfigSetting;
+        public event EventHandler<Updates.ConfigChoiceArgs> ConfigChoice;
+        public event EventHandler<Updates.ConfigOptionArgs> ConfigOption;
+        public event EventHandler<Updates.ConfigSettingArgs> ConfigSetting;
         public event EventHandler<(Command cmdReceived, uint optionID, ConfigResult result)> ConfigResult;
         public event Updates.DirectoryFileAddHandler DirectoryFileAdd;
         public event Updates.DirectoryPrepareHandler DirectoryPrepare;

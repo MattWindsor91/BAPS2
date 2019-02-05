@@ -89,13 +89,13 @@ namespace BAPSClientCommonTests
 
         public class MockReceiver : IConfigServerUpdater
         {
-            public event Updates.ConfigChoiceHandler ConfigChoice;
+            public event EventHandler<Updates.ConfigChoiceArgs> ConfigChoice;
 
-            public event Updates.ConfigOptionHandler ConfigOption;
+            public event EventHandler<Updates.ConfigOptionArgs> ConfigOption;
 
             public event EventHandler<(Command cmdReceived, uint optionID, ConfigResult result)> ConfigResult;
 
-            public event Updates.ConfigSettingHandler ConfigSetting;
+            public event EventHandler<Updates.ConfigSettingArgs> ConfigSetting;
             public event Updates.ChannelStateEventHandler ChannelState;
 
             public void OnConfigChoice(Updates.ConfigChoiceArgs e)

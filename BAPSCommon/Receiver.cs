@@ -126,21 +126,21 @@ namespace BAPSClientCommon
 
         #region Config events
 
-        public event Updates.ConfigOptionHandler ConfigOption;
+        public event EventHandler<Updates.ConfigOptionArgs> ConfigOption;
 
         private void OnConfigOption(Updates.ConfigOptionArgs args)
         {
             ConfigOption?.Invoke(this, args);
         }
 
-        public event Updates.ConfigChoiceHandler ConfigChoice;
+        public event EventHandler<Updates.ConfigChoiceArgs> ConfigChoice;
 
         private void OnConfigChoice(Updates.ConfigChoiceArgs args)
         {
             ConfigChoice?.Invoke(this, args);
         }
 
-        public event Updates.ConfigSettingHandler ConfigSetting;
+        public event EventHandler<Updates.ConfigSettingArgs> ConfigSetting;
 
         private void OnConfigSetting(Updates.ConfigSettingArgs args)
         {

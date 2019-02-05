@@ -38,18 +38,18 @@ namespace BAPSClientCommon
         /// <summary>
         ///     Event raised when the server declares a config choice.
         /// </summary>
-        event Updates.ConfigChoiceHandler ConfigChoice;
+        event EventHandler<Updates.ConfigChoiceArgs> ConfigChoice;
 
         /// <summary>
         ///     Event raised when the server declares a config option.
         /// </summary>
-        event Updates.ConfigOptionHandler ConfigOption;
+        event EventHandler<Updates.ConfigOptionArgs> ConfigOption;
 
         /// <summary>
         ///     Event raised when the server declares that a setting on a
         ///     config option has changed.
         /// </summary>
-        event Updates.ConfigSettingHandler ConfigSetting;
+        event EventHandler<Updates.ConfigSettingArgs> ConfigSetting;
 
         event EventHandler<(Command cmdReceived, uint optionID, ConfigResult result)> ConfigResult;
     }

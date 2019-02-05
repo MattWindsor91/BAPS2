@@ -3,7 +3,6 @@ using BAPSClientCommon.Controllers;
 using BAPSClientCommon.ServerConfig;
 using CommonServiceLocator;
 using GalaSoft.MvvmLight.Ioc;
-using GalaSoft.MvvmLight.Messaging;
 using JetBrains.Annotations;
 
 namespace BAPSPresenterNG.ViewModel
@@ -30,15 +29,13 @@ namespace BAPSPresenterNG.ViewModel
         public static IClientCore ClientCore =>
             ServiceLocator.Current.GetInstance<IClientCore>();
 
-        [ProvidesContext]
-        public static LoginViewModel Login => ServiceLocator.Current.GetInstance<LoginViewModel>();
-        
-        [ProvidesContext]
-        public static MainViewModel Main => ServiceLocator.Current.GetInstance<MainViewModel>();
+        [ProvidesContext] public static LoginViewModel Login => ServiceLocator.Current.GetInstance<LoginViewModel>();
+
+        [ProvidesContext] public static MainViewModel Main => ServiceLocator.Current.GetInstance<MainViewModel>();
 
         [ProvidesContext]
         public static ChannelControllerSet ControllerSet => ServiceLocator.Current.GetInstance<ChannelControllerSet>();
-        
+
         private static void RegisterServices()
         {
             SimpleIoc.Default.Register<ConfigCache>();

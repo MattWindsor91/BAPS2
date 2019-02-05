@@ -18,7 +18,7 @@ namespace BAPSFormControls
 
     public partial class TrackTime : Control
     {
-        public event Requests.MarkerEventHandler PositionChanged;
+        public event EventHandler<Requests.MarkerEventArgs> PositionChanged;
 
         private const int BASE_Y_LINE = 44;
         private const int BASE_Y_INTRO_ARROW = 8;

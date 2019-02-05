@@ -7,7 +7,6 @@ using BAPSClientCommon.Events;
 using BAPSClientCommon.Model;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
 using JetBrains.Annotations;
 
 namespace BAPSPresenterNG.ViewModel
@@ -36,7 +35,7 @@ namespace BAPSPresenterNG.ViewModel
         private ChannelState _state;
 
         [CanBeNull] private RelayCommand _stopCommand;
-        [CanBeNull] private IServerUpdater _updater;
+        [CanBeNull] private readonly IServerUpdater _updater;
 
         public PlayerViewModel(ushort id,
             [CanBeNull] IServerUpdater updater,
@@ -244,6 +243,11 @@ namespace BAPSPresenterNG.ViewModel
                                                RequestStop,
                                                CanRequestStop));
 
+        public void Dispose()
+        {
+            UnregisterForServerUpdates();
+        }
+
         /// <summary>
         ///     Whether it is ok to ask the server to start playing on this channel.
         /// </summary>
@@ -281,7 +285,7 @@ namespace BAPSPresenterNG.ViewModel
             _updater.ChannelMarker += HandleMarker;
             _updater.TrackLoad += HandleTrackLoad;
         }
-        
+
         private void UnregisterForServerUpdates()
         {
             if (_updater == null) return;
@@ -352,11 +356,6 @@ namespace BAPSPresenterNG.ViewModel
             var track = args.Track;
             LoadedTrack = track;
             if (!(track.IsAudioItem || track.IsTextItem)) Zero();
-        }
-
-        public void Dispose()
-        {
-            UnregisterForServerUpdates();
         }
     }
 }

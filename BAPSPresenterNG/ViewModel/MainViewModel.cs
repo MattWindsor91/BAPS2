@@ -5,10 +5,8 @@ using System.Linq;
 using BAPSClientCommon;
 using BAPSClientCommon.Controllers;
 using BAPSClientCommon.ServerConfig;
-using CommonServiceLocator;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
 using JetBrains.Annotations;
 
@@ -24,16 +22,16 @@ namespace BAPSPresenterNG.ViewModel
     [UsedImplicitly]
     public class MainViewModel : ViewModelBase
     {
+        [NotNull] private readonly ConfigCache _config;
+        [NotNull] private readonly ChannelControllerSet _controllerSet;
+
+        [NotNull] private readonly IServerUpdater _updater;
         [CanBeNull] private RelayCommand<ushort> _forwardPauseCommand;
 
         [CanBeNull] private RelayCommand<ushort> _forwardPlayCommand;
 
         [CanBeNull] private RelayCommand<ushort> _forwardStopCommand;
         private string _text;
-
-        [NotNull] private readonly IServerUpdater _updater;
-        [NotNull] private readonly ConfigCache _config;
-        [NotNull] private readonly ChannelControllerSet _controllerSet;
 
         public MainViewModel(
             [CanBeNull] ConfigCache config,
@@ -44,7 +42,7 @@ namespace BAPSPresenterNG.ViewModel
             _config = config ?? throw new ArgumentNullException(nameof(config));
             _controllerSet = controllerSet ?? throw new ArgumentNullException(nameof(controllerSet));
             _updater = updater ?? throw new ArgumentNullException(nameof(updater));
-            
+
             Text = "<You can type notes here>";
             RegisterForConfigUpdates();
         }

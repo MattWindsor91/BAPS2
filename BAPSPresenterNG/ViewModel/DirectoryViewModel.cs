@@ -14,8 +14,8 @@ namespace BAPSPresenterNG.ViewModel
     /// </summary>
     public class DirectoryViewModel : ViewModelBase, IDisposable
     {
-        private string _name;
         private readonly IServerUpdater _updater;
+        private string _name;
 
         public DirectoryViewModel(ushort directoryId, [CanBeNull] IServerUpdater updater)
         {
@@ -44,6 +44,11 @@ namespace BAPSPresenterNG.ViewModel
         ///     The collection of files the server reports as being in this directory.
         /// </summary>
         public ObservableCollection<DirectoryEntry> Files { get; } = new ObservableCollection<DirectoryEntry>();
+
+        public void Dispose()
+        {
+            UnregisterForServerUpdates();
+        }
 
         private void RegisterForServerUpdates()
         {
@@ -80,11 +85,6 @@ namespace BAPSPresenterNG.ViewModel
             if (e.DirectoryId != DirectoryId) return;
             Name = e.Name;
             DispatcherHelper.CheckBeginInvokeOnUI(Files.Clear);
-        }
-
-        public void Dispose()
-        {
-            UnregisterForServerUpdates();
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using BAPSClientWindows;
 using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Ioc;
 using JetBrains.Annotations;
 
 namespace BAPSPresenterNG.ViewModel

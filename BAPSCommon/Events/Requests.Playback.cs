@@ -5,13 +5,6 @@ namespace BAPSClientCommon.Events
     public static partial class Requests
     {
         /// <summary>
-        ///     Event handler for channel marker change requests.
-        /// </summary>
-        /// <param name="sender">The sender of this event.</param>
-        /// <param name="e">The payload of this event.</param>
-        public delegate void MarkerEventHandler(object sender, MarkerEventArgs e);
-
-        /// <summary>
         ///     Payload for a channel marker (position/cue/intro) change request.
         /// </summary>
         public class MarkerEventArgs : Events.MarkerEventArgs

@@ -78,17 +78,17 @@
                         <Style.Triggers>
                             <MultiDataTrigger>
                                 <MultiDataTrigger.Conditions>
-                                    <Condition Binding="{Binding Description}" Value="--LOAD FAILED--"/>
-                                    <Condition Binding="{Binding IsAudioItem}" Value="False"/>
+                                    <Condition Binding="{Binding Description}" Value="--LOAD FAILED--" />
+                                    <Condition Binding="{Binding IsAudioItem}" Value="False" />
                                 </MultiDataTrigger.Conditions>
                                 <MultiDataTrigger.Setters>
-                                    <Setter Property="Background" Value="{StaticResource NameWarningBgBrush}"/>
+                                    <Setter Property="Background" Value="{StaticResource NameWarningBgBrush}" />
                                 </MultiDataTrigger.Setters>
                             </MultiDataTrigger>
 
                         </Style.Triggers>
                     </Style>
-                </TextBlock.Style> 
+                </TextBlock.Style>
             </TextBlock>
         </Border>
         <!-- Track bar -->

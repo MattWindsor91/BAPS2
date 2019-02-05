@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows;
-using System.Windows.Threading;
 using BAPSClientCommon;
 using BAPSClientCommon.Controllers;
 using BAPSClientCommon.Events;
@@ -11,7 +9,6 @@ using BAPSClientCommon.Model;
 using BAPSClientCommon.ServerConfig;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
 using GongSolutions.Wpf.DragDrop;
 using JetBrains.Annotations;
@@ -26,6 +23,7 @@ namespace BAPSPresenterNG.ViewModel
     /// </summary>
     public class ChannelViewModel : ViewModelBase, IDropTarget, IDisposable
     {
+        private string _name;
         [CanBeNull] private RelayCommand _toggleAutoAdvanceCommand;
         [CanBeNull] private RelayCommand _togglePlayOnLoadCommand;
 
@@ -70,7 +68,6 @@ namespace BAPSPresenterNG.ViewModel
                 RaisePropertyChanged(nameof(Name));
             }
         }
-        private string _name;
 
         private ushort ChannelId { get; }
 
@@ -99,6 +96,12 @@ namespace BAPSPresenterNG.ViewModel
                                                        ?? (_togglePlayOnLoadCommand = new RelayCommand(
                                                            () => ToggleConfig(ChannelConfigChangeType.PlayOnLoad,
                                                                IsPlayOnLoad)));
+
+        public void Dispose()
+        {
+            UnregisterForServerUpdates();
+            UnregisterForConfigUpdates();
+        }
 
         public void DragOver(IDropInfo dropInfo)
         {
@@ -134,8 +137,8 @@ namespace BAPSPresenterNG.ViewModel
         /// <summary>
         ///     Registers the view model against server update events.
         ///     <para>
-        ///         This view model can be disposed during run-time, so <see cref="UnregisterForServerUpdates"/>
-        ///         (called during <see cref="Dispose"/>) should be kept in sync with it.
+        ///         This view model can be disposed during run-time, so <see cref="UnregisterForServerUpdates" />
+        ///         (called during <see cref="Dispose" />) should be kept in sync with it.
         ///     </para>
         /// </summary>
         private void RegisterForServerUpdates()
@@ -146,12 +149,12 @@ namespace BAPSPresenterNG.ViewModel
             _updater.ItemDelete += HandleItemDelete;
             _updater.ResetPlaylist += HandleResetPlaylist;
         }
-        
+
         /// <summary>
         ///     Registers the view model against the config cache's config update events.
         ///     <para>
-        ///         This view model can be disposed during run-time, so <see cref="UnregisterForConfigUpdates"/>
-        ///         (called during <see cref="Dispose"/>) should be kept in sync with it.
+        ///         This view model can be disposed during run-time, so <see cref="UnregisterForConfigUpdates" />
+        ///         (called during <see cref="Dispose" />) should be kept in sync with it.
         ///     </para>
         /// </summary>
         private void RegisterForConfigUpdates()
@@ -171,7 +174,7 @@ namespace BAPSPresenterNG.ViewModel
             _updater.ItemDelete -= HandleItemDelete;
             _updater.ResetPlaylist -= HandleResetPlaylist;
         }
-        
+
         /// <summary>
         ///     Unregisters the view model from all config update events.
         /// </summary>
@@ -359,11 +362,5 @@ namespace BAPSPresenterNG.ViewModel
         }
 
         #endregion Tracklist event handlers
-
-        public void Dispose()
-        {
-            UnregisterForServerUpdates();
-            UnregisterForConfigUpdates();
-        }
     }
 }

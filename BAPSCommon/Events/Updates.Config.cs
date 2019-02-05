@@ -4,12 +4,6 @@ namespace BAPSClientCommon.Events
 {
     public static partial class Updates
     {
-        public delegate void ConfigChoiceHandler(object sender, ConfigChoiceArgs e);
-
-        public delegate void ConfigOptionHandler(object sender, ConfigOptionArgs e);
-
-        public delegate void ConfigSettingHandler(object sender, ConfigSettingArgs e);
-
         /// <inheritdoc />
         /// <summary>
         ///     Event payload sent when the server declares a config choice.

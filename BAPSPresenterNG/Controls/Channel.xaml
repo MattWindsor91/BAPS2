@@ -67,7 +67,7 @@ The main channel control.
                 </fa:ImageAwesome>
                 <fa:ImageAwesome
                     Icon="PlayCircleOutline"
-                                 ToolTip="Play on load">
+                    ToolTip="Play on load">
                     <fa:ImageAwesome.Style>
                         <Style TargetType="{x:Type fa:ImageAwesome}"
                                BasedOn="{StaticResource ChannelLampStyle}">
