@@ -14,7 +14,7 @@ namespace BAPSPresenter2
             {
                 if (InvokeRequired)
                 {
-                    Invoke((Updates.DirectoryFileAddHandler)addFileToDirectoryList, sender, e);
+                    Invoke((EventHandler<Updates.DirectoryFileAddArgs>)addFileToDirectoryList, sender, e);
                 }
                 else addFileToDirectoryList(sender, e);
             };
@@ -22,7 +22,7 @@ namespace BAPSPresenter2
             {
                 if (InvokeRequired)
                 {
-                    Invoke((Updates.DirectoryPrepareHandler)clearFiles, sender, e);
+                    Invoke((EventHandler<Updates.DirectoryPrepareArgs>)clearFiles, sender, e);
                 }
                 else clearFiles(sender, e);
             };

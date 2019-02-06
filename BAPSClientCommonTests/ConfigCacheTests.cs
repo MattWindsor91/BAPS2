@@ -96,7 +96,6 @@ namespace BAPSClientCommonTests
             public event EventHandler<(Command cmdReceived, uint optionID, ConfigResult result)> ConfigResult;
 
             public event EventHandler<Updates.ConfigSettingArgs> ConfigSetting;
-            public event Updates.ChannelStateEventHandler ChannelState;
 
             public void OnConfigChoice(Updates.ConfigChoiceArgs e)
             {
@@ -111,11 +110,6 @@ namespace BAPSClientCommonTests
             public void OnConfigSetting(Updates.ConfigSettingArgs e)
             {
                 ConfigSetting?.Invoke(this, e);
-            }
-
-            protected virtual void OnChannelState(Updates.PlayerStateEventArgs e)
-            {
-                ChannelState?.Invoke(this, e);
             }
 
             protected virtual void OnConfigResult((Command cmdReceived, uint optionID, ConfigResult result) e)

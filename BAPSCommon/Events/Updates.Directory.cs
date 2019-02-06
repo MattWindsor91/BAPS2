@@ -2,10 +2,6 @@
 {
     public static partial class Updates
     {
-        public delegate void DirectoryFileAddHandler(object sender, DirectoryFileAddArgs e);
-
-        public delegate void DirectoryPrepareHandler(object sender, DirectoryPrepareArgs e);
-
         /// <inheritdoc />
         /// <summary>
         ///     Event payload for when the server adds a file to a directory.

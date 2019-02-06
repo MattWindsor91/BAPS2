@@ -15,7 +15,7 @@ namespace BAPSPresenter2
             {
                 if (InvokeRequired)
                 {
-                    Invoke((Updates.ChannelStateEventHandler)ShowChannelOperation, sender, e);
+                    Invoke((EventHandler<Updates.PlayerStateEventArgs>)ShowChannelOperation, sender, e);
                 }
                 else ShowChannelOperation(sender, e);
             };
@@ -23,7 +23,7 @@ namespace BAPSPresenter2
             {
                 if (InvokeRequired)
                 {
-                    Invoke((Updates.MarkerEventHandler)ShowPositionWithType, sender, e);
+                    Invoke((EventHandler<Updates.MarkerEventArgs>)ShowPositionWithType, sender, e);
                 }
                 else ShowPositionWithType(sender, e);
             };
@@ -31,7 +31,7 @@ namespace BAPSPresenter2
             {
                 if (InvokeRequired)
                 {
-                    Invoke((Updates.TrackLoadEventHandler)ShowLoadedItem, this, e);
+                    Invoke((EventHandler<Updates.TrackLoadEventArgs>)ShowLoadedItem, this, e);
                 }
                 else ShowLoadedItem(this, e);
             };

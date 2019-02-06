@@ -44,21 +44,21 @@ namespace BAPSClientCommon
 
         #region Playback events
 
-        public event Updates.ChannelStateEventHandler ChannelState;
+        public event EventHandler<Updates.PlayerStateEventArgs> ChannelState;
 
         private void OnChannelOperation(Updates.PlayerStateEventArgs e)
         {
             ChannelState?.Invoke(this, e);
         }
 
-        public event Updates.TrackLoadEventHandler TrackLoad;
+        public event EventHandler<Updates.TrackLoadEventArgs> TrackLoad;
 
         private void OnLoadedItem(Updates.TrackLoadEventArgs args)
         {
             TrackLoad?.Invoke(this, args);
         }
 
-        public event Updates.MarkerEventHandler ChannelMarker;
+        public event EventHandler<Updates.MarkerEventArgs> ChannelMarker;
 
         private void OnMarker(Updates.MarkerEventArgs e)
         {
@@ -69,28 +69,28 @@ namespace BAPSClientCommon
 
         #region Playlist events
 
-        public event Updates.ItemAddEventHandler ItemAdd;
+        public event EventHandler<Updates.TrackAddEventArgs> ItemAdd;
 
         private void OnItemAdd(Updates.TrackAddEventArgs e)
         {
             ItemAdd?.Invoke(this, e);
         }
 
-        public event Updates.ItemMoveEventHandler ItemMove;
+        public event EventHandler<Updates.TrackMoveEventArgs> ItemMove;
 
         private void OnItemMove(Updates.TrackMoveEventArgs e)
         {
             ItemMove?.Invoke(this, e);
         }
 
-        public event Updates.ItemDeleteEventHandler ItemDelete;
+        public event EventHandler<Updates.TrackDeleteEventArgs> ItemDelete;
 
         private void OnItemDelete(Updates.TrackDeleteEventArgs e)
         {
             ItemDelete?.Invoke(this, e);
         }
 
-        public event Updates.ChannelResetEventHandler ResetPlaylist;
+        public event EventHandler<Updates.ChannelResetEventArgs> ResetPlaylist;
 
         private void OnResetPlaylist(Updates.ChannelResetEventArgs e)
         {
@@ -186,30 +186,30 @@ namespace BAPSClientCommon
 
         #region System events
 
-        public event Updates.DirectoryFileAddHandler DirectoryFileAdd;
+        public event EventHandler<Updates.DirectoryFileAddArgs> DirectoryFileAdd;
 
-        public void OnDirectoryFileAdd(Updates.DirectoryFileAddArgs args)
+        private void OnDirectoryFileAdd(Updates.DirectoryFileAddArgs args)
         {
             DirectoryFileAdd?.Invoke(this, args);
         }
 
-        public event Updates.DirectoryPrepareHandler DirectoryPrepare;
+        public event EventHandler<Updates.DirectoryPrepareArgs> DirectoryPrepare;
 
-        public void OnDirectoryPrepare(Updates.DirectoryPrepareArgs args)
+        private void OnDirectoryPrepare(Updates.DirectoryPrepareArgs args)
         {
             DirectoryPrepare?.Invoke(this, args);
         }
 
         public event EventHandler<VersionInfo> Version;
 
-        public void OnVersion(VersionInfo v)
+        private void OnVersion(VersionInfo v)
         {
             Version?.Invoke(this, v);
         }
 
         public event EventHandler<Updates.UpDown> TextScroll;
 
-        public void OnTextScroll(Updates.UpDown upDown)
+        private void OnTextScroll(Updates.UpDown upDown)
         {
             TextScroll?.Invoke(this, upDown);
         }
@@ -223,7 +223,7 @@ namespace BAPSClientCommon
 
         public event EventHandler<bool> ServerQuit;
 
-        public void OnServerQuit(bool expected)
+        private void OnServerQuit(bool expected)
         {
             ServerQuit?.Invoke(this, expected);
         }
@@ -232,14 +232,14 @@ namespace BAPSClientCommon
 
         #region General events
 
-        public event Updates.CountEventHandler IncomingCount;
+        public event EventHandler<Updates.CountEventArgs> IncomingCount;
 
         private void OnIncomingCount(Updates.CountEventArgs e)
         {
             IncomingCount?.Invoke(this, e);
         }
 
-        public event Updates.ErrorEventHandler Error;
+        public event EventHandler<Updates.ErrorEventArgs> Error;
 
         private void OnError(Updates.ErrorEventArgs e)
         {

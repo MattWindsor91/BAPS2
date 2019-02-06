@@ -327,7 +327,6 @@ namespace BAPSPresenterNG.ViewModel
         }
 
         private RepetitionMode _repeatMode;
-        private readonly IServerUpdater _updater;
         private readonly ConfigCache _config;
 
         #endregion Channel flags

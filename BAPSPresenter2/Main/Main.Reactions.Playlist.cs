@@ -14,7 +14,7 @@ namespace BAPSPresenter2
             {
                 if (InvokeRequired)
                 {
-                    Invoke((Updates.ItemAddEventHandler)AddItem, sender, e);
+                    Invoke((EventHandler<Updates.TrackAddEventArgs>)AddItem, sender, e);
                 }
                 else AddItem(sender, e);
             };
@@ -22,7 +22,7 @@ namespace BAPSPresenter2
             {
                 if (InvokeRequired)
                 {
-                    Invoke((Updates.ItemMoveEventHandler)MoveItemTo, sender, e);
+                    Invoke((EventHandler<Updates.TrackMoveEventArgs>)MoveItemTo, sender, e);
                 }
                 else MoveItemTo(sender, e);
             };
@@ -30,7 +30,7 @@ namespace BAPSPresenter2
             {
                 if (InvokeRequired)
                 {
-                    Invoke((Updates.ItemDeleteEventHandler)DeleteItem, sender, e);
+                    Invoke((EventHandler<Updates.TrackDeleteEventArgs>)DeleteItem, sender, e);
                 }
                 else DeleteItem(sender, e);
             };
@@ -38,7 +38,7 @@ namespace BAPSPresenter2
             {
                 if (InvokeRequired)
                 {
-                    Invoke((Updates.ChannelResetEventHandler)CleanPlaylist, sender, e);
+                    Invoke((EventHandler<Updates.ChannelResetEventArgs>)CleanPlaylist, sender, e);
                 }
                 else CleanPlaylist(sender, e);
             };

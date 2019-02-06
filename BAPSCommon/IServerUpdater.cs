@@ -13,14 +13,14 @@ namespace BAPSClientCommon
         /// <summary>
         ///     Event raised when the server reports a change in channel state.
         /// </summary>
-        event Updates.ChannelStateEventHandler ChannelState;
+        event EventHandler<Updates.PlayerStateEventArgs> ChannelState;
 
         /// <summary>
         ///     Event raised when the server reports a change in channel marker.
         /// </summary>
-        event Updates.MarkerEventHandler ChannelMarker;
+        event EventHandler<Updates.MarkerEventArgs> ChannelMarker;
         
-        event Updates.TrackLoadEventHandler TrackLoad;
+        event EventHandler<Updates.TrackLoadEventArgs> TrackLoad;
     }
 
     /// <summary>
@@ -28,8 +28,8 @@ namespace BAPSClientCommon
     /// </summary>
     public interface IDirectoryServerUpdater
     {
-        event Updates.DirectoryFileAddHandler DirectoryFileAdd;
-        event Updates.DirectoryPrepareHandler DirectoryPrepare;
+        event EventHandler<Updates.DirectoryFileAddArgs> DirectoryFileAdd;
+        event EventHandler<Updates.DirectoryPrepareArgs> DirectoryPrepare;
     }
 
     /// <summary>
@@ -61,11 +61,11 @@ namespace BAPSClientCommon
     /// </summary>
     public interface IPlaylistServerUpdater
     {
-        event Updates.ItemAddEventHandler ItemAdd;
-        event Updates.ItemDeleteEventHandler ItemDelete;
-        event Updates.ItemMoveEventHandler ItemMove;
+        event EventHandler<Updates.TrackAddEventArgs> ItemAdd;
+        event EventHandler<Updates.TrackDeleteEventArgs> ItemDelete;
+        event EventHandler<Updates.TrackMoveEventArgs> ItemMove;
         
-        event Updates.ChannelResetEventHandler ResetPlaylist;
+        event EventHandler<Updates.ChannelResetEventArgs> ResetPlaylist;
     }
     
     /// <summary>
@@ -73,8 +73,8 @@ namespace BAPSClientCommon
     /// </summary>
     public interface IServerUpdater : IConfigServerUpdater, IDirectoryServerUpdater, IPlaybackServerUpdater, IPlaylistServerUpdater
     {
-        event Updates.ErrorEventHandler Error;
-        event Updates.CountEventHandler IncomingCount;
+        event EventHandler<Updates.ErrorEventArgs> Error;
+        event EventHandler<Updates.CountEventArgs> IncomingCount;
         event EventHandler<(Command cmdReceived, string ipAddress, uint mask)> IpRestriction;
 
         event EventHandler<(uint resultID, byte dirtyStatus, string description)> LibraryResult;

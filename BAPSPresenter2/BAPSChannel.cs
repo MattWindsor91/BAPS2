@@ -76,13 +76,13 @@ namespace BAPSPresenter2
         ///         same data.
         ///     </para>
         /// </summary>
-        public event Updates.ChannelStateEventHandler OpRequest;
+        public event EventHandler<Updates.PlayerStateEventArgs> OpRequest;
         public event EventHandler<Requests.MarkerEventArgs> PositionRequestChange;
         public event TimelineChangeEventHandler TimelineChanged;
         public event EventHandler<uint> TrackBarMoved;
         public event ChannelConfigChangeHandler ChannelConfigChange;
-        public event Updates.ItemDeleteEventHandler ItemDeleteRequest;
-        public event Updates.ChannelResetEventHandler ChannelResetRequest;
+        public event EventHandler<Updates.TrackDeleteEventArgs> ItemDeleteRequest;
+        public event EventHandler<Updates.ChannelResetEventArgs> ChannelResetRequest;
         public event EventHandler<TrackList> AudioWallRequest;
 
         #endregion Events used to talk to the main presenter

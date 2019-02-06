@@ -4,21 +4,6 @@ namespace BAPSClientCommon.Events
 {
     public static partial class Updates
     {
-        public delegate void ChannelResetEventHandler(object sender, ChannelResetEventArgs e);
-
-        /// <summary>
-        ///     Event handler for channel state server updates.
-        /// </summary>
-        /// <param name="sender">The sender of this event.</param>
-        /// <param name="e">The payload of this event.</param>
-        public delegate void ChannelStateEventHandler(object sender, PlayerStateEventArgs e);
-
-        public delegate void ItemAddEventHandler(object sender, TrackAddEventArgs e);
-
-        public delegate void ItemDeleteEventHandler(object sender, TrackDeleteEventArgs e);
-
-        public delegate void ItemMoveEventHandler(object sender, TrackMoveEventArgs e);
-
         /// <summary>
         ///     Payload for a channel track-list reset server update.
         /// </summary>

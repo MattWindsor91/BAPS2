@@ -5,20 +5,6 @@ namespace BAPSClientCommon.Events
     public static partial class Updates
     {
         /// <summary>
-        ///     Event handler for channel marker server updates.
-        /// </summary>
-        /// <param name="sender">The sender of this event.</param>
-        /// <param name="args">The payload of this event.</param>
-        public delegate void MarkerEventHandler(object sender, MarkerEventArgs args);
-
-        /// <summary>
-        ///     Event handler for track load server updates.
-        /// </summary>
-        /// <param name="sender">The sender of this event.</param>
-        /// <param name="args">The payload of this event.</param>
-        public delegate void TrackLoadEventHandler(object sender, TrackLoadEventArgs args);
-
-        /// <summary>
         ///     Payload for a channel marker (position/cue/intro) server update.
         /// </summary>
         public class MarkerEventArgs : Events.MarkerEventArgs
