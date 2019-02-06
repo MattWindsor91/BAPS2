@@ -4,10 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:BAPSPresenterNG.Controls"
-             xmlns:viewModel="clr-namespace:BAPSPresenterNG.ViewModel"
+             xmlns:mock="clr-namespace:BAPSPresenterNG.DesignData"
              xmlns:converters="clr-namespace:BAPSPresenterNG.Converters"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignData d:Type='{x:Type viewModel:PlayerViewModel}', d:Source='../DesignData/MarkerSetViewModel.xaml'}"
+             d:DataContext="{d:DesignInstance mock:MockPlayerViewModel, IsDesignTimeCreatable=True}"
              d:DesignWidth="300">
     <UserControl.Resources>
         <ResourceDictionary>

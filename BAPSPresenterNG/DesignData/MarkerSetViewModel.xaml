@@ -1,8 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-
-<viewModel:PlayerViewModel
-    xmlns:viewModel="clr-namespace:BAPSPresenterNG.ViewModel"
-    Duration="360000"
-    Position="200000"
-    IntroPosition="120000"
-    CuePosition="60000" />

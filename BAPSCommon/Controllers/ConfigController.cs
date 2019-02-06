@@ -21,7 +21,7 @@ namespace BAPSClientCommon.Controllers
         }
 
         /// <summary>
-        ///     Creates a BAPSNet message to set a Boolean ('Yes'/'No') option to one of its choices.
+        ///     Sends a BAPSNet message to set a Boolean ('Yes'/'No') option to one of its choices.
         /// </summary>
         /// <param name="optionKey">The key of the option to set.</param>
         /// <param name="flag">The Boolean equivalent of the new choice..</param>
@@ -32,7 +32,7 @@ namespace BAPSClientCommon.Controllers
         }
 
         /// <summary>
-        ///     Creates a BAPSNet message to set an option to one of its choices.
+        ///     Sends a BAPSNet message to set an option to one of its choices.
         /// </summary>
         /// <param name="optionKey">The key of the option to set.</param>
         /// <param name="choiceKey">The choice to use.</param>

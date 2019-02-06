@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows;
-using BAPSClientCommon;
 using BAPSClientCommon.Controllers;
 using BAPSClientCommon.Events;
 using BAPSClientCommon.Model;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.CommandWpf;
 using JetBrains.Annotations;
 
 namespace BAPSPresenterNG.ViewModel
@@ -14,7 +12,7 @@ namespace BAPSPresenterNG.ViewModel
     /// <summary>
     ///     View model governing the player head of a channel.
     /// </summary>
-    public class PlayerViewModel : ViewModelBase, IDisposable
+    public class PlayerViewModel : PlayerViewModelBase, IDisposable
     {
         private readonly ushort _id;
 
@@ -26,15 +24,10 @@ namespace BAPSPresenterNG.ViewModel
         /// </summary>
         [NotNull] private ITrack _loadedTrack = new NullTrack();
 
-        [CanBeNull] private RelayCommand _pauseCommand;
-
-        [CanBeNull] private RelayCommand _playCommand;
         private uint _position;
 
         private uint _startTime;
         private PlaybackState _state;
-
-        [CanBeNull] private RelayCommand _stopCommand;
 
         public PlayerViewModel(ushort id, [CanBeNull] IPlaybackController controller)
         {
@@ -51,7 +44,7 @@ namespace BAPSPresenterNG.ViewModel
         /// <summary>
         ///     The expected start time of the currently loaded item (if any).
         /// </summary>
-        public uint StartTime
+        public override uint StartTime
         {
             get => _startTime;
             set
@@ -65,7 +58,7 @@ namespace BAPSPresenterNG.ViewModel
         /// <summary>
         ///     The currently loaded item (if any).
         /// </summary>
-        public ITrack LoadedTrack
+        public override ITrack LoadedTrack
         {
             get => _loadedTrack;
             set
@@ -84,7 +77,7 @@ namespace BAPSPresenterNG.ViewModel
             }
         }
 
-        public PlaybackState State
+        protected override PlaybackState State
         {
             get => _state;
             set
@@ -101,39 +94,9 @@ namespace BAPSPresenterNG.ViewModel
         }
 
         /// <summary>
-        ///     Whether this channel is playing, according to the server.
-        ///     <para>
-        ///         This property should only be set when the server state
-        ///         changes.  When the user requests the channel to play, send
-        ///         <see cref="PlayCommand" />.
-        ///     </para>
-        /// </summary>
-        public bool IsPlaying => _state == PlaybackState.Playing;
-
-        /// <summary>
-        ///     Whether this channel is paused, according to the server.
-        ///     <para>
-        ///         This property should only be set when the server state
-        ///         changes.  When the user requests the channel to pause, send
-        ///         <see cref="PauseCommand" />.
-        ///     </para>
-        /// </summary>
-        public bool IsPaused => _state == PlaybackState.Paused;
-
-        /// <summary>
-        ///     Whether this channel is stopped, according to the server.
-        ///     <para>
-        ///         This property should only be set when the server state
-        ///         changes.  When the user requests the channel to stop, send
-        ///         <see cref="StopCommand" />.
-        ///     </para>
-        /// </summary>
-        public bool IsStopped => _state == PlaybackState.Stopped;
-
-        /// <summary>
         ///     The position of the currently loaded item (if any), in milliseconds.
         /// </summary>
-        public uint Position
+        public override uint Position
         {
             get => _position;
             set
@@ -148,25 +111,9 @@ namespace BAPSPresenterNG.ViewModel
         }
 
         /// <summary>
-        ///     The position of the currently loaded item (if any),
-        ///     as a multiple of the duration.
-        /// </summary>
-        public double PositionScale => (double) Position / Duration;
-
-        /// <summary>
-        ///     The duration of the currently loaded item (if any), in milliseconds.
-        /// </summary>
-        public uint Duration => LoadedTrack.Duration;
-
-        /// <summary>
-        ///     The amount of milliseconds remaining in the currently loaded item.
-        /// </summary>
-        public uint Remaining => Duration - Position;
-
-        /// <summary>
         ///     The cue position of the currently loaded item (if any), in milliseconds.
         /// </summary>
-        public uint CuePosition
+        public override uint CuePosition
         {
             get => _cuePosition;
             set
@@ -179,15 +126,9 @@ namespace BAPSPresenterNG.ViewModel
         }
 
         /// <summary>
-        ///     The cue position of the currently loaded item (if any),
-        ///     as a multiple of the duration.
-        /// </summary>
-        public double CuePositionScale => (double) CuePosition / Duration;
-
-        /// <summary>
         ///     The intro position of the currently loaded item (if any).
         /// </summary>
-        public uint IntroPosition
+        public override uint IntroPosition
         {
             get => _introPosition;
             set
@@ -199,77 +140,29 @@ namespace BAPSPresenterNG.ViewModel
             }
         }
 
-        /// <summary>
-        ///     The intro position of the currently loaded item (if any),
-        ///     as a multiple of the duration.
-        /// </summary>
-        public double IntroPositionScale => (double) IntroPosition / Duration;
-
-        /// <summary>
-        ///     A command that, when fired, asks the server to start playing
-        ///     on this channel.
-        /// </summary>
-        [NotNull]
-        public RelayCommand PlayCommand => _playCommand
-                                           ?? (_playCommand = new RelayCommand(
-                                               RequestPlay,
-                                               CanRequestPlay));
-
         private bool HasController => Controller != null;
 
-        /// <summary>
-        ///     A command that, when fired, asks the server to pause
-        ///     this channel.
-        /// </summary>
-        [NotNull]
-        public RelayCommand PauseCommand => _pauseCommand
-                                            ?? (_pauseCommand = new RelayCommand(
-                                                RequestPause,
-                                                CanRequestPause));
-
         [CanBeNull] private IPlaybackController Controller { get; }
-
-        /// <summary>
-        ///     A command that, when fired, asks the server to stop
-        ///     this channel.
-        /// </summary>
-        [NotNull]
-        public RelayCommand StopCommand => _stopCommand
-                                           ?? (_stopCommand = new RelayCommand(
-                                               RequestStop,
-                                               CanRequestStop));
 
         public void Dispose()
         {
             UnregisterForServerUpdates();
         }
 
-        /// <summary>
-        ///     Whether it is ok to ask the server to start playing on this channel.
-        /// </summary>
-        /// <returns>True provided that the <see cref="PlayCommand" /> can fire.</returns>
         [Pure]
-        private bool CanRequestPlay()
+        protected override bool CanRequestPlay()
         {
             return HasController && !IsPlaying;
         }
 
-        /// <summary>
-        ///     Whether it is ok to ask the server to pause this channel.
-        /// </summary>
-        /// <returns>True provided that the <see cref="PlayCommand" /> can fire.</returns>
         [Pure]
-        private bool CanRequestPause()
+        protected override bool CanRequestPause()
         {
             return HasController;
         }
 
-        /// <summary>
-        ///     Whether it is ok to ask the server to stop this channel.
-        /// </summary>
-        /// <returns>True provided that the <see cref="PlayCommand" /> can fire.</returns>
         [Pure]
-        private bool CanRequestStop()
+        protected override bool CanRequestStop()
         {
             return HasController;
         }
@@ -316,19 +209,19 @@ namespace BAPSPresenterNG.ViewModel
             }
         }
 
-        private void RequestPlay()
+        protected override void RequestPlay()
         {
             Debug.Assert(Controller != null, nameof(Controller) + " != null");
             Controller.SetState(PlaybackState.Playing);
         }
 
-        private void RequestPause()
+        protected override void RequestPause()
         {
             Debug.Assert(Controller != null, nameof(Controller) + " != null");
             Controller.SetState(PlaybackState.Paused);
         }
 
-        private void RequestStop()
+        protected override void RequestStop()
         {
             Debug.Assert(Controller != null, nameof(Controller) + " != null");
             Controller.SetState(PlaybackState.Stopped);
