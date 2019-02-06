@@ -8,16 +8,30 @@ namespace BAPSClientCommon.Controllers
 {
     /// <summary>
     ///     Abstraction between a channel user interface and the BapsNet protocol.
-    ///     <para>
-    ///         This class uses a blocking queue to talk to the
-    ///         <see cref="Sender" />, and thus should be thread-safe.
-    ///     </para>
     /// </summary>
-    public class ChannelController : BapsNetControllerBase
+    public class ChannelController : BapsNetControllerBase, IPlaybackController
     {
         private readonly ushort _channelId;
         [NotNull] private readonly ConfigController _config;
 
+        /// <summary>
+        ///     An event interface that broadcasts playback server updates.
+        ///     <para>
+        ///         Note that the updates may include other channels; anything subscribing to this interface
+        ///         must check incoming events to see if they affect the right channel.
+        ///     </para>
+        /// </summary>
+        public IPlaybackServerUpdater PlaybackUpdater => Core;
+        
+        /// <summary>
+        ///     An event interface that broadcasts playlist server updates.
+        ///     <para>
+        ///         Note that the updates may include other channels; anything subscribing to this interface
+        ///         must check incoming events to see if they affect the right channel.
+        ///     </para>
+        /// </summary>
+        public IPlaylistServerUpdater PlaylistUpdater => Core;
+        
         public ChannelController(ushort channelId, [CanBeNull] IClientCore core, [CanBeNull] ConfigController config) : base(core)
         {
             _channelId = channelId;
@@ -28,7 +42,7 @@ namespace BAPSClientCommon.Controllers
         ///     Asks the server to set this channel's state to <see cref="state" />.
         /// </summary>
         /// <param name="state">The intended new state of the channel.</param>
-        public void SetState(ChannelState state)
+        public void SetState(PlaybackState state)
         {
             SendAsync(new Message(state.AsCommand().WithChannel(_channelId)));
         }

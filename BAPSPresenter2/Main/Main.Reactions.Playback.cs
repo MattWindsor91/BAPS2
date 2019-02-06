@@ -59,15 +59,15 @@ namespace BAPSPresenter2
             var chan = _channels[e.ChannelId];
             switch (e.State)
             {
-                case ChannelState.Playing:
+                case PlaybackState.Playing:
                     chan.ShowPlay();
                     timeLine.Lock(e.ChannelId);
                     break;
-                case ChannelState.Paused:
+                case PlaybackState.Paused:
                     chan.ShowPause();
                     timeLine.Unlock(e.ChannelId);
                     break;
-                case ChannelState.Stopped:
+                case PlaybackState.Stopped:
                     chan.ShowStop();
                     timeLine.Unlock(e.ChannelId);
                     break;

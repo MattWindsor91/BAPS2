@@ -6,40 +6,40 @@ namespace BAPSClientCommon.Model
     /// <summary>
     ///     Enumeration of basic channel states.
     /// </summary>
-    public enum ChannelState
+    public enum PlaybackState
     {
         Playing,
         Paused,
         Stopped
     }
 
-    public static class ChannelStateExtensions
+    public static class PlaybackStateExtensions
     {
-        public static Command AsCommand(this ChannelState pt)
+        public static Command AsCommand(this PlaybackState pt)
         {
             switch (pt)
             {
-                case ChannelState.Playing:
+                case PlaybackState.Playing:
                     return Command.Playback | Command.Play;
-                case ChannelState.Paused:
+                case PlaybackState.Paused:
                     return Command.Playback | Command.Pause;
-                case ChannelState.Stopped:
+                case PlaybackState.Stopped:
                     return Command.Playback | Command.Stop;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(pt), pt, "Not a valid channel state");
             }
         }
 
-        public static ChannelState AsChannelState(this Command c)
+        public static PlaybackState AsPlaybackState(this Command c)
         {
             switch (c & Command.PlaybackOpMask)
             {
                 case Command.Play:
-                    return ChannelState.Playing;
+                    return PlaybackState.Playing;
                 case Command.Pause:
-                    return ChannelState.Paused;
+                    return PlaybackState.Paused;
                 case Command.Stop:
-                    return ChannelState.Stopped;
+                    return PlaybackState.Stopped;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(c), c, "Command is not a valid channel state");
             }

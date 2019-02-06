@@ -29,7 +29,6 @@ namespace BAPSPresenterNG.ViewModel
 
         public ChannelViewModel(ushort channelId,
             [CanBeNull] ConfigCache config,
-            [CanBeNull] IServerUpdater updater,
             [CanBeNull] PlayerViewModel player,
             [CanBeNull] ChannelController controller)
         {
@@ -38,7 +37,6 @@ namespace BAPSPresenterNG.ViewModel
             Controller = controller;
 
             _config = config;
-            _updater = updater;
 
             RegisterForServerUpdates();
             RegisterForConfigUpdates();
@@ -143,11 +141,12 @@ namespace BAPSPresenterNG.ViewModel
         /// </summary>
         private void RegisterForServerUpdates()
         {
-            _updater.TrackLoad += HandleTrackLoad; // NB: the Player also registers this event.
-            _updater.ItemAdd += HandleItemAdd;
-            _updater.ItemMove += HandleItemMove;
-            _updater.ItemDelete += HandleItemDelete;
-            _updater.ResetPlaylist += HandleResetPlaylist;
+            if (Controller == null) return;
+            Controller.PlaybackUpdater.TrackLoad += HandleTrackLoad; // NB: the Player also registers this event.
+            Controller.PlaylistUpdater.ItemAdd += HandleItemAdd;
+            Controller.PlaylistUpdater.ItemMove += HandleItemMove;
+            Controller.PlaylistUpdater.ItemDelete += HandleItemDelete;
+            Controller.PlaylistUpdater.ResetPlaylist += HandleResetPlaylist;
         }
 
         /// <summary>
@@ -168,11 +167,12 @@ namespace BAPSPresenterNG.ViewModel
         /// </summary>
         private void UnregisterForServerUpdates()
         {
-            _updater.TrackLoad -= HandleTrackLoad;
-            _updater.ItemAdd -= HandleItemAdd;
-            _updater.ItemMove -= HandleItemMove;
-            _updater.ItemDelete -= HandleItemDelete;
-            _updater.ResetPlaylist -= HandleResetPlaylist;
+            if (Controller == null) return;
+            Controller.PlaybackUpdater.TrackLoad -= HandleTrackLoad;
+            Controller.PlaylistUpdater.ItemAdd -= HandleItemAdd;
+            Controller.PlaylistUpdater.ItemMove -= HandleItemMove;
+            Controller.PlaylistUpdater.ItemDelete -= HandleItemDelete;
+            Controller.PlaylistUpdater.ResetPlaylist -= HandleResetPlaylist;
         }
 
         /// <summary>

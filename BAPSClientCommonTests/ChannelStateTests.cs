@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace BAPSClientCommonTests
 {
     /// <summary>
-    ///     Tests methods related to <see cref="ChannelState"/>.
+    ///     Tests methods related to <see cref="PlaybackState"/>.
     /// </summary>
     [TestFixture]
     public class ChannelStateTests
@@ -14,9 +14,9 @@ namespace BAPSClientCommonTests
         /// </summary>
         /// <param name="state">The state to test.</param>
         [Test, Combinatorial]
-        public void TestChannelStateCommandRoundTrip([Values] ChannelState state)
+        public void TestChannelStateCommandRoundTrip([Values] PlaybackState state)
         {
-            Assert.That(state.AsCommand().AsChannelState(), Is.EqualTo(state));
+            Assert.That(state.AsCommand().AsPlaybackState(), Is.EqualTo(state));
         }
     }
 }

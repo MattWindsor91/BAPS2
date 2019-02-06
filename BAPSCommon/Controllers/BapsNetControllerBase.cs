@@ -10,7 +10,7 @@ namespace BAPSClientCommon.Controllers
     /// </summary>
     public abstract class BapsNetControllerBase
     {
-        [NotNull] private readonly IClientCore _core;
+        [NotNull] protected readonly IClientCore Core;
 
         /// <summary>
         ///     Base constructor for BapsNet controllers.
@@ -18,7 +18,7 @@ namespace BAPSClientCommon.Controllers
         /// <param name="core">The client core to use to send messages.</param>
         protected BapsNetControllerBase([CanBeNull] IClientCore core)
         {
-            _core = core ?? throw new ArgumentNullException(nameof(core));
+            Core = core ?? throw new ArgumentNullException(nameof(core));
         }
 
         /// <summary>
@@ -27,7 +27,7 @@ namespace BAPSClientCommon.Controllers
         /// <param name="message">The message to send.</param>
         protected void SendAsync([CanBeNull] Message message)
         {
-            _core.SendAsync(message);
+            Core.SendAsync(message);
         }
     }
 }

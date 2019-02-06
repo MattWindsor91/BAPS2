@@ -293,7 +293,7 @@ namespace BAPSClientCommon
                 case Command.Stop:
                 {
                     OnChannelOperation(new Updates.PlayerStateEventArgs(cmdReceived.Channel(),
-                        cmdReceived.AsChannelState()));
+                        cmdReceived.AsPlaybackState()));
                 }
                     break;
                 case Command.Volume:

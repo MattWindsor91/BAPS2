@@ -19,6 +19,8 @@ namespace BAPSClientCommon
         ///     Event raised when the server reports a change in channel marker.
         /// </summary>
         event Updates.MarkerEventHandler ChannelMarker;
+        
+        event Updates.TrackLoadEventHandler TrackLoad;
     }
 
     /// <summary>
@@ -55,21 +57,29 @@ namespace BAPSClientCommon
     }
 
     /// <summary>
+    ///     Event interface for classes that send BapsNet server playlist updates.
+    /// </summary>
+    public interface IPlaylistServerUpdater
+    {
+        event Updates.ItemAddEventHandler ItemAdd;
+        event Updates.ItemDeleteEventHandler ItemDelete;
+        event Updates.ItemMoveEventHandler ItemMove;
+        
+        event Updates.ChannelResetEventHandler ResetPlaylist;
+    }
+    
+    /// <summary>
     ///     Event interface for classes that send BAPSNet server updates.
     /// </summary>
-    public interface IServerUpdater : IConfigServerUpdater, IDirectoryServerUpdater, IPlaybackServerUpdater
+    public interface IServerUpdater : IConfigServerUpdater, IDirectoryServerUpdater, IPlaybackServerUpdater, IPlaylistServerUpdater
     {
         event Updates.ErrorEventHandler Error;
         event Updates.CountEventHandler IncomingCount;
         event EventHandler<(Command cmdReceived, string ipAddress, uint mask)> IpRestriction;
-        event Updates.ItemAddEventHandler ItemAdd;
-        event Updates.ItemDeleteEventHandler ItemDelete;
-        event Updates.ItemMoveEventHandler ItemMove;
+
         event EventHandler<(uint resultID, byte dirtyStatus, string description)> LibraryResult;
         event EventHandler<(uint listingID, uint channelID, string description)> ListingResult;
-        event Updates.TrackLoadEventHandler TrackLoad;
         event EventHandler<(uint permissionCode, string description)> Permission;
-        event Updates.ChannelResetEventHandler ResetPlaylist;
         event EventHandler<bool> ServerQuit;
         event EventHandler<(uint showID, string description)> ShowResult;
         event EventHandler<Updates.UpDown> TextScroll;

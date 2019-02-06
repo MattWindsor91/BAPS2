@@ -40,7 +40,7 @@ namespace BAPSClientCommon.Events
         /// </summary>
         public class PlayerStateEventArgs : ChannelEventArgs
         {
-            public PlayerStateEventArgs(ushort channelId, ChannelState state) : base(channelId)
+            public PlayerStateEventArgs(ushort channelId, PlaybackState state) : base(channelId)
             {
                 State = state;
             }
@@ -48,7 +48,7 @@ namespace BAPSClientCommon.Events
             /// <summary>
             ///     The new state of the channel.
             /// </summary>
-            public ChannelState State { get; }
+            public PlaybackState State { get; }
         }
 
         /// <summary>

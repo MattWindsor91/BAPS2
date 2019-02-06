@@ -32,23 +32,19 @@ namespace BAPSPresenterNG.ViewModel
         private uint _position;
 
         private uint _startTime;
-        private ChannelState _state;
+        private PlaybackState _state;
 
         [CanBeNull] private RelayCommand _stopCommand;
-        [CanBeNull] private readonly IServerUpdater _updater;
 
-        public PlayerViewModel(ushort id,
-            [CanBeNull] IServerUpdater updater,
-            [CanBeNull] ChannelController controller)
+        public PlayerViewModel(ushort id, [CanBeNull] IPlaybackController controller)
         {
             _id = id;
-            _updater = updater;
             Controller = controller;
 
             RegisterForServerUpdates();
         }
 
-        public PlayerViewModel() : this(0, null, null)
+        public PlayerViewModel() : this(0, null)
         {
         }
 
@@ -88,7 +84,7 @@ namespace BAPSPresenterNG.ViewModel
             }
         }
 
-        public ChannelState State
+        public PlaybackState State
         {
             get => _state;
             set
@@ -112,27 +108,27 @@ namespace BAPSPresenterNG.ViewModel
         ///         <see cref="PlayCommand" />.
         ///     </para>
         /// </summary>
-        public bool IsPlaying => _state == ChannelState.Playing;
+        public bool IsPlaying => _state == PlaybackState.Playing;
 
         /// <summary>
         ///     Whether this channel is paused, according to the server.
         ///     <para>
         ///         This property should only be set when the server state
-        ///         changes.  When the user requests the channel to play, send
+        ///         changes.  When the user requests the channel to pause, send
         ///         <see cref="PauseCommand" />.
         ///     </para>
         /// </summary>
-        public bool IsPaused => _state == ChannelState.Paused;
+        public bool IsPaused => _state == PlaybackState.Paused;
 
         /// <summary>
         ///     Whether this channel is stopped, according to the server.
         ///     <para>
         ///         This property should only be set when the server state
-        ///         changes.  When the user requests the channel to play, send
-        ///         <see cref="PauseCommand" />.
+        ///         changes.  When the user requests the channel to stop, send
+        ///         <see cref="StopCommand" />.
         ///     </para>
         /// </summary>
-        public bool IsStopped => _state == ChannelState.Stopped;
+        public bool IsStopped => _state == PlaybackState.Stopped;
 
         /// <summary>
         ///     The position of the currently loaded item (if any), in milliseconds.
@@ -231,7 +227,7 @@ namespace BAPSPresenterNG.ViewModel
                                                 RequestPause,
                                                 CanRequestPause));
 
-        [CanBeNull] private ChannelController Controller { get; }
+        [CanBeNull] private IPlaybackController Controller { get; }
 
         /// <summary>
         ///     A command that, when fired, asks the server to stop
@@ -280,18 +276,18 @@ namespace BAPSPresenterNG.ViewModel
 
         private void RegisterForServerUpdates()
         {
-            if (_updater == null) return;
-            _updater.ChannelState += HandlePlayerState;
-            _updater.ChannelMarker += HandleMarker;
-            _updater.TrackLoad += HandleTrackLoad;
+            if (Controller == null) return;
+            Controller.PlaybackUpdater.ChannelState += HandlePlayerState;
+            Controller.PlaybackUpdater.ChannelMarker += HandleMarker;
+            Controller.PlaybackUpdater.TrackLoad += HandleTrackLoad;
         }
 
         private void UnregisterForServerUpdates()
         {
-            if (_updater == null) return;
-            _updater.ChannelState -= HandlePlayerState;
-            _updater.ChannelMarker -= HandleMarker;
-            _updater.TrackLoad -= HandleTrackLoad;
+            if (Controller == null) return;
+            Controller.PlaybackUpdater.ChannelState -= HandlePlayerState;
+            Controller.PlaybackUpdater.ChannelMarker -= HandleMarker;
+            Controller.PlaybackUpdater.TrackLoad -= HandleTrackLoad;
         }
 
         private void HandlePlayerState(object sender, Updates.PlayerStateEventArgs id)
@@ -323,19 +319,19 @@ namespace BAPSPresenterNG.ViewModel
         private void RequestPlay()
         {
             Debug.Assert(Controller != null, nameof(Controller) + " != null");
-            Controller.SetState(ChannelState.Playing);
+            Controller.SetState(PlaybackState.Playing);
         }
 
         private void RequestPause()
         {
             Debug.Assert(Controller != null, nameof(Controller) + " != null");
-            Controller.SetState(ChannelState.Paused);
+            Controller.SetState(PlaybackState.Paused);
         }
 
         private void RequestStop()
         {
             Debug.Assert(Controller != null, nameof(Controller) + " != null");
-            Controller.SetState(ChannelState.Stopped);
+            Controller.SetState(PlaybackState.Stopped);
         }
 
 

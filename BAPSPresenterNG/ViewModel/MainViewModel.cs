@@ -173,8 +173,8 @@ namespace BAPSPresenterNG.ViewModel
         private ChannelViewModel MakeChannelViewModel(ushort channelId)
         {
             var controller = _controllerSet.ControllerFor(channelId);
-            var player = new PlayerViewModel(channelId, _updater, controller);
-            return new ChannelViewModel(channelId, _config, _updater, player, controller);
+            var player = new PlayerViewModel(channelId, controller);
+            return new ChannelViewModel(channelId, _config, player, controller);
         }
 
         [Pure]

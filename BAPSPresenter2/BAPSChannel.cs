@@ -228,21 +228,21 @@ namespace BAPSPresenter2
 
         #region Mouse events
 
-        private void RequestStateChange(ChannelState state)
+        private void RequestStateChange(PlaybackState state)
         {
             OpRequest?.Invoke(this, new Updates.PlayerStateEventArgs((ushort)ChannelId, state));
         }
 
-        private void playButton_Click(object sender, EventArgs e) => RequestStateChange(ChannelState.Playing);
+        private void playButton_Click(object sender, EventArgs e) => RequestStateChange(PlaybackState.Playing);
         private void pauseButton_Click(object sender, EventArgs e)
         {
             trackList.ClearPendingLoadRequest();
-            RequestStateChange(ChannelState.Paused);
+            RequestStateChange(PlaybackState.Paused);
         }
         private void stopButton_Click(object sender, EventArgs e)
         {
             trackList.ClearPendingLoadRequest();
-            RequestStateChange(ChannelState.Stopped);
+            RequestStateChange(PlaybackState.Stopped);
         }
 
         private void Length_MouseDown(object sender, MouseEventArgs e)
@@ -466,7 +466,7 @@ namespace BAPSPresenter2
             if (valuesecs > 3595)
             {
                 _cds.running = false;
-                RequestStateChange(ChannelState.Playing);
+                RequestStateChange(PlaybackState.Playing);
             }
             length.Text = string.Concat((valuesecs / 60).ToString("00"), ":", (valuesecs % 60).ToString("00"));
 
