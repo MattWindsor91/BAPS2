@@ -1,212 +1,196 @@
 using System;
+using System.Collections.Generic;
+using System.Reactive.Subjects;
 using BAPSClientCommon.BapsNet;
 using BAPSClientCommon.Events;
 using BAPSClientCommon.ServerConfig;
+using JetBrains.Annotations;
 
 namespace BAPSClientCommon
 {
     public partial class ClientCore
     {
-        public event EventHandler<Updates.ConfigChoiceArgs> ConfigChoice;
-        public event EventHandler<Updates.ConfigOptionArgs> ConfigOption;
-        public event EventHandler<Updates.ConfigSettingArgs> ConfigSetting;
-        public event EventHandler<(Command cmdReceived, uint optionID, ConfigResult result)> ConfigResult;
-        public event EventHandler<Updates.DirectoryFileAddArgs> DirectoryFileAdd;
-        public event EventHandler<Updates.DirectoryPrepareArgs> DirectoryPrepare;
-        public event EventHandler<Updates.PlayerStateEventArgs> ChannelState;
-        public event EventHandler<Updates.MarkerEventArgs> ChannelMarker;
-        public event EventHandler<Updates.ErrorEventArgs> Error;
-        public event EventHandler<Updates.CountEventArgs> IncomingCount;
-        public event EventHandler<(Command cmdReceived, string ipAddress, uint mask)> IpRestriction;
-        public event EventHandler<Updates.TrackAddEventArgs> ItemAdd;
-        public event EventHandler<Updates.TrackDeleteEventArgs> ItemDelete;
-        public event EventHandler<Updates.TrackMoveEventArgs> ItemMove;
-        public event EventHandler<(uint resultID, byte dirtyStatus, string description)> LibraryResult;
-        public event EventHandler<(uint listingID, uint channelID, string description)> ListingResult;
-        public event EventHandler<Updates.TrackLoadEventArgs> TrackLoad;
-        public event EventHandler<(uint permissionCode, string description)> Permission;
-        public event EventHandler<Updates.ChannelResetEventArgs> ResetPlaylist;
-        public event EventHandler<bool> ServerQuit;
-        public event EventHandler<(uint showID, string description)> ShowResult;
-        public event EventHandler<Updates.UpDown> TextScroll;
-        public event EventHandler<Updates.UpDown> TextSizeChange;
-        public event EventHandler<(Command command, string description)> UnknownCommand;
-        public event EventHandler<(string username, uint permissions)> User;
-        public event EventHandler<(byte resultCode, string description)> UserResult;
-        public event EventHandler<Receiver.VersionInfo> Version;
+        [NotNull] private readonly Subject<Updates.CountEventArgs> _incomingCount =
+            new Subject<Updates.CountEventArgs>();
+
+        [NotNull] private readonly Subject<Updates.ConfigChoiceEventArgs> _observeConfigChoice =
+            new Subject<Updates.ConfigChoiceEventArgs>();
+
+        [NotNull] private readonly Subject<Updates.ConfigOptionEventArgs> _observeConfigOption =
+            new Subject<Updates.ConfigOptionEventArgs>();
+
+        [NotNull]
+        private readonly Subject<(Command cmdReceived, uint optionID, ConfigResult result)> _observeConfigResult =
+            new Subject<(Command cmdReceived, uint optionID, ConfigResult result)>();
+
+        [NotNull] private readonly Subject<Updates.ConfigSettingEventArgs> _observeConfigSetting =
+            new Subject<Updates.ConfigSettingEventArgs>();
+
+        [NotNull] private readonly Subject<Updates.DirectoryFileAddEventArgs> _observeDirectoryFileAdd =
+            new Subject<Updates.DirectoryFileAddEventArgs>();
+
+        [NotNull] private readonly Subject<Updates.DirectoryPrepareEventArgs> _observeDirectoryPrepare =
+            new Subject<Updates.DirectoryPrepareEventArgs>();
+
+        [NotNull]
+        private readonly Subject<Updates.ErrorEventArgs> _observeError = new Subject<Updates.ErrorEventArgs>();
+
+        [NotNull] private readonly Subject<(Command cmdReceived, string ipAddress, uint mask)> _observeIpRestriction =
+            new Subject<(Command cmdReceived, string ipAddress, uint mask)>();
+
+        [NotNull]
+        private readonly Subject<(uint resultID, byte dirtyStatus, string description)> _observeLibraryResult =
+            new Subject<(uint resultID, byte dirtyStatus, string description)>();
+
+        [NotNull] private readonly Subject<(uint listingID, uint channelID, string description)> _observeListingResult =
+            new Subject<(uint listingID, uint channelID, string description)>();
+
+        [NotNull] private readonly Subject<Updates.MarkerEventArgs> _observeMarker =
+            new Subject<Updates.MarkerEventArgs>();
+
+        [NotNull] private readonly Subject<(uint permissionCode, string description)> _observePermission =
+            new Subject<(uint permissionCode, string description)>();
+
+        [NotNull] private readonly Subject<Updates.PlayerStateEventArgs> _observePlayerState =
+            new Subject<Updates.PlayerStateEventArgs>();
+
+        [NotNull] private readonly Subject<Updates.PlaylistResetEventArgs> _observePlaylistReset =
+            new Subject<Updates.PlaylistResetEventArgs>();
+
+        [NotNull] private readonly Subject<bool> _observeServerQuit = new Subject<bool>();
+
+        [NotNull] private readonly Subject<(uint showID, string description)> _observeShowResult =
+            new Subject<(uint showID, string description)>();
+
+        [NotNull] private readonly Subject<Updates.UpDown> _observeTextScroll = new Subject<Updates.UpDown>();
+        [NotNull] private readonly Subject<Updates.UpDown> _observeTextSizeChange = new Subject<Updates.UpDown>();
+
+        [NotNull] private readonly Subject<Updates.TrackAddEventArgs> _observeTrackAdd =
+            new Subject<Updates.TrackAddEventArgs>();
+
+        [NotNull] private readonly Subject<Updates.TrackDeleteEventArgs> _observeTrackDelete =
+            new Subject<Updates.TrackDeleteEventArgs>();
+
+        [NotNull] private readonly Subject<Updates.TrackLoadEventArgs> _observeTrackLoad =
+            new Subject<Updates.TrackLoadEventArgs>();
+
+        [NotNull] private readonly Subject<Updates.TrackMoveEventArgs> _observeTrackMove =
+            new Subject<Updates.TrackMoveEventArgs>();
+
+        [NotNull] private readonly Subject<(Command command, string description)> _observeUnknownCommand =
+            new Subject<(Command command, string description)>();
+
+        [NotNull] private readonly Subject<(string username, uint permissions)> _observeUser =
+            new Subject<(string username, uint permissions)>();
+
+        [NotNull] private readonly Subject<(byte resultCode, string description)> _observeUserResult =
+            new Subject<(byte resultCode, string description)>();
+
+        [NotNull] private readonly Subject<Receiver.VersionInfo> _observeVersion = new Subject<Receiver.VersionInfo>();
+
+        [NotNull] private readonly IList<IDisposable> _receiverSubscriptions = new List<IDisposable>();
+
+        public IObservable<Updates.CountEventArgs> ObserveIncomingCount => _incomingCount;
+
+        public IObservable<Updates.ConfigChoiceEventArgs> ObserveConfigChoice => _observeConfigChoice;
+
+        public IObservable<Updates.ConfigOptionEventArgs> ObserveConfigOption => _observeConfigOption;
+
+        public IObservable<Updates.ConfigSettingEventArgs> ObserveConfigSetting => _observeConfigSetting;
+
+        public IObservable<(Command cmdReceived, uint optionID, ConfigResult result)> ObserveConfigResult =>
+            _observeConfigResult;
+
+        public IObservable<Updates.DirectoryFileAddEventArgs> ObserveDirectoryFileAdd => _observeDirectoryFileAdd;
+
+        public IObservable<Updates.DirectoryPrepareEventArgs> ObserveDirectoryPrepare => _observeDirectoryPrepare;
+
+        public IObservable<Updates.PlayerStateEventArgs> ObservePlayerState => _observePlayerState;
+
+        public IObservable<Updates.MarkerEventArgs> ObserveMarker => _observeMarker;
+
+        public IObservable<Updates.TrackLoadEventArgs> ObserveTrackLoad => _observeTrackLoad;
+
+        public IObservable<Updates.TrackAddEventArgs> ObserveTrackAdd => _observeTrackAdd;
+
+        public IObservable<Updates.TrackDeleteEventArgs> ObserveTrackDelete => _observeTrackDelete;
+
+        public IObservable<Updates.TrackMoveEventArgs> ObserveTrackMove => _observeTrackMove;
+
+        public IObservable<Updates.PlaylistResetEventArgs> ObservePlaylistReset => _observePlaylistReset;
+
+        public IObservable<Updates.ErrorEventArgs> ObserveError => _observeError;
+
+        public IObservable<bool> ObserveServerQuit => _observeServerQuit;
+
+        public IObservable<Receiver.VersionInfo> ObserveVersion => _observeVersion;
+
+        public IObservable<(Command cmdReceived, string ipAddress, uint mask)> ObserveIpRestriction =>
+            _observeIpRestriction;
+
+        public IObservable<(uint resultID, byte dirtyStatus, string description)> ObserveLibraryResult =>
+            _observeLibraryResult;
+
+        public IObservable<(uint listingID, uint channelID, string description)> ObserveListingResult =>
+            _observeListingResult;
+
+        public IObservable<(uint permissionCode, string description)> ObservePermission => _observePermission;
+
+        public IObservable<(uint showID, string description)> ObserveShowResult => _observeShowResult;
+
+        public IObservable<Updates.UpDown> ObserveTextScroll => _observeTextScroll;
+
+        public IObservable<Updates.UpDown> ObserveTextSizeChange => _observeTextSizeChange;
+
+        public IObservable<(Command command, string description)> ObserveUnknownCommand => _observeUnknownCommand;
+
+        public IObservable<(string username, uint permissions)> ObserveUser => _observeUser;
+
+        public IObservable<(byte resultCode, string description)> ObserveUserResult => _observeUserResult;
 
         /// <summary>
-        ///     Installs events on <see cref="_receiver" /> that forward each server update to the <see cref="ClientCore" />'s own
-        ///     events.
-        ///     <para>
-        ///         This is done so that the <see cref="ClientCore"/> can expose the events to the client before it
-        ///         connects to 
-        ///     </para>
+        ///     Subscribes each forwarding <see cref="Subject{T}" /> on the client core to its corresponding
+        ///     receiver observable.
         /// </summary>
-        private void AttachReceiverEvents()
+        private void SubscribeToReceiver()
         {
-            _receiver.ConfigChoice += OnConfigChoice;
-            _receiver.ConfigOption += OnConfigOption;
-            _receiver.ConfigSetting += OnConfigSetting;
-            _receiver.ConfigResult += OnConfigResult;
-            _receiver.DirectoryFileAdd += OnDirectoryFileAdd;
-            _receiver.DirectoryPrepare += OnDirectoryPrepare;
-            _receiver.ChannelState += OnChannelState;
-            _receiver.ChannelMarker += OnChannelMarker;
-            _receiver.Error += OnError;
-            _receiver.IncomingCount += OnIncomingCount;
-            _receiver.IpRestriction += OnIpRestriction;
-            _receiver.ItemAdd += OnItemAdd;
-            _receiver.ItemDelete += OnItemDelete;
-            _receiver.ItemMove += OnItemMove;
-            _receiver.LibraryResult += OnLibraryResult;
-            _receiver.ListingResult += OnListingResult;
-            _receiver.TrackLoad += OnTrackLoad;
-            _receiver.Permission += OnPermission;
-            _receiver.ResetPlaylist += OnResetPlaylist;
-            _receiver.ServerQuit += OnServerQuit;
-            _receiver.ShowResult += OnShowResult;
-            _receiver.TextScroll += OnTextScroll;
-            _receiver.TextSizeChange += OnTextSizeChange;
-            _receiver.UnknownCommand += OnUnknownCommand;
-            _receiver.User += OnUser;
-            _receiver.UserResult += OnUserResult;
-            _receiver.Version += OnVersion;
+            if (_receiver == null) return;
+            _receiverSubscriptions.Add(_receiver.ObserveConfigChoice.Subscribe(_observeConfigChoice));
+            _receiverSubscriptions.Add(_receiver.ObserveConfigOption.Subscribe(_observeConfigOption));
+            _receiverSubscriptions.Add(_receiver.ObserveConfigSetting.Subscribe(_observeConfigSetting));
+            _receiverSubscriptions.Add(_receiver.ObserveConfigResult.Subscribe(_observeConfigResult));
+            _receiverSubscriptions.Add(_receiver.ObserveConfigOption.Subscribe(_observeConfigOption));
+            _receiverSubscriptions.Add(_receiver.ObserveDirectoryPrepare.Subscribe(_observeDirectoryPrepare));
+            _receiverSubscriptions.Add(_receiver.ObserveDirectoryFileAdd.Subscribe(_observeDirectoryFileAdd));
+            _receiverSubscriptions.Add(_receiver.ObservePlayerState.Subscribe(_observePlayerState));
+            _receiverSubscriptions.Add(_receiver.ObserveMarker.Subscribe(_observeMarker));
+            _receiverSubscriptions.Add(_receiver.ObserveError.Subscribe(_observeError));
+            _receiverSubscriptions.Add(_receiver.ObserveIncomingCount.Subscribe(_incomingCount));
+            _receiverSubscriptions.Add(_receiver.ObserveIpRestriction.Subscribe(_observeIpRestriction));
+            _receiverSubscriptions.Add(_receiver.ObserveTrackAdd.Subscribe(_observeTrackAdd));
+            _receiverSubscriptions.Add(_receiver.ObserveTrackDelete.Subscribe(_observeTrackDelete));
+            _receiverSubscriptions.Add(_receiver.ObserveTrackMove.Subscribe(_observeTrackMove));
+            _receiverSubscriptions.Add(_receiver.ObserveLibraryResult.Subscribe(_observeLibraryResult));
+            _receiverSubscriptions.Add(_receiver.ObserveListingResult.Subscribe(_observeListingResult));
+            _receiverSubscriptions.Add(_receiver.ObserveTrackLoad.Subscribe(_observeTrackLoad));
+            _receiverSubscriptions.Add(_receiver.ObservePermission.Subscribe(_observePermission));
+            _receiverSubscriptions.Add(_receiver.ObservePlaylistReset.Subscribe(_observePlaylistReset));
+            _receiverSubscriptions.Add(_receiver.ObserveServerQuit.Subscribe(_observeServerQuit));
+            _receiverSubscriptions.Add(_receiver.ObserveShowResult.Subscribe(_observeShowResult));
+            _receiverSubscriptions.Add(_receiver.ObserveTextScroll.Subscribe(_observeTextScroll));
+            _receiverSubscriptions.Add(_receiver.ObserveTextSizeChange.Subscribe(_observeTextSizeChange));
+            _receiverSubscriptions.Add(_receiver.ObserveUnknownCommand.Subscribe(_observeUnknownCommand));
+            _receiverSubscriptions.Add(_receiver.ObserveUser.Subscribe(_observeUser));
+            _receiverSubscriptions.Add(_receiver.ObserveUserResult.Subscribe(_observeUserResult));
+            _receiverSubscriptions.Add(_receiver.ObserveVersion.Subscribe(_observeVersion));
         }
 
-        protected virtual void OnConfigChoice(object sender, Updates.ConfigChoiceArgs e)
+        /// <summary>
+        ///     Disposes each subscription created by <see cref="SubscribeToReceiver" />.
+        /// </summary>
+        private void UnsubscribeFromReceiver()
         {
-            ConfigChoice?.Invoke(this, e);
-        }
-
-        protected virtual void OnConfigOption(object sender, Updates.ConfigOptionArgs e)
-        {
-            ConfigOption?.Invoke(this, e);
-        }
-
-        protected virtual void OnConfigSetting(object sender, Updates.ConfigSettingArgs e)
-        {
-            ConfigSetting?.Invoke(this, e);
-        }
-
-        protected virtual void OnConfigResult(object sender, (Command cmdReceived, uint optionID, ConfigResult result) e)
-        {
-            ConfigResult?.Invoke(this, e);
-        }
-
-        protected virtual void OnDirectoryFileAdd(object sender, Updates.DirectoryFileAddArgs e)
-        {
-            DirectoryFileAdd?.Invoke(this, e);
-        }
-
-        protected virtual void OnDirectoryPrepare(object sender, Updates.DirectoryPrepareArgs e)
-        {
-            DirectoryPrepare?.Invoke(this, e);
-        }
-
-        protected virtual void OnChannelState(object sender, Updates.PlayerStateEventArgs e)
-        {
-            ChannelState?.Invoke(this, e);
-        }
-
-        protected virtual void OnChannelMarker(object sender, Updates.MarkerEventArgs args)
-        {
-            ChannelMarker?.Invoke(this, args);
-        }
-
-        protected virtual void OnError(object sender, Updates.ErrorEventArgs e)
-        {
-            Error?.Invoke(this, e);
-        }
-
-        protected virtual void OnIncomingCount(object sender, Updates.CountEventArgs e)
-        {
-            IncomingCount?.Invoke(this, e);
-        }
-
-        protected virtual void OnIpRestriction(object sender, (Command cmdReceived, string ipAddress, uint mask) e)
-        {
-            IpRestriction?.Invoke(this, e);
-        }
-
-        protected virtual void OnItemAdd(object sender, Updates.TrackAddEventArgs e)
-        {
-            ItemAdd?.Invoke(this, e);
-        }
-
-        protected virtual void OnItemDelete(object sender, Updates.TrackDeleteEventArgs e)
-        {
-            ItemDelete?.Invoke(this, e);
-        }
-
-        protected virtual void OnItemMove(object sender, Updates.TrackMoveEventArgs e)
-        {
-            ItemMove?.Invoke(this, e);
-        }
-
-        protected virtual void OnLibraryResult(object sender, (uint resultID, byte dirtyStatus, string description) e)
-        {
-            LibraryResult?.Invoke(this, e);
-        }
-
-        protected virtual void OnListingResult(object sender, (uint listingID, uint channelID, string description) e)
-        {
-            ListingResult?.Invoke(this, e);
-        }
-
-        protected virtual void OnTrackLoad(object sender, Updates.TrackLoadEventArgs e)
-        {
-            TrackLoad?.Invoke(this, e);
-        }
-
-        protected virtual void OnPermission(object sender, (uint permissionCode, string description) e)
-        {
-            Permission?.Invoke(this, e);
-        }
-
-        protected virtual void OnResetPlaylist(object sender, Updates.ChannelResetEventArgs e)
-        {
-            ResetPlaylist?.Invoke(this, e);
-        }
-
-        protected virtual void OnServerQuit(object sender, bool e)
-        {
-            ServerQuit?.Invoke(this, e);
-        }
-
-        protected virtual void OnShowResult(object sender, (uint showID, string description) e)
-        {
-            ShowResult?.Invoke(this, e);
-        }
-
-        protected virtual void OnTextScroll(object sender, Updates.UpDown e)
-        {
-            TextScroll?.Invoke(this, e);
-        }
-
-        protected virtual void OnTextSizeChange(object sender, Updates.UpDown e)
-        {
-            TextSizeChange?.Invoke(this, e);
-        }
-
-        protected virtual void OnUnknownCommand(object sender, (Command command, string description) e)
-        {
-            UnknownCommand?.Invoke(this, e);
-        }
-
-        protected virtual void OnUser(object sender, (string username, uint permissions) e)
-        {
-            User?.Invoke(this, e);
-        }
-
-        protected virtual void OnUserResult(object sender, (byte resultCode, string description) e)
-        {
-            UserResult?.Invoke(this, e);
-        }
-
-        protected virtual void OnVersion(object sender, Receiver.VersionInfo e)
-        {
-            Version?.Invoke(this, e);
+            foreach (var subscription in _receiverSubscriptions) subscription.Dispose();
         }
     }
 }

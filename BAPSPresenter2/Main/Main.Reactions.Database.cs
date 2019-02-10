@@ -9,7 +9,7 @@ namespace BAPSPresenter2
     {
         private void SetupDatabaseReactions(IServerUpdater r)
         {
-            r.LibraryResult += (sender, e) =>
+            r.ObserveLibraryResult += (sender, e) =>
             {
                 if (InvokeRequired)
                 {
@@ -17,7 +17,7 @@ namespace BAPSPresenter2
                 }
                 else addLibraryResult(e.resultID, e.dirtyStatus, e.description);
             };
-            r.ShowResult += (sender, e) =>
+            r.ObserveShowResult += (sender, e) =>
             {
                 if (InvokeRequired)
                 {
@@ -25,7 +25,7 @@ namespace BAPSPresenter2
                 }
                 else addShowResult(e.showID, e.description);
             };
-            r.ListingResult += (sender, e) =>
+            r.ObserveListingResult += (sender, e) =>
             {
                 if (InvokeRequired)
                 {

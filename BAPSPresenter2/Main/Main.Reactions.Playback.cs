@@ -11,7 +11,7 @@ namespace BAPSPresenter2
     {
         private void SetupPlaybackReactions(IServerUpdater r)
         {
-            r.ChannelState += (sender, e) =>
+            r.ObservePlayerState += (sender, e) =>
             {
                 if (InvokeRequired)
                 {
@@ -19,7 +19,7 @@ namespace BAPSPresenter2
                 }
                 else ShowChannelOperation(sender, e);
             };
-            r.ChannelMarker += (sender, e) =>
+            r.ObserveMarker += (sender, e) =>
             {
                 if (InvokeRequired)
                 {
@@ -27,7 +27,7 @@ namespace BAPSPresenter2
                 }
                 else ShowPositionWithType(sender, e);
             };
-            r.TrackLoad += (sender, e) =>
+            r.ObserveTrackLoad += (sender, e) =>
             {
                 if (InvokeRequired)
                 {

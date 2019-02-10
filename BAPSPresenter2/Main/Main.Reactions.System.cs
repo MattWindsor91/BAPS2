@@ -10,23 +10,23 @@ namespace BAPSPresenter2
     {
         private void SetupSystemReactions(IServerUpdater r)
         {
-            r.DirectoryFileAdd += (sender, e) =>
+            r.ObserveDirectoryFileAdd += (sender, e) =>
             {
                 if (InvokeRequired)
                 {
-                    Invoke((EventHandler<Updates.DirectoryFileAddArgs>)addFileToDirectoryList, sender, e);
+                    Invoke((EventHandler<Updates.DirectoryFileAddEventArgs>)addFileToDirectoryList, sender, e);
                 }
                 else addFileToDirectoryList(sender, e);
             };
-            r.DirectoryPrepare += (sender, e) =>
+            r.ObserveDirectoryPrepare += (sender, e) =>
             {
                 if (InvokeRequired)
                 {
-                    Invoke((EventHandler<Updates.DirectoryPrepareArgs>)clearFiles, sender, e);
+                    Invoke((EventHandler<Updates.DirectoryPrepareEventArgs>)clearFiles, sender, e);
                 }
                 else clearFiles(sender, e);
             };
-            r.Version += (sender, e) =>
+            r.ObserveVersion += (sender, e) =>
             {
                 if (InvokeRequired)
                 {
@@ -34,7 +34,7 @@ namespace BAPSPresenter2
                 }
                 else displayVersion(e.Version, e.Date, e.Time, e.Author);
             };
-            r.TextScroll += (sender, e) =>
+            r.ObserveTextScroll += (sender, e) =>
             {
                 var td = textDialog;
                 if (td == null) return;
@@ -44,7 +44,7 @@ namespace BAPSPresenter2
                 }
                 else td.textSize((int)e);
             };
-            r.TextSizeChange += (sender, e) =>
+            r.ObserveTextSizeChange += (sender, e) =>
             {
                 var td = textDialog;
                 if (td == null) return;
@@ -54,7 +54,7 @@ namespace BAPSPresenter2
                 }
                 else td.textSize((int)e);
             };
-            r.ServerQuit += (sender, e) =>
+            r.ObserveServerQuit += (sender, e) =>
             {
                 var description = "The server is shutting down/restarting.";
 
@@ -66,7 +66,7 @@ namespace BAPSPresenter2
             };
         }
 
-        private void addFileToDirectoryList(object sender, Updates.DirectoryFileAddArgs e)
+        private void addFileToDirectoryList(object sender, Updates.DirectoryFileAddEventArgs e)
         {
             if (DirectoryOutOfBounds(e.DirectoryId)) return;
             // TODO(@MattWindsor91): file index?
@@ -74,7 +74,7 @@ namespace BAPSPresenter2
             _directories[e.DirectoryId].Add(e.Description);
         }
 
-        private void clearFiles(object sender, Updates.DirectoryPrepareArgs e)
+        private void clearFiles(object sender, Updates.DirectoryPrepareEventArgs e)
         {
             if (DirectoryOutOfBounds(e.DirectoryId)) return;
             /** Empty the list box ready for new entries (required due to implicit indexing) **/

@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reactive.Linq;
 using System.Windows;
+using BAPSClientCommon;
 using BAPSClientCommon.Controllers;
 using BAPSClientCommon.Events;
 using BAPSClientCommon.Model;
@@ -28,13 +31,18 @@ namespace BAPSPresenterNG.ViewModel
 
         private uint _startTime;
         private PlaybackState _state;
+        
+        /// <summary>
+        ///     The list of handles to observable subscriptions that this view model creates.
+        /// </summary>
+        private readonly IList<IDisposable> _subscriptions = new List<IDisposable>();
 
         public PlayerViewModel(ushort id, [CanBeNull] IPlaybackController controller)
         {
             _id = id;
             Controller = controller;
 
-            RegisterForServerUpdates();
+            SubscribeToServerUpdates();
         }
 
         public PlayerViewModel() : this(0, null)
@@ -146,7 +154,7 @@ namespace BAPSPresenterNG.ViewModel
 
         public void Dispose()
         {
-            UnregisterForServerUpdates();
+            UnsubscribeFromServerUpdates();
         }
 
         [Pure]
@@ -166,33 +174,42 @@ namespace BAPSPresenterNG.ViewModel
         {
             return HasController;
         }
-
-        private void RegisterForServerUpdates()
+        
+        /// <summary>
+        ///     Restricts a channel observable to returning only events for this player's channel.
+        /// </summary>
+        /// <param name="source">The observable to filter.</param>
+        /// <typeparam name="TResult">Type of output from the observable.</typeparam>
+        /// <returns>The observable corresponding to filtering <see cref="source"/> to events for this player's channel.</returns>
+        [NotNull, Pure]
+        private IObservable<TResult> OnThisPlayer<TResult>(IObservable<TResult> source)
+            where TResult : ChannelEventArgs
+        {
+            return from ev in source where ev.ChannelId == _id select ev;
+        }
+        
+        private void SubscribeToServerUpdates()
         {
             if (Controller == null) return;
-            Controller.PlaybackUpdater.ChannelState += HandlePlayerState;
-            Controller.PlaybackUpdater.ChannelMarker += HandleMarker;
-            Controller.PlaybackUpdater.TrackLoad += HandleTrackLoad;
+
+            var updater = Controller.PlaybackUpdater;
+            _subscriptions.Add(OnThisPlayer(updater.ObservePlayerState).Subscribe(HandlePlayerState));
+            _subscriptions.Add(OnThisPlayer(updater.ObserveMarker).Subscribe(HandleMarker));
+            _subscriptions.Add(OnThisPlayer(updater.ObserveTrackLoad).Subscribe(HandleTrackLoad));
         }
 
-        private void UnregisterForServerUpdates()
+        private void UnsubscribeFromServerUpdates()
         {
-            if (Controller == null) return;
-            Controller.PlaybackUpdater.ChannelState -= HandlePlayerState;
-            Controller.PlaybackUpdater.ChannelMarker -= HandleMarker;
-            Controller.PlaybackUpdater.TrackLoad -= HandleTrackLoad;
+            foreach (var subscription in _subscriptions) subscription.Dispose();
         }
 
-        private void HandlePlayerState(object sender, Updates.PlayerStateEventArgs id)
+        private void HandlePlayerState(Updates.PlayerStateEventArgs id)
         {
-            if (id.ChannelId != _id) return;
             State = id.State;
         }
 
-        private void HandleMarker(object sender, Updates.MarkerEventArgs args)
+        private void HandleMarker(Updates.MarkerEventArgs args)
         {
-            if (args.ChannelId != _id) return;
-
             switch (args.Marker)
             {
                 case MarkerType.Position:
@@ -238,7 +255,7 @@ namespace BAPSPresenterNG.ViewModel
             IntroPosition = 0;
         }
 
-        private void HandleTrackLoad(object sender, Updates.TrackLoadEventArgs args)
+        private void HandleTrackLoad(Updates.TrackLoadEventArgs args)
         {
             if (args.ChannelId != _id) return;
 

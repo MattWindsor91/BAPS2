@@ -87,9 +87,9 @@ namespace BAPSClientCommon.Events
     /// <summary>
     ///     Base class for all directory update event payloads.
     /// </summary>
-    public abstract class DirectoryArgs
+    public abstract class DirectoryEventArgs
     {
-        protected DirectoryArgs(ushort directoryId)
+        protected DirectoryEventArgs(ushort directoryId)
         {
             DirectoryId = directoryId;
         }

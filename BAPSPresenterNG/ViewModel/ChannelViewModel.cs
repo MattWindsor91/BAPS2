@@ -1,12 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Windows;
 using BAPSClientCommon;
 using BAPSClientCommon.Controllers;
 using BAPSClientCommon.Events;
 using BAPSClientCommon.Model;
 using BAPSClientCommon.ServerConfig;
+using CommonServiceLocator;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Threading;
@@ -26,6 +30,8 @@ namespace BAPSPresenterNG.ViewModel
         private string _name;
         [CanBeNull] private RelayCommand _toggleAutoAdvanceCommand;
         [CanBeNull] private RelayCommand _togglePlayOnLoadCommand;
+
+        private readonly IList<IDisposable> _subscriptions = new List<IDisposable>();
 
         public ChannelViewModel(ushort channelId,
             [CanBeNull] ConfigCache config,
@@ -133,6 +139,19 @@ namespace BAPSPresenterNG.ViewModel
         }
 
         /// <summary>
+        ///     Restricts a channel observable to returning only events for this channel.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <typeparam name="TResult"></typeparam>
+        /// <returns></returns>
+        [Pure]
+        private IObservable<TResult> OnThisChannel<TResult>(IObservable<TResult> source)
+            where TResult : ChannelEventArgs
+        {
+            return from ev in source where ev.ChannelId == ChannelId select ev;
+        }
+        
+        /// <summary>
         ///     Registers the view model against server update events.
         ///     <para>
         ///         This view model can be disposed during run-time, so <see cref="UnregisterForServerUpdates" />
@@ -142,11 +161,18 @@ namespace BAPSPresenterNG.ViewModel
         private void RegisterForServerUpdates()
         {
             if (Controller == null) return;
-            Controller.PlaybackUpdater.TrackLoad += HandleTrackLoad; // NB: the Player also registers this event.
-            Controller.PlaylistUpdater.ItemAdd += HandleItemAdd;
-            Controller.PlaylistUpdater.ItemMove += HandleItemMove;
-            Controller.PlaylistUpdater.ItemDelete += HandleItemDelete;
-            Controller.PlaylistUpdater.ResetPlaylist += HandleResetPlaylist;
+
+            var playbackUpdater = Controller.PlaybackUpdater;
+            var playlistUpdater = Controller.PlaylistUpdater;
+
+             // NB: the Player also registers this event.
+            _subscriptions.Add(OnThisChannel(playbackUpdater.ObserveTrackLoad).Subscribe(HandleTrackLoad));
+
+            _subscriptions.Add(OnThisChannel(playlistUpdater.ObserveTrackAdd).Subscribe(HandleItemAdd));
+            _subscriptions.Add(OnThisChannel(playlistUpdater.ObserveTrackMove).Subscribe(HandleItemMove));
+            _subscriptions.Add(OnThisChannel(playlistUpdater.ObserveTrackDelete).Subscribe(HandleItemDelete));
+            _subscriptions.Add(OnThisChannel(playlistUpdater.ObservePlaylistReset).Subscribe(HandleResetPlaylist));
+
         }
 
         /// <summary>
@@ -167,12 +193,7 @@ namespace BAPSPresenterNG.ViewModel
         /// </summary>
         private void UnregisterForServerUpdates()
         {
-            if (Controller == null) return;
-            Controller.PlaybackUpdater.TrackLoad -= HandleTrackLoad;
-            Controller.PlaylistUpdater.ItemAdd -= HandleItemAdd;
-            Controller.PlaylistUpdater.ItemMove -= HandleItemMove;
-            Controller.PlaylistUpdater.ItemDelete -= HandleItemDelete;
-            Controller.PlaylistUpdater.ResetPlaylist -= HandleResetPlaylist;
+            foreach (var subscription in _subscriptions) subscription.Dispose();
         }
 
         /// <summary>
@@ -245,9 +266,8 @@ namespace BAPSPresenterNG.ViewModel
             }
         }
 
-        private void HandleTrackLoad(object sender, Updates.TrackLoadEventArgs args)
+        private void HandleTrackLoad(Updates.TrackLoadEventArgs args)
         {
-            if (ChannelId != args.ChannelId) return;
             DispatcherHelper.CheckBeginInvokeOnUI(() => UpdateLoadedStatus(args.Index));
         }
 
@@ -336,27 +356,23 @@ namespace BAPSPresenterNG.ViewModel
         // NB: Anything involving the TrackList has to be done on the
         // UI thread, hence the use of Dispatcher.
 
-        private void HandleItemAdd(object sender, Updates.TrackAddEventArgs e)
+        private void HandleItemAdd(Updates.TrackAddEventArgs e)
         {
-            if (ChannelId != e.ChannelId) return;
             DispatcherHelper.CheckBeginInvokeOnUI(() => TrackList.Add(new TrackViewModel(e.Item)));
         }
 
-        private void HandleItemMove(object sender, Updates.TrackMoveEventArgs e)
+        private void HandleItemMove(Updates.TrackMoveEventArgs e)
         {
-            if (ChannelId != e.ChannelId) return;
             DispatcherHelper.CheckBeginInvokeOnUI(() => TrackList.Move((int) e.Index, (int) e.NewIndex));
         }
 
-        private void HandleItemDelete(object sender, Updates.TrackDeleteEventArgs e)
+        private void HandleItemDelete(Updates.TrackDeleteEventArgs e)
         {
-            if (ChannelId != e.ChannelId) return;
             DispatcherHelper.CheckBeginInvokeOnUI(() => TrackList.RemoveAt((int) e.Index));
         }
 
-        private void HandleResetPlaylist(object sender, Updates.ChannelResetEventArgs e)
+        private void HandleResetPlaylist(Updates.PlaylistResetEventArgs e)
         {
-            if (ChannelId != e.ChannelId) return;
             DispatcherHelper.CheckBeginInvokeOnUI(() => TrackList.Clear());
         }
 

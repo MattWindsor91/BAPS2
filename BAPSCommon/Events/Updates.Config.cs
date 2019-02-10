@@ -8,9 +8,9 @@ namespace BAPSClientCommon.Events
         /// <summary>
         ///     Event payload sent when the server declares a config choice.
         /// </summary>
-        public class ConfigChoiceArgs : ConfigArgs
+        public class ConfigChoiceEventArgs : ConfigArgs
         {
-            public ConfigChoiceArgs(uint optionId, uint choiceId, string description)
+            public ConfigChoiceEventArgs(uint optionId, uint choiceId, string description)
                 : base(optionId)
             {
                 ChoiceId = choiceId;
@@ -32,12 +32,12 @@ namespace BAPSClientCommon.Events
         /// <summary>
         ///     Event payload sent when the server declares a config setting.
         /// </summary>
-        public class ConfigSettingArgs : ConfigTypeIndexArgs
+        public class ConfigSettingEventArgs : ConfigTypeIndexArgs
         {
             /// <summary>The new value to apply.</summary>
             public readonly object Value;
 
-            public ConfigSettingArgs(uint optionId, ConfigType type, object value, int index = -1)
+            public ConfigSettingEventArgs(uint optionId, ConfigType type, object value, int index = -1)
                 : base(optionId, type, index)
             {
                 Value = value;
@@ -48,9 +48,9 @@ namespace BAPSClientCommon.Events
         /// <summary>
         ///     Event payload sent when the server declares a config option.
         /// </summary>
-        public class ConfigOptionArgs : ConfigTypeIndexArgs
+        public class ConfigOptionEventArgs : ConfigTypeIndexArgs
         {
-            public ConfigOptionArgs(uint optionId, ConfigType type, string description, bool hasIndex, int index = -1)
+            public ConfigOptionEventArgs(uint optionId, ConfigType type, string description, bool hasIndex, int index = -1)
                 : base(optionId, type, index)
             {
                 Description = description;

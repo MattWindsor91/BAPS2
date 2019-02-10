@@ -12,33 +12,33 @@ namespace BAPSPresenter2
     {
         private void SetupConfigReactions(IServerUpdater r)
         {
-            Config.InstallReceiverEventHandlers(r);
+            Config.SubscribeToReceiver(r);
 
-            r.ConfigOption += (sender, e) =>
+            r.ObserveConfigOption += (sender, e) =>
             {
                 if (InvokeRequired)
                 {
-                    Invoke((EventHandler<Updates.ConfigOptionArgs>)processOption, sender, e);
+                    Invoke((EventHandler<Updates.ConfigOptionEventArgs>)processOption, sender, e);
                 }
                 else processOption(sender, e);
             };
-            r.ConfigChoice += (sender, e) =>
+            r.ObserveConfigChoice += (sender, e) =>
             {
                 if (InvokeRequired)
                 {
-                    Invoke((EventHandler<Updates.ConfigChoiceArgs>)processChoice, sender, e);
+                    Invoke((EventHandler<Updates.ConfigChoiceEventArgs>)processChoice, sender, e);
                 }
                 else processChoice(sender, e);
             };
-            r.ConfigSetting += (sender, e) =>
+            r.ObserveConfigSetting += (sender, e) =>
             {
                 if (InvokeRequired)
                 {
-                    Invoke((EventHandler<Updates.ConfigSettingArgs>)processConfigSetting, sender, e);
+                    Invoke((EventHandler<Updates.ConfigSettingEventArgs>)processConfigSetting, sender, e);
                 }
                 else processConfigSetting(sender, e);
             };
-            r.ConfigResult += (sender, e) =>
+            r.ObserveConfigResult += (sender, e) =>
             {
                 if (InvokeRequired)
                 {
@@ -46,7 +46,7 @@ namespace BAPSPresenter2
                 }
                 else processConfigResult(e.cmdReceived, e.optionID, e.result);
             };
-            r.User += (sender, e) =>
+            r.ObserveUser += (sender, e) =>
             {
                 if (InvokeRequired)
                 {
@@ -54,7 +54,7 @@ namespace BAPSPresenter2
                 }
                 else processUserInfo(e.username, e.permissions);
             };
-            r.Permission += (sender, e) =>
+            r.ObservePermission += (sender, e) =>
             {
                 if (InvokeRequired)
                 {
@@ -62,7 +62,7 @@ namespace BAPSPresenter2
                 }
                 else processPermissionInfo(e.permissionCode, e.description);
             };
-            r.UserResult += (sender, e) =>
+            r.ObserveUserResult += (sender, e) =>
             {
                 if (InvokeRequired)
                 {
@@ -70,7 +70,7 @@ namespace BAPSPresenter2
                 }
                 else processUserResult(e.resultCode, e.description);
             };
-            r.IpRestriction += (sender, e) =>
+            r.ObserveIpRestriction += (sender, e) =>
             {
                 if (InvokeRequired)
                 {
@@ -84,7 +84,7 @@ namespace BAPSPresenter2
 	        update the configDialog... exceptions to the rule exist... read on
         **/
 
-        private void processChoice(object sender, Updates.ConfigChoiceArgs e)
+        private void processChoice(object sender, Updates.ConfigChoiceEventArgs e)
         {
             /** Ignore if the config dialog is closed **/
             var cd = configDialog;
@@ -136,7 +136,7 @@ namespace BAPSPresenter2
             }
         }
 
-        private void processOption(object sender, Updates.ConfigOptionArgs e)
+        private void processOption(object sender, Updates.ConfigOptionEventArgs e)
         {
             /** Pass onto the config dialog if available **/
             var cd = configDialog;
@@ -206,7 +206,7 @@ namespace BAPSPresenter2
             }
         }
 
-        private void processConfigSetting(object sender, Updates.ConfigSettingArgs e)
+        private void processConfigSetting(object sender, Updates.ConfigSettingEventArgs e)
         {
             var hasIndex = 0 <= e.Index;
             /** 

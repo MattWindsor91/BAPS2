@@ -1,4 +1,7 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Reactive.Linq;
 using BAPSClientCommon;
 using BAPSClientCommon.BapsNet;
 using BAPSClientCommon.Events;
@@ -13,14 +16,11 @@ namespace BAPSClientCommonTests
     public class ConfigCacheTests
     {
         private ConfigCache _configCache;
-        private MockReceiver _receiver;
 
         [SetUp]
         public void Setup()
         {
             _configCache = new ConfigCache();
-            _receiver = new MockReceiver();
-            _configCache.InstallReceiverEventHandlers(_receiver);
         }
 
         [Test]
@@ -87,37 +87,40 @@ namespace BAPSClientCommonTests
             Assert.That(_configCache.GetValue<int>((uint)0, 2), Is.EqualTo(0));
         }
 
-        public class MockReceiver : IConfigServerUpdater
+        public class MockConfigServerUpdater : IConfigServerUpdater
         {
-            public event EventHandler<Updates.ConfigChoiceArgs> ConfigChoice;
+            public Queue<object> Messages { get; } = new Queue<object>();
+                      
+            private IObservable<Updates.ConfigChoiceEventArgs> _observeConfigChoice;
+            private IObservable<Updates.ConfigOptionEventArgs> _observeConfigOption;
+            private IObservable<Updates.ConfigSettingEventArgs> _observeConfigSetting;
+            private IObservable<(Command cmdReceived, uint optionID, ConfigResult result)> _observeConfigResult;
+            private IObservable<Updates.CountEventArgs> _observeIncomingCount;
+            private IObservable<object> _observeMessages;
 
-            public event EventHandler<Updates.ConfigOptionArgs> ConfigOption;
+            private IObservable<object> ObserveMessages =>
+                _observeMessages ??
+                (_observeMessages = Messages.ToObservable());
+ 
+            public IObservable<Updates.CountEventArgs> ObserveIncomingCount =>
+                _observeIncomingCount ??
+                (_observeIncomingCount = ObserveMessages.OfType<Updates.CountEventArgs>());
 
-            public event EventHandler<(Command cmdReceived, uint optionID, ConfigResult result)> ConfigResult;
+            public IObservable<Updates.ConfigChoiceEventArgs> ObserveConfigChoice =>
+                _observeConfigChoice ??
+                (_observeConfigChoice = ObserveMessages.OfType<Updates.ConfigChoiceEventArgs>());
 
-            public event EventHandler<Updates.ConfigSettingArgs> ConfigSetting;
+            public IObservable<Updates.ConfigOptionEventArgs> ObserveConfigOption =>
+                _observeConfigOption ??
+                (_observeConfigOption = ObserveMessages.OfType<Updates.ConfigOptionEventArgs>());
 
-            public void OnConfigChoice(Updates.ConfigChoiceArgs e)
-            {
-                ConfigChoice?.Invoke(this, e);
-            }
+            public IObservable<Updates.ConfigSettingEventArgs> ObserveConfigSetting =>
+                _observeConfigSetting ??
+                (_observeConfigSetting = ObserveMessages.OfType<Updates.ConfigSettingEventArgs>());
 
-            public void OnConfigOption(Updates.ConfigOptionArgs e)
-            {
-                ConfigOption?.Invoke(this, e);
-            }
-
-            public void OnConfigSetting(Updates.ConfigSettingArgs e)
-            {
-                ConfigSetting?.Invoke(this, e);
-            }
-
-            protected virtual void OnConfigResult((Command cmdReceived, uint optionID, ConfigResult result) e)
-            {
-                ConfigResult?.Invoke(this, e);
-            }
-
-            public event EventHandler<Updates.CountEventArgs> IncomingCount;
+            public IObservable<(Command cmdReceived, uint optionID, ConfigResult result)> ObserveConfigResult =>
+                _observeConfigResult ??
+                (_observeConfigResult = ObserveMessages.OfType<(Command cmdReceived, uint optionID, ConfigResult result)>());
         }
 
         #region Events interface
@@ -125,24 +128,27 @@ namespace BAPSClientCommonTests
         [Test]
         public void TestReceiverString()
         {
-            _receiver.OnConfigOption(new Updates.ConfigOptionArgs(64, ConfigType.Str, "Barbaz", false));
+            var receiver = new MockConfigServerUpdater();
+            receiver.Messages.Enqueue(new Updates.ConfigOptionEventArgs(64, ConfigType.Str, "Barbaz", false));
+            receiver.Messages.Enqueue(new Updates.ConfigSettingEventArgs(64, ConfigType.Str, "FrankerZ"));
+            
             Assert.That(_configCache.GetValue<string>(64), Is.Null);
-
-            _receiver.OnConfigSetting(new Updates.ConfigSettingArgs(64, ConfigType.Str, "FrankerZ"));
+            _configCache.SubscribeToReceiver(receiver);
             Assert.That(_configCache.GetValue<string>(64), Is.EqualTo("FrankerZ"));
         }
 
         [Test]
         public void TestReceiverChoice()
         {
-            _receiver.OnConfigOption(new Updates.ConfigOptionArgs(99, ConfigType.Choice, "Keepo", false));
-
-            _receiver.OnConfigChoice(new Updates.ConfigChoiceArgs(99, 0, "Yes"));
-            _receiver.OnConfigChoice(new Updates.ConfigChoiceArgs(99, 1, "No"));
+            var receiver = new MockConfigServerUpdater();
+            receiver.Messages.Enqueue(new Updates.ConfigOptionEventArgs(99, ConfigType.Choice, "Keepo", false));
+            receiver.Messages.Enqueue(new Updates.ConfigChoiceEventArgs(99, 0, "Yes"));
+            receiver.Messages.Enqueue(new Updates.ConfigChoiceEventArgs(99, 1, "No"));
+            receiver.Messages.Enqueue(new Updates.ConfigSettingEventArgs(99, ConfigType.Choice, 1));
+            
+            _configCache.SubscribeToReceiver(receiver);
             Assert.That(_configCache.FindChoiceIndexFor(99, "Yes"), Is.EqualTo(0), "Choice index for 'yes' incorrect");
             Assert.That(_configCache.FindChoiceIndexFor(99, "No"), Is.EqualTo(1), "Choice index for 'no' incorrect");
-
-            _receiver.OnConfigSetting(new Updates.ConfigSettingArgs(99, ConfigType.Choice, 1));
             Assert.That(_configCache.GetValue<int>(99), Is.EqualTo(1), "Choice hasn't changed");
         }
 

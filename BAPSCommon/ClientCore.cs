@@ -93,7 +93,7 @@ namespace BAPSClientCommon
         private void CreateAndLaunchReceiver(TaskFactory tf)
         {
             _receiver = new Receiver(_socket, _dead.Token);
-            AttachReceiverEvents();
+            SubscribeToReceiver();
             _receiverTask = tf.StartNew(_receiver.Run);
         }
 
@@ -169,6 +169,7 @@ namespace BAPSClientCommon
             {
                 NotifyServerOfQuit();
                 CancelTasks();
+                UnsubscribeFromReceiver();
 
                 _socket?.Dispose();
             }

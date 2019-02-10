@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.ComponentModel;
 using BAPSClientCommon.Events;
 using JetBrains.Annotations;
@@ -12,7 +13,7 @@ namespace BAPSClientCommon.ServerConfig
     ///     option from the server. It will then associate the result with the
     ///     name you asked for.
     /// </summary>
-    public partial class ConfigCache
+    public partial class ConfigCache : IDisposable
     {
         /// <summary>
         ///     The (rather paradoxically named) integer that represents a lack of index.
@@ -117,23 +118,32 @@ namespace BAPSClientCommon.ServerConfig
         }
 
         /// <summary>
-        ///     Installs event handlers on a receiver that respond to BAPSNet configuration changes by
-        ///     updating the config cache.
+        ///     Subscribes to the update observables on a given receiver.
         /// </summary>
         /// <param name="r">The <see cref="IConfigServerUpdater" /> with whose event handlers we are registering.</param>
-        public void InstallReceiverEventHandlers(IConfigServerUpdater r)
+        public void SubscribeToReceiver(IConfigServerUpdater r)
         {
-            r.ConfigSetting += (sender, e) => AddOptionValue(e);
-            r.ConfigOption += (sender, e) => AddOptionDescription(e.OptionId, e.Type, e.Description, e.HasIndex);
-            r.ConfigChoice += (sender, e) => AddOptionChoice(e.OptionId, (int) e.ChoiceId, e.ChoiceDescription);
+            // These subscriptions are in this order so that, if the receiver's observables react to subscriptions by
+            // immediately dumping a list of events, then we first fill up the options, then the choices (which depend
+            // on options), then the settings (which depend on both).
+            _receiverSubscriptions.Add(r.ObserveConfigOption.Subscribe(e => AddOptionDescription(e.OptionId, e.Type, e.Description, e.HasIndex)));
+            _receiverSubscriptions.Add(r.ObserveConfigChoice.Subscribe(e => AddOptionChoice(e.OptionId, (int) e.ChoiceId, e.ChoiceDescription)));
+            _receiverSubscriptions.Add(r.ObserveConfigSetting.Subscribe(AddOptionValue));
+        }
+        
+        [NotNull] private readonly IList<IDisposable> _receiverSubscriptions = new List<IDisposable>();
+
+        private void UnsubscribeFromReceiver()
+        {
+            foreach (var subscription in _receiverSubscriptions) subscription.Dispose();
         }
 
         /// <summary>
         ///     Updates the value for a given option ID directly from a
-        ///     <see cref="Updates.ConfigSettingArgs" /> struct.
+        ///     <see cref="Updates.ConfigSettingEventArgs" /> struct.
         /// </summary>
-        /// <param name="args">The <see cref="Updates.ConfigSettingArgs" /> struct to use.</param>
-        private void AddOptionValue(Updates.ConfigSettingArgs args)
+        /// <param name="args">The <see cref="Updates.ConfigSettingEventArgs" /> struct to use.</param>
+        private void AddOptionValue(Updates.ConfigSettingEventArgs args)
         {
             switch (args.Type)
             {
@@ -149,6 +159,11 @@ namespace BAPSClientCommon.ServerConfig
                     AddOptionValue(args.OptionId, i, args.Index);
                     break;
             }
+        }
+
+        public void Dispose()
+        {
+            UnsubscribeFromReceiver();
         }
     }
 }

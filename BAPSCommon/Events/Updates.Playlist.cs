@@ -7,9 +7,9 @@ namespace BAPSClientCommon.Events
         /// <summary>
         ///     Payload for a channel track-list reset server update.
         /// </summary>
-        public class ChannelResetEventArgs : ChannelEventArgs
+        public class PlaylistResetEventArgs : ChannelEventArgs
         {
-            public ChannelResetEventArgs(ushort channelId) : base(channelId)
+            public PlaylistResetEventArgs(ushort channelId) : base(channelId)
             {
             }
         }

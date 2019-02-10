@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Net;
+using System.Reactive.Linq;
 using System.Threading;
 using BAPSClientCommon.BapsNet;
 using BAPSClientCommon.Events;
@@ -44,11 +46,11 @@ namespace BAPSClientCommon
 
         #region Playback events
 
-        public event EventHandler<Updates.PlayerStateEventArgs> ChannelState;
-
+        public event EventHandler<Updates.PlayerStateEventArgs> PlayerState;
+        
         private void OnChannelOperation(Updates.PlayerStateEventArgs e)
         {
-            ChannelState?.Invoke(this, e);
+            PlayerState?.Invoke(this, e);
         }
 
         public event EventHandler<Updates.TrackLoadEventArgs> TrackLoad;
@@ -58,43 +60,43 @@ namespace BAPSClientCommon
             TrackLoad?.Invoke(this, args);
         }
 
-        public event EventHandler<Updates.MarkerEventArgs> ChannelMarker;
+        public event EventHandler<Updates.MarkerEventArgs> Marker;
 
         private void OnMarker(Updates.MarkerEventArgs e)
         {
-            ChannelMarker?.Invoke(this, e);
+            Marker?.Invoke(this, e);
         }
 
         #endregion Playback events
 
         #region Playlist events
 
-        public event EventHandler<Updates.TrackAddEventArgs> ItemAdd;
+        public event EventHandler<Updates.TrackAddEventArgs> TrackAdd;
 
         private void OnItemAdd(Updates.TrackAddEventArgs e)
         {
-            ItemAdd?.Invoke(this, e);
+            TrackAdd?.Invoke(this, e);
         }
 
-        public event EventHandler<Updates.TrackMoveEventArgs> ItemMove;
+        public event EventHandler<Updates.TrackMoveEventArgs> TrackMove;
 
         private void OnItemMove(Updates.TrackMoveEventArgs e)
         {
-            ItemMove?.Invoke(this, e);
+            TrackMove?.Invoke(this, e);
         }
 
-        public event EventHandler<Updates.TrackDeleteEventArgs> ItemDelete;
+        public event EventHandler<Updates.TrackDeleteEventArgs> TrackDelete;
 
         private void OnItemDelete(Updates.TrackDeleteEventArgs e)
         {
-            ItemDelete?.Invoke(this, e);
+            TrackDelete?.Invoke(this, e);
         }
 
-        public event EventHandler<Updates.ChannelResetEventArgs> ResetPlaylist;
+        public event EventHandler<Updates.PlaylistResetEventArgs> PlaylistReset;
 
-        private void OnResetPlaylist(Updates.ChannelResetEventArgs e)
+        private void OnResetPlaylist(Updates.PlaylistResetEventArgs e)
         {
-            ResetPlaylist?.Invoke(this, e);
+            PlaylistReset?.Invoke(this, e);
         }
 
         #endregion Playlist events
@@ -126,23 +128,23 @@ namespace BAPSClientCommon
 
         #region Config events
 
-        public event EventHandler<Updates.ConfigOptionArgs> ConfigOption;
+        public event EventHandler<Updates.ConfigOptionEventArgs> ConfigOption;
 
-        private void OnConfigOption(Updates.ConfigOptionArgs args)
+        private void OnConfigOption(Updates.ConfigOptionEventArgs args)
         {
             ConfigOption?.Invoke(this, args);
         }
 
-        public event EventHandler<Updates.ConfigChoiceArgs> ConfigChoice;
+        public event EventHandler<Updates.ConfigChoiceEventArgs> ConfigChoice;
 
-        private void OnConfigChoice(Updates.ConfigChoiceArgs args)
+        private void OnConfigChoice(Updates.ConfigChoiceEventArgs args)
         {
             ConfigChoice?.Invoke(this, args);
         }
 
-        public event EventHandler<Updates.ConfigSettingArgs> ConfigSetting;
+        public event EventHandler<Updates.ConfigSettingEventArgs> ConfigSetting;
 
-        private void OnConfigSetting(Updates.ConfigSettingArgs args)
+        private void OnConfigSetting(Updates.ConfigSettingEventArgs args)
         {
             ConfigSetting?.Invoke(this, args);
         }
@@ -186,16 +188,16 @@ namespace BAPSClientCommon
 
         #region System events
 
-        public event EventHandler<Updates.DirectoryFileAddArgs> DirectoryFileAdd;
+        public event EventHandler<Updates.DirectoryFileAddEventArgs> DirectoryFileAdd;
 
-        private void OnDirectoryFileAdd(Updates.DirectoryFileAddArgs args)
+        private void OnDirectoryFileAdd(Updates.DirectoryFileAddEventArgs args)
         {
             DirectoryFileAdd?.Invoke(this, args);
         }
 
-        public event EventHandler<Updates.DirectoryPrepareArgs> DirectoryPrepare;
+        public event EventHandler<Updates.DirectoryPrepareEventArgs> DirectoryPrepare;
 
-        private void OnDirectoryPrepare(Updates.DirectoryPrepareArgs args)
+        private void OnDirectoryPrepare(Updates.DirectoryPrepareEventArgs args)
         {
             DirectoryPrepare?.Invoke(this, args);
         }
@@ -378,7 +380,7 @@ namespace BAPSClientCommon
                 case Command.ResetPlaylist:
                 {
                     var channelId = cmdReceived.Channel();
-                    OnResetPlaylist(new Updates.ChannelResetEventArgs(channelId));
+                    OnResetPlaylist(new Updates.PlaylistResetEventArgs(channelId));
                 }
                     break;
                 default:
@@ -461,7 +463,7 @@ namespace BAPSClientCommon
                         var optionId = _cs.ReceiveI();
                         var description = _cs.ReceiveS();
                         var type = _cs.ReceiveI();
-                        OnConfigOption(new Updates.ConfigOptionArgs(optionId, (ConfigType) type, description, hasIndex,
+                        OnConfigOption(new Updates.ConfigOptionEventArgs(optionId, (ConfigType) type, description, hasIndex,
                             index));
                     }
                     else
@@ -477,7 +479,7 @@ namespace BAPSClientCommon
                     {
                         var choiceIndex = _cs.ReceiveI();
                         var choiceDescription = _cs.ReceiveS();
-                        OnConfigChoice(new Updates.ConfigChoiceArgs(optionId, choiceIndex, choiceDescription));
+                        OnConfigChoice(new Updates.ConfigChoiceEventArgs(optionId, choiceIndex, choiceDescription));
                     }
                     else
                     {
@@ -585,7 +587,7 @@ namespace BAPSClientCommon
             var index = -1;
             if (cmdReceived.HasFlag(Command.ConfigUseValueMask)) index = cmdReceived.ConfigValue();
 
-            OnConfigSetting(new Updates.ConfigSettingArgs(optionId, type, value, index));
+            OnConfigSetting(new Updates.ConfigSettingEventArgs(optionId, type, value, index));
         }
 
         private void DecodeSystemCommand(Command cmdReceived)
@@ -601,14 +603,14 @@ namespace BAPSClientCommon
                         var directoryIndex = cmdReceived.SystemValue();
                         var index = _cs.ReceiveI();
                         var description = _cs.ReceiveS();
-                        OnDirectoryFileAdd(new Updates.DirectoryFileAddArgs(directoryIndex, index, description));
+                        OnDirectoryFileAdd(new Updates.DirectoryFileAddEventArgs(directoryIndex, index, description));
                     }
                     else
                     {
                         var directoryIndex = cmdReceived.SystemValue();
                         _ = _cs.ReceiveI();
                         var niceDirectoryName = _cs.ReceiveS();
-                        OnDirectoryPrepare(new Updates.DirectoryPrepareArgs(directoryIndex, niceDirectoryName));
+                        OnDirectoryPrepare(new Updates.DirectoryPrepareEventArgs(directoryIndex, niceDirectoryName));
                     }
 
                     break;
@@ -676,5 +678,221 @@ namespace BAPSClientCommon
         }
 
         #endregion Command decoding
+
+        private IObservable<Updates.PlayerStateEventArgs> _observePlayerState;
+        private IObservable<Updates.CountEventArgs> _observeIncomingCount;
+        private IObservable<Updates.ConfigChoiceEventArgs> _observeConfigChoice;
+        private IObservable<Updates.ConfigOptionEventArgs> _observeConfigOption;
+        private IObservable<Updates.ConfigSettingEventArgs> _observeConfigSetting;
+        private IObservable<(Command cmdReceived, uint optionID, ConfigResult result)> _observeConfigResult;
+        private IObservable<Updates.DirectoryFileAddEventArgs> _observeDirectoryFileAdd;
+        private IObservable<Updates.DirectoryPrepareEventArgs> _observeDirectoryPrepare;
+        private IObservable<Updates.MarkerEventArgs> _observeMarker;
+        private IObservable<Updates.TrackLoadEventArgs> _observeTrackLoad;
+        private IObservable<Updates.TrackAddEventArgs> _observeTrackAdd;
+        private IObservable<Updates.TrackDeleteEventArgs> _observeTrackDelete;
+        private IObservable<Updates.TrackMoveEventArgs> _observeTrackMove;
+        private IObservable<Updates.PlaylistResetEventArgs> _observePlaylistReset;
+        private IObservable<Updates.ErrorEventArgs> _observeError;
+        private IObservable<bool> _observeServerQuit;
+        private IObservable<VersionInfo> _observeVersion;
+        private IObservable<(Command cmdReceived, string ipAddress, uint mask)> _observeIpRestriction;
+        private IObservable<(uint resultID, byte dirtyStatus, string description)> _observeLibraryResult;
+        private IObservable<(uint listingID, uint channelID, string description)> _observeListingResult;
+        private IObservable<(uint permissionCode, string description)> _observePermission;
+        private IObservable<(uint showID, string description)> _observeShowResult;
+        private IObservable<Updates.UpDown> _observeTextScroll;
+        private IObservable<Updates.UpDown> _observeTextSizeChange;
+        private IObservable<(Command command, string description)> _observeUnknownCommand;
+        private IObservable<(string username, uint permissions)> _observeUser;
+        private IObservable<(byte resultCode, string description)> _observeUserResult;
+
+        public IObservable<Updates.PlayerStateEventArgs> ObservePlayerState =>
+            _observePlayerState ??
+                (_observePlayerState = Observable.FromEventPattern<Updates.PlayerStateEventArgs>(
+                    ev => PlayerState += ev,
+                    ev => PlayerState -= ev
+                ).Select(x => x.EventArgs));
+
+        public IObservable<Updates.MarkerEventArgs> ObserveMarker =>
+            _observeMarker ??
+                (_observeMarker = Observable.FromEventPattern<Updates.MarkerEventArgs>(
+                    ev => Marker += ev,
+                    ev => Marker -= ev
+                ).Select(x => x.EventArgs));
+
+        public IObservable<Updates.TrackLoadEventArgs> ObserveTrackLoad =>
+            _observeTrackLoad ??
+                (_observeTrackLoad = Observable.FromEventPattern<Updates.TrackLoadEventArgs>(
+                    ev => TrackLoad += ev,
+                    ev => TrackLoad -= ev
+                ).Select(x => x.EventArgs));
+        public IObservable<Updates.CountEventArgs> ObserveIncomingCount =>
+            _observeIncomingCount ??
+                (_observeIncomingCount = Observable.FromEventPattern<Updates.CountEventArgs>(
+                    ev => IncomingCount += ev,
+                    ev => IncomingCount -= ev
+                ).Select(x => x.EventArgs));
+
+        public IObservable<Updates.ConfigChoiceEventArgs> ObserveConfigChoice =>
+            _observeConfigChoice ??
+                (_observeConfigChoice = Observable.FromEventPattern<Updates.ConfigChoiceEventArgs>(
+                    ev => ConfigChoice += ev,
+                    ev => ConfigChoice -= ev
+                ).Select(x => x.EventArgs));
+
+        public IObservable<Updates.ConfigOptionEventArgs> ObserveConfigOption =>
+            _observeConfigOption ??
+                (_observeConfigOption = Observable.FromEventPattern<Updates.ConfigOptionEventArgs>(
+                    ev => ConfigOption += ev,
+                    ev => ConfigOption -= ev
+                ).Select(x => x.EventArgs));
+
+        public IObservable<Updates.ConfigSettingEventArgs> ObserveConfigSetting =>
+            _observeConfigSetting ??
+                (_observeConfigSetting = Observable.FromEventPattern<Updates.ConfigSettingEventArgs>(
+                    ev => ConfigSetting += ev,
+                    ev => ConfigSetting -= ev
+                ).Select(x => x.EventArgs));
+
+        public IObservable<(Command cmdReceived, uint optionID, ConfigResult result)> ObserveConfigResult =>
+            _observeConfigResult ??
+                (_observeConfigResult = Observable.FromEventPattern<(Command cmdReceived, uint optionID, ConfigResult result)>(
+                    ev => ConfigResult += ev,
+                    ev => ConfigResult -= ev
+                ).Select(x => x.EventArgs));
+
+        public IObservable<Updates.DirectoryFileAddEventArgs> ObserveDirectoryFileAdd =>
+            _observeDirectoryFileAdd ??
+                (_observeDirectoryFileAdd = Observable.FromEventPattern<Updates.DirectoryFileAddEventArgs>(
+                    ev => DirectoryFileAdd += ev,
+                    ev => DirectoryFileAdd -= ev
+                ).Select(x => x.EventArgs));
+
+        public IObservable<Updates.DirectoryPrepareEventArgs> ObserveDirectoryPrepare =>
+            _observeDirectoryPrepare ??
+                (_observeDirectoryPrepare = Observable.FromEventPattern<Updates.DirectoryPrepareEventArgs>(
+                    ev => DirectoryPrepare += ev,
+                    ev => DirectoryPrepare -= ev
+                ).Select(x => x.EventArgs));
+
+        public IObservable<Updates.TrackAddEventArgs> ObserveTrackAdd =>
+            _observeTrackAdd ??
+                (_observeTrackAdd = Observable.FromEventPattern<Updates.TrackAddEventArgs>(
+                    ev => TrackAdd += ev,
+                    ev => TrackAdd -= ev
+                ).Select(x => x.EventArgs));
+
+        public IObservable<Updates.TrackDeleteEventArgs> ObserveTrackDelete =>
+            _observeTrackDelete ??
+                (_observeTrackDelete = Observable.FromEventPattern<Updates.TrackDeleteEventArgs>(
+                    ev => TrackDelete += ev,
+                    ev => TrackDelete -= ev
+                ).Select(x => x.EventArgs));
+
+        public IObservable<Updates.TrackMoveEventArgs> ObserveTrackMove =>
+            _observeTrackMove ??
+                (_observeTrackMove = Observable.FromEventPattern<Updates.TrackMoveEventArgs>(
+                    ev => TrackMove += ev,
+                    ev => TrackMove -= ev
+                ).Select(x => x.EventArgs));
+
+        public IObservable<Updates.PlaylistResetEventArgs> ObservePlaylistReset =>
+            _observePlaylistReset ??
+                (_observePlaylistReset = Observable.FromEventPattern<Updates.PlaylistResetEventArgs>(
+                    ev => PlaylistReset += ev,
+                    ev => PlaylistReset -= ev
+                ).Select(x => x.EventArgs));
+
+        public IObservable<Updates.ErrorEventArgs> ObserveError =>
+            _observeError ??
+                (_observeError = Observable.FromEventPattern<Updates.ErrorEventArgs>(
+                    ev => Error += ev,
+                    ev => Error -= ev
+                ).Select(x => x.EventArgs));
+
+        public IObservable<bool> ObserveServerQuit =>
+            _observeServerQuit ??
+                (_observeServerQuit = Observable.FromEventPattern<bool>(
+                    ev => ServerQuit += ev,
+                    ev => ServerQuit -= ev
+                ).Select(x => x.EventArgs));
+
+        public IObservable<VersionInfo> ObserveVersion =>
+            _observeVersion ??
+                (_observeVersion = Observable.FromEventPattern<VersionInfo>(
+                    ev => Version += ev,
+                    ev => Version -= ev
+                ).Select(x => x.EventArgs));
+
+        public IObservable<(Command cmdReceived, string ipAddress, uint mask)> ObserveIpRestriction =>
+            _observeIpRestriction ??
+                (_observeIpRestriction = Observable.FromEventPattern<(Command cmdReceived, string ipAddress, uint mask)>(
+                    ev => IpRestriction += ev,
+                    ev => IpRestriction -= ev
+                ).Select(x => x.EventArgs));
+
+        public IObservable<(uint resultID, byte dirtyStatus, string description)> ObserveLibraryResult =>
+            _observeLibraryResult ??
+                (_observeLibraryResult = Observable.FromEventPattern<(uint resultID, byte dirtyStatus, string description)>(
+                    ev => LibraryResult += ev,
+                    ev => LibraryResult -= ev
+                ).Select(x => x.EventArgs));
+
+        public IObservable<(uint listingID, uint channelID, string description)> ObserveListingResult =>
+            _observeListingResult ??
+                (_observeListingResult = Observable.FromEventPattern<(uint listingID, uint channelID, string description)>(
+                    ev => ListingResult += ev,
+                    ev => ListingResult -= ev
+                ).Select(x => x.EventArgs));
+
+        public IObservable<(uint permissionCode, string description)> ObservePermission =>
+            _observePermission ??
+                (_observePermission = Observable.FromEventPattern<(uint permissionCode, string description)>(
+                    ev => Permission += ev,
+                    ev => Permission -= ev
+                ).Select(x => x.EventArgs));
+
+        public IObservable<(uint showID, string description)> ObserveShowResult =>
+            _observeShowResult ??
+                (_observeShowResult = Observable.FromEventPattern<(uint showID, string description)>(
+                    ev => ShowResult += ev,
+                    ev => ShowResult -= ev
+                ).Select(x => x.EventArgs));
+
+        public IObservable<Updates.UpDown> ObserveTextScroll =>
+            _observeTextScroll ??
+                (_observeTextScroll = Observable.FromEventPattern<Updates.UpDown>(
+                    ev => TextScroll += ev,
+                    ev => TextScroll -= ev
+                ).Select(x => x.EventArgs));
+
+        public IObservable<Updates.UpDown> ObserveTextSizeChange =>
+             _observeTextSizeChange ??
+                (_observeTextSizeChange = Observable.FromEventPattern<Updates.UpDown>(
+                    ev => TextSizeChange += ev,
+                    ev => TextSizeChange -= ev
+                ).Select(x => x.EventArgs));
+
+        public IObservable<(Command command, string description)> ObserveUnknownCommand =>
+             _observeUnknownCommand ??
+                (_observeUnknownCommand = Observable.FromEventPattern<(Command command, string description)>(
+                    ev => UnknownCommand += ev,
+                    ev => UnknownCommand -= ev
+                ).Select(x => x.EventArgs));
+       
+        public IObservable<(string username, uint permissions)> ObserveUser =>
+             _observeUser ??
+                (_observeUser = Observable.FromEventPattern<(string username, uint permissions)>(
+                    ev => User += ev,
+                    ev => User -= ev
+                ).Select(x => x.EventArgs));
+        
+        public IObservable<(byte resultCode, string description)> ObserveUserResult =>
+             _observeUserResult ??
+                (_observeUserResult = Observable.FromEventPattern<(byte resultCode, string description)>(
+                    ev => UserResult += ev,
+                    ev => UserResult -= ev
+                ).Select(x => x.EventArgs));
     }
 }

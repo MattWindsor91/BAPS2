@@ -6,15 +6,6 @@
     /// </summary>
     public static partial class Updates
     {
-        public delegate void CountEventHandler(object sender, CountEventArgs e);
-
-        /// <summary>
-        ///     Delegate for handling server errors.
-        /// </summary>
-        /// <param name="sender">The sender of the event.</param>
-        /// <param name="e">The argument struct, containing the error code and description.</param>
-        public delegate void ErrorEventHandler(object sender, ErrorEventArgs e);
-
         public enum CountType
         {
             LibraryItem,

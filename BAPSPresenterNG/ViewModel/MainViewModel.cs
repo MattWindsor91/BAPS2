@@ -23,7 +23,8 @@ namespace BAPSPresenterNG.ViewModel
     public class MainViewModel : ViewModelBase
     {
         [NotNull] private readonly ConfigCache _config;
-        [NotNull] private readonly ChannelControllerSet _controllerSet;
+        [NotNull] private readonly ChannelControllerSet _channelControllerSet;
+        [NotNull] private readonly DirectoryControllerSet _directoryControllerSet;
 
         [NotNull] private readonly IServerUpdater _updater;
         [CanBeNull] private RelayCommand<ushort> _forwardPauseCommand;
@@ -37,10 +38,12 @@ namespace BAPSPresenterNG.ViewModel
             [CanBeNull] ConfigCache config,
             // TODO(@MattWindsor91): this should be IServerUpdater, but I'm not sure how to get SimpleIoC to inject it otherwise.
             [CanBeNull] IClientCore updater,
-            [CanBeNull] ChannelControllerSet controllerSet)
+            [CanBeNull] ChannelControllerSet controllerSet,
+            [CanBeNull] DirectoryControllerSet directoryControllerSet)
         {
             _config = config ?? throw new ArgumentNullException(nameof(config));
-            _controllerSet = controllerSet ?? throw new ArgumentNullException(nameof(controllerSet));
+            _channelControllerSet = controllerSet ?? throw new ArgumentNullException(nameof(controllerSet));
+            _directoryControllerSet = directoryControllerSet ?? throw new ArgumentNullException(nameof(directoryControllerSet));
             _updater = updater ?? throw new ArgumentNullException(nameof(updater));
 
             Text = "<You can type notes here>";
@@ -172,7 +175,7 @@ namespace BAPSPresenterNG.ViewModel
         [Pure]
         private ChannelViewModel MakeChannelViewModel(ushort channelId)
         {
-            var controller = _controllerSet.ControllerFor(channelId);
+            var controller = _channelControllerSet.ControllerFor(channelId);
             var player = new PlayerViewModel(channelId, controller);
             return new ChannelViewModel(channelId, _config, player, controller);
         }
@@ -180,7 +183,8 @@ namespace BAPSPresenterNG.ViewModel
         [Pure]
         private DirectoryViewModel MakeDirectoryViewModel(ushort directoryId)
         {
-            return new DirectoryViewModel(directoryId, _updater);
+            var controller = _directoryControllerSet.ControllerFor(directoryId);
+            return new DirectoryViewModel(directoryId, controller);
         }
     }
 }

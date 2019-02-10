@@ -38,7 +38,7 @@ namespace BAPSPresenterNG
 
             _core = ViewModelLocator.ClientCore;
             Debug.Assert(_core != null, nameof(_core) + " != null");
-            ConfigCache.InstallReceiverEventHandlers(_core);
+            ConfigCache.SubscribeToReceiver(_core);
 
             var launchedProperly = _core.Launch();
             if (!launchedProperly) Shutdown();

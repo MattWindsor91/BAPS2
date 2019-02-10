@@ -10,7 +10,7 @@ namespace BAPSPresenter2
     {
         private void SetupPlaylistReactions(IServerUpdater r)
         {
-            r.ItemAdd += (sender, e) =>
+            r.ObserveTrackAdd += (sender, e) =>
             {
                 if (InvokeRequired)
                 {
@@ -18,7 +18,7 @@ namespace BAPSPresenter2
                 }
                 else AddItem(sender, e);
             };
-            r.ItemMove += (sender, e) =>
+            r.ObserveTrackMove += (sender, e) =>
             {
                 if (InvokeRequired)
                 {
@@ -26,7 +26,7 @@ namespace BAPSPresenter2
                 }
                 else MoveItemTo(sender, e);
             };
-            r.ItemDelete += (sender, e) =>
+            r.ObserveTrackDelete += (sender, e) =>
             {
                 if (InvokeRequired)
                 {
@@ -34,11 +34,11 @@ namespace BAPSPresenter2
                 }
                 else DeleteItem(sender, e);
             };
-            r.ResetPlaylist += (sender, e) =>
+            r.ObservePlaylistReset += (sender, e) =>
             {
                 if (InvokeRequired)
                 {
-                    Invoke((EventHandler<Updates.ChannelResetEventArgs>)CleanPlaylist, sender, e);
+                    Invoke((EventHandler<Updates.PlaylistResetEventArgs>)CleanPlaylist, sender, e);
                 }
                 else CleanPlaylist(sender, e);
             };
@@ -65,7 +65,7 @@ namespace BAPSPresenter2
             RefreshAudioWall();
         }
 
-        private void CleanPlaylist(object sender, Updates.ChannelResetEventArgs e)
+        private void CleanPlaylist(object sender, Updates.PlaylistResetEventArgs e)
         {
             if (ChannelOutOfBounds(e.ChannelId)) return;
             _channels[e.ChannelId].CleanPlaylist();

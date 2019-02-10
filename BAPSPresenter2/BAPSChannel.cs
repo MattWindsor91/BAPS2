@@ -82,7 +82,7 @@ namespace BAPSPresenter2
         public event EventHandler<uint> TrackBarMoved;
         public event ChannelConfigChangeHandler ChannelConfigChange;
         public event EventHandler<Updates.TrackDeleteEventArgs> ItemDeleteRequest;
-        public event EventHandler<Updates.ChannelResetEventArgs> ChannelResetRequest;
+        public event EventHandler<Updates.PlaylistResetEventArgs> ChannelResetRequest;
         public event EventHandler<TrackList> AudioWallRequest;
 
         #endregion Events used to talk to the main presenter
@@ -398,7 +398,7 @@ namespace BAPSPresenter2
             }
             else if (e.ClickedItem == resetChannelStripMenuItem)
             {
-                OnChannelResetRequest(new Updates.ChannelResetEventArgs((ushort)ChannelId));
+                OnChannelResetRequest(new Updates.PlaylistResetEventArgs((ushort)ChannelId));
             }
             else if (e.ClickedItem == showAudioWallToolStripMenuItem)
             {
@@ -492,7 +492,7 @@ namespace BAPSPresenter2
             AudioWallRequest?.Invoke(this, e);
         }
 
-        protected virtual void OnChannelResetRequest(Updates.ChannelResetEventArgs e)
+        protected virtual void OnChannelResetRequest(Updates.PlaylistResetEventArgs e)
         {
             ChannelResetRequest?.Invoke(this, e);
         }

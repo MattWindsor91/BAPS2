@@ -6,9 +6,9 @@
         /// <summary>
         ///     Event payload for when the server adds a file to a directory.
         /// </summary>
-        public class DirectoryFileAddArgs : DirectoryArgs
+        public class DirectoryFileAddEventArgs : DirectoryEventArgs
         {
-            public DirectoryFileAddArgs(ushort directoryId, uint index, string description)
+            public DirectoryFileAddEventArgs(ushort directoryId, uint index, string description)
                 : base(directoryId)
             {
                 Index = index;
@@ -31,9 +31,9 @@
         ///     Event payload for when the server clears out and renames a directory,
         ///     or creates one if it doesn't exist.
         /// </summary>
-        public class DirectoryPrepareArgs : DirectoryArgs
+        public class DirectoryPrepareEventArgs : DirectoryEventArgs
         {
-            public DirectoryPrepareArgs(ushort directoryId, string name)
+            public DirectoryPrepareEventArgs(ushort directoryId, string name)
                 : base(directoryId)
             {
                 Name = name;

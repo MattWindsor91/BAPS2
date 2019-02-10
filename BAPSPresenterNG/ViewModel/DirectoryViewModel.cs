@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Reactive.Linq;
 using BAPSClientCommon;
+using BAPSClientCommon.Controllers;
 using BAPSClientCommon.Events;
 using BAPSClientCommon.Model;
 using GalaSoft.MvvmLight;
@@ -14,14 +17,14 @@ namespace BAPSPresenterNG.ViewModel
     /// </summary>
     public class DirectoryViewModel : ViewModelBase, IDisposable
     {
-        private readonly IServerUpdater _updater;
+        [CanBeNull] private readonly DirectoryController _controller;
         private string _name;
 
-        public DirectoryViewModel(ushort directoryId, [CanBeNull] IServerUpdater updater)
+        public DirectoryViewModel(ushort directoryId, [CanBeNull] DirectoryController controller)
         {
-            _updater = updater;
+            _controller = controller;
             DirectoryId = directoryId;
-            RegisterForServerUpdates();
+            SubscribeToServerUpdates();
         }
 
         public ushort DirectoryId { get; }
@@ -45,24 +48,39 @@ namespace BAPSPresenterNG.ViewModel
         /// </summary>
         public ObservableCollection<DirectoryEntry> Files { get; } = new ObservableCollection<DirectoryEntry>();
 
+        [NotNull] private readonly IList<IDisposable> _subscriptions = new List<IDisposable>();
+        
         public void Dispose()
         {
-            UnregisterForServerUpdates();
+            UnsubscribeFromServerUpdates();
         }
-
-        private void RegisterForServerUpdates()
+        
+        /// <summary>
+        ///     Restricts a directory observable to returning only events for this directory.
+        /// </summary>
+        /// <param name="source">The observable to filter.</param>
+        /// <typeparam name="TResult">Type of output from the observable.</typeparam>
+        /// <returns>The observable corresponding to filtering <see cref="source"/> to events for this directory.</returns>
+        [NotNull, Pure]
+        private IObservable<TResult> OnThisDirectory<TResult>(IObservable<TResult> source)
+            where TResult : DirectoryEventArgs
         {
-            _updater.DirectoryFileAdd += HandleDirectoryFileAdd;
-            _updater.DirectoryPrepare += HandleDirectoryPrepare;
+            return from ev in source where ev.DirectoryId == DirectoryId select ev;
         }
-
-        private void UnregisterForServerUpdates()
+        private void SubscribeToServerUpdates()
         {
-            _updater.DirectoryFileAdd -= HandleDirectoryFileAdd;
-            _updater.DirectoryPrepare -= HandleDirectoryPrepare;
+            if (_controller == null) return;
+            var updater = _controller.Updater;
+            _subscriptions.Add(updater.ObserveDirectoryFileAdd.Subscribe(HandleDirectoryFileAdd));
+            _subscriptions.Add(updater.ObserveDirectoryPrepare.Subscribe(HandleDirectoryPrepare));
         }
 
-        private void HandleDirectoryFileAdd(object sender, Updates.DirectoryFileAddArgs e)
+        private void UnsubscribeFromServerUpdates()
+        {
+            foreach (var subscription in _subscriptions) subscription.Dispose();
+        }
+
+        private void HandleDirectoryFileAdd(Updates.DirectoryFileAddEventArgs e)
         {
             if (e.DirectoryId != DirectoryId) return;
             var entry = new DirectoryEntry(DirectoryId, e.Description);
@@ -78,9 +96,8 @@ namespace BAPSPresenterNG.ViewModel
         ///         previously been used.
         ///     </para>
         /// </summary>
-        /// <param name="sender">Ignored.</param>
         /// <param name="e">The server update payload.</param>
-        private void HandleDirectoryPrepare(object sender, Updates.DirectoryPrepareArgs e)
+        private void HandleDirectoryPrepare(Updates.DirectoryPrepareEventArgs e)
         {
             if (e.DirectoryId != DirectoryId) return;
             Name = e.Name;

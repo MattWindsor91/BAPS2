@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reactive.Linq;
 using BAPSClientCommon.BapsNet;
 using BAPSClientCommon.Events;
 using BAPSClientCommon.ServerConfig;
@@ -6,65 +7,68 @@ using BAPSClientCommon.ServerConfig;
 namespace BAPSClientCommon
 {
     /// <summary>
-    ///     Event interface common to all server update classes.
+    ///     Observable interface common to all server update classes.
     /// </summary>
     public interface IBaseServerUpdater
     {
         /// <summary>
-        ///     Event raised to notify subscribers that a particular number of items is en route.
+        ///     Observable that notifies subscribers that a particular number of items is en route.
         /// </summary>
-        event EventHandler<Updates.CountEventArgs> IncomingCount;
+        IObservable<Updates.CountEventArgs> ObserveIncomingCount { get; }
     }
-    
+
     /// <summary>
-    ///     Event interface for classes that send BapsNet server playback updates.
+    ///     Observable interface for classes that send BapsNet server playback updates.
     /// </summary>
     public interface IPlaybackServerUpdater : IBaseServerUpdater
     {
         /// <summary>
-        ///     Event raised when the server reports a change in channel state.
+        ///     Observable that reports when the server reports a change in channel state.
         /// </summary>
-        event EventHandler<Updates.PlayerStateEventArgs> ChannelState;
+        IObservable<Updates.PlayerStateEventArgs> ObservePlayerState { get; }
 
         /// <summary>
-        ///     Event raised when the server reports a change in channel marker.
+        ///     Observable that reports when the server reports a change in channel marker.
         /// </summary>
-        event EventHandler<Updates.MarkerEventArgs> ChannelMarker;
-        
-        event EventHandler<Updates.TrackLoadEventArgs> TrackLoad;
+        IObservable<Updates.MarkerEventArgs> ObserveMarker { get; }
+
+        /// <summary>
+        ///     Observable that reports when the server reports that a new track has been loaded into the player.
+        /// </summary>
+        IObservable<Updates.TrackLoadEventArgs> ObserveTrackLoad { get; }
     }
 
     /// <summary>
-    ///     Event interface for classes that send BapsNet server directory updates.
+    ///     Observable interface for classes that send BapsNet server directory updates.
     /// </summary>
     public interface IDirectoryServerUpdater : IBaseServerUpdater
     {
-        event EventHandler<Updates.DirectoryFileAddArgs> DirectoryFileAdd;
-        event EventHandler<Updates.DirectoryPrepareArgs> DirectoryPrepare;
+        IObservable<Updates.DirectoryFileAddEventArgs> ObserveDirectoryFileAdd { get; }
+        IObservable<Updates.DirectoryPrepareEventArgs> ObserveDirectoryPrepare { get; }
     }
 
     /// <summary>
-    ///     Event interface for classes that send BapsNet server config updates.
+    ///     Observable interface for classes that send BapsNet server config updates.
     /// </summary>
     public interface IConfigServerUpdater : IBaseServerUpdater
     {
         /// <summary>
-        ///     Event raised when the server declares a config choice.
+        ///     Observable that reports when the server declares a config choice.
         /// </summary>
-        event EventHandler<Updates.ConfigChoiceArgs> ConfigChoice;
+        IObservable<Updates.ConfigChoiceEventArgs> ObserveConfigChoice { get; }
 
         /// <summary>
-        ///     Event raised when the server declares a config option.
+        ///     Observable that reports when the server declares a config option.
         /// </summary>
-        event EventHandler<Updates.ConfigOptionArgs> ConfigOption;
+        IObservable<Updates.ConfigOptionEventArgs> ObserveConfigOption { get; }
 
         /// <summary>
         ///     Event raised when the server declares that a setting on a
         ///     config option has changed.
         /// </summary>
-        event EventHandler<Updates.ConfigSettingArgs> ConfigSetting;
+        IObservable<Updates.ConfigSettingEventArgs> ObserveConfigSetting { get; }
 
-        event EventHandler<(Command cmdReceived, uint optionID, ConfigResult result)> ConfigResult;
+        IObservable<(Command cmdReceived, uint optionID, ConfigResult result)> ObserveConfigResult { get; }
     }
 
     /// <summary>
@@ -72,20 +76,20 @@ namespace BAPSClientCommon
     /// </summary>
     public interface IPlaylistServerUpdater : IBaseServerUpdater
     {
-        event EventHandler<Updates.TrackAddEventArgs> ItemAdd;
-        event EventHandler<Updates.TrackDeleteEventArgs> ItemDelete;
-        event EventHandler<Updates.TrackMoveEventArgs> ItemMove;
-        
-        event EventHandler<Updates.ChannelResetEventArgs> ResetPlaylist;
+        IObservable<Updates.TrackAddEventArgs> ObserveTrackAdd { get; }
+        IObservable<Updates.TrackDeleteEventArgs> ObserveTrackDelete { get; }
+        IObservable<Updates.TrackMoveEventArgs> ObserveTrackMove { get; }
+
+        IObservable<Updates.PlaylistResetEventArgs> ObservePlaylistReset { get; }
     }
 
     public interface ISystemServerUpdater : IBaseServerUpdater
     {
-        event EventHandler<Updates.ErrorEventArgs> Error;
-        event EventHandler<bool> ServerQuit;
-        event EventHandler<Receiver.VersionInfo> Version;
+        IObservable<Updates.ErrorEventArgs> ObserveError { get; }
+        IObservable<bool> ObserveServerQuit { get; }
+        IObservable<Receiver.VersionInfo> ObserveVersion { get; }
     }
-    
+
     /// <summary>
     ///     Event interface for classes that send BAPSNet server updates.
     /// </summary>
@@ -93,16 +97,16 @@ namespace BAPSClientCommon
         : IConfigServerUpdater, IDirectoryServerUpdater, IPlaybackServerUpdater, IPlaylistServerUpdater,
             ISystemServerUpdater
     {
-        event EventHandler<(Command cmdReceived, string ipAddress, uint mask)> IpRestriction;
+        IObservable<(Command cmdReceived, string ipAddress, uint mask)> ObserveIpRestriction { get; }
 
-        event EventHandler<(uint resultID, byte dirtyStatus, string description)> LibraryResult;
-        event EventHandler<(uint listingID, uint channelID, string description)> ListingResult;
-        event EventHandler<(uint permissionCode, string description)> Permission;
-        event EventHandler<(uint showID, string description)> ShowResult;
-        event EventHandler<Updates.UpDown> TextScroll;
-        event EventHandler<Updates.UpDown> TextSizeChange;
-        event EventHandler<(Command command, string description)> UnknownCommand;
-        event EventHandler<(string username, uint permissions)> User;
-        event EventHandler<(byte resultCode, string description)> UserResult;
+        IObservable<(uint resultID, byte dirtyStatus, string description)> ObserveLibraryResult { get; }
+        IObservable<(uint listingID, uint channelID, string description)> ObserveListingResult { get; }
+        IObservable<(uint permissionCode, string description)> ObservePermission { get; }
+        IObservable<(uint showID, string description)> ObserveShowResult { get; }
+        IObservable<Updates.UpDown> ObserveTextScroll { get; }
+        IObservable<Updates.UpDown> ObserveTextSizeChange { get; }
+        IObservable<(Command command, string description)> ObserveUnknownCommand { get; }
+        IObservable<(string username, uint permissions)> ObserveUser { get; }
+        IObservable<(byte resultCode, string description)> ObserveUserResult { get; }
     }
 }

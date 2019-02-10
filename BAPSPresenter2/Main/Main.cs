@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
@@ -217,26 +218,26 @@ namespace BAPSPresenter2
             SetupSystemReactions(r);
             SetupGeneralReactions(r);
         }
-
+        
         private void SetupGeneralReactions(IServerUpdater r)
         {
-            r.IncomingCount += (sender, e) =>
+            r.ObserveIncomingCount.Subscribe(e =>
             {
                 if (InvokeRequired)
                 {
-                    Invoke((Updates.CountEventHandler)HandleCount, sender, e);
+                    Invoke((EventHandler<Updates.CountEventArgs>)HandleCount, this, e);
                 }
-                else HandleCount(sender, e);
-            };
-            r.Error += (sender, e) =>
+                else HandleCount(this, e);
+            });
+            r.ObserveError += (sender, e) =>
             {
                 if (InvokeRequired)
                 {
-                    Invoke((Updates.ErrorEventHandler)HandleError, sender, e);
+                    Invoke((EventHandler<Updates.ErrorEventArgs>)HandleError, sender, e);
                 }
                 else HandleError(sender, e);
             };
-            r.UnknownCommand += (sender, e) =>
+            r.ObserveUnknownCommand += (sender, e) =>
             {
                 if (InvokeRequired)
                 {
