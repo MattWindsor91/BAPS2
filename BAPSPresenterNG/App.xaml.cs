@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Windows;
 using BAPSClientCommon;
+using BAPSClientCommon.Controllers;
 using BAPSClientCommon.ServerConfig;
 using BAPSClientWindows;
 using BAPSPresenterNG.ViewModel;
@@ -30,6 +31,7 @@ namespace BAPSPresenterNG
             SimpleIoc.Default.Register<ConfigManager>();
             SimpleIoc.Default.Register(MakeAuthenticator);
             SimpleIoc.Default.Register<IClientCore, ClientCore>();
+            SimpleIoc.Default.Register<InitialUpdatePerformer>();
 
             _main = new MainWindow();
             _main.Show();
@@ -37,28 +39,24 @@ namespace BAPSPresenterNG
             _core = ViewModelLocator.ClientCore;
             Debug.Assert(_core != null, nameof(_core) + " != null");
             ConfigCache.InstallReceiverEventHandlers(_core);
-            _core.AboutToAuthenticate += AboutToAuthenticate;
-            _core.AboutToAutoUpdate += ChannelCountReady;
 
             var launchedProperly = _core.Launch();
             if (!launchedProperly) Shutdown();
-        }
 
-        private static void ChannelCountReady(object sender, (int numChannelsPrefetch, int numDirectoriesPrefetch) args)
-        {
-            // Manually pumping 'count changed' messages.
-            var (numChannelsPrefetch, numDirectoriesPrefetch) = args;
-            ConfigCache.AddOptionDescription((uint) OptionKey.ChannelCount, ConfigType.Int, "Number of channels",
-                false);
-            ConfigCache.AddOptionValue((uint) OptionKey.ChannelCount, numChannelsPrefetch);
-            ConfigCache.AddOptionDescription((uint) OptionKey.DirectoryCount, ConfigType.Int, "Number of directories",
-                false);
-            ConfigCache.AddOptionValue((uint) OptionKey.DirectoryCount, numDirectoriesPrefetch);
+            var init = SimpleIoc.Default.GetInstance<InitialUpdatePerformer>();
+            init.Run();
         }
 
         private Authenticator MakeAuthenticator()
         {
-            return new Authenticator(LoginCallback);
+            var auth = new Authenticator(LoginCallback);
+            auth.ServerError += (s, errorMessage) =>
+            {
+                MessageBox.Show(errorMessage, "Server error:", MessageBoxButton.OK);
+                //logError(errorMessage);
+            };
+            auth.UserError += (s, errorMessage) => { MessageBox.Show(errorMessage, "Login error:", MessageBoxButton.OK); };
+            return auth;
         }
 
         private Authenticator.Response LoginCallback()
@@ -78,16 +76,6 @@ namespace BAPSPresenterNG
                 Server = login.ViewModel.Server,
                 Port = login.ViewModel.Port
             };
-        }
-
-        private void AboutToAuthenticate(object sender, [NotNull] Authenticator e)
-        {
-            e.ServerError += (s, errorMessage) =>
-            {
-                MessageBox.Show(errorMessage, "Server error:", MessageBoxButton.OK);
-                //logError(errorMessage);
-            };
-            e.UserError += (s, errorMessage) => { MessageBox.Show(errorMessage, "Login error:", MessageBoxButton.OK); };
         }
 
         private void Application_Exit(object sender, ExitEventArgs e)

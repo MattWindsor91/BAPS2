@@ -1,4 +1,5 @@
 using System;
+using System.Reactive.Linq;
 using BAPSClientCommon.BapsNet;
 using BAPSClientCommon.ServerConfig;
 using JetBrains.Annotations;
@@ -44,6 +45,37 @@ namespace BAPSClientCommon.Controllers
             var cmd = Command.Config | Command.SetConfigValue;
             if (index != ConfigCache.NoIndex) cmd |= Command.ConfigUseValueMask | (Command) index;
             SendAsync(new Message(cmd).Add(optionId).Add((uint) ConfigType.Choice).Add((uint) choiceIndex));
+        }
+
+
+        /// <summary>
+        ///     Asks the server to retrieve an integer config key, producing a task that waits until either
+        ///     the config cache receives it or the given timeout period elapses.
+        /// </summary>
+        /// <param name="key">The key to retrieve.</param>
+        /// <param name="timeout">A time-span that, will be used as the timeout for this poll.</param>
+        /// <param name="fallback">A fallback value to use if the timeout elapses.</param>
+        /// <param name="index">If given, the specific index to retrieve.</param>
+        /// <returns>A task that completes with the retrieved integer value.</returns>
+        public int PollInt(OptionKey key, TimeSpan timeout, int fallback = -1, int index = ConfigCache.NoIndex)
+        {
+            var mainObservable = Observable.FromEventPattern<ConfigCache.IntChangeEventArgs>(
+                ev =>
+                {
+                    _cache.IntChanged += ev;
+                    // This is a strange place to put this, but necessary;
+                    // the BapsNet conversation that results in receiving the config setting has to
+                    // take place within the time window that 'ev' is registered.
+                    SendAsync(new Message(Command.Config | Command.GetConfigSetting).Add((uint) key));
+                },
+                ev => _cache.IntChanged -= ev
+            ).FirstAsync(
+                ev => ev.EventArgs.Key == key && ev.EventArgs.Index == index
+            ).Select(
+                ev => ev.EventArgs.Value
+            );
+            var fallbackObservable = Observable.Return(fallback).Delay(timeout);
+            return mainObservable.Amb(fallbackObservable).Wait();
         }
     }
 }

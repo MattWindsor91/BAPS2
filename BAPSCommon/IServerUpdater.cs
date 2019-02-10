@@ -6,9 +6,20 @@ using BAPSClientCommon.ServerConfig;
 namespace BAPSClientCommon
 {
     /// <summary>
+    ///     Event interface common to all server update classes.
+    /// </summary>
+    public interface IBaseServerUpdater
+    {
+        /// <summary>
+        ///     Event raised to notify subscribers that a particular number of items is en route.
+        /// </summary>
+        event EventHandler<Updates.CountEventArgs> IncomingCount;
+    }
+    
+    /// <summary>
     ///     Event interface for classes that send BapsNet server playback updates.
     /// </summary>
-    public interface IPlaybackServerUpdater
+    public interface IPlaybackServerUpdater : IBaseServerUpdater
     {
         /// <summary>
         ///     Event raised when the server reports a change in channel state.
@@ -26,7 +37,7 @@ namespace BAPSClientCommon
     /// <summary>
     ///     Event interface for classes that send BapsNet server directory updates.
     /// </summary>
-    public interface IDirectoryServerUpdater
+    public interface IDirectoryServerUpdater : IBaseServerUpdater
     {
         event EventHandler<Updates.DirectoryFileAddArgs> DirectoryFileAdd;
         event EventHandler<Updates.DirectoryPrepareArgs> DirectoryPrepare;
@@ -35,7 +46,7 @@ namespace BAPSClientCommon
     /// <summary>
     ///     Event interface for classes that send BapsNet server config updates.
     /// </summary>
-    public interface IConfigServerUpdater
+    public interface IConfigServerUpdater : IBaseServerUpdater
     {
         /// <summary>
         ///     Event raised when the server declares a config choice.
@@ -59,7 +70,7 @@ namespace BAPSClientCommon
     /// <summary>
     ///     Event interface for classes that send BapsNet server playlist updates.
     /// </summary>
-    public interface IPlaylistServerUpdater
+    public interface IPlaylistServerUpdater : IBaseServerUpdater
     {
         event EventHandler<Updates.TrackAddEventArgs> ItemAdd;
         event EventHandler<Updates.TrackDeleteEventArgs> ItemDelete;
@@ -67,26 +78,31 @@ namespace BAPSClientCommon
         
         event EventHandler<Updates.ChannelResetEventArgs> ResetPlaylist;
     }
+
+    public interface ISystemServerUpdater : IBaseServerUpdater
+    {
+        event EventHandler<Updates.ErrorEventArgs> Error;
+        event EventHandler<bool> ServerQuit;
+        event EventHandler<Receiver.VersionInfo> Version;
+    }
     
     /// <summary>
     ///     Event interface for classes that send BAPSNet server updates.
     /// </summary>
-    public interface IServerUpdater : IConfigServerUpdater, IDirectoryServerUpdater, IPlaybackServerUpdater, IPlaylistServerUpdater
+    public interface IServerUpdater
+        : IConfigServerUpdater, IDirectoryServerUpdater, IPlaybackServerUpdater, IPlaylistServerUpdater,
+            ISystemServerUpdater
     {
-        event EventHandler<Updates.ErrorEventArgs> Error;
-        event EventHandler<Updates.CountEventArgs> IncomingCount;
         event EventHandler<(Command cmdReceived, string ipAddress, uint mask)> IpRestriction;
 
         event EventHandler<(uint resultID, byte dirtyStatus, string description)> LibraryResult;
         event EventHandler<(uint listingID, uint channelID, string description)> ListingResult;
         event EventHandler<(uint permissionCode, string description)> Permission;
-        event EventHandler<bool> ServerQuit;
         event EventHandler<(uint showID, string description)> ShowResult;
         event EventHandler<Updates.UpDown> TextScroll;
         event EventHandler<Updates.UpDown> TextSizeChange;
         event EventHandler<(Command command, string description)> UnknownCommand;
         event EventHandler<(string username, uint permissions)> User;
         event EventHandler<(byte resultCode, string description)> UserResult;
-        event EventHandler<Receiver.VersionInfo> Version;
     }
 }

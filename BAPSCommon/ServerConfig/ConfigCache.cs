@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.ComponentModel;
 using BAPSClientCommon.Events;
 using JetBrains.Annotations;
@@ -20,8 +20,8 @@ namespace BAPSClientCommon.ServerConfig
         public const int NoIndex = -1;
 
 
-        private readonly Dictionary<string, IOption> _descLookup = new Dictionary<string, IOption>();
-        private readonly Dictionary<uint, IOption> _idLookup = new Dictionary<uint, IOption>();
+        private readonly ConcurrentDictionary<string, IOption> _descLookup = new ConcurrentDictionary<string, IOption>();
+        private readonly ConcurrentDictionary<uint, IOption> _idLookup = new ConcurrentDictionary<uint, IOption>();
 
         private IOption MakeOption(uint optionId, ConfigType type, string description, bool isIndexed)
         {

@@ -3,6 +3,12 @@ using BAPSPresenterNG.ViewModel;
 
 namespace BAPSPresenterNG.DesignData
 {
+    /// <summary>
+    ///     A dummy implementation of <see cref="IPlayerViewModel"/>.
+    ///     <para>
+    ///         This is used to provide sample data to player controls when in design-time mode.
+    ///     </para>
+    /// </summary>
     public class MockPlayerViewModel : PlayerViewModelBase
     {
         protected override PlaybackState State { get; set; } = PlaybackState.Playing;

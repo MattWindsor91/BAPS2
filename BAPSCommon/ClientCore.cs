@@ -16,7 +16,6 @@ namespace BAPSClientCommon
     /// </summary>
     public partial class ClientCore : IClientCore
     {
-        private const int CountPrefetchTimeoutMilliseconds = 500;
         private const int CancelGracePeriodMilliseconds = 500;
         private readonly Authenticator _auth;
 
@@ -80,51 +79,9 @@ namespace BAPSClientCommon
 
             LaunchTasks();
 
-            var numChannels = PrefetchCount(OptionKey.ChannelCount);
-            var numDirectories = PrefetchCount(OptionKey.DirectoryCount);
-
-            OnAboutToAutoUpdate((numChannels, numDirectories));
-            EnqueueAutoUpdate(numDirectories);
-
             return true;
         }
-
-        /// <summary>
-        ///     Synchronously polls the BAPS server for an integer config
-        ///     setting (eg, a channel or directory count).
-        ///     <para>
-        ///         This is intended as a workaround for certain BAPS server
-        ///         versions, whose auto-update runs require up-front directory
-        ///         counts, and send channel information before sending the
-        ///         channel count itself.
-        ///     </para>
-        /// </summary>
-        /// <param name="key">The key of the count option to poll.</param>
-        /// <returns>The value (or 0 if the prefetch timed out).</returns>
-        private int PrefetchCount(OptionKey key)
-        {
-            var count = 0;
-            var optionId = (uint) key;
-
-            using (var wait = new EventWaitHandle(false, EventResetMode.AutoReset))
-            {
-                void Waiter(object sender, Updates.ConfigSettingArgs args)
-                {
-                    if (args.OptionId != optionId) return;
-                    if (args.Value is int v) count = v;
-                    _receiver.ConfigSetting -= Waiter;
-                    wait.Set();
-                }
-
-                _receiver.ConfigSetting += Waiter;
-                SendAsync(new Message(Command.Config | Command.GetConfigSetting).Add(optionId));
-                wait.WaitOne(CountPrefetchTimeoutMilliseconds);
-            }
-
-            return count;
-        }
-
-
+        
         private void LaunchTasks()
         {
             var tf = new TaskFactory(_dead.Token, TaskCreationOptions.LongRunning, TaskContinuationOptions.None,
@@ -151,19 +108,6 @@ namespace BAPSClientCommon
             Debug.Assert(_auth != null, "Tried to authenticate with null authenticator");
             _socket = _auth.Run();
             return _socket != null;
-        }
-
-        private void EnqueueAutoUpdate(int numDirectories)
-        {
-            // Add the auto-update message onto the queue (chat(2) and general(1))
-            var cmd = Command.System | Command.AutoUpdate | (Command) 2 | (Command) 1;
-            SendAsync(new Message(cmd));
-            for (var i = 0; i < numDirectories; i++)
-            {
-                /** Add the refresh folder onto the queue **/
-                cmd = Command.System | Command.ListFiles | (Command) i;
-                SendAsync(new Message(cmd));
-            }
         }
 
         /// <summary>

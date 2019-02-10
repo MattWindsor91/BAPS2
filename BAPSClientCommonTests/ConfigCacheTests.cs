@@ -116,6 +116,8 @@ namespace BAPSClientCommonTests
             {
                 ConfigResult?.Invoke(this, e);
             }
+
+            public event EventHandler<Updates.CountEventArgs> IncomingCount;
         }
 
         #region Events interface

@@ -34,13 +34,24 @@ namespace BAPSPresenterNG.ViewModel
         [ProvidesContext] public static MainViewModel Main => ServiceLocator.Current.GetInstance<MainViewModel>();
 
         [ProvidesContext]
-        public static ChannelControllerSet ControllerSet => ServiceLocator.Current.GetInstance<ChannelControllerSet>();
+        public static ConfigController ConfigController => ServiceLocator.Current.GetInstance<ConfigController>();
+        
+        [ProvidesContext]
+        public static SystemController SystemController => ServiceLocator.Current.GetInstance<SystemController>();
+        
+        [ProvidesContext]
+        public static ChannelControllerSet ChannelControllerSet => ServiceLocator.Current.GetInstance<ChannelControllerSet>();
+        
+        [ProvidesContext]
+        public static DirectoryControllerSet DirectoryControllerSet => ServiceLocator.Current.GetInstance<DirectoryControllerSet>();
 
         private static void RegisterServices()
         {
             SimpleIoc.Default.Register<ConfigCache>();
             SimpleIoc.Default.Register<ConfigController>();
+            SimpleIoc.Default.Register<SystemController>();
             SimpleIoc.Default.Register<ChannelControllerSet>();
+            SimpleIoc.Default.Register<DirectoryControllerSet>();
         }
     }
 }
