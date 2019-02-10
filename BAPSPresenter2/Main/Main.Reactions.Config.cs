@@ -5,6 +5,7 @@ using BAPSClientCommon;
 using BAPSClientCommon.BapsNet;
 using BAPSClientCommon.Events;
 using BAPSClientCommon.ServerConfig;
+using BAPSClientCommon.Updaters;
 
 namespace BAPSPresenter2
 {

@@ -1,4 +1,5 @@
 using BAPSClientCommon.BapsNet;
+using BAPSClientCommon.Updaters;
 using JetBrains.Annotations;
 
 namespace BAPSClientCommon.Controllers
@@ -6,6 +7,7 @@ namespace BAPSClientCommon.Controllers
     /// <summary>
     ///     Controller for general BAPS system requests and updates.
     /// </summary>
+    [UsedImplicitly]
     public class SystemController : BapsNetControllerBase
     {
         public ISystemServerUpdater Updater => Core;

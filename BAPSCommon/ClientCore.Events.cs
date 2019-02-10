@@ -62,8 +62,7 @@ namespace BAPSClientCommon
         [NotNull] private readonly Subject<(uint showID, string description)> _observeShowResult =
             new Subject<(uint showID, string description)>();
 
-        [NotNull] private readonly Subject<Updates.UpDown> _observeTextScroll = new Subject<Updates.UpDown>();
-        [NotNull] private readonly Subject<Updates.UpDown> _observeTextSizeChange = new Subject<Updates.UpDown>();
+        [NotNull] private readonly Subject<Updates.TextSettingEventArgs> _observeTextSetting = new Subject<Updates.TextSettingEventArgs>();
 
         [NotNull] private readonly Subject<Updates.TrackAddEventArgs> _observeTrackAdd =
             new Subject<Updates.TrackAddEventArgs>();
@@ -138,9 +137,7 @@ namespace BAPSClientCommon
 
         public IObservable<(uint showID, string description)> ObserveShowResult => _observeShowResult;
 
-        public IObservable<Updates.UpDown> ObserveTextScroll => _observeTextScroll;
-
-        public IObservable<Updates.UpDown> ObserveTextSizeChange => _observeTextSizeChange;
+        public IObservable<Updates.TextSettingEventArgs> ObserveTextSetting => _observeTextSetting;
 
         public IObservable<(Command command, string description)> ObserveUnknownCommand => _observeUnknownCommand;
 
@@ -177,8 +174,7 @@ namespace BAPSClientCommon
             _receiverSubscriptions.Add(_receiver.ObservePlaylistReset.Subscribe(_observePlaylistReset));
             _receiverSubscriptions.Add(_receiver.ObserveServerQuit.Subscribe(_observeServerQuit));
             _receiverSubscriptions.Add(_receiver.ObserveShowResult.Subscribe(_observeShowResult));
-            _receiverSubscriptions.Add(_receiver.ObserveTextScroll.Subscribe(_observeTextScroll));
-            _receiverSubscriptions.Add(_receiver.ObserveTextSizeChange.Subscribe(_observeTextSizeChange));
+            _receiverSubscriptions.Add(_receiver.ObserveTextSetting.Subscribe(_observeTextSetting));
             _receiverSubscriptions.Add(_receiver.ObserveUnknownCommand.Subscribe(_observeUnknownCommand));
             _receiverSubscriptions.Add(_receiver.ObserveUser.Subscribe(_observeUser));
             _receiverSubscriptions.Add(_receiver.ObserveUserResult.Subscribe(_observeUserResult));

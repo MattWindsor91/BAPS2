@@ -2,6 +2,7 @@
 
 using BAPSClientCommon;
 using System;
+using BAPSClientCommon.Updaters;
 
 namespace BAPSPresenter2
 {

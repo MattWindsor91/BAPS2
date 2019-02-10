@@ -71,8 +71,8 @@ namespace BAPSPresenterNG.ViewModel
         {
             if (_controller == null) return;
             var updater = _controller.Updater;
-            _subscriptions.Add(updater.ObserveDirectoryFileAdd.Subscribe(HandleDirectoryFileAdd));
-            _subscriptions.Add(updater.ObserveDirectoryPrepare.Subscribe(HandleDirectoryPrepare));
+            _subscriptions.Add(OnThisDirectory(updater.ObserveDirectoryFileAdd).Subscribe(HandleDirectoryFileAdd));
+            _subscriptions.Add(OnThisDirectory(updater.ObserveDirectoryPrepare).Subscribe(HandleDirectoryPrepare));
         }
 
         private void UnsubscribeFromServerUpdates()
@@ -82,7 +82,6 @@ namespace BAPSPresenterNG.ViewModel
 
         private void HandleDirectoryFileAdd(Updates.DirectoryFileAddEventArgs e)
         {
-            if (e.DirectoryId != DirectoryId) return;
             var entry = new DirectoryEntry(DirectoryId, e.Description);
             DispatcherHelper.CheckBeginInvokeOnUI(() => Files.Insert((int) e.Index, entry));
         }
@@ -99,7 +98,6 @@ namespace BAPSPresenterNG.ViewModel
         /// <param name="e">The server update payload.</param>
         private void HandleDirectoryPrepare(Updates.DirectoryPrepareEventArgs e)
         {
-            if (e.DirectoryId != DirectoryId) return;
             Name = e.Name;
             DispatcherHelper.CheckBeginInvokeOnUI(Files.Clear);
         }

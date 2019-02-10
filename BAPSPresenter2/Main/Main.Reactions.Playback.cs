@@ -4,6 +4,7 @@ using System;
 using BAPSClientCommon;
 using BAPSClientCommon.Events;
 using BAPSClientCommon.Model;
+using BAPSClientCommon.Updaters;
 
 namespace BAPSPresenter2
 {

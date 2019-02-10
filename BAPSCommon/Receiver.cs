@@ -6,6 +6,7 @@ using BAPSClientCommon.BapsNet;
 using BAPSClientCommon.Events;
 using BAPSClientCommon.Model;
 using BAPSClientCommon.ServerConfig;
+using BAPSClientCommon.Updaters;
 
 namespace BAPSClientCommon
 {
@@ -209,19 +210,13 @@ namespace BAPSClientCommon
             Version?.Invoke(this, v);
         }
 
-        public event EventHandler<Updates.UpDown> TextScroll;
+        public event EventHandler<Updates.TextSettingEventArgs> TextSetting;
 
-        private void OnTextScroll(Updates.UpDown upDown)
+        private void OnTextSetting(Updates.TextSettingEventArgs args)
         {
-            TextScroll?.Invoke(this, upDown);
+            TextSetting?.Invoke(this, args);
         }
 
-        public event EventHandler<Updates.UpDown> TextSizeChange;
-
-        public void OnTextSizeChange(Updates.UpDown upDown)
-        {
-            TextSizeChange?.Invoke(this, upDown);
-        }
 
         public event EventHandler<bool> ServerQuit;
 
@@ -643,13 +638,13 @@ namespace BAPSClientCommon
                 case Command.ScrollText:
                 {
                     var upDown = cmdReceived.SystemValue() == 0 ? Updates.UpDown.Down : Updates.UpDown.Up;
-                    OnTextScroll(upDown);
+                    OnTextSetting(new Updates.TextSettingEventArgs(Updates.TextSetting.Scroll, upDown));
                 }
                     break;
                 case Command.TextSize:
                 {
                     var upDown = cmdReceived.SystemValue() == 0 ? Updates.UpDown.Down : Updates.UpDown.Up;
-                    OnTextSizeChange(upDown);
+                    OnTextSetting(new Updates.TextSettingEventArgs(Updates.TextSetting.FontSize, upDown));
                 }
                     break;
                 case Command.Quit:
@@ -701,8 +696,7 @@ namespace BAPSClientCommon
         private IObservable<(uint listingID, uint channelID, string description)> _observeListingResult;
         private IObservable<(uint permissionCode, string description)> _observePermission;
         private IObservable<(uint showID, string description)> _observeShowResult;
-        private IObservable<Updates.UpDown> _observeTextScroll;
-        private IObservable<Updates.UpDown> _observeTextSizeChange;
+        private IObservable<Updates.TextSettingEventArgs> _observeTextSetting;
         private IObservable<(Command command, string description)> _observeUnknownCommand;
         private IObservable<(string username, uint permissions)> _observeUser;
         private IObservable<(byte resultCode, string description)> _observeUserResult;
@@ -860,18 +854,11 @@ namespace BAPSClientCommon
                     ev => ShowResult -= ev
                 ).Select(x => x.EventArgs));
 
-        public IObservable<Updates.UpDown> ObserveTextScroll =>
-            _observeTextScroll ??
-                (_observeTextScroll = Observable.FromEventPattern<Updates.UpDown>(
-                    ev => TextScroll += ev,
-                    ev => TextScroll -= ev
-                ).Select(x => x.EventArgs));
-
-        public IObservable<Updates.UpDown> ObserveTextSizeChange =>
-             _observeTextSizeChange ??
-                (_observeTextSizeChange = Observable.FromEventPattern<Updates.UpDown>(
-                    ev => TextSizeChange += ev,
-                    ev => TextSizeChange -= ev
+        public IObservable<Updates.TextSettingEventArgs> ObserveTextSetting =>
+             _observeTextSetting ??
+                (_observeTextSetting = Observable.FromEventPattern<Updates.TextSettingEventArgs>(
+                    ev => TextSetting += ev,
+                    ev => TextSetting -= ev
                 ).Select(x => x.EventArgs));
 
         public IObservable<(Command command, string description)> ObserveUnknownCommand =>

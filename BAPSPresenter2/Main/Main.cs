@@ -9,6 +9,7 @@ using BAPSClientCommon.BapsNet;
 using BAPSClientCommon.Controllers;
 using BAPSClientCommon.Events;
 using BAPSClientCommon.ServerConfig;
+using BAPSClientCommon.Updaters;
 using BAPSPresenter2.Dialogs;
 using Timer = System.Windows.Forms.Timer;
 // Legacy

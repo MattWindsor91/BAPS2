@@ -1,5 +1,6 @@
 using System;
 using BAPSClientCommon.BapsNet;
+using BAPSClientCommon.Updaters;
 using JetBrains.Annotations;
 
 namespace BAPSClientCommon

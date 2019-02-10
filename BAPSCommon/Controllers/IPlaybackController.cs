@@ -1,4 +1,5 @@
 using BAPSClientCommon.Model;
+using BAPSClientCommon.Updaters;
 
 namespace BAPSClientCommon.Controllers
 {

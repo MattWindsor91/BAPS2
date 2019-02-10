@@ -28,12 +28,6 @@
             Config
         }
 
-        public enum UpDown : byte
-        {
-            Down = 0,
-            Up = 1
-        }
-
         public struct CountEventArgs
         {
             public CountType Type;

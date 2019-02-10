@@ -2,6 +2,7 @@
 using BAPSClientCommon.BapsNet;
 using BAPSClientCommon.Model;
 using BAPSClientCommon.ServerConfig;
+using BAPSClientCommon.Updaters;
 using JetBrains.Annotations;
 
 namespace BAPSClientCommon.Controllers

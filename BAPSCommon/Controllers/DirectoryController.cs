@@ -1,6 +1,7 @@
 using System;
 using BAPSClientCommon.BapsNet;
 using BAPSClientCommon.ServerConfig;
+using BAPSClientCommon.Updaters;
 using JetBrains.Annotations;
 
 namespace BAPSClientCommon.Controllers

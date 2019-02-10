@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using BAPSClientCommon.Events;
+using BAPSClientCommon.Updaters;
 using JetBrains.Annotations;
 
 namespace BAPSClientCommon.ServerConfig
