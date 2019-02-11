@@ -1,0 +1,109 @@
+<UserControl x:Class="URY.BAPS.Client.Wpf.Controls.Player"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:converters="clr-namespace:URY.BAPS.Client.Wpf.Converters"
+             xmlns:controls="clr-namespace:URY.BAPS.Client.Wpf.Controls"
+             xmlns:designData="clr-namespace:URY.BAPS.Client.Wpf.DesignData"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance designData:MockPlayerViewModel, IsDesignTimeCreatable=True}"
+             d:DesignWidth="300">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <converters:MsecToPositionStringConverter x:Key="MsecToPositionStringConverter" />
+            <SolidColorBrush x:Key="PlayBrush" Color="#FF60ABA2" />
+            <SolidColorBrush x:Key="PauseBrush" Color="#FFFEB93A" />
+            <SolidColorBrush x:Key="StopBrush" Color="#FFE2293A" />
+            <SolidColorBrush x:Key="NameFgBrush" Color="#FFE1E1E1" />
+            <SolidColorBrush x:Key="NameBgBrush" Color="#FF0073E6" />
+            <SolidColorBrush x:Key="NameWarningBgBrush" Color="#FFE2293A" />
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" /> <!-- Transport controls -->
+            <RowDefinition Height="Auto" /> <!-- Track name -->
+            <RowDefinition Height="Auto" /> <!-- Track bar -->
+            <RowDefinition Height="64px" /> <!-- Position displays -->
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" /> <!-- Play/Elapsed -->
+            <ColumnDefinition Width="*" /> <!-- Pause/Remaining -->
+            <ColumnDefinition Width="*" /> <!-- Stop/Start-At -->
+        </Grid.ColumnDefinitions>
+        <!-- Transport controls -->
+        <controls:TransportButton
+            Grid.Row="0" Grid.Column="0"
+            Icon="Play"
+            IsHighlighted="{Binding IsPlaying}"
+            HighlightBrush="{StaticResource PlayBrush}"
+            ToolTip="Play"
+            Command="{Binding PlayCommand}" />
+        <controls:TransportButton
+            Grid.Row="0" Grid.Column="1"
+            Icon="Pause"
+            IsHighlighted="{Binding IsPaused}"
+            HighlightBrush="{StaticResource PauseBrush}"
+            ToolTip="Pause"
+            Command="{Binding PauseCommand}" />
+        <controls:TransportButton
+            Grid.Row="0" Grid.Column="2"
+            Icon="Stop"
+            IsHighlighted="{Binding IsStopped}"
+            HighlightBrush="{StaticResource StopBrush}"
+            ToolTip="Stop"
+            Command="{Binding StopCommand}" />
+        <!-- Track name -->
+        <Border
+            Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
+            BorderThickness="1pt" Background="{StaticResource NameBgBrush}" BorderBrush="Black"
+            DataContext="{Binding LoadedTrack}">
+            <TextBlock
+                Foreground="{StaticResource NameFgBrush}"
+                TextTrimming="CharacterEllipsis"
+                Height="24pt"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                TextAlignment="Center"
+                FontSize="14pt"
+                Padding="4pt"
+                FontFamily="Consolas"
+                ToolTip="{Binding Description}"
+                Text="{Binding Description, FallbackValue=UNKNOWN, TargetNullValue=NONE}">
+                <!-- Change background when the track appears to have failed to load.
+                     (The BAPS server isn't explicit about this, so we have to do some guesswork. -->
+                <TextBlock.Style>
+                    <Style TargetType="{x:Type TextBlock}">
+                        <Style.Triggers>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding Description}" Value="--LOAD FAILED--" />
+                                    <Condition Binding="{Binding IsAudioItem}" Value="False" />
+                                </MultiDataTrigger.Conditions>
+                                <MultiDataTrigger.Setters>
+                                    <Setter Property="Background" Value="{StaticResource NameWarningBgBrush}" />
+                                </MultiDataTrigger.Setters>
+                            </MultiDataTrigger>
+
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+        </Border>
+        <!-- Track bar -->
+        <controls:TrackBar Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" DataContext="{Binding}" />
+        <!-- Position displays -->
+        <controls:PositionDisplay
+            Grid.Row="3" Grid.Column="0"
+            SubText="Elapsed"
+            MainText="{Binding Position, Converter={StaticResource MsecToPositionStringConverter}}" />
+        <controls:PositionDisplay Grid.Row="3" Grid.Column="1"
+                               SubText="Remaining"
+                               MainText="{Binding Remaining, Converter={StaticResource MsecToPositionStringConverter}}" />
+        <controls:PositionDisplay Grid.Row="3" Grid.Column="2"
+
+                               SubText="Start at:"
+                               MainText="{Binding StartTime, Converter={StaticResource MsecToPositionStringConverter}}" />
+    </Grid>
+</UserControl>

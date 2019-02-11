@@ -1,5 +1,5 @@
 ﻿using System;
-using BAPSClientCommon.Events;
+using URY.BAPS.Client.Common.Events;
 
 namespace BAPSPresenter2
 {

@@ -209,13 +209,13 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BAPSClientWindows\BAPSClientWindows.csproj">
+    <ProjectReference Include="..\BAPSClientWindows\BAPS.Client.Windows.csproj">
       <Project>{f429ef69-9102-42dc-ad98-9234b0dccc35}</Project>
-      <Name>BAPSClientWindows</Name>
+      <Name>BAPS.Client.Windows</Name>
     </ProjectReference>
-    <ProjectReference Include="..\BAPSCommon\BAPSClientCommon.csproj">
-      <Project>{701B4F5C-600A-4EB2-82AE-BA11EA8160A7}</Project>
-      <Name>BAPSClientCommon</Name>
+    <ProjectReference Include="..\BAPSCommon\BAPS.Client.Common.csproj">
+      <Project>{701b4f5c-600a-4eb2-82ae-ba11ea8160a7}</Project>
+      <Name>BAPS.Client.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\BAPSFormControls\BAPSFormControls.csproj">
       <Project>{4c3d1722-7b93-4081-8d61-572f8f088ced}</Project>

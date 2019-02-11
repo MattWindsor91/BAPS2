@@ -1,9 +1,8 @@
 ﻿// This used to be BAPSPresenterMainReactions_system.cpp.
 
-using BAPSClientCommon;
 using System;
-using BAPSClientCommon.Events;
-using BAPSClientCommon.Updaters;
+using URY.BAPS.Client.Common.Events;
+using URY.BAPS.Client.Common.Updaters;
 
 namespace BAPSPresenter2
 {

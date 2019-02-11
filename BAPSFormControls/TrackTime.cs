@@ -1,10 +1,10 @@
-﻿using BAPSClientCommon;
-using System;
+﻿using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
-using BAPSClientCommon.Events;
-using BAPSClientCommon.Model;
+using URY.BAPS.Client.Common.Events;
+using URY.BAPS.Client.Common.Model;
+using URY.BAPS.Client.Common.Utils;
 
 namespace BAPSFormControls
 {
@@ -210,7 +210,7 @@ namespace BAPSFormControls
 
         private void DrawTime(PaintEventArgs e, int time, int x, int y)
         {
-            e.Graphics.DrawString(BAPSClientCommon.Utils.Time.MillisecondsToTimeString(time),
+            e.Graphics.DrawString(Time.MillisecondsToTimeString(time),
                         Font,
                         new SolidBrush(ForeColor),
                         new Rectangle(x + 12, y - 2, 50, 12));

@@ -1,9 +1,9 @@
-﻿using BAPSClientCommon;
-using BAPSClientCommon.BapsNet;
-using System;
+﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using Message = BAPSClientCommon.BapsNet.Message;
+using URY.BAPS.Client.Common;
+using URY.BAPS.Client.Common.BapsNet;
+using Message = URY.BAPS.Client.Common.BapsNet.Message;
 
 namespace BAPSPresenter2.Dialogs
 {

@@ -115,15 +115,15 @@
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BAPSCommon\BAPSClientCommon.csproj">
-      <Project>{701B4F5C-600A-4EB2-82AE-BA11EA8160A7}</Project>
-      <Name>BAPSClientCommon</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="BAPSLabel.resx">
       <DependentUpon>BAPSLabel.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BAPSCommon\BAPS.Client.Common.csproj">
+      <Project>{701b4f5c-600a-4eb2-82ae-ba11ea8160a7}</Project>
+      <Name>BAPS.Client.Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

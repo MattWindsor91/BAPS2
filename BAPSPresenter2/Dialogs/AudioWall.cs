@@ -1,10 +1,10 @@
-﻿using BAPSClientCommon;
-using System;
+﻿using System;
 using System.Linq;
 using System.Drawing;
 using System.Windows.Forms;
-using BAPSClientCommon.BapsNet;
-using Message = BAPSClientCommon.BapsNet.Message;
+using URY.BAPS.Client.Common;
+using URY.BAPS.Client.Common.BapsNet;
+using Message = URY.BAPS.Client.Common.BapsNet.Message;
 
 namespace BAPSPresenter2
 {

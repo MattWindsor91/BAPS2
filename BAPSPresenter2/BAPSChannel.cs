@@ -1,12 +1,12 @@
-﻿using BAPSClientCommon;
-using BAPSPresenter;
+﻿using BAPSPresenter;
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
-using BAPSClientCommon.BapsNet;
-using BAPSClientCommon.Events;
-using BAPSClientCommon.Model;
-using BAPSClientCommon.ServerConfig;
+using URY.BAPS.Client.Common;
+using URY.BAPS.Client.Common.Events;
+using URY.BAPS.Client.Common.Model;
+using URY.BAPS.Client.Common.ServerConfig;
+using URY.BAPS.Client.Common.Utils;
 
 namespace BAPSPresenter2
 {
@@ -132,9 +132,9 @@ namespace BAPSPresenter2
 
                     value = (int)(Math.Round(value / 1000f) * 1000);
                     /** Set the amount of time gone **/
-                    timeGone.Text = BAPSClientCommon.Utils.Time.MillisecondsToTimeString(value);
+                    timeGone.Text = Time.MillisecondsToTimeString(value);
                     var tl = trackTime.Duration - value;
-                    timeLeft.Text = BAPSClientCommon.Utils.Time.MillisecondsToTimeString(tl);
+                    timeLeft.Text = Time.MillisecondsToTimeString(tl);
                     if (playButton.Enabled || tl > 10000 || tl < 500)
                     {
                         nearEndTimer.Enabled = false;
@@ -190,8 +190,8 @@ namespace BAPSPresenter2
                 RequestTimelineChange(TimelineChangeType.Duration, 0);
                 trackTime.CuePosition = 0;
                 trackTime.IntroPosition = 0;
-                timeLeft.Text = BAPSClientCommon.Utils.Time.MillisecondsToTimeString(0);
-                timeGone.Text = BAPSClientCommon.Utils.Time.MillisecondsToTimeString(0);
+                timeLeft.Text = Time.MillisecondsToTimeString(0);
+                timeGone.Text = Time.MillisecondsToTimeString(0);
                 nearEndTimer.Enabled = false;
                 timeLeft.Highlighted = false;
             }

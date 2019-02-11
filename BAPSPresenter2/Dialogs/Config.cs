@@ -1,10 +1,10 @@
-﻿using BAPSClientCommon;
-using BAPSClientCommon.BapsNet;
-using System;
+﻿using System;
 using System.Linq; // for collection queries
 using System.Windows.Forms;
-using BAPSClientCommon.ServerConfig;
-using Message = BAPSClientCommon.BapsNet.Message;
+using URY.BAPS.Client.Common;
+using URY.BAPS.Client.Common.BapsNet;
+using URY.BAPS.Client.Common.ServerConfig;
+using Message = URY.BAPS.Client.Common.BapsNet.Message;
 
 namespace BAPSPresenter2.Dialogs
 {

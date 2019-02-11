@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Forms;
-using BAPSClientCommon;
 using BAPSPresenter;
 
 namespace BAPSPresenter2

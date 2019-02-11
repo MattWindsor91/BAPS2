@@ -1,11 +1,11 @@
-﻿using BAPSClientCommon;
-using BAPSPresenter;
+﻿using BAPSPresenter;
 using System;
 using System.Windows.Forms;
-using BAPSClientCommon.BapsNet;
-using BAPSClientCommon.Events;
-using BAPSClientCommon.Model;
-using Message = BAPSClientCommon.BapsNet.Message;
+using URY.BAPS.Client.Common;
+using URY.BAPS.Client.Common.BapsNet;
+using URY.BAPS.Client.Common.Events;
+using URY.BAPS.Client.Common.Model;
+using Message = URY.BAPS.Client.Common.BapsNet.Message;
 
 namespace BAPSPresenter2
 {
@@ -340,7 +340,7 @@ namespace BAPSPresenter2
                 {
                     newSetting = "No";
                 }
-                core.SendAsync(new BAPSClientCommon.Message(cmd).Add(, (uint)oci.optionid, (uint)oci.type, (uint)(int)oci.choiceList[newSetting]));
+                core.SendAsync(new BAPS.Client.Common.Message(cmd).Add(, (uint)oci.optionid, (uint)oci.type, (uint)(int)oci.choiceList[newSetting]));
             }
             else if (e.ClickedItem == BAPSChannelplayOnLoadToolStripMenuItem)
             {
@@ -350,32 +350,32 @@ namespace BAPSPresenter2
                 {
                     newSetting = "No";
                 }
-                core.SendAsync(new BAPSClientCommon.Message(cmd).Add(, (uint)oci.optionid, (uint)oci.type, (uint)(int)oci.choiceList[newSetting]));
+                core.SendAsync(new BAPS.Client.Common.Message(cmd).Add(, (uint)oci.optionid, (uint)oci.type, (uint)(int)oci.choiceList[newSetting]));
             }
             else if (e.ClickedItem == repeatNoneToolStripMenuItem && !repeatNoneToolStripMenuItem.Checked)
             {
                 var oci = ConfigCache.getOption("Repeat");
-                core.SendAsync(new BAPSClientCommon.Message(cmd).Add(, (uint)oci.optionid, (uint)oci.type, (uint)(int)oci.choiceList["No repeat"]));
+                core.SendAsync(new BAPS.Client.Common.Message(cmd).Add(, (uint)oci.optionid, (uint)oci.type, (uint)(int)oci.choiceList["No repeat"]));
             }
             else if (e.ClickedItem == repeatOneToolStripMenuItem && !repeatOneToolStripMenuItem.Checked)
             {
                 var oci = ConfigCache.getOption("Repeat");
-                core.SendAsync(new BAPSClientCommon.Message(cmd).Add(, (uint)oci.optionid, (uint)oci.type, (uint)(int)oci.choiceList["Repeat one"]));
+                core.SendAsync(new BAPS.Client.Common.Message(cmd).Add(, (uint)oci.optionid, (uint)oci.type, (uint)(int)oci.choiceList["Repeat one"]));
             }
             else if (e.ClickedItem == repeatAllToolStripMenuItem && !repeatAllToolStripMenuItem.Checked)
             {
                 var oci = ConfigCache.getOption("Repeat");
-                core.SendAsync(new BAPSClientCommon.Message(cmd).Add(, (uint)oci.optionid, (uint)oci.type, (uint)(int)oci.choiceList["Repeat all"]));
+                core.SendAsync(new BAPS.Client.Common.Message(cmd).Add(, (uint)oci.optionid, (uint)oci.type, (uint)(int)oci.choiceList["Repeat all"]));
             }
             else if (e.ClickedItem == deleteItemToolStripMenuItem)
             {
                 cmd = Command.PLAYLIST | Command.DELETEITEM | (Command)tl.Channel;
-                core.SendAsync(new BAPSClientCommon.Message(cmd).Add(, (uint)tl.LastIndexClicked));
+                core.SendAsync(new BAPS.Client.Common.Message(cmd).Add(, (uint)tl.LastIndexClicked));
             }
             else if (e.ClickedItem == resetChannelStripMenuItem)
             {
                 cmd = Command.PLAYLIST | Command.RESETPLAYLIST | (Command)tl.Channel;
-                core.SendAsync(new BAPSClientCommon.Message(cmd));
+                core.SendAsync(new BAPS.Client.Common.Message(cmd));
             }
             else if (e.ClickedItem == showAudioWallToolStripMenuItem)
             {

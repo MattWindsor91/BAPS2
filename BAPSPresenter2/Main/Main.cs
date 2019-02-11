@@ -4,13 +4,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
-using BAPSClientCommon;
-using BAPSClientCommon.BapsNet;
-using BAPSClientCommon.Controllers;
-using BAPSClientCommon.Events;
-using BAPSClientCommon.ServerConfig;
-using BAPSClientCommon.Updaters;
 using BAPSPresenter2.Dialogs;
+using URY.BAPS.Client.Common;
+using URY.BAPS.Client.Common.BapsNet;
+using URY.BAPS.Client.Common.Controllers;
+using URY.BAPS.Client.Common.Events;
+using URY.BAPS.Client.Common.ServerConfig;
+using URY.BAPS.Client.Common.Updaters;
 using Timer = System.Windows.Forms.Timer;
 // Legacy
 

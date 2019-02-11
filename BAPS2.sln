@@ -1,3 +1,4 @@
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2024
@@ -26,16 +27,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BAPSPresenter", "BAPSPresen
 		{46FD9397-DD3B-456A-9D95-504D60F6A9B5} = {46FD9397-DD3B-456A-9D95-504D60F6A9B5}
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAPSClientCommon", "BAPSCommon\BAPSClientCommon.csproj", "{701B4F5C-600A-4EB2-82AE-BA11EA8160A7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "URY.BAPS.Client.Common", "URY.BAPS.Client.Common\URY.BAPS.Client.Common.csproj", "{701B4F5C-600A-4EB2-82AE-BA11EA8160A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BAPSPresenterNG", "BAPSPresenterNG\BAPSPresenterNG.csproj", "{65A7B0DA-F2BB-49B3-AB0B-B4BA30885EFA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "URY.BAPS.Client.Wpf", "URY.BAPS.Client.Wpf\URY.BAPS.Client.Wpf.csproj", "{65A7B0DA-F2BB-49B3-AB0B-B4BA30885EFA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAPSClientCommonTests", "BAPSClientCommonTests\BAPSClientCommonTests.csproj", "{86EFEC49-A8A7-4BAF-8BCC-C6E78A3A2772}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "URY.BAPS.Client.Common.Tests", "URY.BAPS.Client.Common.Tests\URY.BAPS.Client.Common.Tests.csproj", "{86EFEC49-A8A7-4BAF-8BCC-C6E78A3A2772}"
 	ProjectSection(ProjectDependencies) = postProject
 		{701B4F5C-600A-4EB2-82AE-BA11EA8160A7} = {701B4F5C-600A-4EB2-82AE-BA11EA8160A7}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BAPSClientWindows", "BAPSClientWindows\BAPSClientWindows.csproj", "{F429EF69-9102-42DC-AD98-9234B0DCCC35}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "URY.BAPS.Client.Windows", "URY.BAPS.Client.Windows\URY.BAPS.Client.Windows.csproj", "{F429EF69-9102-42DC-AD98-9234B0DCCC35}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

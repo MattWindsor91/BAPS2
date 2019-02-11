@@ -1,10 +1,9 @@
-﻿using BAPSClientCommon;
-using System;
+﻿using System;
 using System.Linq;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
-using BAPSClientCommon.Model;
+using URY.BAPS.Client.Common.Model;
 
 namespace BAPSPresenter2
 {

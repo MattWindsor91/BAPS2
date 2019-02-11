@@ -1,0 +1,97 @@
+﻿<Window x:Class="URY.BAPS.Client.Wpf.Login"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Login" Height="240" Width="320"
+        ResizeMode="CanResizeWithGrip"
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner"
+        DataContext="{Binding Login, Source={StaticResource Locator}}">
+    <Window.Resources>
+        <ResourceDictionary>
+            <Style x:Key="FieldLabel" TargetType="{x:Type Label}">
+                <Setter Property="Margin" Value="12px 0px 6px 0px" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+            </Style>
+            <Style x:Key="Field" TargetType="{x:Type Control}">
+                <Setter Property="Margin" Value="6px 8px 8px 8px" />
+                <Setter Property="MinHeight" Value="24px" />
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" /> <!-- logo -->
+            <ColumnDefinition Width="Auto" /> <!-- labels -->
+            <ColumnDefinition /> <!-- fields -->
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" /> <!-- username -->
+            <RowDefinition Height="Auto" /> <!-- password -->
+            <RowDefinition Height="Auto" /> <!-- server -->
+            <RowDefinition Height="Auto" /> <!-- port -->
+            <RowDefinition Height="*" /> <!-- buttons -->
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Column="0" Grid.Row="0" Grid.RowSpan="5" Background="{DynamicResource MainBg}">
+            <Image Width="128px" Height="128px" Source="{DynamicResource Logo}" />
+            <TextBlock FontSize="32px" TextAlignment="Center"
+                       Foreground="{StaticResource MainFg}"
+                       FontWeight="Bold">
+                BAPS
+            </TextBlock>
+        </StackPanel>
+
+        <Label
+            Grid.Row="0" Grid.Column="1"
+            Style="{StaticResource FieldLabel}"
+            Target="{Binding ElementName=UsernameTxt}">
+            _Username:
+        </Label>
+        <TextBox
+            Grid.Row="0" Grid.Column="2"
+            Style="{StaticResource Field}"
+            Name="UsernameTxt" Text="{Binding Username, Mode=TwoWay}" />
+
+        <Label
+            Grid.Row="1" Grid.Column="1"
+            Style="{StaticResource FieldLabel}"
+            Target="{Binding ElementName=PasswordTxt}">
+            _Password:
+        </Label>
+        <PasswordBox
+            Grid.Row="1" Grid.Column="2"
+            Style="{StaticResource Field}"
+            Name="PasswordTxt" />
+
+        <Label
+            Grid.Row="2" Grid.Column="1"
+            Style="{StaticResource FieldLabel}"
+            Target="{Binding ElementName=ServerTxt}">
+            _Server:
+        </Label>
+        <TextBox
+            Grid.Row="2" Grid.Column="2"
+            Style="{StaticResource Field}"
+            Name="ServerTxt" Text="{Binding Server, Mode=TwoWay}" />
+
+        <Label
+            Grid.Row="3" Grid.Column="1"
+            Style="{StaticResource FieldLabel}"
+            Target="{Binding ElementName=PortTxt}">
+            P_ort:
+        </Label>
+        <TextBox
+            Grid.Row="3" Grid.Column="2" Name="PortTxt"
+            Style="{StaticResource Field}"
+            Text="{Binding Port, Mode=TwoWay}" />
+
+        <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3"
+                    Orientation="Horizontal" FlowDirection="RightToLeft" VerticalAlignment="Bottom">
+            <Button Margin="4px" MinWidth="64px" Height="32px" IsDefault="True" Click="LoginBtn_Click">Login</Button>
+            <Button Margin="4px" MinWidth="64px" Height="32px" IsCancel="True">Cancel</Button>
+        </StackPanel>
+    </Grid>
+</Window>

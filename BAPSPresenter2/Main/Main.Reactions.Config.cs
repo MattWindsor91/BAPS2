@@ -1,11 +1,10 @@
 ﻿// This used to be BAPSPresenterMainReactions_config.cpp.
 
 using System;
-using BAPSClientCommon;
-using BAPSClientCommon.BapsNet;
-using BAPSClientCommon.Events;
-using BAPSClientCommon.ServerConfig;
-using BAPSClientCommon.Updaters;
+using URY.BAPS.Client.Common.BapsNet;
+using URY.BAPS.Client.Common.Events;
+using URY.BAPS.Client.Common.ServerConfig;
+using URY.BAPS.Client.Common.Updaters;
 
 namespace BAPSPresenter2
 {
