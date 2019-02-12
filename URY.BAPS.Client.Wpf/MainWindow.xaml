@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:controls="clr-namespace:URY.BAPS.Client.Wpf.Controls"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
         mc:Ignorable="d"
         Title="BAPS Presenter" Height="768" Width="1024"
         DataContext="{Binding Main, Source={StaticResource Locator}}">
@@ -53,34 +54,52 @@
                 <LineBreak />
                 Presenting Suite
             </TextBlock>
-            <Button Width="64px" Margin="4px">
-                <TextBlock TextAlignment="Center">Load<LineBreak />Show</TextBlock>
-            </Button>
-            <Button Width="64px" Margin="4px">
-                <TextBlock TextAlignment="Center">Search<LineBreak />Library</TextBlock>
+            <Button Width="96px" Margin="4px">
+                <TextBlock TextAlignment="Center">
+                    <fa:ImageAwesome Icon="FloppyOutline" Margin="4px" Width="32px"/>
+                    <LineBreak/>
+                    Load Show
+                </TextBlock>
             </Button>
         </StackPanel>
         <TextBox DockPanel.Dock="Bottom" MinHeight="72pt"
                  Style="{StaticResource MainTextBoxStyle}"
                  Text="{Binding Text, Mode=TwoWay}" />
         <TextBox DockPanel.Dock="Bottom" />
-        <ListView
-            DockPanel.Dock="Left"
+        <TabControl
+            DockPanel.Dock="Right"
             Width="320px"
-            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-            ItemsSource="{Binding Directories}"
             Background="{StaticResource SideBg}">
-            <ListBox.ItemContainerStyle>
-                <Style TargetType="ListBoxItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                </Style>
-            </ListBox.ItemContainerStyle>
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <controls:Directory />
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock>
+                        <fa:ImageAwesome Icon="FileSoundOutline" Width="16px"/> Sound Folders
+                    </TextBlock>
+                </TabItem.Header>
+                <ListView
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                    Margin="4px"
+                    ItemsSource="{Binding Directories}">
+                    <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <controls:Directory />
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock>
+                        <fa:ImageAwesome Icon="Music" Width="16px"/> Track Library
+                    </TextBlock>
+                </TabItem.Header>
+            </TabItem>
+        </TabControl>
         <ListView
             ItemsSource="{Binding Channels}"
             HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
