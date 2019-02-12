@@ -6,7 +6,7 @@ namespace URY.BAPS.Client.Wpf.Controls
     /// <summary>
     ///     Interaction logic for PositionDisplay.xaml
     /// </summary>
-    public partial class PositionDisplay : UserControl
+    public partial class PositionDisplay
     {
         public static DependencyProperty SubTextProperty =
             DependencyProperty.Register("SubText", typeof(string), typeof(PositionDisplay));

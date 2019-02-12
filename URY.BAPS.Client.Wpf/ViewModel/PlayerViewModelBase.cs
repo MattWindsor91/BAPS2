@@ -5,6 +5,10 @@ using URY.BAPS.Client.Common.Model;
 
 namespace URY.BAPS.Client.Wpf.ViewModel
 {
+    /// <summary>
+    ///     Abstract base class providing the parts of <see cref="IPlayerViewModel"/>
+    ///     that are largely the same across implementations.
+    /// </summary>
     public abstract class PlayerViewModelBase : ViewModelBase, IPlayerViewModel
     {
         [CanBeNull] private RelayCommand _pauseCommand;

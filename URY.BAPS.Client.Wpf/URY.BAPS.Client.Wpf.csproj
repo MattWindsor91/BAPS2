@@ -119,13 +119,16 @@
     <Compile Include="Controls\TransportButton.xaml.cs">
       <DependentUpon>TransportButton.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DesignData\MockChannelViewModel.cs" />
     <Compile Include="DesignData\MockPlayerViewModel.cs" />
     <Compile Include="ViewModel\ChannelViewModel.cs" />
     <Compile Include="Converters\EntryTypeToIconConverter.cs" />
     <Compile Include="Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModel\ChannelViewModelBase.cs" />
     <Compile Include="ViewModel\DirectoryViewModel.cs" />
+    <Compile Include="ViewModel\IChannelViewModel.cs" />
     <Compile Include="ViewModel\IPlayerViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\PlayerViewModel.cs" />

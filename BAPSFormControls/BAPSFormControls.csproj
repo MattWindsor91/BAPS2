@@ -120,7 +120,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BAPSCommon\BAPS.Client.Common.csproj">
+    <ProjectReference Include="..\URY.BAPS.Client.Common\URY.BAPS.Client.Common.csproj">
       <Project>{701b4f5c-600a-4eb2-82ae-ba11ea8160a7}</Project>
       <Name>BAPS.Client.Common</Name>
     </ProjectReference>

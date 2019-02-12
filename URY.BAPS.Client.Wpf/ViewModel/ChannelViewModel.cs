@@ -23,21 +23,17 @@ namespace URY.BAPS.Client.Wpf.ViewModel
     ///         The channel view model combines a player view model and a track-list.
     ///     </para>
     /// </summary>
-    public class ChannelViewModel : ViewModelBase, IDropTarget, IDisposable
+    public class ChannelViewModel : ChannelViewModelBase, IDropTarget, IDisposable
     {
         private string _name;
-        [CanBeNull] private RelayCommand _toggleAutoAdvanceCommand;
-        [CanBeNull] private RelayCommand _togglePlayOnLoadCommand;
 
         private readonly IList<IDisposable> _subscriptions = new List<IDisposable>();
 
         public ChannelViewModel(ushort channelId,
             [CanBeNull] ConfigCache config,
-            [CanBeNull] PlayerViewModel player,
-            [CanBeNull] ChannelController controller)
+            [CanBeNull] IPlayerViewModel player,
+            [CanBeNull] ChannelController controller) : base(channelId, player)
         {
-            ChannelId = channelId;
-            Player = player ?? throw new ArgumentNullException(nameof(player));
             Controller = controller;
 
             _config = config;
@@ -47,20 +43,13 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         }
 
         /// <summary>
-        ///     The part of the channel containing the loaded track and its
-        ///     position markers.
-        /// </summary>
-        [NotNull]
-        public PlayerViewModel Player { get; }
-
-        /// <summary>
         ///     The name of the channel.
         ///     <para>
         ///         If not set manually, this is 'Channel X', where X
         ///         is the channel's ID plus one.
         ///     </para>
         /// </summary>
-        public string Name
+        public override string Name
         {
             get => _name ?? $"Channel {ChannelId + 1}";
             set
@@ -71,33 +60,8 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             }
         }
 
-        private ushort ChannelId { get; }
-
         [CanBeNull] public ChannelController Controller { get; }
 
-        /// <summary>
-        ///     The track list.
-        /// </summary>
-        [NotNull]
-        public ObservableCollection<TrackViewModel> TrackList { get; } = new ObservableCollection<TrackViewModel>();
-
-        /// <summary>
-        ///     A command that, when fired, checks the current auto advance
-        ///     status and asks the server to invert it.
-        /// </summary>
-        public RelayCommand ToggleAutoAdvanceCommand => _toggleAutoAdvanceCommand
-                                                        ?? (_toggleAutoAdvanceCommand = new RelayCommand(
-                                                            () => ToggleConfig(ChannelConfigChangeType.AutoAdvance,
-                                                                IsAutoAdvance)));
-
-        /// <summary>
-        ///     A command that, when fired, checks the current play-on-load
-        ///     status and asks the server to invert it.
-        /// </summary>
-        public RelayCommand TogglePlayOnLoadCommand => _togglePlayOnLoadCommand
-                                                       ?? (_togglePlayOnLoadCommand = new RelayCommand(
-                                                           () => ToggleConfig(ChannelConfigChangeType.PlayOnLoad,
-                                                               IsPlayOnLoad)));
 
         public void Dispose()
         {
@@ -124,16 +88,6 @@ namespace URY.BAPS.Client.Wpf.ViewModel
                     Controller?.AddFile(dirEntry);
                     break;
             }
-        }
-
-        private TrackViewModel TrackAt(int index)
-        {
-            return TrackList.ElementAtOrDefault(index) ?? TrackViewModel.MakeNull();
-        }
-
-        public bool IsLoadPossible(int index)
-        {
-            return TrackAt(index).IsTextItem || !Player.IsPlaying;
         }
 
         /// <summary>
@@ -250,18 +204,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         private void HandleRepeat(ConfigCache.ChoiceChangeEventArgs e)
         {
             if (ChannelId != e.Index) return;
-            switch (e.Choice)
-            {
-                case ChoiceKeys.RepeatAll:
-                    RepeatMode = RepetitionMode.All;
-                    break;
-                case ChoiceKeys.RepeatNone:
-                    RepeatMode = RepetitionMode.None;
-                    break;
-                case ChoiceKeys.RepeatOne:
-                    RepeatMode = RepetitionMode.One;
-                    break;
-            }
+            RepeatMode = ChoiceKeys.ChoiceToRepeatMode(e.Choice, _repeatMode);
         }
 
         private void HandleTrackLoad(Updates.TrackLoadEventArgs args)
@@ -275,9 +218,14 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         }
 
 
-        private void ToggleConfig(ChannelConfigChangeType configurable, bool lastValue)
+        protected override bool CanToggleConfig(ChannelConfigChangeType setting)
         {
-            var nextValue = lastValue ? ChannelConfigChangeType.Off : ChannelConfigChangeType.On;
+            return true;
+        }
+
+        protected override void SetConfigFlag(ChannelConfigChangeType configurable, bool value)
+        {
+            var nextValue = value ? ChannelConfigChangeType.On : ChannelConfigChangeType.Off;
             Controller?.Configure(configurable | nextValue);
         }
 
@@ -290,7 +238,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         ///         changes.
         ///     </para>
         /// </summary>
-        public bool IsPlayOnLoad
+        public override bool IsPlayOnLoad
         {
             get => _isPlayOnLoad;
             set
@@ -310,7 +258,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         ///         changes.
         ///     </para>
         /// </summary>
-        public bool IsAutoAdvance
+        public override bool IsAutoAdvance
         {
             get => _isAutoAdvance;
             set
@@ -323,17 +271,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
 
         private bool _isAutoAdvance;
 
-        /// <summary>
-        ///     Enumeration of repeat modes.
-        /// </summary>
-        public enum RepetitionMode
-        {
-            None,
-            One,
-            All
-        }
-
-        public RepetitionMode RepeatMode
+        public override RepeatMode RepeatMode
         {
             get => _repeatMode;
             set
@@ -344,7 +282,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             }
         }
 
-        private RepetitionMode _repeatMode;
+        private RepeatMode _repeatMode;
         private readonly ConfigCache _config;
 
         #endregion Channel flags

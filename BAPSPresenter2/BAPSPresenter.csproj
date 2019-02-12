@@ -209,11 +209,11 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BAPSClientWindows\BAPS.Client.Windows.csproj">
+    <ProjectReference Include="..\URY.BAPS.Client.Windows\URY.BAPS.Client.Windows.csproj">
       <Project>{f429ef69-9102-42dc-ad98-9234b0dccc35}</Project>
       <Name>BAPS.Client.Windows</Name>
     </ProjectReference>
-    <ProjectReference Include="..\BAPSCommon\BAPS.Client.Common.csproj">
+    <ProjectReference Include="..\URY.BAPS.Client.Common\URY.BAPS.Client.Common.csproj">
       <Project>{701b4f5c-600a-4eb2-82ae-ba11ea8160a7}</Project>
       <Name>BAPS.Client.Common</Name>
     </ProjectReference>
