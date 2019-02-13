@@ -362,34 +362,34 @@ namespace BAPSPresenter2
             deleteItemToolStripMenuItem.Enabled = trackList.LastIndexClicked != -1;
         }
 
-        private void OnChannelConfigChange(ChannelConfigChangeType type) =>
+        private void OnChannelConfigChange(ChannelFlag type) =>
             ChannelConfigChange?.Invoke(this, new ChannelConfigChangeArgs((ushort)ChannelId, type));
 
         private void TrackListContextMenuStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             if (e.ClickedItem == automaticAdvanceToolStripMenuItem)
             {
-                var rq = ChannelConfigChangeType.AutoAdvance;
-                rq |= automaticAdvanceToolStripMenuItem.Checked ? ChannelConfigChangeType.Off : ChannelConfigChangeType.On;
+                var rq = ChannelFlag.AutoAdvance;
+                rq |= automaticAdvanceToolStripMenuItem.Checked ? ChannelFlag.Off : ChannelFlag.On;
                 OnChannelConfigChange(rq);
             }
             else if (e.ClickedItem == playOnLoadToolStripMenuItem)
             {
-                var rq = ChannelConfigChangeType.PlayOnLoad;
-                rq |= playOnLoadToolStripMenuItem.Checked ? ChannelConfigChangeType.Off : ChannelConfigChangeType.On;
+                var rq = ChannelFlag.PlayOnLoad;
+                rq |= playOnLoadToolStripMenuItem.Checked ? ChannelFlag.Off : ChannelFlag.On;
                 OnChannelConfigChange(rq);
             }
             else if (e.ClickedItem == repeatNoneToolStripMenuItem && !repeatNoneToolStripMenuItem.Checked)
             {
-                OnChannelConfigChange(ChannelConfigChangeType.RepeatNone);
+                OnChannelConfigChange(ChannelFlag.RepeatNone);
             }
             else if (e.ClickedItem == repeatOneToolStripMenuItem && !repeatOneToolStripMenuItem.Checked)
             {
-                OnChannelConfigChange(ChannelConfigChangeType.RepeatOne);
+                OnChannelConfigChange(ChannelFlag.RepeatOne);
             }
             else if (e.ClickedItem == repeatAllToolStripMenuItem && !repeatAllToolStripMenuItem.Checked)
             {
-                OnChannelConfigChange(ChannelConfigChangeType.RepeatAll);
+                OnChannelConfigChange(ChannelFlag.RepeatAll);
             }
             else if (e.ClickedItem == deleteItemToolStripMenuItem)
             {

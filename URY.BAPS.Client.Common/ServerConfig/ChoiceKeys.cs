@@ -13,9 +13,9 @@ namespace URY.BAPS.Client.Common.ServerConfig
     {
         public const string Yes = "Yes";
         public const string No = "No";
-        public const string RepeatNone = "None";
-        public const string RepeatOne = "One";
-        public const string RepeatAll = "All";
+        public const string RepeatNone = "No repeat";
+        public const string RepeatOne = "Repeat one";
+        public const string RepeatAll = "Repeat all";
 
         /// <summary>
         ///     Converts a choice string to a Boolean.

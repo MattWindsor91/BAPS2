@@ -20,10 +20,13 @@ namespace URY.BAPS.Client.Wpf.DesignData
         /// <param name="player">A player view model to use for the playback-specific parts of the model.</param>
         public MockChannelViewModel(ushort channelId, [CanBeNull] IPlayerViewModel player) : base(channelId, player)
         {
-            Name = "Mockup Channel";
+            Name = "Mock Channel";
 
             TrackList.Add(new TrackViewModel(new FileTrack("URY Whisper (Dry)", 2_000)));
-            TrackList.Add(new TrackViewModel(new LibraryTrack("Several Species of Small Furry Animals Gathered Together in a Cave and Grooving with a Pict", 36_000)) {IsLoaded = true});
+            TrackList.Add(new TrackViewModel(new LibraryTrack(
+                    "Several Species of Small Furry Animals Gathered Together in a Cave and Grooving with a Pict",
+                    36_000))
+                {IsLoaded = true});
             TrackList.Add(new TrackViewModel(new TextTrack("Don't Panic", "Always remember where your towel is.")));
         }
 
@@ -36,16 +39,46 @@ namespace URY.BAPS.Client.Wpf.DesignData
         }
 
         public override string Name { get; set; }
+
+        public override int SelectedIndex { get; set; } = -1;
+
         public override bool IsPlayOnLoad { get; set; } = true;
-        public override bool IsAutoAdvance { get; set; } = false;
+        public override bool IsAutoAdvance { get; set; }
         public override RepeatMode RepeatMode { get; set; } = RepeatMode.One;
 
-        protected override bool CanToggleConfig(ChannelConfigChangeType setting)
+        protected override bool CanResetPlaylist()
         {
-            return setting == ChannelConfigChangeType.AutoAdvance;
+            return true;
         }
 
-        protected override void SetConfigFlag(ChannelConfigChangeType setting, bool newValue)
+        protected override void ResetPlaylist()
+        {
+        }
+
+        protected override bool CanDeleteItem()
+        {
+            return true;
+        }
+
+        protected override void DeleteItem()
+        {
+        }
+
+        protected override bool CanSetRepeatMode(RepeatMode newMode)
+        {
+            return newMode != RepeatMode;
+        }
+        
+        protected override void SetRepeatMode(RepeatMode newMode)
+        {
+        }
+
+        protected override bool CanToggleConfig(ChannelFlag setting)
+        {
+            return setting == ChannelFlag.AutoAdvance;
+        }
+
+        protected override void SetConfigFlag(ChannelFlag setting, bool newValue)
         {
             // Deliberately ignored
         }

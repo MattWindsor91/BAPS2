@@ -1,3 +1,6 @@
+using System;
+using System.ComponentModel;
+
 namespace URY.BAPS.Client.Common.ServerConfig
 {
 	/// <summary>
@@ -49,4 +52,58 @@ namespace URY.BAPS.Client.Common.ServerConfig
         Controller2ButtonCode = 36,
         Invalid = uint.MaxValue
     }
+
+	/// <summary>
+	/// 	Extension methods for <see cref="OptionKey"/>s.
+	/// </summary>
+	public static class OptionKeyExtensions
+	{
+		/// <summary>
+		/// 	Converts a <see cref="ChannelFlag"/> to an <see cref="OptionKey"/>.
+		/// </summary>
+		/// <param name="flag">The channel flag to convert.</param>
+		/// <returns>The corresponding option key.</returns>
+		/// <exception cref="InvalidEnumArgumentException"></exception>
+		/// <exception cref="ArgumentOutOfRangeException"></exception>
+		public static OptionKey ToOptionKey(this ChannelFlag flag)
+		{
+			if (!Enum.IsDefined(typeof(ChannelFlag), flag))
+				throw new InvalidEnumArgumentException(nameof(flag), (int) flag, typeof(ChannelFlag));
+			switch (flag)
+			{
+				case ChannelFlag.AutoAdvance:
+					return OptionKey.AutoAdvance;
+				case ChannelFlag.PlayOnLoad:
+					return OptionKey.AutoPlay;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(flag), flag, "This should be unreachable");
+			}
+		}
+
+		/// <summary>
+		/// 	Converts a <see cref="ChannelFlag"/> to an <see cref="OptionKey"/>.
+		/// </summary>
+		/// <param name="key">The option key to convert.</param>
+		/// <returns>The corresponding channel flag.</returns>
+		/// <exception cref="InvalidEnumArgumentException">
+		/// 	<paramref name="key"/> isn't a valid <see cref="OptionKey"/>.
+		/// </exception>
+		/// <exception cref="ArgumentOutOfRangeException">
+		/// 	The option key doesn't correspond to a valid channel flag.
+		/// </exception>
+		public static ChannelFlag ToChannelFlag(this OptionKey key)
+		{
+			if (!Enum.IsDefined(typeof(OptionKey), key))
+				throw new InvalidEnumArgumentException(nameof(key), (int) key, typeof(OptionKey));
+			switch (key)
+			{
+				case OptionKey.AutoAdvance:
+					return ChannelFlag.AutoAdvance;
+				case OptionKey.AutoPlay:
+					return ChannelFlag.PlayOnLoad;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(key), key, "Not a channel flag");
+			}
+		}	
+	}
 }

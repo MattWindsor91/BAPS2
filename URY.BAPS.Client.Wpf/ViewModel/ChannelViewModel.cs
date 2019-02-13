@@ -29,6 +29,19 @@ namespace URY.BAPS.Client.Wpf.ViewModel
 
         private readonly IList<IDisposable> _subscriptions = new List<IDisposable>();
 
+        private int _selectedIndex = -1;
+
+        public override int SelectedIndex
+        {
+            get => _selectedIndex;
+            set
+            {
+                if (_selectedIndex == value) return;
+                _selectedIndex = value;
+                RaisePropertyChanged(nameof(SelectedIndex));
+            }
+        }
+       
         public ChannelViewModel(ushort channelId,
             [CanBeNull] ConfigCache config,
             [CanBeNull] IPlayerViewModel player,
@@ -218,18 +231,33 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         }
 
 
-        protected override bool CanToggleConfig(ChannelConfigChangeType setting)
+        protected override bool CanToggleConfig(ChannelFlag setting)
         {
             return true;
         }
 
-        protected override void SetConfigFlag(ChannelConfigChangeType configurable, bool value)
+        protected override void SetConfigFlag(ChannelFlag configurable, bool value)
         {
-            var nextValue = value ? ChannelConfigChangeType.On : ChannelConfigChangeType.Off;
-            Controller?.Configure(configurable | nextValue);
+            Controller?.SetFlag(configurable, value);
         }
 
         #region Channel flags
+
+        protected override void DeleteItem()
+        {
+            if (SelectedIndex < 0) return;
+            Controller?.DeleteItemAt((uint)SelectedIndex);
+        }
+
+        protected override void SetRepeatMode(RepeatMode newMode)
+        {
+            Controller?.SetRepeatMode(newMode);
+        }
+
+        protected override bool CanSetRepeatMode(RepeatMode newMode)
+        {
+            return newMode != _repeatMode;
+        }
 
         /// <summary>
         ///     Whether play-on-load is active, according to the server.
@@ -279,7 +307,32 @@ namespace URY.BAPS.Client.Wpf.ViewModel
                 if (_repeatMode == value) return;
                 _repeatMode = value;
                 RaisePropertyChanged(nameof(RepeatMode));
+                // Transitive dependencies
+                RaisePropertyChanged(nameof(IsRepeatAll));
+                RaisePropertyChanged(nameof(IsRepeatOne));
+                RaisePropertyChanged(nameof(IsRepeatNone));
             }
+        }
+
+        protected override bool CanResetPlaylist()
+        {
+            return true;
+        }
+
+        protected override void ResetPlaylist()
+        {
+            Controller?.Reset();
+        }
+
+        private bool IsSelectedIndexValid =>
+            0 <= SelectedIndex && SelectedIndex < TrackList.Count;
+
+        private bool IsSelectedIndexLoaded =>
+            TrackAt(SelectedIndex).IsLoaded;
+        
+        protected override bool CanDeleteItem()
+        {
+            return IsSelectedIndexValid && !IsSelectedIndexLoaded;
         }
 
         private RepeatMode _repeatMode;
@@ -309,6 +362,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
 
         private void HandleResetPlaylist(Updates.PlaylistResetEventArgs e)
         {
+            // TODO(@MattWindsor91): this should probably _not_ clear the loaded item
             DispatcherHelper.CheckBeginInvokeOnUI(() => TrackList.Clear());
         }
 

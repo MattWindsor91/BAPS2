@@ -66,53 +66,16 @@ namespace URY.BAPS.Client.Common.Controllers
             SendAsync(new Message(cmd.WithChannel(_channelId)).Add(index));
         }
 
-        private OptionKey GetChannelConfigOption(ChannelConfigChangeType type)
+        public void SetFlag(ChannelFlag flag, bool value)
         {
-            if (type.HasFlag(ChannelConfigChangeType.AutoAdvance))
-            {
-                if (!(type.HasFlag(ChannelConfigChangeType.Off) ||
-                      type.HasFlag(ChannelConfigChangeType.On)))
-                    throw new ArgumentOutOfRangeException(nameof(type), type, "AutoAdvance must have Off or On flag");
-                return OptionKey.AutoAdvance;
-            }
-
-            if (type.HasFlag(ChannelConfigChangeType.PlayOnLoad))
-            {
-                if (!(type.HasFlag(ChannelConfigChangeType.Off) ||
-                      type.HasFlag(ChannelConfigChangeType.On)))
-                    throw new ArgumentOutOfRangeException(nameof(type), type, "PlayOnLoad must have Off or On flag");
-                return OptionKey.AutoPlay;
-            }
-
-            if (type.HasFlag(ChannelConfigChangeType.Repeat))
-            {
-                if (!(type.HasFlag(ChannelConfigChangeType.All) ||
-                      type.HasFlag(ChannelConfigChangeType.One) ||
-                      type.HasFlag(ChannelConfigChangeType.None)))
-                    throw new ArgumentOutOfRangeException(nameof(type), type,
-                        "Repeat must have None, One, or All flag");
-                return OptionKey.Repeat;
-            }
-
-            throw new ArgumentOutOfRangeException(nameof(type), type, "No valid config category flag set");
+            var optionKey = flag.ToOptionKey();
+            var choiceDesc = ChoiceKeys.BooleanToChoice(value);
+            _config.SetChoice(optionKey, choiceDesc, _channelId);
         }
 
-        private string GetChannelConfigChoice(ChannelConfigChangeType type)
+        public void SetRepeatMode(RepeatMode newMode)
         {
-            if (type.HasFlag(ChannelConfigChangeType.On)) return "Yes";
-            if (type.HasFlag(ChannelConfigChangeType.Off)) return "No";
-            if (type.HasFlag(ChannelConfigChangeType.None)) return "No repeat";
-            if (type.HasFlag(ChannelConfigChangeType.One)) return "Repeat one";
-            if (type.HasFlag(ChannelConfigChangeType.All)) return "Repeat all";
-            throw new ArgumentOutOfRangeException(nameof(type), type, "No valid config choice flag set");
-        }
-
-        public void Configure(ChannelConfigChangeType type)
-        {
-            var optionId = GetChannelConfigOption(type);
-            var choiceDesc = GetChannelConfigChoice(type);
-
-            _config.SetChoice(optionId, choiceDesc, _channelId);
+            _config.SetChoice(OptionKey.Repeat, newMode.ToChoiceKey(), _channelId);
         }
 
         public void AddFile(DirectoryEntry file)

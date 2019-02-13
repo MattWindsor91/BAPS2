@@ -1,5 +1,5 @@
 ﻿using System.Collections.ObjectModel;
-using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.CommandWpf;
 using URY.BAPS.Client.Common.Model;
 
 namespace URY.BAPS.Client.Wpf.ViewModel
@@ -21,22 +21,12 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         /// </summary>
         string Name { get; set; }
 
+        int SelectedIndex { get; set; }
+        
         /// <summary>
         ///     The track list.
         /// </summary>
         ObservableCollection<TrackViewModel> TrackList { get; }
-
-        /// <summary>
-        ///     A command that, when fired, checks the current auto advance
-        ///     status and asks the server to invert it.
-        /// </summary>
-        RelayCommand ToggleAutoAdvanceCommand { get; }
-
-        /// <summary>
-        ///     A command that, when fired, checks the current play-on-load
-        ///     status and asks the server to invert it.
-        /// </summary>
-        RelayCommand TogglePlayOnLoadCommand { get; }
 
         /// <summary>
         ///     Whether play-on-load is active, according to the server.
@@ -56,6 +46,61 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         /// </summary>
         bool IsAutoAdvance { get; set; }
 
+        #region Commands
+
+        /// <summary>
+        ///     A command that, when fired, checks the current auto advance
+        ///     status and asks the server to invert it.
+        /// </summary>
+        RelayCommand ToggleAutoAdvanceCommand { get; }
+
+        /// <summary>
+        ///     A command that, when fired, checks the current play-on-load
+        ///     status and asks the server to invert it.
+        /// </summary>
+        RelayCommand TogglePlayOnLoadCommand { get; }
+
+        /// <summary>
+        ///     A command that, when fired, asks the server to set this channel's
+        ///     repeat mode.
+        /// </summary>
+        RelayCommand<RepeatMode> SetRepeatModeCommand { get; }
+
+        /// <summary>
+        ///     A command that, when fired, asks the server to reset the playlist.
+        /// </summary>
+        RelayCommand ResetPlaylistCommand { get; }
+
+        /// <summary>
+        ///     A command that, when fired, asks the server to delete the currently
+        ///     selected item.
+        /// </summary>
+        RelayCommand DeleteItemCommand { get; }
+
+        #endregion Commands
+
+        #region Repeat mode
+
+        /// <summary>
+        ///     The current repetition mode.
+        /// </summary>
         RepeatMode RepeatMode { get; set; }
+
+        /// <summary>
+        ///     Gets whether <see cref="RepeatMode" /> is 'none'.
+        /// </summary>
+        bool IsRepeatNone { get; }
+
+        /// <summary>
+        ///     Gets whether <see cref="RepeatMode" /> is 'one'.
+        /// </summary>
+        bool IsRepeatOne { get; }
+
+        /// <summary>
+        ///     Gets whether <see cref="RepeatMode" /> is 'all'.
+        /// </summary>
+        bool IsRepeatAll { get; }
+
+        #endregion Repeat mode
     }
 }
