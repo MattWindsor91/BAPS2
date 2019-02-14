@@ -178,7 +178,8 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         {
             var controller = _channelControllerSet.ControllerFor(channelId);
             var player = new PlayerViewModel(channelId, controller);
-            return new ChannelViewModel(channelId, _config, player, controller);
+            var trackList = new TrackListViewModel(channelId, controller);
+            return new ChannelViewModel(channelId, _config, player, trackList, controller);
         }
 
         [Pure]

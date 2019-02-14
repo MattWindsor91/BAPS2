@@ -14,55 +14,33 @@ namespace URY.BAPS.Client.Wpf.DesignData
     public sealed class MockChannelViewModel : ChannelViewModelBase
     {
         /// <summary>
-        ///     Constructs a mock channel view model.
+        ///     Constructs a mock channel view model with specific parameters.
         /// </summary>
         /// <param name="channelId">The ID of this channel.</param>
         /// <param name="player">A player view model to use for the playback-specific parts of the model.</param>
-        public MockChannelViewModel(ushort channelId, [CanBeNull] IPlayerViewModel player) : base(channelId, player)
+        /// <param name="trackList">A track-list view model to use for the track-list-specific parts of the model</param>
+        public MockChannelViewModel(ushort channelId,
+            [CanBeNull] IPlayerViewModel player,
+            [CanBeNull] ITrackListViewModel trackList) : base(channelId, player, trackList)
         {
             Name = "Mock Channel";
-
-            TrackList.Add(new TrackViewModel(new FileTrack("URY Whisper (Dry)", 2_000)));
-            TrackList.Add(new TrackViewModel(new LibraryTrack(
-                    "Several Species of Small Furry Animals Gathered Together in a Cave and Grooving with a Pict",
-                    36_000))
-                {IsLoaded = true});
-            TrackList.Add(new TrackViewModel(new TextTrack("Don't Panic", "Always remember where your towel is.")));
         }
 
         /// <summary>
-        ///     Constructs a mock channel view model with sensible defaults.
+        ///     Constructs a mock channel view model with placeholder parameters.
         /// </summary>
         [UsedImplicitly]
-        public MockChannelViewModel() : this(0, new MockPlayerViewModel())
+        public MockChannelViewModel() : this(0, new MockPlayerViewModel(), new MockTrackListViewModel())
         {
         }
 
         public override string Name { get; set; }
 
-        public override int SelectedIndex { get; set; } = -1;
 
         public override bool IsPlayOnLoad { get; set; } = true;
         public override bool IsAutoAdvance { get; set; }
         public override RepeatMode RepeatMode { get; set; } = RepeatMode.One;
 
-        protected override bool CanResetPlaylist()
-        {
-            return true;
-        }
-
-        protected override void ResetPlaylist()
-        {
-        }
-
-        protected override bool CanDeleteItem()
-        {
-            return true;
-        }
-
-        protected override void DeleteItem()
-        {
-        }
 
         protected override bool CanSetRepeatMode(RepeatMode newMode)
         {

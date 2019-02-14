@@ -115,12 +115,18 @@
       <DependentUpon>TrackBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Header.cs" />
+    <Compile Include="Controls\TrackList.xaml.cs">
+      <DependentUpon>TrackList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Converters\MouseButtonEventArgsToIndexConverter.cs" />
     <Compile Include="Converters\PositionScaleConverter.cs" />
     <Compile Include="Controls\TransportButton.xaml.cs">
       <DependentUpon>TransportButton.xaml</DependentUpon>
     </Compile>
     <Compile Include="DesignData\MockChannelViewModel.cs" />
     <Compile Include="DesignData\MockPlayerViewModel.cs" />
+    <Compile Include="DesignData\MockTrackListViewModel.cs" />
+    <Compile Include="ViewModel\ChannelComponentViewModelBase.cs" />
     <Compile Include="ViewModel\ChannelViewModel.cs" />
     <Compile Include="Converters\EntryTypeToIconConverter.cs" />
     <Compile Include="Login.xaml.cs">
@@ -130,9 +136,12 @@
     <Compile Include="ViewModel\DirectoryViewModel.cs" />
     <Compile Include="ViewModel\IChannelViewModel.cs" />
     <Compile Include="ViewModel\IPlayerViewModel.cs" />
+    <Compile Include="ViewModel\ITrackListViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\PlayerViewModel.cs" />
     <Compile Include="ViewModel\PlayerViewModelBase.cs" />
+    <Compile Include="ViewModel\TrackListViewModel.cs" />
+    <Compile Include="ViewModel\TrackListViewModelBase.cs" />
     <Compile Include="ViewModel\TrackViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Page Include="Controls\Directory.xaml">
@@ -145,6 +154,10 @@
     </Page>
     <Page Include="Controls\Player.xaml" />
     <Page Include="Controls\TrackBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\TrackList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

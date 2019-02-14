@@ -9,21 +9,23 @@ using URY.BAPS.Client.Common.Model;
 
 namespace URY.BAPS.Client.Wpf.ViewModel
 {
-    public abstract class ChannelViewModelBase : ViewModelBase, IChannelViewModel
+    /// <summary>
+    ///     Abstract base class providing the parts of <see cref="IChannelViewModel"/>
+    ///     that are largely the same across implementations.
+    /// </summary>
+    public abstract class ChannelViewModelBase : ChannelComponentViewModelBase, IChannelViewModel
     {
-        [CanBeNull] private RelayCommand _deleteItemCommand;
-        [CanBeNull] private RelayCommand _resetPlaylistCommand;
         [CanBeNull] private RelayCommand<RepeatMode> _setRepeatModeCommand;
         [CanBeNull] private RelayCommand _toggleAutoAdvanceCommand;
         [CanBeNull] private RelayCommand _togglePlayOnLoadCommand;
 
-        protected ChannelViewModelBase(ushort channelId, [CanBeNull] IPlayerViewModel player)
+        protected ChannelViewModelBase(ushort channelId,
+            [CanBeNull] IPlayerViewModel player,
+            [CanBeNull] ITrackListViewModel trackList) : base(channelId)
         {
-            ChannelId = channelId;
             Player = player ?? throw new ArgumentNullException(nameof(player));
+            TrackList = trackList ?? throw new ArgumentNullException(nameof(trackList));
         }
-
-        protected ushort ChannelId { get; }
 
         /// <summary>
         ///     Gets whether the repeat mode is 'none'.
@@ -53,13 +55,9 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         public bool IsRepeatAll => RepeatMode == RepeatMode.All;
 
         [NotNull] public IPlayerViewModel Player { get; }
+        [NotNull] public ITrackListViewModel TrackList { get; } 
 
-        public abstract string Name { get; set; }
-
-        public abstract int SelectedIndex { get; set; }
-            
-        [NotNull]
-        public ObservableCollection<TrackViewModel> TrackList { get; } = new ObservableCollection<TrackViewModel>();
+        public abstract string Name { get; set; }            
 
         [NotNull]
         public RelayCommand ToggleAutoAdvanceCommand => _toggleAutoAdvanceCommand
@@ -85,41 +83,10 @@ namespace URY.BAPS.Client.Wpf.ViewModel
                                                                         CanSetRepeatMode
                                                                     ));
 
-        [NotNull]
-        public RelayCommand ResetPlaylistCommand => _resetPlaylistCommand
-                                                    ?? (_resetPlaylistCommand =
-                                                        new RelayCommand(ResetPlaylist, CanResetPlaylist));
-
-        [NotNull]
-        public RelayCommand DeleteItemCommand => _deleteItemCommand
-                                                 ?? (_deleteItemCommand = new RelayCommand(DeleteItem, CanDeleteItem));
 
         public abstract bool IsPlayOnLoad { get; set; }
         public abstract bool IsAutoAdvance { get; set; }
         public abstract RepeatMode RepeatMode { get; set; }
-
-        /// <summary>
-        ///     Checks whether the reset-playlist command can fire.
-        /// </summary>
-        /// <returns>Whether <see cref="ResetPlaylistCommand" /> can fire.</returns>
-        protected abstract bool CanResetPlaylist();
-
-        /// <summary>
-        ///     Resets the channel's playlist.
-        /// </summary>
-        protected abstract void ResetPlaylist();
-
-        /// <summary>
-        ///     Checks whether the delete-item command can fire.
-        /// </summary>
-        /// <returns>Whether <see cref="DeleteItemCommand" /> can fire.</returns>
-        protected abstract bool CanDeleteItem();
-
-        /// <summary>
-        ///     Deletes the currently selected item.
-        /// </summary>
-        protected abstract void DeleteItem();
-
 
         /// <summary>
         ///     Sets the repeat mode.
@@ -132,17 +99,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         /// </summary>
         /// <param name="newMode">The proposed new repeat mode.</param>
         /// <returns>True if the repeat mode may be set to <see cref="newMode" />.</returns>
-        protected abstract bool CanSetRepeatMode(RepeatMode newMode);
-
-        protected TrackViewModel TrackAt(int index)
-        {
-            return TrackList.ElementAtOrDefault(index) ?? TrackViewModel.MakeNull();
-        }
-
-        public bool IsLoadPossible(int index)
-        {
-            return TrackAt(index).IsTextItem || !Player.IsPlaying;
-        }
+        protected abstract bool CanSetRepeatMode(RepeatMode newMode); 
 
         /// <summary>
         ///     Gets whether a particular channel config setting can be toggled.

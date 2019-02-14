@@ -11,6 +11,11 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         ///     position markers.
         /// </summary>
         IPlayerViewModel Player { get; }
+        
+        /// <summary>
+        ///     The part of the channel containing the track list.
+        /// </summary>
+        ITrackListViewModel TrackList { get; }
 
         /// <summary>
         ///     The name of the channel.
@@ -21,13 +26,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         /// </summary>
         string Name { get; set; }
 
-        int SelectedIndex { get; set; }
         
-        /// <summary>
-        ///     The track list.
-        /// </summary>
-        ObservableCollection<TrackViewModel> TrackList { get; }
-
         /// <summary>
         ///     Whether play-on-load is active, according to the server.
         ///     <para>
@@ -65,17 +64,6 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         ///     repeat mode.
         /// </summary>
         RelayCommand<RepeatMode> SetRepeatModeCommand { get; }
-
-        /// <summary>
-        ///     A command that, when fired, asks the server to reset the playlist.
-        /// </summary>
-        RelayCommand ResetPlaylistCommand { get; }
-
-        /// <summary>
-        ///     A command that, when fired, asks the server to delete the currently
-        ///     selected item.
-        /// </summary>
-        RelayCommand DeleteItemCommand { get; }
 
         #endregion Commands
 

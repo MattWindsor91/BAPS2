@@ -8,17 +8,13 @@ The main channel control.
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:fa="http://schemas.fontawesome.io/icons/"
-             xmlns:dd="urn:gong-wpf-dragdrop"
-             xmlns:converters="clr-namespace:URY.BAPS.Client.Wpf.Converters"
              xmlns:controls="clr-namespace:URY.BAPS.Client.Wpf.Controls"
-             xmlns:viewModel="clr-namespace:URY.BAPS.Client.Wpf.ViewModel"
              xmlns:designData="clr-namespace:URY.BAPS.Client.Wpf.DesignData"
              xmlns:model="clr-namespace:URY.BAPS.Client.Common.Model;assembly=URY.BAPS.Client.Common"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800" Width="360"
              d:DataContext="{d:DesignInstance designData:MockChannelViewModel, IsDesignTimeCreatable=True}">
     <UserControl.Resources>
-        <converters:EntryTypeToIconConverter x:Key="EntryTypeToIconConverter" />
         <Thickness x:Key="ChannelBarMargin">6px</Thickness>
         <!-- ChannelBarHeight - (2*ChannelBarMargin) -->
         <sys:Double x:Key="ChannelBarHeightMinusMargin">20</sys:Double>
@@ -33,13 +29,67 @@ The main channel control.
             <Setter Property="Margin" Value="{StaticResource ChannelBarMargin}" />
             <Setter Property="Foreground" Value="{StaticResource ChannelLegendLampOut}" />
         </Style>
+        <Storyboard x:Key="OpenChannelMenu">
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ChannelMenu" Storyboard.TargetProperty="(ContextMenu.IsOpen)">
+                <DiscreteObjectKeyFrame KeyTime="0:0:0">
+                    <DiscreteObjectKeyFrame.Value>
+                        <sys:Boolean>True</sys:Boolean>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+            </ObjectAnimationUsingKeyFrames>
+        </Storyboard>
     </UserControl.Resources>
+    <UserControl.Triggers>
+        <EventTrigger RoutedEvent="ButtonBase.Click" SourceName="button">
+            <BeginStoryboard x:Name="OpenChannelMenu_BeginStoryboard" Storyboard="{StaticResource OpenChannelMenu}"/>
+        </EventTrigger>
+    </UserControl.Triggers>
     <DockPanel>
         <controls:Header
             DockPanel.Dock="Top"
             Icon="Music"
             Text="{Binding Name}">
             <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
+                <Button x:Name="button">
+                    <Button.Content>
+                        <fa:ImageAwesome Margin="{StaticResource ChannelBarMargin}" Icon="Navicon" />
+                    </Button.Content>
+                    <Button.ContextMenu>
+                        <ContextMenu x:Name="ChannelMenu" FlowDirection="LeftToRight">
+                            <MenuItem
+                                Header="_Auto advance"
+                                IsCheckable="True" IsChecked="{Binding IsAutoAdvance, Mode=OneWay}"
+                                Command="{Binding ToggleAutoAdvanceCommand}"
+                                />
+                            <MenuItem
+                                Header="_Play on load"
+                                IsCheckable="True" IsChecked="{Binding IsPlayOnLoad, Mode=OneWay}"
+                                Command="{Binding TogglePlayOnLoadCommand}"
+                                />
+                            <Separator />
+                            <MenuItem
+                                Header="Repeat a_ll"
+                                IsCheckable="True" IsChecked="{Binding IsRepeatAll, Mode=OneWay}"
+                                Command="{Binding SetRepeatModeCommand}"
+                                CommandParameter="{x:Static model:RepeatMode.All}"
+                                />
+                            <MenuItem
+                                Header="Repeat _one"
+                                IsCheckable="True" IsChecked="{Binding IsRepeatOne, Mode=OneWay}"
+                                Command="{Binding SetRepeatModeCommand}"
+                                CommandParameter="{x:Static model:RepeatMode.One}"
+                                />
+                            <MenuItem
+                                Header="Repeat _none"
+                                IsCheckable="True" IsChecked="{Binding IsRepeatNone, Mode=OneWay}"
+                                Command="{Binding SetRepeatModeCommand}"
+                                CommandParameter="{x:Static model:RepeatMode.None}"
+                                />
+                            <Separator />
+                            <MenuItem Header="_Show audio wall" />
+                        </ContextMenu>
+                    </Button.ContextMenu>
+                </Button>
                 <fa:ImageAwesome Icon="Repeat" ToolTip="Repeat mode">
                     <fa:ImageAwesome.Style>
                         <Style TargetType="{x:Type fa:ImageAwesome}"
@@ -84,93 +134,6 @@ The main channel control.
             </StackPanel>
         </controls:Header>
         <controls:Player DockPanel.Dock="Bottom" DataContext="{Binding Player}" />
-        <!-- TODO(@MattWindsor91): work out how to make load only happen if selection changed by left-click. -->
-        <ListBox
-            HorizontalContentAlignment="Stretch"
-            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-            ItemsSource="{Binding TrackList,UpdateSourceTrigger=PropertyChanged}"
-            dd:DragDrop.IsDropTarget="True"
-            dd:DragDrop.DropHandler="{Binding}"
-            SelectionChanged="TrackList_SelectionChanged"
-            SelectedIndex="{Binding SelectedIndex, Mode=OneWayToSource}">
-            <ListBox.ContextMenu>
-                <ContextMenu>
-                    <MenuItem
-                        Header="_Reset Channel"
-                        Command="{Binding ResetPlaylistCommand}"
-                        />
-                    <Separator />
-                    <MenuItem Header="_Delete Item"
-                        Command="{Binding DeleteItemCommand}"
-                        />
-                    <Separator />
-                    <MenuItem
-                        Header="_Auto advance"
-                        IsCheckable="True" IsChecked="{Binding IsAutoAdvance, Mode=OneWay}"
-                        Command="{Binding ToggleAutoAdvanceCommand}"
-                        />
-                    <MenuItem
-                        Header="_Play on load"
-                        IsCheckable="True" IsChecked="{Binding IsPlayOnLoad, Mode=OneWay}"
-                        Command="{Binding TogglePlayOnLoadCommand}"
-                        />
-                    <Separator />
-                    <MenuItem
-                        Header="Repeat a_ll"
-                        IsCheckable="True" IsChecked="{Binding IsRepeatAll, Mode=OneWay}"
-                        Command="{Binding SetRepeatModeCommand}"
-                        CommandParameter="{x:Static model:RepeatMode.All}"
-                        />
-                    <MenuItem
-                        Header="Repeat _one"
-                        IsCheckable="True" IsChecked="{Binding IsRepeatOne, Mode=OneWay}"
-                        Command="{Binding SetRepeatModeCommand}"
-                        CommandParameter="{x:Static model:RepeatMode.One}"
-                        />
-                    <MenuItem
-                        Header="Repeat _none"
-                        IsCheckable="True" IsChecked="{Binding IsRepeatNone, Mode=OneWay}"
-                        Command="{Binding SetRepeatModeCommand}"
-                        CommandParameter="{x:Static model:RepeatMode.None}"
-                        />
-                    <Separator />
-                    <MenuItem Header="_Show audio wall" />
-                </ContextMenu>
-            </ListBox.ContextMenu>
-            <ListBox.ItemTemplate>
-                <DataTemplate DataType="{x:Type viewModel:TrackViewModel}">
-                    <Border BorderThickness="2px" CornerRadius="4">
-                        <Border.Style>
-                            <Style TargetType="{x:Type Border}">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsLoaded}" Value="True">
-                                        <Setter Property="BorderBrush" Value="{StaticResource AccentBg}" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Border.Style>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="24px" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="24px" />
-                            </Grid.RowDefinitions>
-                            <fa:ImageAwesome Grid.Row="0" Grid.Column="0"
-                                             Foreground="Black"
-                                             Margin="2px"
-                                             Icon="{Binding Converter={StaticResource EntryTypeToIconConverter}}" />
-                            <TextBlock Grid.Row="0" Grid.Column="1"
-                                       VerticalAlignment="Center"
-                                       Margin="2px"
-                                       FontSize="10pt"
-                                       ToolTip="{Binding Description}"
-                                       Text="{Binding Description}" />
-                        </Grid>
-                    </Border>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+        <controls:TrackList DataContext="{Binding TrackList}" />
     </DockPanel>
 </UserControl>

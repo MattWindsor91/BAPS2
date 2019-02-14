@@ -9,7 +9,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
     ///     Abstract base class providing the parts of <see cref="IPlayerViewModel"/>
     ///     that are largely the same across implementations.
     /// </summary>
-    public abstract class PlayerViewModelBase : ViewModelBase, IPlayerViewModel
+    public abstract class PlayerViewModelBase : ChannelComponentViewModelBase, IPlayerViewModel
     {
         [CanBeNull] private RelayCommand _pauseCommand;
         [CanBeNull] private RelayCommand _playCommand;
@@ -39,16 +39,8 @@ namespace URY.BAPS.Client.Wpf.ViewModel
 
         public abstract uint IntroPosition { get; set; }
 
-        /// <summary>
-        ///     The intro position of the currently loaded item (if any),
-        ///     as a multiple of the duration.
-        /// </summary>
         public double IntroPositionScale => (double) IntroPosition / Duration;
 
-        /// <summary>
-        ///     A command that, when fired, asks the server to start playing
-        ///     on this channel.
-        /// </summary>
         [NotNull]
         public virtual RelayCommand PlayCommand => _playCommand
                                                     ?? (_playCommand = new RelayCommand(
@@ -63,10 +55,6 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         /// <returns>True provided that the <see cref="PlayCommand" /> can fire.</returns>
         protected abstract bool CanRequestPlay();
 
-        /// <summary>
-        ///     A command that, when fired, asks the server to pause
-        ///     this channel.
-        /// </summary>
         [NotNull]
         public virtual RelayCommand PauseCommand => _pauseCommand
                                                      ?? (_pauseCommand = new RelayCommand(
@@ -81,10 +69,6 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         /// <returns>True provided that the <see cref="PauseCommand" /> can fire.</returns>
         protected abstract bool CanRequestPause();
 
-        /// <summary>
-        ///     A command that, when fired, asks the server to stop
-        ///     this channel.
-        /// </summary>
         [NotNull]
         public virtual RelayCommand StopCommand => _stopCommand
                                                     ?? (_stopCommand = new RelayCommand(
@@ -98,5 +82,9 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         /// </summary>
         /// <returns>True provided that the <see cref="StopCommand" /> can fire.</returns>
         protected abstract bool CanRequestStop();
+
+        protected PlayerViewModelBase(ushort channelId) : base(channelId)
+        {
+        }
     }
 }

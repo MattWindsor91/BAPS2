@@ -23,29 +23,17 @@ namespace URY.BAPS.Client.Wpf.ViewModel
     ///         The channel view model combines a player view model and a track-list.
     ///     </para>
     /// </summary>
-    public class ChannelViewModel : ChannelViewModelBase, IDropTarget, IDisposable
+    public class ChannelViewModel : ChannelViewModelBase, IDisposable
     {
         private string _name;
 
         private readonly IList<IDisposable> _subscriptions = new List<IDisposable>();
-
-        private int _selectedIndex = -1;
-
-        public override int SelectedIndex
-        {
-            get => _selectedIndex;
-            set
-            {
-                if (_selectedIndex == value) return;
-                _selectedIndex = value;
-                RaisePropertyChanged(nameof(SelectedIndex));
-            }
-        }
-       
+      
         public ChannelViewModel(ushort channelId,
             [CanBeNull] ConfigCache config,
             [CanBeNull] IPlayerViewModel player,
-            [CanBeNull] ChannelController controller) : base(channelId, player)
+            [CanBeNull] ITrackListViewModel trackList,
+            [CanBeNull] ChannelController controller) : base(channelId, player, trackList)
         {
             Controller = controller;
 
@@ -75,75 +63,27 @@ namespace URY.BAPS.Client.Wpf.ViewModel
 
         [CanBeNull] public ChannelController Controller { get; }
 
-
         public void Dispose()
         {
-            UnregisterForServerUpdates();
-            UnregisterForConfigUpdates();
-        }
-
-        public void DragOver(IDropInfo dropInfo)
-        {
-            switch (dropInfo.Data)
-            {
-                case DirectoryEntry _:
-                    dropInfo.DropTargetAdorner = DropTargetAdorners.Insert;
-                    dropInfo.Effects = DragDropEffects.Copy;
-                    break;
-            }
-        }
-
-        public void Drop(IDropInfo dropInfo)
-        {
-            switch (dropInfo.Data)
-            {
-                case DirectoryEntry dirEntry:
-                    Controller?.AddFile(dirEntry);
-                    break;
-            }
-        }
-
-        /// <summary>
-        ///     Restricts a channel observable to returning only events for this channel.
-        /// </summary>
-        /// <param name="source"></param>
-        /// <typeparam name="TResult"></typeparam>
-        /// <returns></returns>
-        [Pure]
-        private IObservable<TResult> OnThisChannel<TResult>(IObservable<TResult> source)
-            where TResult : ChannelEventArgs
-        {
-            return from ev in source where ev.ChannelId == ChannelId select ev;
+            UnsubscribeFromServerUpdates();
+            UnsubscribeFromConfigUpdates();
         }
         
         /// <summary>
         ///     Registers the view model against server update events.
         ///     <para>
-        ///         This view model can be disposed during run-time, so <see cref="UnregisterForServerUpdates" />
+        ///         This view model can be disposed during run-time, so <see cref="UnsubscribeFromServerUpdates" />
         ///         (called during <see cref="Dispose" />) should be kept in sync with it.
         ///     </para>
         /// </summary>
         private void RegisterForServerUpdates()
         {
-            if (Controller == null) return;
-
-            var playbackUpdater = Controller.PlaybackUpdater;
-            var playlistUpdater = Controller.PlaylistUpdater;
-
-             // NB: the Player also registers this event.
-            _subscriptions.Add(OnThisChannel(playbackUpdater.ObserveTrackLoad).Subscribe(HandleTrackLoad));
-
-            _subscriptions.Add(OnThisChannel(playlistUpdater.ObserveTrackAdd).Subscribe(HandleItemAdd));
-            _subscriptions.Add(OnThisChannel(playlistUpdater.ObserveTrackMove).Subscribe(HandleItemMove));
-            _subscriptions.Add(OnThisChannel(playlistUpdater.ObserveTrackDelete).Subscribe(HandleItemDelete));
-            _subscriptions.Add(OnThisChannel(playlistUpdater.ObservePlaylistReset).Subscribe(HandleResetPlaylist));
-
         }
 
         /// <summary>
         ///     Registers the view model against the config cache's config update events.
         ///     <para>
-        ///         This view model can be disposed during run-time, so <see cref="UnregisterForConfigUpdates" />
+        ///         This view model can be disposed during run-time, so <see cref="UnsubscribeFromConfigUpdates" />
         ///         (called during <see cref="Dispose" />) should be kept in sync with it.
         ///     </para>
         /// </summary>
@@ -156,7 +96,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         /// <summary>
         ///     Unregisters the view model from all server update events.
         /// </summary>
-        private void UnregisterForServerUpdates()
+        private void UnsubscribeFromServerUpdates()
         {
             foreach (var subscription in _subscriptions) subscription.Dispose();
         }
@@ -164,7 +104,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         /// <summary>
         ///     Unregisters the view model from all config update events.
         /// </summary>
-        private void UnregisterForConfigUpdates()
+        private void UnsubscribeFromConfigUpdates()
         {
             _config.ChoiceChanged -= HandleConfigChoiceChanged;
             _config.StringChanged -= HandleConfigStringChanged;
@@ -220,17 +160,6 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             RepeatMode = ChoiceKeys.ChoiceToRepeatMode(e.Choice, _repeatMode);
         }
 
-        private void HandleTrackLoad(Updates.TrackLoadEventArgs args)
-        {
-            DispatcherHelper.CheckBeginInvokeOnUI(() => UpdateLoadedStatus(args.Index));
-        }
-
-        private void UpdateLoadedStatus(uint index)
-        {
-            for (var i = 0; i < TrackList.Count; i++) TrackList[i].IsLoaded = i == index;
-        }
-
-
         protected override bool CanToggleConfig(ChannelFlag setting)
         {
             return true;
@@ -242,12 +171,6 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         }
 
         #region Channel flags
-
-        protected override void DeleteItem()
-        {
-            if (SelectedIndex < 0) return;
-            Controller?.DeleteItemAt((uint)SelectedIndex);
-        }
 
         protected override void SetRepeatMode(RepeatMode newMode)
         {
@@ -314,58 +237,10 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             }
         }
 
-        protected override bool CanResetPlaylist()
-        {
-            return true;
-        }
-
-        protected override void ResetPlaylist()
-        {
-            Controller?.Reset();
-        }
-
-        private bool IsSelectedIndexValid =>
-            0 <= SelectedIndex && SelectedIndex < TrackList.Count;
-
-        private bool IsSelectedIndexLoaded =>
-            TrackAt(SelectedIndex).IsLoaded;
-        
-        protected override bool CanDeleteItem()
-        {
-            return IsSelectedIndexValid && !IsSelectedIndexLoaded;
-        }
 
         private RepeatMode _repeatMode;
         private readonly ConfigCache _config;
 
         #endregion Channel flags
-
-        #region Tracklist event handlers
-
-        // NB: Anything involving the TrackList has to be done on the
-        // UI thread, hence the use of Dispatcher.
-
-        private void HandleItemAdd(Updates.TrackAddEventArgs e)
-        {
-            DispatcherHelper.CheckBeginInvokeOnUI(() => TrackList.Add(new TrackViewModel(e.Item)));
-        }
-
-        private void HandleItemMove(Updates.TrackMoveEventArgs e)
-        {
-            DispatcherHelper.CheckBeginInvokeOnUI(() => TrackList.Move((int) e.Index, (int) e.NewIndex));
-        }
-
-        private void HandleItemDelete(Updates.TrackDeleteEventArgs e)
-        {
-            DispatcherHelper.CheckBeginInvokeOnUI(() => TrackList.RemoveAt((int) e.Index));
-        }
-
-        private void HandleResetPlaylist(Updates.PlaylistResetEventArgs e)
-        {
-            // TODO(@MattWindsor91): this should probably _not_ clear the loaded item
-            DispatcherHelper.CheckBeginInvokeOnUI(() => TrackList.Clear());
-        }
-
-        #endregion Tracklist event handlers
     }
 }

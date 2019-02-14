@@ -15,8 +15,6 @@ namespace URY.BAPS.Client.Wpf.ViewModel
     /// </summary>
     public class PlayerViewModel : PlayerViewModelBase, IDisposable
     {
-        private readonly ushort _id;
-
         private uint _cuePosition;
         private uint _introPosition;
 
@@ -35,16 +33,11 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         /// </summary>
         private readonly IList<IDisposable> _subscriptions = new List<IDisposable>();
 
-        public PlayerViewModel(ushort id, [CanBeNull] IPlaybackController controller)
+        public PlayerViewModel(ushort channelId, [CanBeNull] IPlaybackController controller) : base(channelId)
         {
-            _id = id;
             Controller = controller;
 
             SubscribeToServerUpdates();
-        }
-
-        public PlayerViewModel() : this(0, null)
-        {
         }
 
         /// <summary>
@@ -173,27 +166,14 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             return HasController;
         }
         
-        /// <summary>
-        ///     Restricts a channel observable to returning only events for this player's channel.
-        /// </summary>
-        /// <param name="source">The observable to filter.</param>
-        /// <typeparam name="TResult">Type of output from the observable.</typeparam>
-        /// <returns>The observable corresponding to filtering <see cref="source"/> to events for this player's channel.</returns>
-        [NotNull, Pure]
-        private IObservable<TResult> OnThisPlayer<TResult>(IObservable<TResult> source)
-            where TResult : ChannelEventArgs
-        {
-            return from ev in source where ev.ChannelId == _id select ev;
-        }
-        
         private void SubscribeToServerUpdates()
         {
             if (Controller == null) return;
 
             var updater = Controller.PlaybackUpdater;
-            _subscriptions.Add(OnThisPlayer(updater.ObservePlayerState).Subscribe(HandlePlayerState));
-            _subscriptions.Add(OnThisPlayer(updater.ObserveMarker).Subscribe(HandleMarker));
-            _subscriptions.Add(OnThisPlayer(updater.ObserveTrackLoad).Subscribe(HandleTrackLoad));
+            _subscriptions.Add(OnThisChannel(updater.ObservePlayerState).Subscribe(HandlePlayerState));
+            _subscriptions.Add(OnThisChannel(updater.ObserveMarker).Subscribe(HandleMarker));
+            _subscriptions.Add(OnThisChannel(updater.ObserveTrackLoad).Subscribe(HandleTrackLoad));
         }
 
         private void UnsubscribeFromServerUpdates()
@@ -255,7 +235,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
 
         private void HandleTrackLoad(Updates.TrackLoadEventArgs args)
         {
-            if (args.ChannelId != _id) return;
+            if (args.ChannelId != ChannelId) return;
 
             var track = args.Track;
             LoadedTrack = track;
