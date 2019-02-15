@@ -4,6 +4,7 @@ using JetBrains.Annotations;
 using URY.BAPS.Client.Common;
 using URY.BAPS.Client.Common.Controllers;
 using URY.BAPS.Client.Common.ServerConfig;
+using URY.BAPS.Client.Wpf.Services;
 
 namespace URY.BAPS.Client.Wpf.ViewModel
 {
@@ -52,6 +53,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             SimpleIoc.Default.Register<SystemController>();
             SimpleIoc.Default.Register<ChannelControllerSet>();
             SimpleIoc.Default.Register<DirectoryControllerSet>();
+            SimpleIoc.Default.Register<AudioWallService>();
         }
     }
 }

@@ -14,6 +14,7 @@ using URY.BAPS.Client.Common.Controllers;
 using URY.BAPS.Client.Common.Events;
 using URY.BAPS.Client.Common.Model;
 using URY.BAPS.Client.Common.ServerConfig;
+using URY.BAPS.Client.Wpf.Services;
 
 namespace URY.BAPS.Client.Wpf.ViewModel
 {
@@ -28,14 +29,18 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         private string _name;
 
         private readonly IList<IDisposable> _subscriptions = new List<IDisposable>();
-      
+
+        [CanBeNull] private readonly AudioWallService _audioWallService;
+
         public ChannelViewModel(ushort channelId,
             [CanBeNull] ConfigCache config,
             [CanBeNull] IPlayerViewModel player,
             [CanBeNull] ITrackListViewModel trackList,
-            [CanBeNull] ChannelController controller) : base(channelId, player, trackList)
+            [CanBeNull] ChannelController controller,
+            [CanBeNull] AudioWallService audioWallService) : base(channelId, player, trackList)
         {
             Controller = controller;
+            _audioWallService = audioWallService;
 
             _config = config;
 
@@ -175,6 +180,18 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         protected override void SetRepeatMode(RepeatMode newMode)
         {
             Controller?.SetRepeatMode(newMode);
+        }
+
+        protected override bool CanOpenAudioWall()
+        {
+            // TODO(@MattWindsor91): ideally this should reflect whether the
+            // AudioWallService already has an audio wall open.
+            return _audioWallService != null;
+        }
+
+        protected override void OpenAudioWall()
+        {
+            _audioWallService?.OpenAudioWall(this);
         }
 
         protected override bool CanSetRepeatMode(RepeatMode newMode)

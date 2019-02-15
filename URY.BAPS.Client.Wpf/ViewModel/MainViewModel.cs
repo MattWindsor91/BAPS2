@@ -10,6 +10,7 @@ using URY.BAPS.Client.Common;
 using URY.BAPS.Client.Common.Controllers;
 using URY.BAPS.Client.Common.ServerConfig;
 using URY.BAPS.Client.Common.Updaters;
+using URY.BAPS.Client.Wpf.Services;
 
 namespace URY.BAPS.Client.Wpf.ViewModel
 {
@@ -26,8 +27,11 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         [NotNull] private readonly ConfigCache _config;
         [NotNull] private readonly ChannelControllerSet _channelControllerSet;
         [NotNull] private readonly DirectoryControllerSet _directoryControllerSet;
+        [NotNull] private readonly AudioWallService _audioWallService;
 
         [NotNull] private readonly IServerUpdater _updater;
+
+
         [CanBeNull] private RelayCommand<ushort> _forwardPauseCommand;
 
         [CanBeNull] private RelayCommand<ushort> _forwardPlayCommand;
@@ -40,11 +44,13 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             // TODO(@MattWindsor91): this should be IServerUpdater, but I'm not sure how to get SimpleIoC to inject it otherwise.
             [CanBeNull] IClientCore updater,
             [CanBeNull] ChannelControllerSet controllerSet,
-            [CanBeNull] DirectoryControllerSet directoryControllerSet)
+            [CanBeNull] DirectoryControllerSet directoryControllerSet,
+            [CanBeNull] AudioWallService audioWallService)
         {
             _config = config ?? throw new ArgumentNullException(nameof(config));
             _channelControllerSet = controllerSet ?? throw new ArgumentNullException(nameof(controllerSet));
             _directoryControllerSet = directoryControllerSet ?? throw new ArgumentNullException(nameof(directoryControllerSet));
+            _audioWallService = audioWallService ?? throw new ArgumentNullException(nameof(audioWallService));
             _updater = updater ?? throw new ArgumentNullException(nameof(updater));
 
             Text = "<You can type notes here>";
@@ -179,7 +185,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             var controller = _channelControllerSet.ControllerFor(channelId);
             var player = new PlayerViewModel(channelId, controller);
             var trackList = new TrackListViewModel(channelId, controller);
-            return new ChannelViewModel(channelId, _config, player, trackList, controller);
+            return new ChannelViewModel(channelId, _config, player, trackList, controller, _audioWallService);
         }
 
         [Pure]

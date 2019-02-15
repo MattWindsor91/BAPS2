@@ -40,8 +40,8 @@ The main channel control.
         </Storyboard>
     </UserControl.Resources>
     <UserControl.Triggers>
-        <EventTrigger RoutedEvent="ButtonBase.Click" SourceName="button">
-            <BeginStoryboard x:Name="OpenChannelMenu_BeginStoryboard" Storyboard="{StaticResource OpenChannelMenu}"/>
+        <EventTrigger RoutedEvent="ButtonBase.Click" SourceName="MenuButton">
+            <BeginStoryboard x:Name="OpenChannelMenuBeginStoryboard" Storyboard="{StaticResource OpenChannelMenu}"/>
         </EventTrigger>
     </UserControl.Triggers>
     <DockPanel>
@@ -50,7 +50,7 @@ The main channel control.
             Icon="Music"
             Text="{Binding Name}">
             <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
-                <Button x:Name="button">
+                <Button x:Name="MenuButton">
                     <Button.Content>
                         <fa:ImageAwesome Margin="{StaticResource ChannelBarMargin}" Icon="Navicon" />
                     </Button.Content>
@@ -86,7 +86,9 @@ The main channel control.
                                 CommandParameter="{x:Static model:RepeatMode.None}"
                                 />
                             <Separator />
-                            <MenuItem Header="_Show audio wall" />
+                            <MenuItem
+                                Header="_Show audio wall"
+                                Command="{Binding OpenAudioWallCommand}" />
                         </ContextMenu>
                     </Button.ContextMenu>
                 </Button>

@@ -101,6 +101,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AudioWall.xaml.cs">
+      <DependentUpon>AudioWall.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Directory.xaml.cs">
       <DependentUpon>Directory.xaml</DependentUpon>
     </Compile>
@@ -126,6 +129,7 @@
     <Compile Include="DesignData\MockChannelViewModel.cs" />
     <Compile Include="DesignData\MockPlayerViewModel.cs" />
     <Compile Include="DesignData\MockTrackListViewModel.cs" />
+    <Compile Include="Services\AudioWallService.cs" />
     <Compile Include="ViewModel\ChannelComponentViewModelBase.cs" />
     <Compile Include="ViewModel\ChannelViewModel.cs" />
     <Compile Include="Converters\EntryTypeToIconConverter.cs" />
@@ -144,6 +148,10 @@
     <Compile Include="ViewModel\TrackListViewModelBase.cs" />
     <Compile Include="ViewModel\TrackViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Page Include="AudioWall.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Directory.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

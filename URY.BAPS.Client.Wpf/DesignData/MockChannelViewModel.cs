@@ -41,6 +41,14 @@ namespace URY.BAPS.Client.Wpf.DesignData
         public override bool IsAutoAdvance { get; set; }
         public override RepeatMode RepeatMode { get; set; } = RepeatMode.One;
 
+        protected override bool CanOpenAudioWall()
+        {
+            return true;
+        }
+
+        protected override void OpenAudioWall()
+        {            
+        }
 
         protected override bool CanSetRepeatMode(RepeatMode newMode)
         {

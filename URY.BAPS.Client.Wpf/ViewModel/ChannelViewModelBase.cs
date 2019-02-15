@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using JetBrains.Annotations;
 using URY.BAPS.Client.Common;
@@ -10,11 +7,12 @@ using URY.BAPS.Client.Common.Model;
 namespace URY.BAPS.Client.Wpf.ViewModel
 {
     /// <summary>
-    ///     Abstract base class providing the parts of <see cref="IChannelViewModel"/>
+    ///     Abstract base class providing the parts of <see cref="IChannelViewModel" />
     ///     that are largely the same across implementations.
     /// </summary>
     public abstract class ChannelViewModelBase : ChannelComponentViewModelBase, IChannelViewModel
     {
+        [CanBeNull] private RelayCommand _openAudioWallCommand;
         [CanBeNull] private RelayCommand<RepeatMode> _setRepeatModeCommand;
         [CanBeNull] private RelayCommand _toggleAutoAdvanceCommand;
         [CanBeNull] private RelayCommand _togglePlayOnLoadCommand;
@@ -26,6 +24,11 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             Player = player ?? throw new ArgumentNullException(nameof(player));
             TrackList = trackList ?? throw new ArgumentNullException(nameof(trackList));
         }
+
+        [NotNull]
+        public RelayCommand OpenAudioWallCommand => _openAudioWallCommand
+                                                    ?? (_openAudioWallCommand =
+                                                        new RelayCommand(OpenAudioWall, CanOpenAudioWall));
 
         /// <summary>
         ///     Gets whether the repeat mode is 'none'.
@@ -55,9 +58,9 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         public bool IsRepeatAll => RepeatMode == RepeatMode.All;
 
         [NotNull] public IPlayerViewModel Player { get; }
-        [NotNull] public ITrackListViewModel TrackList { get; } 
+        [NotNull] public ITrackListViewModel TrackList { get; }
 
-        public abstract string Name { get; set; }            
+        public abstract string Name { get; set; }
 
         [NotNull]
         public RelayCommand ToggleAutoAdvanceCommand => _toggleAutoAdvanceCommand
@@ -83,23 +86,33 @@ namespace URY.BAPS.Client.Wpf.ViewModel
                                                                         CanSetRepeatMode
                                                                     ));
 
-
         public abstract bool IsPlayOnLoad { get; set; }
         public abstract bool IsAutoAdvance { get; set; }
         public abstract RepeatMode RepeatMode { get; set; }
 
         /// <summary>
-        ///     Sets the repeat mode.
+        ///     Checks whether an audio wall can be opened for this channel.
         /// </summary>
-        /// <param name="newMode">The new repeat mode.</param>
-        protected abstract void SetRepeatMode(RepeatMode newMode);
+        /// <returns>True if <see cref="OpenAudioWallCommand" /> may fire.</returns>
+        protected abstract bool CanOpenAudioWall();
+
+        /// <summary>
+        ///     Opens an audio wall for this channel.
+        /// </summary>
+        protected abstract void OpenAudioWall();
 
         /// <summary>
         ///     Checks whether the repeat mode may be set to the given new mode.
         /// </summary>
         /// <param name="newMode">The proposed new repeat mode.</param>
         /// <returns>True if the repeat mode may be set to <see cref="newMode" />.</returns>
-        protected abstract bool CanSetRepeatMode(RepeatMode newMode); 
+        protected abstract bool CanSetRepeatMode(RepeatMode newMode);
+
+        /// <summary>
+        ///     Sets the repeat mode.
+        /// </summary>
+        /// <param name="newMode">The new repeat mode.</param>
+        protected abstract void SetRepeatMode(RepeatMode newMode);
 
         /// <summary>
         ///     Gets whether a particular channel config setting can be toggled.
