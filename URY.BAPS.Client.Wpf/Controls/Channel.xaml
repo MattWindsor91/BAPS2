@@ -11,6 +11,7 @@ The main channel control.
              xmlns:controls="clr-namespace:URY.BAPS.Client.Wpf.Controls"
              xmlns:designData="clr-namespace:URY.BAPS.Client.Wpf.DesignData"
              xmlns:model="clr-namespace:URY.BAPS.Client.Common.Model;assembly=URY.BAPS.Client.Common"
+             xmlns:wpf="clr-namespace:URY.BAPS.Client.Wpf"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800" Width="360"
              d:DataContext="{d:DesignInstance designData:MockChannelViewModel, IsDesignTimeCreatable=True}">
@@ -29,33 +30,19 @@ The main channel control.
             <Setter Property="Margin" Value="{StaticResource ChannelBarMargin}" />
             <Setter Property="Foreground" Value="{StaticResource ChannelLegendLampOut}" />
         </Style>
-        <Storyboard x:Key="OpenChannelMenu">
-            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ChannelMenu" Storyboard.TargetProperty="(ContextMenu.IsOpen)">
-                <DiscreteObjectKeyFrame KeyTime="0:0:0">
-                    <DiscreteObjectKeyFrame.Value>
-                        <sys:Boolean>True</sys:Boolean>
-                    </DiscreteObjectKeyFrame.Value>
-                </DiscreteObjectKeyFrame>
-            </ObjectAnimationUsingKeyFrames>
-        </Storyboard>
     </UserControl.Resources>
-    <UserControl.Triggers>
-        <EventTrigger RoutedEvent="ButtonBase.Click" SourceName="MenuButton">
-            <BeginStoryboard x:Name="OpenChannelMenuBeginStoryboard" Storyboard="{StaticResource OpenChannelMenu}"/>
-        </EventTrigger>
-    </UserControl.Triggers>
     <DockPanel>
         <controls:Header
             DockPanel.Dock="Top"
             Icon="Music"
             Text="{Binding Name}">
             <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
-                <Button x:Name="MenuButton">
+                <Button wpf:ContextMenuLeftClickBehavior.IsLeftClickEnabled="True">
                     <Button.Content>
                         <fa:ImageAwesome Margin="{StaticResource ChannelBarMargin}" Icon="Navicon" />
                     </Button.Content>
                     <Button.ContextMenu>
-                        <ContextMenu x:Name="ChannelMenu" FlowDirection="LeftToRight">
+                        <ContextMenu FlowDirection="LeftToRight">
                             <MenuItem
                                 Header="_Auto advance"
                                 IsCheckable="True" IsChecked="{Binding IsAutoAdvance, Mode=OneWay}"

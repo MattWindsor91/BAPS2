@@ -104,6 +104,7 @@
     <Compile Include="AudioWall.xaml.cs">
       <DependentUpon>AudioWall.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ContextMenuLeftClickBehavior.cs" />
     <Compile Include="Controls\Directory.xaml.cs">
       <DependentUpon>Directory.xaml</DependentUpon>
     </Compile>
