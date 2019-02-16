@@ -46,32 +46,27 @@ The main channel control.
                             <MenuItem
                                 Header="_Auto advance"
                                 IsCheckable="True" IsChecked="{Binding IsAutoAdvance, Mode=OneWay}"
-                                Command="{Binding ToggleAutoAdvanceCommand}"
-                                />
+                                Command="{Binding ToggleAutoAdvanceCommand}" />
                             <MenuItem
                                 Header="_Play on load"
                                 IsCheckable="True" IsChecked="{Binding IsPlayOnLoad, Mode=OneWay}"
-                                Command="{Binding TogglePlayOnLoadCommand}"
-                                />
+                                Command="{Binding TogglePlayOnLoadCommand}" />
                             <Separator />
                             <MenuItem
                                 Header="Repeat a_ll"
                                 IsCheckable="True" IsChecked="{Binding IsRepeatAll, Mode=OneWay}"
                                 Command="{Binding SetRepeatModeCommand}"
-                                CommandParameter="{x:Static model:RepeatMode.All}"
-                                />
+                                CommandParameter="{x:Static model:RepeatMode.All}" />
                             <MenuItem
                                 Header="Repeat _one"
                                 IsCheckable="True" IsChecked="{Binding IsRepeatOne, Mode=OneWay}"
                                 Command="{Binding SetRepeatModeCommand}"
-                                CommandParameter="{x:Static model:RepeatMode.One}"
-                                />
+                                CommandParameter="{x:Static model:RepeatMode.One}" />
                             <MenuItem
                                 Header="Repeat _none"
                                 IsCheckable="True" IsChecked="{Binding IsRepeatNone, Mode=OneWay}"
                                 Command="{Binding SetRepeatModeCommand}"
-                                CommandParameter="{x:Static model:RepeatMode.None}"
-                                />
+                                CommandParameter="{x:Static model:RepeatMode.None}" />
                             <Separator />
                             <MenuItem
                                 Header="_Show audio wall"

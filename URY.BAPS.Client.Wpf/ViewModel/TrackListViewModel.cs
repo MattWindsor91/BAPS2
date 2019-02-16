@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using GalaSoft.MvvmLight.Threading;
-using GongSolutions.Wpf.DragDrop;
 using JetBrains.Annotations;
 using URY.BAPS.Client.Common.Controllers;
 using URY.BAPS.Client.Common.Events;
@@ -20,35 +19,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             SubscribeToServerUpdates();
         }
 
-        #region Subscriptions
-        
-        /// <summary>
-        ///     The list of handles to observable subscriptions that this view model creates.
-        /// </summary>
-        [NotNull] private readonly IList<IDisposable> _subscriptions = new List<IDisposable>();
-        
-        private void SubscribeToServerUpdates()
-        {
-            var playbackUpdater = Controller.PlaybackUpdater;
-             // NB: the Player also registers this event.
-            _subscriptions.Add(OnThisChannel(playbackUpdater.ObserveTrackLoad).Subscribe(HandleTrackLoad));
-            
-            var playlistUpdater = Controller.PlaylistUpdater;
-            _subscriptions.Add(OnThisChannel(playlistUpdater.ObserveTrackAdd).Subscribe(HandleItemAdd));
-            _subscriptions.Add(OnThisChannel(playlistUpdater.ObserveTrackMove).Subscribe(HandleItemMove));
-            _subscriptions.Add(OnThisChannel(playlistUpdater.ObserveTrackDelete).Subscribe(HandleItemDelete));
-            _subscriptions.Add(OnThisChannel(playlistUpdater.ObservePlaylistReset).Subscribe(HandleResetPlaylist));
-
-        }
-        
-        private void UnsubscribeFromServerUpdates()
-        {
-            foreach (var subscription in _subscriptions) subscription.Dispose();
-        }
-        
-        #endregion Subscriptions
-
-        private ChannelController Controller { get;  }
+        private ChannelController Controller { get; }
 
         public override int SelectedIndex
         {
@@ -59,6 +30,17 @@ namespace URY.BAPS.Client.Wpf.ViewModel
                 _selectedIndex = value;
                 RaisePropertyChanged(nameof(SelectedIndex));
             }
+        }
+
+        private bool IsSelectedIndexValid =>
+            0 <= SelectedIndex && SelectedIndex < Tracks.Count;
+
+        private bool IsSelectedIndexLoaded =>
+            TrackAt(SelectedIndex).IsLoaded;
+
+        public void Dispose()
+        {
+            UnsubscribeFromServerUpdates();
         }
 
         private void HandleTrackLoad(Updates.TrackLoadEventArgs args)
@@ -81,7 +63,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             if (track < 0) return;
             Controller?.Select((uint) track);
         }
-        
+
         protected override bool CanResetPlaylist()
         {
             return true;
@@ -92,27 +74,48 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             Controller?.Reset();
         }
 
-        private bool IsSelectedIndexValid =>
-            0 <= SelectedIndex && SelectedIndex < Tracks.Count;
-
-        private bool IsSelectedIndexLoaded =>
-            TrackAt(SelectedIndex).IsLoaded;
-        
         protected override bool CanDeleteItem()
         {
             return IsSelectedIndexValid && !IsSelectedIndexLoaded;
         }
-        
+
         protected override void DeleteItem()
         {
             if (SelectedIndex < 0) return;
-            Controller?.DeleteItemAt((uint)SelectedIndex);
+            Controller?.DeleteItemAt((uint) SelectedIndex);
         }
 
         protected override void DropDirectoryEntry(DirectoryEntry entry)
         {
             Controller?.AddFile(entry);
         }
+
+        #region Subscriptions
+
+        /// <summary>
+        ///     The list of handles to observable subscriptions that this view model creates.
+        /// </summary>
+        [NotNull] private readonly IList<IDisposable> _subscriptions = new List<IDisposable>();
+
+        private void SubscribeToServerUpdates()
+        {
+            var playbackUpdater = Controller.PlaybackUpdater;
+            // NB: the Player also registers this event.
+            _subscriptions.Add(OnThisChannel(playbackUpdater.ObserveTrackLoad).Subscribe(HandleTrackLoad));
+
+            var playlistUpdater = Controller.PlaylistUpdater;
+            _subscriptions.Add(OnThisChannel(playlistUpdater.ObserveTrackAdd).Subscribe(HandleItemAdd));
+            _subscriptions.Add(OnThisChannel(playlistUpdater.ObserveTrackMove).Subscribe(HandleItemMove));
+            _subscriptions.Add(OnThisChannel(playlistUpdater.ObserveTrackDelete).Subscribe(HandleItemDelete));
+            _subscriptions.Add(OnThisChannel(playlistUpdater.ObservePlaylistReset).Subscribe(HandleResetPlaylist));
+        }
+
+        private void UnsubscribeFromServerUpdates()
+        {
+            foreach (var subscription in _subscriptions) subscription.Dispose();
+        }
+
+        #endregion Subscriptions
 
         #region Tracklist event handlers
 
@@ -141,10 +144,5 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         }
 
         #endregion Tracklist event handlers
-        
-        public void Dispose()
-        {
-            UnsubscribeFromServerUpdates();
-        }
     }
 }

@@ -12,7 +12,7 @@ namespace URY.BAPS.Client.Wpf.DesignData
     public class MockTrackListViewModel : TrackListViewModelBase
     {
         /// <summary>
-        ///     Constructs a <see cref="MockTrackListViewModel"/> with a particular channel ID.
+        ///     Constructs a <see cref="MockTrackListViewModel" /> with a particular channel ID.
         /// </summary>
         /// <param name="channelId">The channel ID to use.</param>
         public MockTrackListViewModel(ushort channelId) : base(channelId)
@@ -26,12 +26,12 @@ namespace URY.BAPS.Client.Wpf.DesignData
         }
 
         /// <summary>
-        ///     Constructs a <see cref="MockTrackListViewModel"/> with a placeholder channel ID.
+        ///     Constructs a <see cref="MockTrackListViewModel" /> with a placeholder channel ID.
         /// </summary>
         public MockTrackListViewModel() : this(0)
         {
         }
-        
+
         public override int SelectedIndex { get; set; } = -1;
 
         protected override bool CanLoadTrack(int index)

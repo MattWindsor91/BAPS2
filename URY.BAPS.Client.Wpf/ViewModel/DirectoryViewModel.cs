@@ -17,6 +17,8 @@ namespace URY.BAPS.Client.Wpf.ViewModel
     public class DirectoryViewModel : ViewModelBase, IDisposable
     {
         [CanBeNull] private readonly DirectoryController _controller;
+
+        [NotNull] private readonly IList<IDisposable> _subscriptions = new List<IDisposable>();
         private string _name;
 
         public DirectoryViewModel(ushort directoryId, [CanBeNull] DirectoryController controller)
@@ -47,25 +49,25 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         /// </summary>
         public ObservableCollection<DirectoryEntry> Files { get; } = new ObservableCollection<DirectoryEntry>();
 
-        [NotNull] private readonly IList<IDisposable> _subscriptions = new List<IDisposable>();
-        
         public void Dispose()
         {
             UnsubscribeFromServerUpdates();
         }
-        
+
         /// <summary>
         ///     Restricts a directory observable to returning only events for this directory.
         /// </summary>
         /// <param name="source">The observable to filter.</param>
         /// <typeparam name="TResult">Type of output from the observable.</typeparam>
-        /// <returns>The observable corresponding to filtering <see cref="source"/> to events for this directory.</returns>
-        [NotNull, Pure]
+        /// <returns>The observable corresponding to filtering <see cref="source" /> to events for this directory.</returns>
+        [NotNull]
+        [Pure]
         private IObservable<TResult> OnThisDirectory<TResult>(IObservable<TResult> source)
             where TResult : DirectoryEventArgs
         {
             return from ev in source where ev.DirectoryId == DirectoryId select ev;
         }
+
         private void SubscribeToServerUpdates()
         {
             if (_controller == null) return;

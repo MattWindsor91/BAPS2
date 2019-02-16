@@ -1,17 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Reactive.Linq;
-using System.Windows;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Threading;
-using GongSolutions.Wpf.DragDrop;
 using JetBrains.Annotations;
 using URY.BAPS.Client.Common;
 using URY.BAPS.Client.Common.Controllers;
-using URY.BAPS.Client.Common.Events;
 using URY.BAPS.Client.Common.Model;
 using URY.BAPS.Client.Common.ServerConfig;
 using URY.BAPS.Client.Wpf.Services;
@@ -26,11 +17,10 @@ namespace URY.BAPS.Client.Wpf.ViewModel
     /// </summary>
     public class ChannelViewModel : ChannelViewModelBase, IDisposable
     {
-        private string _name;
+        [CanBeNull] private readonly AudioWallService _audioWallService;
 
         private readonly IList<IDisposable> _subscriptions = new List<IDisposable>();
-
-        [CanBeNull] private readonly AudioWallService _audioWallService;
+        private string _name;
 
         public ChannelViewModel(ushort channelId,
             [CanBeNull] ConfigCache config,
@@ -73,7 +63,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             UnsubscribeFromServerUpdates();
             UnsubscribeFromConfigUpdates();
         }
-        
+
         /// <summary>
         ///     Registers the view model against server update events.
         ///     <para>

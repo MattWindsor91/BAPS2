@@ -1,4 +1,3 @@
-using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using JetBrains.Annotations;
 using URY.BAPS.Client.Common.Model;
@@ -6,7 +5,7 @@ using URY.BAPS.Client.Common.Model;
 namespace URY.BAPS.Client.Wpf.ViewModel
 {
     /// <summary>
-    ///     Abstract base class providing the parts of <see cref="IPlayerViewModel"/>
+    ///     Abstract base class providing the parts of <see cref="IPlayerViewModel" />
     ///     that are largely the same across implementations.
     /// </summary>
     public abstract class PlayerViewModelBase : ChannelComponentViewModelBase, IPlayerViewModel
@@ -14,6 +13,11 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         [CanBeNull] private RelayCommand _pauseCommand;
         [CanBeNull] private RelayCommand _playCommand;
         [CanBeNull] private RelayCommand _stopCommand;
+
+        protected PlayerViewModelBase(ushort channelId) : base(channelId)
+        {
+        }
+
         protected abstract PlaybackState State { get; set; }
 
         public abstract uint StartTime { get; set; }
@@ -43,23 +47,29 @@ namespace URY.BAPS.Client.Wpf.ViewModel
 
         [NotNull]
         public virtual RelayCommand PlayCommand => _playCommand
-                                                    ?? (_playCommand = new RelayCommand(
-                                                        RequestPlay,
-                                                        CanRequestPlay));
+                                                   ?? (_playCommand = new RelayCommand(
+                                                       RequestPlay,
+                                                       CanRequestPlay));
+
+        [NotNull]
+        public virtual RelayCommand PauseCommand => _pauseCommand
+                                                    ?? (_pauseCommand = new RelayCommand(
+                                                        RequestPause,
+                                                        CanRequestPause));
+
+        [NotNull]
+        public virtual RelayCommand StopCommand => _stopCommand
+                                                   ?? (_stopCommand = new RelayCommand(
+                                                       RequestStop,
+                                                       CanRequestStop));
 
         protected abstract void RequestPlay();
-        
+
         /// <summary>
         ///     Whether it is ok to ask the server to start playing on this channel.
         /// </summary>
         /// <returns>True provided that the <see cref="PlayCommand" /> can fire.</returns>
         protected abstract bool CanRequestPlay();
-
-        [NotNull]
-        public virtual RelayCommand PauseCommand => _pauseCommand
-                                                     ?? (_pauseCommand = new RelayCommand(
-                                                         RequestPause,
-                                                         CanRequestPause));
 
         protected abstract void RequestPause();
 
@@ -69,12 +79,6 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         /// <returns>True provided that the <see cref="PauseCommand" /> can fire.</returns>
         protected abstract bool CanRequestPause();
 
-        [NotNull]
-        public virtual RelayCommand StopCommand => _stopCommand
-                                                    ?? (_stopCommand = new RelayCommand(
-                                                        RequestStop,
-                                                        CanRequestStop));
-
         protected abstract void RequestStop();
 
         /// <summary>
@@ -82,9 +86,5 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         /// </summary>
         /// <returns>True provided that the <see cref="StopCommand" /> can fire.</returns>
         protected abstract bool CanRequestStop();
-
-        protected PlayerViewModelBase(ushort channelId) : base(channelId)
-        {
-        }
     }
 }

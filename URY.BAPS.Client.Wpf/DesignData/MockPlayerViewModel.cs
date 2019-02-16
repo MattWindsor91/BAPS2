@@ -4,13 +4,28 @@ using URY.BAPS.Client.Wpf.ViewModel;
 namespace URY.BAPS.Client.Wpf.DesignData
 {
     /// <summary>
-    ///     A dummy implementation of <see cref="IPlayerViewModel"/>.
+    ///     A dummy implementation of <see cref="IPlayerViewModel" />.
     ///     <para>
     ///         This is used to provide sample data to player controls in design mode.
     ///     </para>
     /// </summary>
     public class MockPlayerViewModel : PlayerViewModelBase
     {
+        /// <summary>
+        ///     Constructs a new <see cref="MockPlayerViewModel" /> with a particular channel ID.
+        /// </summary>
+        /// <param name="channelId">The channel ID to use.</param>
+        public MockPlayerViewModel(ushort channelId) : base(channelId)
+        {
+        }
+
+        /// <summary>
+        ///     Constructs a new <see cref="MockPlayerViewModel" /> with a placeholder channel ID.
+        /// </summary>
+        public MockPlayerViewModel() : this(0)
+        {
+        }
+
         protected override PlaybackState State { get; set; } = PlaybackState.Playing;
 
         public override uint StartTime { get; set; } = 0;
@@ -50,21 +65,6 @@ namespace URY.BAPS.Client.Wpf.DesignData
         protected override bool CanRequestStop()
         {
             return true;
-        }
-
-        /// <summary>
-        ///     Constructs a new <see cref="MockPlayerViewModel"/> with a particular channel ID.
-        /// </summary>
-        /// <param name="channelId">The channel ID to use.</param>
-        public MockPlayerViewModel(ushort channelId) : base(channelId)
-        {
-        }
-
-        /// <summary>
-        ///     Constructs a new <see cref="MockPlayerViewModel"/> with a placeholder channel ID.
-        /// </summary>
-        public MockPlayerViewModel() : this(0)
-        {
         }
     }
 }

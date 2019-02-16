@@ -17,16 +17,6 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         ObservableCollection<TrackViewModel> Tracks { get; }
 
         /// <summary>
-        ///     Gets the track at a particular index in the track list.
-        /// </summary>
-        /// <param name="index">The index of the track to retrieve, if possible.</param>
-        /// <returns>
-        ///     The track at <paramref name="index"/>, or a null track if one doesn't exist.
-        /// </returns>
-        [NotNull]
-        TrackViewModel TrackAt(int index);
-
-        /// <summary>
         ///     The currently-selected index.
         ///     <para>
         ///         This is not necessarily the index of the currently-loaded item;
@@ -34,7 +24,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         ///     </para>
         /// </summary>
         int SelectedIndex { get; set; }
-        
+
         /// <summary>
         ///     A command that, when fired, asks the server to reset the playlist.
         /// </summary>
@@ -47,11 +37,21 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         /// </summary>
         [NotNull]
         RelayCommand DeleteItemCommand { get; }
-        
+
         /// <summary>
         ///     A command that, when fired, asks the server to load the given item.
-        /// </summary>       
+        /// </summary>
         [NotNull]
         RelayCommand<int> LoadTrackCommand { get; }
+
+        /// <summary>
+        ///     Gets the track at a particular index in the track list.
+        /// </summary>
+        /// <param name="index">The index of the track to retrieve, if possible.</param>
+        /// <returns>
+        ///     The track at <paramref name="index" />, or a null track if one doesn't exist.
+        /// </returns>
+        [NotNull]
+        TrackViewModel TrackAt(int index);
     }
 }

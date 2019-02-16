@@ -9,6 +9,9 @@
 //------------------------------------------------------------------------------
 
 namespace URY.BAPS.Client.Wpf.Properties {
+    using System;
+    
+    
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -16,7 +19,7 @@ namespace URY.BAPS.Client.Wpf.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -36,7 +39,7 @@ namespace URY.BAPS.Client.Wpf.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("BAPS.Client.Wpf.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("URY.BAPS.Client.Wpf.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -64,6 +67,24 @@ namespace URY.BAPS.Client.Wpf.Properties {
             get {
                 object obj = ResourceManager.GetObject("Main", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Converted value must be a {0}..
+        /// </summary>
+        internal static string SelectionChangedEventArgsToIndexConverter_Convert_NotSelectionChangedEventArgs {
+            get {
+                return ResourceManager.GetString("SelectionChangedEventArgsToIndexConverter_Convert_NotSelectionChangedEventArgs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Event source must be a {0}..
+        /// </summary>
+        internal static string SelectionChangedEventArgsToIndexConverter_Convert_SourceNotSelector {
+            get {
+                return ResourceManager.GetString("SelectionChangedEventArgsToIndexConverter_Convert_SourceNotSelector", resourceCulture);
             }
         }
         

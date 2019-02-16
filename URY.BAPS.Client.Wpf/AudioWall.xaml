@@ -5,47 +5,26 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:controls="clr-namespace:URY.BAPS.Client.Wpf.Controls"
         xmlns:designData="clr-namespace:URY.BAPS.Client.Wpf.DesignData"
-        xmlns:viewModel="clr-namespace:URY.BAPS.Client.Wpf.ViewModel"
-        xmlns:fa="http://schemas.fontawesome.io/icons/"
-        xmlns:converters="clr-namespace:URY.BAPS.Client.Wpf.Converters"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance designData:MockChannelViewModel, IsDesignTimeCreatable=True}"
         Title="Audio Wall" Height="450" Width="800" WindowStyle="ToolWindow">
     <DockPanel>
-        <controls:Header DockPanel.Dock="Top" Icon="Table" Text="Audio Wall"/>
+        <controls:Header DockPanel.Dock="Top" Icon="Table" Text="Audio Wall" />
         <ListBox
             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
             ScrollViewer.VerticalScrollBarVisibility="Disabled"
-            ItemsSource="{Binding TrackList.Tracks}">
+            ItemsSource="{Binding TrackList.Tracks}" ItemTemplate="{StaticResource TrackTemplate}">
             <ListBox.ItemContainerStyle>
                 <Style TargetType="ListBoxItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                    <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="VerticalContentAlignment" Value="Stretch" />
                 </Style>
             </ListBox.ItemContainerStyle>
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <UniformGrid/>
+                    <UniformGrid />
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
-            <ListBox.ItemTemplate>
-                <DataTemplate DataType="viewModel:TrackViewModel">
-                    <Border HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch"
-                            CornerRadius="5" Background="{StaticResource AccentFg}"
-                            BorderThickness="4px" BorderBrush="{StaticResource AccentBg}"
-                            >
-                        <StackPanel Margin="4px">
-                            <StackPanel.Resources>
-                                <converters:EntryTypeToIconConverter x:Key="EntryTypeToIconConverter" />
-                            </StackPanel.Resources>
-                            <fa:ImageAwesome Width="64px" Height="64px" Foreground="{StaticResource AccentBg}" Icon="{Binding Converter={StaticResource EntryTypeToIconConverter}}" />
-                            <TextBlock TextTrimming="WordEllipsis"
-                                       TextWrapping="Wrap" Text="{Binding Description}"/>
-                        </StackPanel>
-                    </Border>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
         </ListBox>
     </DockPanel>
 </Window>

@@ -26,7 +26,7 @@ namespace URY.BAPS.Client.Wpf.Services
             _channelOfCurrentAudioWall = channel;
             _wall = new AudioWall
             {
-                DataContext = channel,
+                DataContext = channel
             };
             _wall.Closed += HandleWallClosing;
 

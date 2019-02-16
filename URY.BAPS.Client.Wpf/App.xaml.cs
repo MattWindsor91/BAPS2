@@ -54,7 +54,10 @@ namespace URY.BAPS.Client.Wpf
                 MessageBox.Show(errorMessage, "Server error:", MessageBoxButton.OK);
                 //logError(errorMessage);
             };
-            auth.UserError += (s, errorMessage) => { MessageBox.Show(errorMessage, "Login error:", MessageBoxButton.OK); };
+            auth.UserError += (s, errorMessage) =>
+            {
+                MessageBox.Show(errorMessage, "Login error:", MessageBoxButton.OK);
+            };
             return auth;
         }
 

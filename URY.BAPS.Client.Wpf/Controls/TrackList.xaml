@@ -1,8 +1,8 @@
 ﻿<UserControl x:Class="URY.BAPS.Client.Wpf.Controls.TrackList"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:dd="urn:gong-wpf-dragdrop"
              xmlns:converters="clr-namespace:URY.BAPS.Client.Wpf.Converters"
              xmlns:model="clr-namespace:URY.BAPS.Client.Common.Model;assembly=URY.BAPS.Client.Common"
@@ -13,20 +13,21 @@
              xmlns:command="http://www.galasoft.ch/mvvmlight"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance designData:MockTrackListViewModel, IsDesignTimeCreatable=True}"
-             >
+             d:DesignWidth="400" d:DesignHeight="500">
     <UserControl.Resources>
-        <converters:MouseButtonEventArgsToIndexConverter x:Key="MouseButtonEventArgsToIndexConverter"/>
+        <converters:MouseButtonEventArgsToIndexConverter x:Key="MouseButtonEventArgsToIndexConverter" />
         <converters:EntryTypeToIconConverter x:Key="EntryTypeToIconConverter" />
     </UserControl.Resources>
     <!-- TODO(@MattWindsor91): work out how to make load only happen if selection changed by left-click. -->
     <ListBox
         Name="Tracks"
-            HorizontalContentAlignment="Stretch"
-            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-            ItemsSource="{Binding Tracks, UpdateSourceTrigger=PropertyChanged}"
-            dd:DragDrop.IsDropTarget="True"
-            dd:DragDrop.DropHandler="{Binding}"
-            SelectedIndex="{Binding SelectedIndex, Mode=OneWayToSource}">
+        HorizontalContentAlignment="Stretch"
+        ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+        ItemsSource="{Binding Tracks, UpdateSourceTrigger=PropertyChanged}"
+        ItemTemplate="{StaticResource TrackTemplate}"
+        dd:DragDrop.IsDropTarget="True"
+        dd:DragDrop.DropHandler="{Binding}"
+        SelectedIndex="{Binding SelectedIndex, Mode=OneWayToSource}">
         <!-- This interaction wires up *left* mouse clicks to the command for loading a track.
              Note that this is deliberately _not_ bound to SelectionChanged; this means that the selection can change
              independently from loading tracks (for example, by right-clicking). -->
@@ -45,39 +46,5 @@
                 <MenuItem Header="_Delete Item" Command="{Binding DeleteItemCommand}" />
             </ContextMenu>
         </ListBox.ContextMenu>
-        <ListBox.ItemTemplate>
-            <DataTemplate DataType="{x:Type viewModel:TrackViewModel}">
-                <Border BorderThickness="2px" CornerRadius="4">
-                    <Border.Style>
-                        <Style TargetType="{x:Type Border}">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsLoaded}" Value="True">
-                                    <Setter Property="BorderBrush" Value="{StaticResource AccentBg}" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Border.Style>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="24px" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="24px" />
-                        </Grid.RowDefinitions>
-                        <fa:ImageAwesome Grid.Row="0" Grid.Column="0"
-                                             Foreground="Black"
-                                             Margin="2px"
-                                             Icon="{Binding Converter={StaticResource EntryTypeToIconConverter}}" />
-                        <TextBlock Grid.Row="0" Grid.Column="1"
-                                       VerticalAlignment="Center"
-                                       Margin="2px"
-                                       FontSize="10pt"
-                                       ToolTip="{Binding Description}"
-                                       Text="{Binding Description}" />
-                    </Grid>
-                </Border>
-            </DataTemplate>
-        </ListBox.ItemTemplate>
     </ListBox>
 </UserControl>

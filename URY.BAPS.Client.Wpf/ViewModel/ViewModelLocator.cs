@@ -36,15 +36,17 @@ namespace URY.BAPS.Client.Wpf.ViewModel
 
         [ProvidesContext]
         public static ConfigController ConfigController => ServiceLocator.Current.GetInstance<ConfigController>();
-        
+
         [ProvidesContext]
         public static SystemController SystemController => ServiceLocator.Current.GetInstance<SystemController>();
-        
+
         [ProvidesContext]
-        public static ChannelControllerSet ChannelControllerSet => ServiceLocator.Current.GetInstance<ChannelControllerSet>();
-        
+        public static ChannelControllerSet ChannelControllerSet =>
+            ServiceLocator.Current.GetInstance<ChannelControllerSet>();
+
         [ProvidesContext]
-        public static DirectoryControllerSet DirectoryControllerSet => ServiceLocator.Current.GetInstance<DirectoryControllerSet>();
+        public static DirectoryControllerSet DirectoryControllerSet =>
+            ServiceLocator.Current.GetInstance<DirectoryControllerSet>();
 
         private static void RegisterServices()
         {

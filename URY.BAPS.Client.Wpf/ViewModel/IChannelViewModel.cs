@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using GalaSoft.MvvmLight.CommandWpf;
+﻿using GalaSoft.MvvmLight.CommandWpf;
 using URY.BAPS.Client.Common.Model;
 
 namespace URY.BAPS.Client.Wpf.ViewModel
@@ -11,7 +10,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         ///     position markers.
         /// </summary>
         IPlayerViewModel Player { get; }
-        
+
         /// <summary>
         ///     The part of the channel containing the track list.
         /// </summary>
@@ -26,7 +25,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         /// </summary>
         string Name { get; set; }
 
-        
+
         /// <summary>
         ///     Whether play-on-load is active, according to the server.
         ///     <para>

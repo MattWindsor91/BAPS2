@@ -24,10 +24,10 @@ namespace URY.BAPS.Client.Wpf.ViewModel
     [UsedImplicitly]
     public class MainViewModel : ViewModelBase
     {
-        [NotNull] private readonly ConfigCache _config;
-        [NotNull] private readonly ChannelControllerSet _channelControllerSet;
-        [NotNull] private readonly DirectoryControllerSet _directoryControllerSet;
         [NotNull] private readonly AudioWallService _audioWallService;
+        [NotNull] private readonly ChannelControllerSet _channelControllerSet;
+        [NotNull] private readonly ConfigCache _config;
+        [NotNull] private readonly DirectoryControllerSet _directoryControllerSet;
 
         [NotNull] private readonly IServerUpdater _updater;
 
@@ -49,7 +49,8 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         {
             _config = config ?? throw new ArgumentNullException(nameof(config));
             _channelControllerSet = controllerSet ?? throw new ArgumentNullException(nameof(controllerSet));
-            _directoryControllerSet = directoryControllerSet ?? throw new ArgumentNullException(nameof(directoryControllerSet));
+            _directoryControllerSet =
+                directoryControllerSet ?? throw new ArgumentNullException(nameof(directoryControllerSet));
             _audioWallService = audioWallService ?? throw new ArgumentNullException(nameof(audioWallService));
             _updater = updater ?? throw new ArgumentNullException(nameof(updater));
 

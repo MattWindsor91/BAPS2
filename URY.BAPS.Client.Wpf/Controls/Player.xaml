@@ -99,11 +99,11 @@
             SubText="Elapsed"
             MainText="{Binding Position, Converter={StaticResource MsecToPositionStringConverter}}" />
         <controls:PositionDisplay Grid.Row="3" Grid.Column="1"
-                               SubText="Remaining"
-                               MainText="{Binding Remaining, Converter={StaticResource MsecToPositionStringConverter}}" />
+                                  SubText="Remaining"
+                                  MainText="{Binding Remaining, Converter={StaticResource MsecToPositionStringConverter}}" />
         <controls:PositionDisplay Grid.Row="3" Grid.Column="2"
 
-                               SubText="Start at:"
-                               MainText="{Binding StartTime, Converter={StaticResource MsecToPositionStringConverter}}" />
+                                  SubText="Start at:"
+                                  MainText="{Binding StartTime, Converter={StaticResource MsecToPositionStringConverter}}" />
     </Grid>
 </UserControl>

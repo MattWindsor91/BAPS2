@@ -47,14 +47,14 @@ namespace URY.BAPS.Client.Wpf.DesignData
         }
 
         protected override void OpenAudioWall()
-        {            
+        {
         }
 
         protected override bool CanSetRepeatMode(RepeatMode newMode)
         {
             return newMode != RepeatMode;
         }
-        
+
         protected override void SetRepeatMode(RepeatMode newMode)
         {
         }

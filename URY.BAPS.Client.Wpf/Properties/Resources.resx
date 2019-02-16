@@ -124,4 +124,10 @@
   <data name="splashIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\splashicon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="SelectionChangedEventArgsToIndexConverter_Convert_NotSelectionChangedEventArgs" xml:space="preserve">
+    <value>Converted value must be a {0}.</value>
+  </data>
+  <data name="SelectionChangedEventArgsToIndexConverter_Convert_SourceNotSelector" xml:space="preserve">
+    <value>Event source must be a {0}.</value>
+  </data>
 </root>

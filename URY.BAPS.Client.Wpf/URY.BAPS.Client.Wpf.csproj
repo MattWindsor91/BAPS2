@@ -127,6 +127,7 @@
     <Compile Include="Controls\TransportButton.xaml.cs">
       <DependentUpon>TransportButton.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\SelectionChangedEventArgsToIndexConverter.cs" />
     <Compile Include="DesignData\MockChannelViewModel.cs" />
     <Compile Include="DesignData\MockPlayerViewModel.cs" />
     <Compile Include="DesignData\MockTrackListViewModel.cs" />
@@ -246,6 +247,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\splashIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Converters\README.md" />
+    <Content Include="DesignData\README.md" />
+    <Content Include="Services\README.md" />
+    <Content Include="ViewModel\README.md" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

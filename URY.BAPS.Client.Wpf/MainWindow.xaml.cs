@@ -1,6 +1,4 @@
-﻿using System.Windows;
-
-namespace URY.BAPS.Client.Wpf
+﻿namespace URY.BAPS.Client.Wpf
 {
     /// <summary>
     ///     Interaction logic for MainWindow.xaml

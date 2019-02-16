@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Reactive.Linq;
 using System.Windows;
 using JetBrains.Annotations;
 using URY.BAPS.Client.Common.Controllers;
@@ -15,6 +14,11 @@ namespace URY.BAPS.Client.Wpf.ViewModel
     /// </summary>
     public class PlayerViewModel : PlayerViewModelBase, IDisposable
     {
+        /// <summary>
+        ///     The list of handles to observable subscriptions that this view model creates.
+        /// </summary>
+        private readonly IList<IDisposable> _subscriptions = new List<IDisposable>();
+
         private uint _cuePosition;
         private uint _introPosition;
 
@@ -27,11 +31,6 @@ namespace URY.BAPS.Client.Wpf.ViewModel
 
         private uint _startTime;
         private PlaybackState _state;
-        
-        /// <summary>
-        ///     The list of handles to observable subscriptions that this view model creates.
-        /// </summary>
-        private readonly IList<IDisposable> _subscriptions = new List<IDisposable>();
 
         public PlayerViewModel(ushort channelId, [CanBeNull] IPlaybackController controller) : base(channelId)
         {
@@ -165,7 +164,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         {
             return HasController;
         }
-        
+
         private void SubscribeToServerUpdates()
         {
             if (Controller == null) return;

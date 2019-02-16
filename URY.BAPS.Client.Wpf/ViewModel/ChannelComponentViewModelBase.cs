@@ -21,7 +21,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         ///     The ID of the channel this view model concerns.
         /// </summary>
         public ushort ChannelId { get; }
-        
+
         /// <summary>
         ///     Restricts a channel observable to returning only events for this channel.
         /// </summary>
