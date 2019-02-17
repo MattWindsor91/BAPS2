@@ -7,7 +7,7 @@ using URY.BAPS.Client.Common.Events;
 using URY.BAPS.Client.Common.ServerConfig;
 using URY.BAPS.Client.Common.Updaters;
 
-namespace URY.BAPS.Client.Common.Tests
+namespace URY.BAPS.Client.Common.Tests.ServerConfig
 {
     /// <summary>
     ///     Tests for the <see cref="ConfigCache" />.
