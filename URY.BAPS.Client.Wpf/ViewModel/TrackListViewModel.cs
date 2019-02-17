@@ -38,7 +38,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         private bool IsSelectedIndexLoaded =>
             TrackAt(SelectedIndex).IsLoaded;
 
-        public void Dispose()
+        public override void Dispose()
         {
             UnsubscribeFromServerUpdates();
         }

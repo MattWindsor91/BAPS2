@@ -142,7 +142,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
 
         [CanBeNull] private IPlaybackController Controller { get; }
 
-        public void Dispose()
+        public override void Dispose()
         {
             UnsubscribeFromServerUpdates();
         }

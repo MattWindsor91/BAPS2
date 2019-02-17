@@ -103,5 +103,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         /// </summary>
         /// <param name="entry">The entry to handle.</param>
         protected abstract void DropDirectoryEntry(DirectoryEntry entry);
+
+        public abstract void Dispose();
     }
 }

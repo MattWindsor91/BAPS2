@@ -66,5 +66,10 @@ namespace URY.BAPS.Client.Wpf.DesignData
         {
             return true;
         }
+
+        public override void Dispose()
+        {
+            // Nothing to dispose
+        }
     }
 }

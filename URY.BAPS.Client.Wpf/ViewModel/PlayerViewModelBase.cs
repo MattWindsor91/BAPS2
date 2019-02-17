@@ -86,5 +86,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         /// </summary>
         /// <returns>True provided that the <see cref="StopCommand" /> can fire.</returns>
         protected abstract bool CanRequestStop();
+
+        public abstract void Dispose();
     }
 }

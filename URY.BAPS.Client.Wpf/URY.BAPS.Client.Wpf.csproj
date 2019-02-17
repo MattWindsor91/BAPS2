@@ -132,6 +132,7 @@
     <Compile Include="DesignData\MockPlayerViewModel.cs" />
     <Compile Include="DesignData\MockTrackListViewModel.cs" />
     <Compile Include="Services\AudioWallService.cs" />
+    <Compile Include="Services\ChannelFactoryService.cs" />
     <Compile Include="ViewModel\ChannelComponentViewModelBase.cs" />
     <Compile Include="ViewModel\ChannelViewModel.cs" />
     <Compile Include="Converters\EntryTypeToIconConverter.cs" />

@@ -56,6 +56,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             SimpleIoc.Default.Register<ChannelControllerSet>();
             SimpleIoc.Default.Register<DirectoryControllerSet>();
             SimpleIoc.Default.Register<AudioWallService>();
+            SimpleIoc.Default.Register<ChannelFactoryService>();
         }
     }
 }

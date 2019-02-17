@@ -1,3 +1,4 @@
+using System;
 using System.Collections.ObjectModel;
 using GalaSoft.MvvmLight.CommandWpf;
 using GongSolutions.Wpf.DragDrop;
@@ -8,7 +9,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
     /// <summary>
     ///     Interface for view models over channel track-lists.
     /// </summary>
-    public interface ITrackListViewModel : IDropTarget
+    public interface ITrackListViewModel : IDropTarget, IDisposable
     {
         /// <summary>
         ///     The track list proper.

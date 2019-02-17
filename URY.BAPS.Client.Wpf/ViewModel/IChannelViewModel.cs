@@ -1,9 +1,10 @@
-﻿using GalaSoft.MvvmLight.CommandWpf;
+﻿using System;
+using GalaSoft.MvvmLight.CommandWpf;
 using URY.BAPS.Client.Common.Model;
 
 namespace URY.BAPS.Client.Wpf.ViewModel
 {
-    public interface IChannelViewModel
+    public interface IChannelViewModel : IDisposable
     {
         /// <summary>
         ///     The part of the channel containing the loaded track and its

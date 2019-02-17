@@ -24,8 +24,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
     [UsedImplicitly]
     public class MainViewModel : ViewModelBase
     {
-        [NotNull] private readonly AudioWallService _audioWallService;
-        [NotNull] private readonly ChannelControllerSet _channelControllerSet;
+        [NotNull] private readonly ChannelFactoryService _channelFactory;
         [NotNull] private readonly ConfigCache _config;
         [NotNull] private readonly DirectoryControllerSet _directoryControllerSet;
 
@@ -40,6 +39,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         private string _text;
 
         public MainViewModel(
+            [CanBeNull] ChannelFactoryService channelFactory,
             [CanBeNull] ConfigCache config,
             // TODO(@MattWindsor91): this should be IServerUpdater, but I'm not sure how to get SimpleIoC to inject it otherwise.
             [CanBeNull] IClientCore updater,
@@ -47,11 +47,10 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             [CanBeNull] DirectoryControllerSet directoryControllerSet,
             [CanBeNull] AudioWallService audioWallService)
         {
+            _channelFactory = channelFactory ?? throw new ArgumentNullException(nameof(channelFactory));
             _config = config ?? throw new ArgumentNullException(nameof(config));
-            _channelControllerSet = controllerSet ?? throw new ArgumentNullException(nameof(controllerSet));
             _directoryControllerSet =
                 directoryControllerSet ?? throw new ArgumentNullException(nameof(directoryControllerSet));
-            _audioWallService = audioWallService ?? throw new ArgumentNullException(nameof(audioWallService));
             _updater = updater ?? throw new ArgumentNullException(nameof(updater));
 
             Text = "<You can type notes here>";
@@ -62,7 +61,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         ///     The set of channels currently in use.
         /// </summary>
         [NotNull]
-        public ObservableCollection<ChannelViewModel> Channels { get; } = new ObservableCollection<ChannelViewModel>();
+        public ObservableCollection<IChannelViewModel> Channels { get; } = new ObservableCollection<IChannelViewModel>();
 
         [NotNull]
         public ObservableCollection<DirectoryViewModel> Directories { get; } =
@@ -124,7 +123,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         /// <param name="channelId">The ID of the channel to get.</param>
         /// <returns>The channel at <paramref name="channelId" />, or null if one doesn't exist.</returns>
         [CanBeNull]
-        private ChannelViewModel ChannelAt(ushort channelId)
+        private IChannelViewModel ChannelAt(ushort channelId)
         {
             return Channels.ElementAtOrDefault(channelId);
         }
@@ -181,12 +180,9 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         }
 
         [Pure]
-        private ChannelViewModel MakeChannelViewModel(ushort channelId)
+        private IChannelViewModel MakeChannelViewModel(ushort channelId)
         {
-            var controller = _channelControllerSet.ControllerFor(channelId);
-            var player = new PlayerViewModel(channelId, controller);
-            var trackList = new TrackListViewModel(channelId, controller);
-            return new ChannelViewModel(channelId, _config, player, trackList, controller, _audioWallService);
+            return _channelFactory.Make(channelId);
         }
 
         [Pure]

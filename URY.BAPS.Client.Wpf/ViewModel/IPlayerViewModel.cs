@@ -1,9 +1,10 @@
+using System;
 using GalaSoft.MvvmLight.CommandWpf;
 using URY.BAPS.Client.Common.Model;
 
 namespace URY.BAPS.Client.Wpf.ViewModel
 {
-    public interface IPlayerViewModel
+    public interface IPlayerViewModel : IDisposable
     {
         /// <summary>
         ///     The expected start time of the currently loaded item (if any).

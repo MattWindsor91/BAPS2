@@ -58,8 +58,9 @@ namespace URY.BAPS.Client.Wpf.ViewModel
 
         [CanBeNull] public ChannelController Controller { get; }
 
-        public void Dispose()
+        public override void Dispose()
         {
+            base.Dispose();
             UnsubscribeFromServerUpdates();
             UnsubscribeFromConfigUpdates();
         }
