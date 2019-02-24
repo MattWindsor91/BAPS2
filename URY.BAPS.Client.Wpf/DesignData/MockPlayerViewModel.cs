@@ -31,14 +31,9 @@ namespace URY.BAPS.Client.Wpf.DesignData
         public override uint StartTime { get; set; } = 0;
         public override ITrack LoadedTrack { get; set; } = new FileTrack("Xanadu", 300_000);
 
-        public override uint Position
-        {
-            get => 120_000;
-            set { }
-        }
-
-        public override uint CuePosition { get; set; }
-        public override uint IntroPosition { get; set; }
+        public override uint Position { get; set; } = 120_000;
+        public override uint CuePosition { get; set; } = 64_000;
+        public override uint IntroPosition { get; set; } = 20_000;
 
         protected override void RequestPlay()
         {
