@@ -9,5 +9,10 @@
         {
             InitializeComponent();
         }
+
+        private void Slider_ValueChanged()
+        {
+
+        }
     }
 }

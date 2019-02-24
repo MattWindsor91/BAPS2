@@ -114,7 +114,6 @@
     <Compile Include="Controls\Player.xaml.cs">
       <DependentUpon>Player.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\TrackBarBackground.cs" />
     <Compile Include="Controls\TrackBar.xaml.cs">
       <DependentUpon>TrackBar.xaml</DependentUpon>
     </Compile>

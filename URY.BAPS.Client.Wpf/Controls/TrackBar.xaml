@@ -4,42 +4,226 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:converters="clr-namespace:URY.BAPS.Client.Wpf.Converters"
-             xmlns:controls="clr-namespace:URY.BAPS.Client.Wpf.Controls"
              xmlns:designData="clr-namespace:URY.BAPS.Client.Wpf.DesignData"
              mc:Ignorable="d"
-             Height="48px" d:DesignWidth="800"
+             Height="72px" d:DesignWidth="800"
              d:DataContext="{d:DesignInstance designData:MockPlayerViewModel, IsDesignTimeCreatable=True}">
     <UserControl.Resources>
         <converters:PositionScaleConverter x:Key="PositionScaleConverter" />
+
+        <LinearGradientBrush x:Key="IntroBrush" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="#AAE81123" Offset="0"/>
+            <GradientStop Color="white" Offset="0.05"/>
+            <GradientStop Color="#AAE81123" Offset="0.5"/>
+            <GradientStop Color="#AAD13438" Offset="1"/>
+        </LinearGradientBrush>
+
+        <LinearGradientBrush x:Key="UnderlayBrush" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="#995D5A58" Offset="0"/>
+            <GradientStop Color="#994C4A48" Offset="0.5"/>
+            <GradientStop Color="#995D5A58" Offset="0.75"/>
+            <GradientStop Color="#997A7574" Offset="1"/>
+        </LinearGradientBrush>
+
+        <LinearGradientBrush x:Key="PositionBrush" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="#AA00CC6A" Offset="0"/>
+            <GradientStop Color="white" Offset="0.05"/>
+            <GradientStop Color="#AA00CC6A" Offset="0.5"/>
+            <GradientStop Color="#AA10893E" Offset="1"/>
+        </LinearGradientBrush>
+
+        <LinearGradientBrush x:Key="CueBrush" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="#AA0078D7" Offset="0"/>
+            <GradientStop Color="white" Offset="0.05"/>
+            <GradientStop Color="#AA0078D7" Offset="0.5"/>
+            <GradientStop Color="#AA0063B1" Offset="1"/>
+        </LinearGradientBrush>
+
+        <Style x:Key="SliderButtonStyle" TargetType="{x:Type RepeatButton}">
+            <Setter Property="SnapsToDevicePixels" Value="true" />
+            <Setter Property="OverridesDefaultStyle" Value="true" />
+            <Setter Property="IsTabStop" Value="false" />
+            <Setter Property="Focusable" Value="false" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RepeatButton}">
+                        <Border Background="Transparent" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SliderThumbStyle" TargetType="{x:Type Thumb}">
+            <Setter Property="SnapsToDevicePixels" Value="true" />
+            <Setter Property="OverridesDefaultStyle" Value="true" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Thumb}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Rectangle Width="6" Height="{TemplateBinding ActualHeight}"
+                                       SnapsToDevicePixels="True"
+                                   Fill="White"
+                                   StrokeThickness="1"
+                                   Stroke="{StaticResource AccentBg}"
+                                   StrokeLineJoin="Round" HorizontalAlignment="Left"
+                                   />
+                            <Polygon VerticalAlignment="Center"
+                             StrokeThickness="1"
+                             StrokeLineJoin="Round"
+                             HorizontalAlignment="Right"                             
+                             SnapsToDevicePixels="True"
+                             Stroke="{StaticResource AccentBg}"
+                             Fill="{StaticResource AccentFg}"
+                             Opacity="0.8"
+                             Points="0 7, 12 0, 12 14"
+                             >
+
+                                <!-- TODO: visual state groups -->
+                            </Polygon>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="{x:Type Slider}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Slider}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TickBar
+                                x:Name="Tick"
+                                SnapsToDevicePixels="True"
+                                Placement="Top"
+                                Fill="#AAFFFFFF"
+                                Visibility="Collapsed">
+                            </TickBar>
+                            <Track
+           x:Name="PART_Track">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Style="{StaticResource SliderButtonStyle}"
+                      Command="Slider.DecreaseLarge" />
+                                </Track.DecreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb Style="{StaticResource SliderThumbStyle}"
+                                           Height="{TemplateBinding ActualHeight}"
+                                           />
+                                </Track.Thumb>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Style="{StaticResource SliderButtonStyle}"
+                      Command="Slider.IncreaseLarge" />
+                                </Track.IncreaseRepeatButton>
+                            </Track>
+                            <TickBar x:Name="BottomTick"
+             SnapsToDevicePixels="True"
+             Fill="{TemplateBinding Foreground}"
+             Placement="Bottom"
+             Height="4"
+             Visibility="Collapsed" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="TickPlacement" Value="TopLeft">
+                                <Setter TargetName="Tick" Property="Visibility" Value="Visible" />
+                            </Trigger>
+                            <Trigger Property="TickPlacement" Value="BottomRight">
+                                <Setter TargetName="Tick" Property="Visibility" Value="Visible" />
+                            </Trigger>
+                            <Trigger Property="TickPlacement" Value="Both">
+                                <Setter TargetName="Tick" Property="Visibility" Value="Visible" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="{x:Type TextBlock}">
+            <Setter Property="FontFamily" Value="Consolas"/>
+            <Setter Property="Foreground" Value="#55FFFFFF"/>
+            <Setter Property="FontSize" Value="14px"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Padding" Value="2px 0px"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <converters:MsecToPositionStringConverter x:Key="MsecToPositionStringConverter" />
     </UserControl.Resources>
-    <Canvas Name="Canvas"
-            Background="Black">
-        <controls:TrackBarBackground VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
-                                     Position="{Binding Position}"
-                                     Duration="{Binding Duration}" />
-        <Rectangle Height="24px" VerticalAlignment="Center" Margin="0px 12px" HorizontalAlignment="Left" Fill="Lime">
-            <Rectangle.Width>
-                <MultiBinding Converter="{StaticResource PositionScaleConverter}">
-                    <Binding Path="PositionScale" />
-                    <Binding ElementName="Canvas" Path="ActualWidth" />
-                </MultiBinding>
-            </Rectangle.Width>
-        </Rectangle>
-        <Rectangle Height="48px" VerticalAlignment="Stretch" HorizontalAlignment="Left" Fill="Red">
-            <Rectangle.Width>
-                <MultiBinding Converter="{StaticResource PositionScaleConverter}">
-                    <Binding Path="IntroPositionScale" />
-                    <Binding ElementName="Canvas" Path="ActualWidth" />
-                </MultiBinding>
-            </Rectangle.Width>
-        </Rectangle>
-        <Rectangle Height="48px" VerticalAlignment="Stretch" HorizontalAlignment="Left" Fill="Blue">
-            <Rectangle.Width>
-                <MultiBinding Converter="{StaticResource PositionScaleConverter}">
-                    <Binding Path="CuePositionScale" />
-                    <Binding ElementName="Canvas" Path="ActualWidth" />
-                </MultiBinding>
-            </Rectangle.Width>
-        </Rectangle>
-    </Canvas>
+    <Grid Name="Canvas" Background="black">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="16px"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="16px"/>
+        </Grid.RowDefinitions>
+
+        <!-- Labels -->
+        <TextBlock Grid.Row="0">Intro</TextBlock>
+        <TextBlock Grid.Row="1">Position</TextBlock>
+        <TextBlock Grid.Row="2">Cue</TextBlock>
+        <TextBlock Grid.Row="0" HorizontalAlignment="Right" Text="{Binding IntroPosition, Converter={StaticResource MsecToPositionStringConverter}}"/>
+        <TextBlock Grid.Row="1" HorizontalAlignment="Right" Text="{Binding Position, Converter={StaticResource MsecToPositionStringConverter}}"/>
+        <TextBlock Grid.Row="2" HorizontalAlignment="Right" Text="{Binding CuePosition, Converter={StaticResource MsecToPositionStringConverter}}"/>
+        <!-- Intro -->
+        <Border Grid.Row="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderBrush="#AAD13438" Background="{StaticResource UnderlayBrush}" BorderThickness="0px 1px">
+            <Rectangle VerticalAlignment="Stretch" HorizontalAlignment="Left" Fill="{StaticResource IntroBrush}">
+                <Rectangle.Width>
+                    <MultiBinding Converter="{StaticResource PositionScaleConverter}">
+                        <Binding Path="IntroPositionScale" />
+                        <Binding ElementName="Canvas" Path="ActualWidth" />
+                    </MultiBinding>
+                </Rectangle.Width>
+            </Rectangle>
+        </Border>
+        <!-- Main -->
+        <Border Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderBrush="#AA10893E" Background="{StaticResource UnderlayBrush}" BorderThickness="0px 1px">
+            <Rectangle VerticalAlignment="Stretch" HorizontalAlignment="Left" Fill="{StaticResource PositionBrush}">
+                <Rectangle.Width>
+                    <MultiBinding Converter="{StaticResource PositionScaleConverter}">
+                        <Binding Path="PositionScale" />
+                        <Binding ElementName="Canvas" Path="ActualWidth" />
+                    </MultiBinding>
+                </Rectangle.Width>
+            </Rectangle>
+        </Border>
+        <!-- Cue -->
+        <Border Grid.Row="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderBrush="#AA0063B1" Background="{StaticResource UnderlayBrush}" BorderThickness="0px 1px">
+            <Rectangle VerticalAlignment="Stretch" HorizontalAlignment="Left" Fill="{StaticResource CueBrush}">
+                <Rectangle.Width>
+                    <MultiBinding Converter="{StaticResource PositionScaleConverter}">
+                        <Binding Path="CuePositionScale" />
+                        <Binding ElementName="Canvas" Path="ActualWidth" />
+                    </MultiBinding>
+                </Rectangle.Width>
+            </Rectangle>
+        </Border>
+
+
+        <!-- Intro -->
+        <Slider Grid.Row="0"
+            Maximum="{Binding Duration, Mode=OneWay}"
+            Value="{Binding IntroPosition, Mode=OneWay}"
+            Width="{Binding ElementName=Canvas, Path=ActualWidth}"
+        >
+        </Slider>
+        <!-- Main -->
+        <Slider Grid.Row="1"
+            Maximum="{Binding Duration, Mode=OneWay}"
+            Value="{Binding Position, Mode=OneWay}"
+            Width="{Binding ElementName=Canvas, Path=ActualWidth}">
+        </Slider>
+        <!-- Cue -->
+        <Slider Grid.Row="2"
+            Maximum="{Binding Duration, Mode=OneWay}"
+            Value="{Binding CuePosition, Mode=OneWay}"
+            Width="{Binding ElementName=Canvas, Path=ActualWidth}"
+            TickPlacement="Both"
+            TickFrequency="10000"
+            >
+        </Slider>
+    </Grid>
 </UserControl>
