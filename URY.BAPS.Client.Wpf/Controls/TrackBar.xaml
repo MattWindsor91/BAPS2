@@ -11,11 +11,12 @@
     <UserControl.Resources>
         <converters:PositionScaleConverter x:Key="PositionScaleConverter" />
 
+        <SolidColorBrush x:Key="IntroBorderBrush" Color="#AAD13438"/>
         <LinearGradientBrush x:Key="IntroBrush" StartPoint="0,0" EndPoint="0,1">
-            <GradientStop Color="#AAE81123" Offset="0"/>
+            <GradientStop Color="#E81123" Offset="0"/>
             <GradientStop Color="white" Offset="0.05"/>
-            <GradientStop Color="#AAE81123" Offset="0.5"/>
-            <GradientStop Color="#AAD13438" Offset="1"/>
+            <GradientStop Color="#E81123" Offset="0.5"/>
+            <GradientStop Color="#D13438" Offset="1"/>
         </LinearGradientBrush>
 
         <LinearGradientBrush x:Key="UnderlayBrush" StartPoint="0,0" EndPoint="0,1">
@@ -25,19 +26,41 @@
             <GradientStop Color="#997A7574" Offset="1"/>
         </LinearGradientBrush>
 
+        <SolidColorBrush x:Key="PositionBorderBrush" Color="#AA10893E"/>
         <LinearGradientBrush x:Key="PositionBrush" StartPoint="0,0" EndPoint="0,1">
-            <GradientStop Color="#AA00CC6A" Offset="0"/>
+            <GradientStop Color="#00CC6A" Offset="0"/>
             <GradientStop Color="white" Offset="0.05"/>
-            <GradientStop Color="#AA00CC6A" Offset="0.5"/>
-            <GradientStop Color="#AA10893E" Offset="1"/>
+            <GradientStop Color="#00CC6A" Offset="0.5"/>
+            <GradientStop Color="#10893E" Offset="1"/>
         </LinearGradientBrush>
 
+        <SolidColorBrush x:Key="CueBorderBrush" Color="#AA0063B1"/>
         <LinearGradientBrush x:Key="CueBrush" StartPoint="0,0" EndPoint="0,1">
-            <GradientStop Color="#AA0078D7" Offset="0"/>
+            <GradientStop Color="#0078D7" Offset="0"/>
             <GradientStop Color="white" Offset="0.05"/>
-            <GradientStop Color="#AA0078D7" Offset="0.5"/>
-            <GradientStop Color="#AA0063B1" Offset="1"/>
+            <GradientStop Color="#0078D7" Offset="0.5"/>
+            <GradientStop Color="#0063B1" Offset="1"/>
         </LinearGradientBrush>
+
+        <Style x:Key="BaseVBarStyle" TargetType="{x:Type Line}">
+            <Setter Property="Y1" Value="0"/>
+            <Setter Property="Y2" Value="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Grid}}"/>
+            <Setter Property="Opacity" Value="0.5"></Setter>
+            <Setter Property="StrokeThickness" Value="4"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Direction="0" BlurRadius="4" ShadowDepth="3">
+
+                    </DropShadowEffect>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <!-- Move the line to account for its thickness. -->
+                    <TranslateTransform X="2"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
         <Style x:Key="SliderButtonStyle" TargetType="{x:Type RepeatButton}">
             <Setter Property="SnapsToDevicePixels" Value="true" />
@@ -79,7 +102,7 @@
                              Stroke="{StaticResource AccentBg}"
                              Fill="{StaticResource AccentFg}"
                              Opacity="0.8"
-                             Points="0 7, 12 0, 12 14"
+                             Points="-7 7, 6 0, 6 14"
                              >
 
                                 <!-- TODO: visual state groups -->
@@ -105,16 +128,16 @@
                                 Fill="#AAFFFFFF"
                                 Visibility="Collapsed">
                             </TickBar>
-                            <Track
-           x:Name="PART_Track">
+                            <Track x:Name="PART_Track">
                                 <Track.DecreaseRepeatButton>
                                     <RepeatButton Style="{StaticResource SliderButtonStyle}"
                       Command="Slider.DecreaseLarge" />
                                 </Track.DecreaseRepeatButton>
                                 <Track.Thumb>
-                                    <Thumb Style="{StaticResource SliderThumbStyle}"
-                                           Height="{TemplateBinding ActualHeight}"
-                                           />
+                                    <Thumb
+                                        Style="{StaticResource SliderThumbStyle}"
+                                        Height="{TemplateBinding ActualHeight}"
+                                        />
                                 </Track.Thumb>
                                 <Track.IncreaseRepeatButton>
                                     <RepeatButton Style="{StaticResource SliderButtonStyle}"
@@ -154,23 +177,27 @@
         </Style>
         <converters:MsecToPositionStringConverter x:Key="MsecToPositionStringConverter" />
     </UserControl.Resources>
-    <Grid Name="Canvas" Background="black">
+    <Grid Name="Canvas" Background="black" ClipToBounds="True">
         <Grid.RowDefinitions>
             <RowDefinition Height="16px"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="16px"/>
         </Grid.RowDefinitions>
 
-        <!-- Labels -->
+        <!-- * Labels * -->
         <TextBlock Grid.Row="0">Intro</TextBlock>
         <TextBlock Grid.Row="1">Position</TextBlock>
         <TextBlock Grid.Row="2">Cue</TextBlock>
         <TextBlock Grid.Row="0" HorizontalAlignment="Right" Text="{Binding IntroPosition, Converter={StaticResource MsecToPositionStringConverter}}"/>
         <TextBlock Grid.Row="1" HorizontalAlignment="Right" Text="{Binding Position, Converter={StaticResource MsecToPositionStringConverter}}"/>
         <TextBlock Grid.Row="2" HorizontalAlignment="Right" Text="{Binding CuePosition, Converter={StaticResource MsecToPositionStringConverter}}"/>
+
+        <!-- * Horizontal bars * -->
         <!-- Intro -->
-        <Border Grid.Row="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderBrush="#AAD13438" Background="{StaticResource UnderlayBrush}" BorderThickness="0px 1px">
-            <Rectangle VerticalAlignment="Stretch" HorizontalAlignment="Left" Fill="{StaticResource IntroBrush}">
+        <Border
+            Grid.Row="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+            BorderBrush="{StaticResource IntroBorderBrush}" Background="{StaticResource UnderlayBrush}" BorderThickness="0px 1px">
+            <Rectangle Name="IntroBar" VerticalAlignment="Stretch" HorizontalAlignment="Left" Fill="{StaticResource IntroBrush}" Opacity="0.6">
                 <Rectangle.Width>
                     <MultiBinding Converter="{StaticResource PositionScaleConverter}">
                         <Binding Path="IntroPositionScale" />
@@ -180,8 +207,10 @@
             </Rectangle>
         </Border>
         <!-- Main -->
-        <Border Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderBrush="#AA10893E" Background="{StaticResource UnderlayBrush}" BorderThickness="0px 1px">
-            <Rectangle VerticalAlignment="Stretch" HorizontalAlignment="Left" Fill="{StaticResource PositionBrush}">
+        <Border
+            Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+            BorderBrush="{StaticResource PositionBorderBrush}" Background="{StaticResource UnderlayBrush}" BorderThickness="0px 1px">
+            <Rectangle Name="PositionBar" VerticalAlignment="Stretch" HorizontalAlignment="Left" Fill="{StaticResource PositionBrush}" Opacity="0.6">
                 <Rectangle.Width>
                     <MultiBinding Converter="{StaticResource PositionScaleConverter}">
                         <Binding Path="PositionScale" />
@@ -191,8 +220,8 @@
             </Rectangle>
         </Border>
         <!-- Cue -->
-        <Border Grid.Row="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderBrush="#AA0063B1" Background="{StaticResource UnderlayBrush}" BorderThickness="0px 1px">
-            <Rectangle VerticalAlignment="Stretch" HorizontalAlignment="Left" Fill="{StaticResource CueBrush}">
+        <Border Grid.Row="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderBrush="{StaticResource CueBorderBrush}" Background="{StaticResource UnderlayBrush}" BorderThickness="0px 1px">
+            <Rectangle Name="CueBar" VerticalAlignment="Stretch" HorizontalAlignment="Left" Fill="{StaticResource CueBrush}" Opacity="0.6">
                 <Rectangle.Width>
                     <MultiBinding Converter="{StaticResource PositionScaleConverter}">
                         <Binding Path="CuePositionScale" />
@@ -202,7 +231,26 @@
             </Rectangle>
         </Border>
 
+        <!-- * Vertical bars * -->
 
+        <Line Name="IntroVBar" Grid.Row="0" Grid.RowSpan="3"
+              Style="{StaticResource BaseVBarStyle}"
+              Stroke="{StaticResource IntroBorderBrush}"
+              X1="{Binding ActualWidth, ElementName=IntroBar}"
+              X2="{Binding X1, ElementName=IntroVBar}"/>
+        <Line Name="PositionVBar" Grid.Row="0" Grid.RowSpan="3"
+              Style="{StaticResource BaseVBarStyle}"
+              Stroke="{StaticResource PositionBorderBrush}"
+              X1="{Binding ActualWidth, ElementName=PositionBar}"
+              X2="{Binding X1, ElementName=PositionVBar}"/>
+        <Line Name="CueVBar" Grid.Row="0" Grid.RowSpan="3"
+              Style="{StaticResource BaseVBarStyle}"
+              Stroke="{StaticResource CueBorderBrush}"
+              X1="{Binding ActualWidth, ElementName=CueBar}"
+              X2="{Binding X1, ElementName=CueVBar}"/>
+
+
+        <!-- * Sliders * -->
         <!-- Intro -->
         <Slider Grid.Row="0"
             Maximum="{Binding Duration, Mode=OneWay}"

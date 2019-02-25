@@ -12,18 +12,33 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <converters:MsecToPositionStringConverter x:Key="MsecToPositionStringConverter" />
-            <SolidColorBrush x:Key="PlayBrush" Color="#FF60ABA2" />
-            <SolidColorBrush x:Key="PauseBrush" Color="#FFFEB93A" />
-            <SolidColorBrush x:Key="StopBrush" Color="#FFE2293A" />
-            <SolidColorBrush x:Key="NameFgBrush" Color="#FFE1E1E1" />
-            <SolidColorBrush x:Key="NameBgBrush" Color="#FF0073E6" />
+            <LinearGradientBrush x:Key="PlayBrush" StartPoint="0 0" EndPoint="0 1">
+                <GradientStop Color="#10893E" Offset="0"  />
+                <GradientStop Color="white" Offset="0.05"/>
+                <GradientStop Color="#00CC6A" Offset="0.85"/>
+                <GradientStop Color="#10893E" Offset="1"/>
+            </LinearGradientBrush>
+            <LinearGradientBrush x:Key="PauseBrush" StartPoint="0 0" EndPoint="0 1">
+                <GradientStop Color="#CA5010" Offset="0"  />
+                <GradientStop Color="white" Offset="0.05"/>
+                <GradientStop Color="#FF8C00" Offset="0.85"/>
+                <GradientStop Color="#CA5010" Offset="1" />
+            </LinearGradientBrush>
+            <LinearGradientBrush x:Key="StopBrush" StartPoint="0 0" EndPoint="0 1">
+                <GradientStop Color="#D13438" Offset="0"  />
+                <GradientStop Color="white" Offset="0.05"/>
+                <GradientStop Color="#E81123" Offset="0.85"/>
+                <GradientStop Color="#D13438" Offset="1" />
+            </LinearGradientBrush>
+            <SolidColorBrush x:Key="NameFgBrush" Color="#00CC6A" />
+            <SolidColorBrush x:Key="NameBgBrush" Color="black" />
             <SolidColorBrush x:Key="NameWarningBgBrush" Color="#FFE2293A" />
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" /> <!-- Transport controls -->
-            <RowDefinition Height="Auto" /> <!-- Track name -->
+            <RowDefinition Height="32px" /> <!-- Track name -->
             <RowDefinition Height="Auto" /> <!-- Track bar -->
             <RowDefinition Height="64px" /> <!-- Position displays -->
         </Grid.RowDefinitions>
@@ -57,20 +72,18 @@
         <!-- Track name -->
         <Border
             Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
-            BorderThickness="1pt" Background="{StaticResource NameBgBrush}" BorderBrush="Black"
+            BorderThickness="1px" Background="{StaticResource NameBgBrush}" BorderBrush="Black"
             DataContext="{Binding LoadedTrack}">
             <TextBlock
                 Foreground="{StaticResource NameFgBrush}"
                 TextTrimming="CharacterEllipsis"
-                Height="24pt"
                 HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
-                TextAlignment="Center"
-                FontSize="14pt"
-                Padding="4pt"
-                FontFamily="Consolas"
+                VerticalAlignment="Center"
+                TextAlignment="Center"                
+                FontSize="16px"
+                Padding="4px"
                 ToolTip="{Binding Description}"
-                Text="{Binding Description, FallbackValue=UNKNOWN, TargetNullValue=NONE}">
+                Text="{Binding Description, FallbackValue=UNKNOWN, TargetNullValue=NONE}" FontWeight="Bold">
                 <!-- Change background when the track appears to have failed to load.
                      (The BAPS server isn't explicit about this, so we have to do some guesswork. -->
                 <TextBlock.Style>
