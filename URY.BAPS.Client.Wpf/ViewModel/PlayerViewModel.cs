@@ -12,7 +12,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
     /// <summary>
     ///     View model governing the player head of a channel.
     /// </summary>
-    public class PlayerViewModel : PlayerViewModelBase, IDisposable
+    public class PlayerViewModel : PlayerViewModelBase
     {
         /// <summary>
         ///     The list of handles to observable subscriptions that this view model creates.
@@ -151,6 +151,15 @@ namespace URY.BAPS.Client.Wpf.ViewModel
 
         protected override void RequestSetCue(uint newCue)
         {
+            // NOTE: this, and the similar early-returns in the other markers, serve two purposes.
+            // They prevent redundant server traffic, but *also* guard against the UI view
+            // responding to *server updates* on markers by sending the server a change request.
+            // Doing so not only wastes network resources by telling the BAPS server to move to the
+            // position it just told us it moved to, but can also cause audio judder if the position
+            // moved during the round-trip.
+            //
+            // At time of writing, the WPF player view *does* do this.
+            if (newCue == CuePosition) return;
             Controller?.SetMarker(MarkerType.Cue, newCue);
         }
 
@@ -161,6 +170,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
 
         protected override void RequestSetIntro(uint newIntro)
         {
+            if (newIntro == IntroPosition) return;
             Controller?.SetMarker(MarkerType.Intro, newIntro);
         }
 
@@ -171,6 +181,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
 
         protected override void RequestSetPosition(uint newPosition)
         {
+            if (newPosition == Position) return;
             Controller?.SetMarker(MarkerType.Position, newPosition);
         }
 

@@ -12,6 +12,7 @@ The main channel control.
              xmlns:designData="clr-namespace:URY.BAPS.Client.Wpf.DesignData"
              xmlns:model="clr-namespace:URY.BAPS.Client.Common.Model;assembly=URY.BAPS.Client.Common"
              xmlns:wpf="clr-namespace:URY.BAPS.Client.Wpf"
+             xmlns:behaviors="clr-namespace:URY.BAPS.Client.Wpf.Behaviors"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800" Width="360"
              d:DataContext="{d:DesignInstance designData:MockChannelViewModel, IsDesignTimeCreatable=True}">
@@ -37,7 +38,7 @@ The main channel control.
             Icon="Music"
             Text="{Binding Name}">
             <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
-                <Button wpf:ContextMenuLeftClickBehavior.IsLeftClickEnabled="True">
+                <Button behaviors:ContextMenuLeftClickBehavior.IsLeftClickEnabled="True">
                     <Button.Content>
                         <fa:ImageAwesome Margin="{StaticResource ChannelBarMargin}" Icon="Navicon" />
                     </Button.Content>

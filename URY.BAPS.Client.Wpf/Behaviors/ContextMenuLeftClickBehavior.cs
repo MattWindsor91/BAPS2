@@ -2,7 +2,7 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 
-namespace URY.BAPS.Client.Wpf
+namespace URY.BAPS.Client.Wpf.Behaviors
 {
     /// <summary>
     ///     Attached property for adding the ability to open a context menu on left-click (rather than the usual
