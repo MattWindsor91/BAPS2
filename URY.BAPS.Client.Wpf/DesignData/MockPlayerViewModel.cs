@@ -35,6 +35,11 @@ namespace URY.BAPS.Client.Wpf.DesignData
         public override uint CuePosition { get; set; } = 64_000;
         public override uint IntroPosition { get; set; } = 20_000;
 
+        protected override bool CanRequestSetPosition(uint newPosition)
+        {
+            return true;
+        }
+
         protected override void RequestPlay()
         {
         }
@@ -65,6 +70,28 @@ namespace URY.BAPS.Client.Wpf.DesignData
         public override void Dispose()
         {
             // Nothing to dispose
+        }
+
+        protected override void RequestSetCue(uint newCue)
+        {
+        }
+
+        protected override bool CanRequestSetCue(uint newCue)
+        {
+            return true;
+        }
+
+        protected override void RequestSetIntro(uint newIntro)
+        {
+        }
+
+        protected override bool CanRequestSetIntro(uint newIntro)
+        {
+            return true;
+        }
+
+        protected override void RequestSetPosition(uint newPosition)
+        {
         }
     }
 }

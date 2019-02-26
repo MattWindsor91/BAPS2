@@ -12,6 +12,9 @@ namespace URY.BAPS.Client.Wpf.ViewModel
     {
         [CanBeNull] private RelayCommand _pauseCommand;
         [CanBeNull] private RelayCommand _playCommand;
+        [CanBeNull] private RelayCommand<uint> _setCueCommand;
+        [CanBeNull] private RelayCommand<uint> _setIntroCommand;
+        [CanBeNull] private RelayCommand<uint> _setPositionCommand;
         [CanBeNull] private RelayCommand _stopCommand;
 
         protected PlayerViewModelBase(ushort channelId) : base(channelId)
@@ -20,8 +23,22 @@ namespace URY.BAPS.Client.Wpf.ViewModel
 
         protected abstract PlaybackState State { get; set; }
 
+        [NotNull]
+        public virtual RelayCommand<uint> SetCueCommand => _setCueCommand
+                                                           ?? (_setCueCommand = new RelayCommand<uint>(
+                                                               RequestSetCue,
+                                                               CanRequestSetCue));
+
+        [NotNull]
+        public virtual RelayCommand<uint> SetIntroCommand => _setIntroCommand
+                                                             ?? (_setIntroCommand = new RelayCommand<uint>(
+                                                                 RequestSetIntro,
+                                                                 CanRequestSetIntro));
+
         public abstract uint StartTime { get; set; }
         public abstract ITrack LoadedTrack { get; set; }
+
+        public bool HasLoadedAudioTrack => LoadedTrack.IsAudioItem;
 
         public bool IsPlaying => State == PlaybackState.Playing;
 
@@ -63,6 +80,24 @@ namespace URY.BAPS.Client.Wpf.ViewModel
                                                        RequestStop,
                                                        CanRequestStop));
 
+        [NotNull]
+        public virtual RelayCommand<uint> SetPositionCommand => _setPositionCommand
+                                                                ?? (_setPositionCommand = new RelayCommand<uint>(
+                                                                    RequestSetPosition,
+                                                                    CanRequestSetPosition));
+
+        public abstract void Dispose();
+
+        protected abstract void RequestSetCue(uint newCue);
+        protected abstract bool CanRequestSetCue(uint newCue);
+
+        protected abstract void RequestSetIntro(uint newIntro);
+        protected abstract bool CanRequestSetIntro(uint newIntro);
+
+        protected abstract void RequestSetPosition(uint newPosition);
+        protected abstract bool CanRequestSetPosition(uint newPosition);
+
+
         protected abstract void RequestPlay();
 
         /// <summary>
@@ -86,7 +121,5 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         /// </summary>
         /// <returns>True provided that the <see cref="StopCommand" /> can fire.</returns>
         protected abstract bool CanRequestStop();
-
-        public abstract void Dispose();
     }
 }

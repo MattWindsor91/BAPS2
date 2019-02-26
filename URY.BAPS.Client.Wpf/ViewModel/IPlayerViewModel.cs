@@ -17,6 +17,11 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         ITrack LoadedTrack { get; set; }
 
         /// <summary>
+        ///     True provided that there is a currently loaded item, and it is an audio track.
+        /// </summary>
+        bool HasLoadedAudioTrack { get; }
+
+        /// <summary>
         ///     Whether this channel is playing, according to the server.
         ///     <para>
         ///         This property should only be set when the server state
@@ -52,12 +57,6 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         uint Position { get; set; }
 
         /// <summary>
-        ///     The position of the currently loaded item (if any),
-        ///     as a multiple of the duration.
-        /// </summary>
-        double PositionScale { get; }
-
-        /// <summary>
         ///     The duration of the currently loaded item (if any), in milliseconds.
         /// </summary>
         uint Duration { get; }
@@ -73,21 +72,9 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         uint CuePosition { get; set; }
 
         /// <summary>
-        ///     The cue position of the currently loaded item (if any),
-        ///     as a multiple of the duration.
-        /// </summary>
-        double CuePositionScale { get; }
-
-        /// <summary>
         ///     The intro position of the currently loaded item (if any).
         /// </summary>
         uint IntroPosition { get; set; }
-
-        /// <summary>
-        ///     The intro position of the currently loaded item (if any),
-        ///     as a multiple of the duration.
-        /// </summary>
-        double IntroPositionScale { get; }
 
         /// <summary>
         ///     A command that, when fired, asks the server to start playing
@@ -106,5 +93,20 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         ///     this channel.
         /// </summary>
         RelayCommand StopCommand { get; }
+
+        /// <summary>
+        ///     A command that, when fired, asks the server to move the cue marker to the given position.
+        /// </summary>
+        RelayCommand<uint> SetCueCommand { get; }
+
+        /// <summary>
+        ///     A command that, when fired, asks the server to move the position marker to the given position.
+        /// </summary>
+        RelayCommand<uint> SetPositionCommand { get; }
+
+        /// <summary>
+        ///     A command that, when fired, asks the server to move the intro marker to the given position.
+        /// </summary>
+        RelayCommand<uint> SetIntroCommand { get; }
     }
 }

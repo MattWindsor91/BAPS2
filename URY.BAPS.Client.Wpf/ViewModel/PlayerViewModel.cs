@@ -66,6 +66,8 @@ namespace URY.BAPS.Client.Wpf.ViewModel
 
                 _loadedTrack = value;
                 RaisePropertyChanged(nameof(LoadedTrack));
+                // Transitive dependency on LoadedTrack
+                RaisePropertyChanged(nameof(HasLoadedAudioTrack));
                 RaisePropertyChanged(nameof(Duration));
                 // Transitive dependency on Duration
                 RaisePropertyChanged(nameof(Remaining));
@@ -145,6 +147,36 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         public override void Dispose()
         {
             UnsubscribeFromServerUpdates();
+        }
+
+        protected override void RequestSetCue(uint newCue)
+        {
+            Controller?.SetMarker(MarkerType.Cue, newCue);
+        }
+
+        protected override bool CanRequestSetCue(uint newCue)
+        {
+            return HasLoadedAudioTrack;
+        }
+
+        protected override void RequestSetIntro(uint newIntro)
+        {
+            Controller?.SetMarker(MarkerType.Intro, newIntro);
+        }
+
+        protected override bool CanRequestSetIntro(uint newIntro)
+        {
+            return HasLoadedAudioTrack;
+        }
+
+        protected override void RequestSetPosition(uint newPosition)
+        {
+            Controller?.SetMarker(MarkerType.Position, newPosition);
+        }
+
+        protected override bool CanRequestSetPosition(uint newPosition)
+        {
+            return HasLoadedAudioTrack;
         }
 
         [Pure]
