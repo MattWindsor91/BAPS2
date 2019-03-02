@@ -111,7 +111,7 @@
 
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <VirtualizingStackPanel IsItemsHost="True" Orientation="Horizontal" />
+                    <UniformGrid IsItemsHost="True" Rows="1" />
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
 
