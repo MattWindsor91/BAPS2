@@ -16,7 +16,7 @@
              d:DesignWidth="400" d:DesignHeight="500">
     <UserControl.Resources>
         <converters:MouseButtonEventArgsToIndexConverter x:Key="MouseButtonEventArgsToIndexConverter" />
-        <converters:EntryTypeToIconConverter x:Key="EntryTypeToIconConverter" />
+        <converters:TrackToIconConverter x:Key="EntryTypeToIconConverter" />
     </UserControl.Resources>
     <!-- TODO(@MattWindsor91): work out how to make load only happen if selection changed by left-click. -->
     <ListBox

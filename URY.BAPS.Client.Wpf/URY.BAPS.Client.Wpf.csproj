@@ -140,7 +140,7 @@
     <Compile Include="Services\ChannelFactoryService.cs" />
     <Compile Include="ViewModel\ChannelComponentViewModelBase.cs" />
     <Compile Include="ViewModel\ChannelViewModel.cs" />
-    <Compile Include="Converters\EntryTypeToIconConverter.cs" />
+    <Compile Include="Converters\TrackToIconConverter.cs" />
     <Compile Include="Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
     </Compile>

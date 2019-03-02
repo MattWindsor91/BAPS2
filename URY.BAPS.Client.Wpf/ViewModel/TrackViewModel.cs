@@ -39,6 +39,8 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         public string Text => _underlyingTrack.Text;
         public bool IsAudioItem => _underlyingTrack.IsAudioItem;
         public bool IsTextItem => _underlyingTrack.IsTextItem;
+        public bool IsError => _underlyingTrack.IsError;
+        public bool IsLoading => _underlyingTrack.IsLoading;
         public bool IsFromLibrary => _underlyingTrack.IsFromLibrary;
         public uint Duration => _underlyingTrack.Duration;
 

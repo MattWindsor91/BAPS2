@@ -22,8 +22,8 @@
 
         <LinearGradientBrush x:Key="UnderlayBrush" StartPoint="0,0" EndPoint="0,1">
             <GradientStop Color="#995D5A58" Offset="0" />
-            <GradientStop Color="#994C4A48" Offset="0.5" />
-            <GradientStop Color="#995D5A58" Offset="0.75" />
+            <GradientStop Color="#554C4A48" Offset="0.5" />
+            <GradientStop Color="#555D5A58" Offset="0.75" />
             <GradientStop Color="#997A7574" Offset="1" />
         </LinearGradientBrush>
 

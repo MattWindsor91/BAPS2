@@ -30,9 +30,11 @@
                 <GradientStop Color="#E81123" Offset="0.85"/>
                 <GradientStop Color="#D13438" Offset="1" />
             </LinearGradientBrush>
-            <SolidColorBrush x:Key="NameFgBrush" Color="#00CC6A" />
             <SolidColorBrush x:Key="NameBgBrush" Color="black" />
-            <SolidColorBrush x:Key="NameWarningBgBrush" Color="#FFE2293A" />
+            <SolidColorBrush x:Key="NameInactiveFgBrush" Color="#10893E"/>
+            <SolidColorBrush x:Key="NameFgBrush" Color="#00CC6A" />
+            <SolidColorBrush x:Key="NameWarningFgBrush" Color="#E2293A" />
+            <SolidColorBrush x:Key="NameLoadingFgBrush" Color="#0078D7" />
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
@@ -75,7 +77,6 @@
             BorderThickness="1px" Background="{StaticResource NameBgBrush}" BorderBrush="Black"
             DataContext="{Binding LoadedTrack}">
             <TextBlock
-                Foreground="{StaticResource NameFgBrush}"
                 TextTrimming="CharacterEllipsis"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Center"
@@ -84,21 +85,26 @@
                 Padding="4px"
                 ToolTip="{Binding Description}"
                 Text="{Binding Description, FallbackValue=UNKNOWN, TargetNullValue=NONE}" FontWeight="Bold">
-                <!-- Change background when the track appears to have failed to load.
-                     (The BAPS server isn't explicit about this, so we have to do some guesswork. -->
                 <TextBlock.Style>
+                    <!-- Change background when the track appears to have failed to load. -->
                     <Style TargetType="{x:Type TextBlock}">
+                        <Setter Property="Foreground" Value="{StaticResource NameInactiveFgBrush}"/>
                         <Style.Triggers>
-                            <MultiDataTrigger>
-                                <MultiDataTrigger.Conditions>
-                                    <Condition Binding="{Binding Description}" Value="--LOAD FAILED--" />
-                                    <Condition Binding="{Binding IsAudioItem}" Value="False" />
-                                </MultiDataTrigger.Conditions>
-                                <MultiDataTrigger.Setters>
-                                    <Setter Property="Background" Value="{StaticResource NameWarningBgBrush}" />
-                                </MultiDataTrigger.Setters>
-                            </MultiDataTrigger>
-
+                            <DataTrigger Binding="{Binding IsAudioItem}" Value="True">
+                                <DataTrigger.Setters>
+                                    <Setter Property="Foreground" Value="{StaticResource NameFgBrush}" />
+                                </DataTrigger.Setters>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsLoading}" Value="True">
+                                <DataTrigger.Setters>
+                                    <Setter Property="Foreground" Value="{StaticResource NameLoadingFgBrush}" />
+                                </DataTrigger.Setters>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsError}" Value="True">
+                                <DataTrigger.Setters>
+                                    <Setter Property="Foreground" Value="{StaticResource NameWarningFgBrush}" />
+                                </DataTrigger.Setters>
+                            </DataTrigger>
                         </Style.Triggers>
                     </Style>
                 </TextBlock.Style>
