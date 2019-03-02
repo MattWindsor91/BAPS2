@@ -10,32 +10,25 @@
              d:DataContext="{d:DesignInstance designData:MockPlayerViewModel, IsDesignTimeCreatable=True}"
              d:DesignWidth="300">
     <UserControl.Resources>
-        <ResourceDictionary>
-            <converters:MsecToPositionStringConverter x:Key="MsecToPositionStringConverter" />
-            <LinearGradientBrush x:Key="PlayBrush" StartPoint="0 0" EndPoint="0 1">
-                <GradientStop Color="#10893E" Offset="0"  />
-                <GradientStop Color="white" Offset="0.05"/>
-                <GradientStop Color="#00CC6A" Offset="0.85"/>
-                <GradientStop Color="#10893E" Offset="1"/>
-            </LinearGradientBrush>
-            <LinearGradientBrush x:Key="PauseBrush" StartPoint="0 0" EndPoint="0 1">
-                <GradientStop Color="#CA5010" Offset="0"  />
-                <GradientStop Color="white" Offset="0.05"/>
-                <GradientStop Color="#FF8C00" Offset="0.85"/>
-                <GradientStop Color="#CA5010" Offset="1" />
-            </LinearGradientBrush>
-            <LinearGradientBrush x:Key="StopBrush" StartPoint="0 0" EndPoint="0 1">
-                <GradientStop Color="#D13438" Offset="0"  />
-                <GradientStop Color="white" Offset="0.05"/>
-                <GradientStop Color="#E81123" Offset="0.85"/>
-                <GradientStop Color="#D13438" Offset="1" />
-            </LinearGradientBrush>
-            <SolidColorBrush x:Key="NameBgBrush" Color="black" />
-            <SolidColorBrush x:Key="NameInactiveFgBrush" Color="#10893E"/>
-            <SolidColorBrush x:Key="NameFgBrush" Color="#00CC6A" />
-            <SolidColorBrush x:Key="NameWarningFgBrush" Color="#E2293A" />
-            <SolidColorBrush x:Key="NameLoadingFgBrush" Color="#0078D7" />
-        </ResourceDictionary>
+        <converters:MsecToPositionStringConverter x:Key="MsecToPositionStringConverter" />
+        <LinearGradientBrush x:Key="PlayBrush" StartPoint="0 0" EndPoint="0 1">
+            <GradientStop Color="#10893E" Offset="0"  />
+            <GradientStop Color="white" Offset="0.05"/>
+            <GradientStop Color="#00CC6A" Offset="0.85"/>
+            <GradientStop Color="#10893E" Offset="1"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="PauseBrush" StartPoint="0 0" EndPoint="0 1">
+            <GradientStop Color="#CA5010" Offset="0"  />
+            <GradientStop Color="white" Offset="0.05"/>
+            <GradientStop Color="#FF8C00" Offset="0.85"/>
+            <GradientStop Color="#CA5010" Offset="1" />
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="StopBrush" StartPoint="0 0" EndPoint="0 1">
+            <GradientStop Color="#D13438" Offset="0"  />
+            <GradientStop Color="white" Offset="0.05"/>
+            <GradientStop Color="#E81123" Offset="0.85"/>
+            <GradientStop Color="#D13438" Offset="1" />
+        </LinearGradientBrush>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -72,44 +65,7 @@
             ToolTip="Stop"
             Command="{Binding StopCommand}" />
         <!-- Track name -->
-        <Border
-            Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
-            BorderThickness="1px" Background="{StaticResource NameBgBrush}" BorderBrush="Black"
-            DataContext="{Binding LoadedTrack}">
-            <TextBlock
-                TextTrimming="CharacterEllipsis"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Center"
-                TextAlignment="Center"                
-                FontSize="16px"
-                Padding="4px"
-                ToolTip="{Binding Description}"
-                Text="{Binding Description, FallbackValue=UNKNOWN, TargetNullValue=NONE}" FontWeight="Bold">
-                <TextBlock.Style>
-                    <!-- Change background when the track appears to have failed to load. -->
-                    <Style TargetType="{x:Type TextBlock}">
-                        <Setter Property="Foreground" Value="{StaticResource NameInactiveFgBrush}"/>
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsAudioItem}" Value="True">
-                                <DataTrigger.Setters>
-                                    <Setter Property="Foreground" Value="{StaticResource NameFgBrush}" />
-                                </DataTrigger.Setters>
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding IsLoading}" Value="True">
-                                <DataTrigger.Setters>
-                                    <Setter Property="Foreground" Value="{StaticResource NameLoadingFgBrush}" />
-                                </DataTrigger.Setters>
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding IsError}" Value="True">
-                                <DataTrigger.Setters>
-                                    <Setter Property="Foreground" Value="{StaticResource NameWarningFgBrush}" />
-                                </DataTrigger.Setters>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </TextBlock.Style>
-            </TextBlock>
-        </Border>
+        <controls:TrackLegend Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" DataContext="{Binding LoadedTrack}"/>
         <!-- Track bar -->
         <controls:TrackBar Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" DataContext="{Binding}" />
         <!-- Position displays -->
