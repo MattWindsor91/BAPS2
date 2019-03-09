@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using URY.BAPS.Client.Wpf.ViewModel;
 
-namespace URY.BAPS.Client.Wpf
+namespace URY.BAPS.Client.Wpf.Dialogs
 {
     /// <summary>
     ///     Interaction logic for Login.xaml

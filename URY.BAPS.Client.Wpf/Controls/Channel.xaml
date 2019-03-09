@@ -11,7 +11,6 @@ The main channel control.
              xmlns:controls="clr-namespace:URY.BAPS.Client.Wpf.Controls"
              xmlns:designData="clr-namespace:URY.BAPS.Client.Wpf.DesignData"
              xmlns:model="clr-namespace:URY.BAPS.Client.Common.Model;assembly=URY.BAPS.Client.Common"
-             xmlns:wpf="clr-namespace:URY.BAPS.Client.Wpf"
              xmlns:behaviors="clr-namespace:URY.BAPS.Client.Wpf.Behaviors"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800" MinWidth="360"

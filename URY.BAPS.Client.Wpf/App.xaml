@@ -3,7 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModel="clr-namespace:URY.BAPS.Client.Wpf.ViewModel"
-             xmlns:Converters="clr-namespace:URY.BAPS.Client.Wpf.Converters"
+             xmlns:converters="clr-namespace:URY.BAPS.Client.Wpf.Converters"
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              x:Class="URY.BAPS.Client.Wpf.App"
              Startup="Application_Startup"
@@ -13,7 +13,7 @@
             <BitmapImage x:Key="Logo" UriSource="pack://application:,,,/Resources/splashIcon.png" />
 
             <viewModel:ViewModelLocator x:Key="Locator" d:IsDataSource="True" />
-            <Converters:TrackToIconConverter x:Key="EntryTypeToIconConverter" />
+            <converters:TrackToIconConverter x:Key="EntryTypeToIconConverter" />
 
             <!-- Colours used throughout BAPS -->
             <SolidColorBrush x:Key="MainBg" Color="#FF002D5A" />

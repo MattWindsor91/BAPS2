@@ -24,15 +24,6 @@ namespace URY.BAPS.Client.Common
         event EventHandler<Authenticator> AboutToAuthenticate;
 
         /// <summary>
-        ///     Event raised when the <see cref="ClientCore" /> is about to start
-        ///     auto-updating.
-        ///     <para>
-        ///         This event supplies any pre-fetched counts in advance of the auto-update.
-        ///     </para>
-        /// </summary>
-        event EventHandler<(int numChannelsPrefetch, int numDirectoriesPrefetch)> AboutToAutoUpdate;
-
-        /// <summary>
         ///     Tries to authenticate and launch a BAPS client.
         /// </summary>
         /// <returns>Whether the client successfully launched.</returns>

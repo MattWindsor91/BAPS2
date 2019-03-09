@@ -54,7 +54,7 @@ namespace URY.BAPS.Client.Common.ServerConfig
             ///         <see cref="OptionKey.Invalid" />.
             ///     </para>
             /// </summary>
-            public OptionKey Key =>
+            protected OptionKey Key =>
                 Enum.IsDefined(typeof(OptionKey), OptionId) ? (OptionKey) OptionId : OptionKey.Invalid;
 
             public uint OptionId { get; }

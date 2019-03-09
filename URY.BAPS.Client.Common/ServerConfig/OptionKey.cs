@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using URY.BAPS.Client.Common.Model;
 
 namespace URY.BAPS.Client.Common.ServerConfig
 {
@@ -69,16 +70,12 @@ namespace URY.BAPS.Client.Common.ServerConfig
 		{
 			if (!Enum.IsDefined(typeof(ChannelFlag), flag))
 				throw new InvalidEnumArgumentException(nameof(flag), (int) flag, typeof(ChannelFlag));
-			switch (flag)
-			{
-				case ChannelFlag.AutoAdvance:
-					return OptionKey.AutoAdvance;
-				case ChannelFlag.PlayOnLoad:
-					return OptionKey.AutoPlay;
-				default:
-					throw new ArgumentOutOfRangeException(nameof(flag), flag, "This should be unreachable");
-			}
-		}
+            return flag switch {
+				ChannelFlag.AutoAdvance => OptionKey.AutoAdvance,
+				ChannelFlag.PlayOnLoad => OptionKey.AutoPlay,
+                _ => OptionKey.Invalid
+			};
+        }
 
 		/// <summary>
 		/// 	Converts a <see cref="ChannelFlag"/> to an <see cref="OptionKey"/>.

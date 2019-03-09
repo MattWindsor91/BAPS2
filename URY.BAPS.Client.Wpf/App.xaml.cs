@@ -6,6 +6,7 @@ using JetBrains.Annotations;
 using URY.BAPS.Client.Common;
 using URY.BAPS.Client.Common.ServerConfig;
 using URY.BAPS.Client.Windows;
+using URY.BAPS.Client.Wpf.Dialogs;
 using URY.BAPS.Client.Wpf.ViewModel;
 
 namespace URY.BAPS.Client.Wpf

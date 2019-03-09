@@ -25,7 +25,7 @@ namespace URY.BAPS.Client.Common
         /// </param>
         /// <param name="socket">
         ///     The <see cref="ClientSocket" /> that the <see cref="Sender" /> will
-        ///     send packed BAPSnet messages on.
+        ///     send packed BapsNet messages on.
         /// </param>
         public Sender(CancellationToken token, ClientSocket socket)
         {

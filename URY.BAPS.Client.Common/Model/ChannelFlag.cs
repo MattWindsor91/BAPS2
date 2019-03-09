@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace URY.BAPS.Client.Common
+﻿namespace URY.BAPS.Client.Common.Model
 {
     /// <summary>
     ///     High-level enumeration of various Boolean config settings on channels.

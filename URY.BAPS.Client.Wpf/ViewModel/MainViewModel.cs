@@ -9,7 +9,6 @@ using JetBrains.Annotations;
 using URY.BAPS.Client.Common;
 using URY.BAPS.Client.Common.Controllers;
 using URY.BAPS.Client.Common.ServerConfig;
-using URY.BAPS.Client.Common.Updaters;
 using URY.BAPS.Client.Wpf.Services;
 
 namespace URY.BAPS.Client.Wpf.ViewModel
@@ -28,21 +27,20 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         [NotNull] private readonly ConfigCache _config;
         [NotNull] private readonly DirectoryControllerSet _directoryControllerSet;
 
-        [NotNull] private readonly IServerUpdater _updater;
-
-
         [CanBeNull] private RelayCommand<ushort> _forwardPauseCommand;
 
         [CanBeNull] private RelayCommand<ushort> _forwardPlayCommand;
 
         [CanBeNull] private RelayCommand<ushort> _forwardStopCommand;
-        private string _text;
+
+        [NotNull] public ITextViewModel Text { get; }
 
         public MainViewModel(
             [CanBeNull] ChannelFactoryService channelFactory,
             [CanBeNull] ConfigCache config,
             // TODO(@MattWindsor91): this should be IServerUpdater, but I'm not sure how to get SimpleIoC to inject it otherwise.
             [CanBeNull] IClientCore updater,
+            [CanBeNull] ITextViewModel text,
             [CanBeNull] ChannelControllerSet controllerSet,
             [CanBeNull] DirectoryControllerSet directoryControllerSet,
             [CanBeNull] AudioWallService audioWallService)
@@ -51,9 +49,8 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             _config = config ?? throw new ArgumentNullException(nameof(config));
             _directoryControllerSet =
                 directoryControllerSet ?? throw new ArgumentNullException(nameof(directoryControllerSet));
-            _updater = updater ?? throw new ArgumentNullException(nameof(updater));
 
-            Text = "<You can type notes here>";
+            Text = text ?? throw new ArgumentNullException(nameof(text));
             RegisterForConfigUpdates();
         }
 
@@ -105,17 +102,6 @@ namespace URY.BAPS.Client.Wpf.ViewModel
                 channelId =>
                     ChannelAt(channelId)?.Player?.StopCommand?.CanExecute(null) ?? false
             ));
-
-        public string Text
-        {
-            get => _text;
-            set
-            {
-                if (_text == value) return;
-                _text = value;
-                RaisePropertyChanged(nameof(Text));
-            }
-        }
 
         /// <summary>
         ///     Shorthand for getting the channel at the given channel ID.

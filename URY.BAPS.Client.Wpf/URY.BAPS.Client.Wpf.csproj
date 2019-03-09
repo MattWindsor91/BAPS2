@@ -24,7 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <LangVersion>7.2</LangVersion>
+    <LangVersion>7.3</LangVersion>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -107,7 +107,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AudioWall.xaml.cs">
+    <Compile Include="Services\WallServiceBase.cs" />
+    <Compile Include="Walls\AudioWall.xaml.cs">
       <DependentUpon>AudioWall.xaml</DependentUpon>
     </Compile>
     <Compile Include="Behaviors\ContextMenuLeftClickBehavior.cs" />
@@ -119,6 +120,9 @@
     </Compile>
     <Compile Include="Controls\Player.xaml.cs">
       <DependentUpon>Player.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\TextPanel.xaml.cs">
+      <DependentUpon>TextPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TrackBar.xaml.cs">
       <DependentUpon>TrackBar.xaml</DependentUpon>
@@ -138,28 +142,35 @@
     <Compile Include="Converters\SliderValueChangedEventArgsToUintConverter.cs" />
     <Compile Include="DesignData\MockChannelViewModel.cs" />
     <Compile Include="DesignData\MockPlayerViewModel.cs" />
+    <Compile Include="DesignData\MockTextViewModel.cs" />
     <Compile Include="DesignData\MockTrackListViewModel.cs" />
     <Compile Include="Services\AudioWallService.cs" />
     <Compile Include="Services\ChannelFactoryService.cs" />
+    <Compile Include="Services\TextWallService.cs" />
     <Compile Include="ViewModel\ChannelComponentViewModelBase.cs" />
     <Compile Include="ViewModel\ChannelViewModel.cs" />
     <Compile Include="Converters\TrackToIconConverter.cs" />
-    <Compile Include="Login.xaml.cs">
+    <Compile Include="Dialogs\Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModel\ChannelViewModelBase.cs" />
     <Compile Include="ViewModel\DirectoryViewModel.cs" />
     <Compile Include="ViewModel\IChannelViewModel.cs" />
     <Compile Include="ViewModel\IPlayerViewModel.cs" />
+    <Compile Include="ViewModel\ITextViewModel.cs" />
     <Compile Include="ViewModel\ITrackListViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\PlayerViewModel.cs" />
     <Compile Include="ViewModel\PlayerViewModelBase.cs" />
+    <Compile Include="ViewModel\TextViewModel.cs" />
     <Compile Include="ViewModel\TrackListViewModel.cs" />
     <Compile Include="ViewModel\TrackListViewModelBase.cs" />
     <Compile Include="ViewModel\TrackViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
-    <Page Include="AudioWall.xaml">
+    <Compile Include="Walls\TextWall.xaml.cs">
+      <DependentUpon>TextWall.xaml</DependentUpon>
+    </Compile>
+    <Page Include="Walls\AudioWall.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -172,6 +183,7 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Player.xaml" />
+    <Page Include="Controls\TextPanel.xaml" />
     <Page Include="Controls\TrackBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -194,7 +206,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Login.xaml">
+    <Page Include="Dialogs\Login.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -207,6 +219,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\TransportButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Walls\TextWall.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

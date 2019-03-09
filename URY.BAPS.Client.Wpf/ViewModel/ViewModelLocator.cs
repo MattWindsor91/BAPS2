@@ -22,6 +22,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 
             RegisterServices();
+            SimpleIoc.Default.Register<ITextViewModel, TextViewModel>();
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<LoginViewModel>();
         }

@@ -33,15 +33,11 @@ namespace URY.BAPS.Client.Common.ServerConfig
         /// </returns>
         public static bool ChoiceToBoolean([CanBeNull] string choice, bool fallback)
         {
-            switch (choice)
-            {
-                case Yes:
-                    return true;
-                case No:
-                    return false;
-                default:
-                    return fallback;
-            }
+            return choice switch {
+                Yes => true,
+                No => false,
+                _ => fallback
+            };
         }
 
         /// <summary>
@@ -63,17 +59,13 @@ namespace URY.BAPS.Client.Common.ServerConfig
         /// <returns>The corresponding mode, or <see cref="fallback"/> if <see cref="key"/> doesn't correspond to one.</returns>
         public static RepeatMode ChoiceToRepeatMode([CanBeNull] string key, RepeatMode fallback)
         {
-            switch (key)
+            return key switch
             {
-                case RepeatNone:
-                    return RepeatMode.None;
-                case RepeatOne:
-                    return RepeatMode.One;
-                case RepeatAll:
-                    return RepeatMode.All;
-                default:
-                    return fallback;
-            }
+                RepeatNone => RepeatMode.None,
+                RepeatOne => RepeatMode.One,
+                RepeatAll => RepeatMode.All,
+                _ => fallback
+            };
         }
 
         /// <summary>

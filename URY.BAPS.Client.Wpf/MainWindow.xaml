@@ -18,10 +18,6 @@
         <sys:UInt16 x:Key="Chan0">0</sys:UInt16>
         <sys:UInt16 x:Key="Chan1">1</sys:UInt16>
         <sys:UInt16 x:Key="Chan2">2</sys:UInt16>
-        <!-- Styles -->
-        <Style x:Key="MainTextBoxStyle" TargetType="{x:Type TextBox}">
-            <Setter Property="FontSize" Value="18pt" />
-        </Style>
     </Window.Resources>
     <Window.InputBindings>
         <!-- F1-3 control the first channel, if it exists -->
@@ -54,15 +50,13 @@
             </TextBlock>
             <Button Width="96px" Margin="4px">
                 <TextBlock TextAlignment="Center">
-                    <fa:ImageAwesome Icon="FloppyOutline" Margin="4px" Width="32px" />
+                    <fa:ImageAwesome Icon="Download" Margin="4px" Width="32px" />
                     <LineBreak />
                     Load Show
                 </TextBlock>
             </Button>
         </StackPanel>
-        <TextBox DockPanel.Dock="Bottom" MinHeight="72pt"
-                 Style="{StaticResource MainTextBoxStyle}"
-                 Text="{Binding Text, Mode=TwoWay}" />
+        <controls:TextPanel DockPanel.Dock="Bottom" MinHeight="72pt" DataContext="{Binding Text, Mode=OneTime}" />
         <TextBox DockPanel.Dock="Bottom" />
         <TabControl
             DockPanel.Dock="Right"

@@ -1,5 +1,6 @@
 using System;
 using NUnit.Framework;
+using URY.BAPS.Client.Common.Model;
 using URY.BAPS.Client.Common.ServerConfig;
 
 namespace URY.BAPS.Client.Common.Tests.ServerConfig

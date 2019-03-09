@@ -50,15 +50,6 @@ namespace URY.BAPS.Client.Common
         public event EventHandler<Authenticator> AboutToAuthenticate;
 
         /// <summary>
-        ///     Event raised when the <see cref="ClientCore" /> is about to start
-        ///     auto-updating.
-        ///     <para>
-        ///         This event supplies any pre-fetched counts in advance of the auto-update.
-        ///     </para>
-        /// </summary>
-        public event EventHandler<(int numChannelsPrefetch, int numDirectoriesPrefetch)> AboutToAutoUpdate;
-
-        /// <summary>
         ///     Tries to authenticate and launch a BAPS client.
         /// </summary>
         /// <returns>Whether the client successfully launched.</returns>
@@ -147,11 +138,6 @@ namespace URY.BAPS.Client.Common
             }
 
             task.Dispose();
-        }
-
-        protected virtual void OnAboutToAutoUpdate((int numChannelsPrefetch, int numDirectoriesPrefetch) e)
-        {
-            AboutToAutoUpdate?.Invoke(this, e);
         }
 
         #region IDisposable Support
