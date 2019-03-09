@@ -9,12 +9,11 @@ namespace URY.BAPS.Client.Wpf.Converters
     ///     Converts an unsigned integer containing a number of milliseconds to a
     ///     string.
     /// </summary>
-    public class MsecToPositionStringConverter : IValueConverter
+    public class MillisecondsToPositionStringConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (!(value is uint msecs)) return "??";
-            return Time.MillisecondsToTimeString((int) msecs);
+            return value is uint ms ? Time.MillisecondsToTimeString((int) ms) : "??";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

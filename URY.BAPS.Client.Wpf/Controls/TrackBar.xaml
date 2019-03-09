@@ -199,7 +199,7 @@
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
         <converters:SliderValueChangedEventArgsToUintConverter x:Key="SliderValueChangedEventArgsToUintConverter"/>
-        <converters:MsecToPositionStringConverter x:Key="MsecToPositionStringConverter" />
+        <converters:MillisecondsToPositionStringConverter x:Key="MsecToPositionStringConverter" />
     </UserControl.Resources>
     <Grid x:Name="Canvas" Background="black" ClipToBounds="True">
         <Grid.RowDefinitions>
