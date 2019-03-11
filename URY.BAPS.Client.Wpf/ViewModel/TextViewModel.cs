@@ -72,8 +72,9 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             }
         }
 
-        private void SubscribeToServerUpdates(ISystemServerUpdater updater)
+        private void SubscribeToServerUpdates(IServerUpdater updater)
         {
+            updater.ObserveTrackLoad.Subscribe(OnTrackLoad);
             updater.ObserveTextSetting.Subscribe(OnTextSetting);
         }
 
@@ -83,12 +84,31 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             DispatcherHelper.CheckBeginInvokeOnUI(() => FontSize += delta);
         }
 
-        private void OnTextSetting(Updates.TextSettingEventArgs obj)
+        /// <summary>
+        ///     Observes a track load from the server.
+        ///     <para>
+        ///         The text view model observes track loads so as to
+        ///         handle text-track loads; it doesn't react to any other
+        ///         track load.
+        ///     </para>
+        /// </summary>
+        /// <param name="args">Information about the newly-loaded track.</param>
+        private void OnTrackLoad(Updates.TrackLoadEventArgs args)
         {
-            switch (obj.Setting)
+            if (!args.Track.IsTextItem) return;
+            Text = args.Track.Text;
+        }
+
+        /// <summary>
+        ///     Observes a text setting change from the server.
+        /// </summary>
+        /// <param name="args">Information about the text setting change.</param>
+        private void OnTextSetting(Updates.TextSettingEventArgs args)
+        {
+            switch (args.Setting)
             {
                 case Updates.TextSetting.FontSize:
-                    AdjustFontSize(obj.Direction);
+                    AdjustFontSize(args.Direction);
                     break;
                 case Updates.TextSetting.Scroll:
                     // TODO(@MattWindsor91): handle scroll somehow.

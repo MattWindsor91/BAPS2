@@ -278,10 +278,11 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         private void HandleTrackLoad(Updates.TrackLoadEventArgs args)
         {
             if (args.ChannelId != ChannelId) return;
-
             var track = args.Track;
+            if (track.IsTextItem) return;
+
             LoadedTrack = track;
-            if (!(track.IsAudioItem || track.IsTextItem)) Zero();
+            if (!track.IsAudioItem) Zero();
         }
     }
 }

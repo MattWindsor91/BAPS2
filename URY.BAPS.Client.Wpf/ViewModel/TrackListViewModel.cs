@@ -49,8 +49,22 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             UnsubscribeFromServerUpdates();
         }
 
+        /// <summary>
+        ///     Observes a track-load server update.
+        /// </summary>
+        /// <para>
+        ///     The track-list reacts to audio track loads by marking the
+        ///     loaded track's view model, and removing marks from any other
+        ///     track.
+        /// </para>
+        /// <param name="args"></param>
         private void HandleTrackLoad(Updates.TrackLoadEventArgs args)
         {
+            // Text-item loads are handled differently from other loads;
+            // they don't change the loaded track or the track-list
+            // markings, and are handled by the text view model instead.
+            if (args.Track.IsTextItem) return;
+
             DispatcherHelper.CheckBeginInvokeOnUI(() => UpdateLoadedStatus(args.Index));
         }
 
