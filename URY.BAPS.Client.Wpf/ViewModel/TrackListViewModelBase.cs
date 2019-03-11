@@ -47,6 +47,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             switch (dropInfo.Data)
             {
                 case DirectoryEntry _:
+                case DataObject d when d.ContainsText():
                     dropInfo.DropTargetAdorner = DropTargetAdorners.Insert;
                     dropInfo.Effects = DragDropEffects.Copy;
                     break;
@@ -59,6 +60,9 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             {
                 case DirectoryEntry dirEntry:
                     DropDirectoryEntry(dirEntry);
+                    break;
+                case DataObject d when d.ContainsText():
+                    DropText(d.GetText());
                     break;
             }
         }
@@ -103,6 +107,12 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         /// </summary>
         /// <param name="entry">The entry to handle.</param>
         protected abstract void DropDirectoryEntry(DirectoryEntry entry);
+
+        /// <summary>
+        ///     Handles an attempt to drop some text into this track-list.
+        /// </summary>
+        /// <param name="text">The text to handle.</param>
+        protected abstract void DropText(string text);
 
         public abstract void Dispose();
     }

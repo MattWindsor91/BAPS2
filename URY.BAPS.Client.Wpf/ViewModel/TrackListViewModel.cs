@@ -38,6 +38,12 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         private bool IsSelectedIndexLoaded =>
             TrackAt(SelectedIndex).IsLoaded;
 
+
+        protected override void DropText(string text)
+        {
+            Controller.AddText(text);
+        }
+
         public override void Dispose()
         {
             UnsubscribeFromServerUpdates();

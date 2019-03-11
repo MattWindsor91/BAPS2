@@ -2,6 +2,15 @@
 
 namespace URY.BAPS.Client.Common.BapsNet
 {
+    /// <summary>
+    ///     Enumeration of command groups.
+    ///     <para>
+    ///         The numbers assigned to each group are significant: when
+    ///         shifted left by 13 bits, they form the BapsNet command
+    ///         group flags.  As a result, they shouldn't be changed
+    ///         without good reason.
+    ///     </para>
+    /// </summary>
     public enum CommandGroup : ushort
     {
         Playback = 0,
@@ -14,9 +23,7 @@ namespace URY.BAPS.Client.Common.BapsNet
     [Flags]
     public enum Command : ushort
     {
-        /**
-         * MASKS
-         **/
+        #region Masks
         GroupMask = 0b11100000_00000000, // 14th bit onwards, hence shift is 13
         PlaybackOpMask = 0b00011111_10000000,
         PlaybackModeMask = 0b00000000_01000000,
@@ -33,19 +40,36 @@ namespace URY.BAPS.Client.Common.BapsNet
         SystemOpMask = 0b00011111_00000000,
         SystemModeMask = 0b00000000_10000000,
         SystemValueMask = 0b00000000_01111111,
+        #endregion Masks
 
-        /**
-         * Operation categories
-         **/
+        #region Command groups
+        /// <summary>
+        ///     The BapsNet command-word flag for the Playback command group.
+        /// </summary>
         Playback = CommandGroup.Playback << 13,
-        Playlist = CommandGroup.Playlist << 13,
-        Database = CommandGroup.Database << 13,
-        Config = CommandGroup.Config << 13,
-        System = CommandGroup.System << 13,
 
-        /**
-         * Playback
-         **/
+        /// <summary>
+        ///     The BapsNet command-word flag for the Playlist command group.
+        /// </summary>
+        Playlist = CommandGroup.Playlist << 13,
+
+        /// <summary>
+        ///     The BapsNet command-word flag for the Database command group.
+        /// </summary>
+        Database = CommandGroup.Database << 13,
+
+        /// <summary>
+        ///     The BapsNet command-word flag for the Config command group.
+        /// </summary>
+        Config = CommandGroup.Config << 13,
+
+        /// <summary>
+        ///     The BapsNet command-word flag for the System command group.
+        /// </summary>
+        System = CommandGroup.System << 13,
+        #endregion Command groups
+
+        #region Playback commands
         Play = 0 << 7, //C-
         Stop = 1 << 7, //C-
         Pause = 2 << 7, //C-
@@ -64,10 +88,9 @@ namespace URY.BAPS.Client.Common.BapsNet
         IntroPosition = 7 << 7, //SC-[0](set) u32int introposition
 
         //C -[1](get)
+        #endregion Playback commands
 
-        /**
-         * Playlist
-         **/
+        #region Playlist commands
         AddItem = 0 << 7, //C-u32int itemtype [VOID]
 
         //					[FILE]		u32int directory number, string filename
@@ -84,10 +107,9 @@ namespace URY.BAPS.Client.Common.BapsNet
 
         ResetPlaylist = 5 << 7, //SC-none
         CopyItem = 6 << 7, //C-u32int fromindex, u32int tochannel
+        #endregion Playlist commands
 
-        /**
-         * Database
-         **/
+        #region Database commands
         LibrarySearch = 0 << 8, //C  string artist, string title			MUSICLIBRESULT | LIBRARYERROR
         LibraryOrdering = 1 << 8, //C  [VALUE-maybedirty] u32int orderingfield, u32int reverseorder?
         LibraryResult = 2 << 8, //S  [0](count) u32int count
@@ -110,6 +132,7 @@ namespace URY.BAPS.Client.Common.BapsNet
         AssignListing = 8 << 8, //C  [-][channel] u32int listingid
 
         BapsDbError = 9 << 8, //S  [-][VALUE-errorCode] string description
+        #endregion Database commands
 
         /**
          * Library orderings
@@ -125,9 +148,8 @@ namespace URY.BAPS.Client.Common.BapsNet
         LibraryMaybeDirty = 1,
         LibraryDirty = 2,
 
-        /**
-         * Config
-         **/
+        #region Config commands
+
         GetOptions = 0 << 8, //(no args)			OPTION (count-data)
         GetOptionChoices = 1 << 8, //u32int optionid 	OPTIONCHOICE (count-data)
         GetConfigSettings = 2 << 8, //(no args)			CONFIGSETTING (count-data)
@@ -170,10 +192,9 @@ namespace URY.BAPS.Client.Common.BapsNet
 
         // [1](data)  [0/1](allow/deny)	string ipaddress, u32int mask
         AlterIpRestriction = 26 << 8, // [0/1](add/remove) [0/1](allow/deny) string ipaddress, u32int mask
+        #endregion Config commands
 
-        /**
-         * System
-         **/
+        #region System commands
         ListFiles = 0 << 8, //C-[x][VALUE-dirnumber]
         Filename = 1 << 8, //S-[0](count)[VALUE-dirnumber] u32int count, string niceDirectoryName
 
@@ -206,6 +227,7 @@ namespace URY.BAPS.Client.Common.BapsNet
 
         //	 [VALUE-1] text bigger
         Quit = 15 << 8 //(no args)
+        #endregion System commands
     }
 
     public static class CommandExtensions

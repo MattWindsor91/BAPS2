@@ -64,7 +64,11 @@ namespace URY.BAPS.Client.Wpf.DesignData
         protected override void DropDirectoryEntry(DirectoryEntry entry)
         {
         }
-        
+
+        protected override void DropText(string text)
+        {            
+        }
+
         public override void Dispose()
         {
             // Nothing to dispose

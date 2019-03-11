@@ -4,6 +4,7 @@ using URY.BAPS.Client.Common.BapsNet;
 using URY.BAPS.Client.Common.Model;
 using URY.BAPS.Client.Common.ServerConfig;
 using URY.BAPS.Client.Common.Updaters;
+using URY.BAPS.Client.Common.Utils;
 
 namespace URY.BAPS.Client.Common.Controllers
 {
@@ -80,8 +81,7 @@ namespace URY.BAPS.Client.Common.Controllers
 
         public void AddFile(DirectoryEntry file)
         {
-            var cmd = (Command.Playlist | Command.AddItem).WithChannel(_channelId);
-            SendAsync(new Message(cmd).Add((uint) TrackType.File).Add(file.DirectoryId).Add(file.Description));
+            SendAsync(MessageFactory.MakeAddFileItem(_channelId, file.DirectoryId, file.Description));
         }
 
         /// <summary>
@@ -103,6 +103,17 @@ namespace URY.BAPS.Client.Common.Controllers
         {
             var cmd = (Command.Playlist | Command.ResetPlaylist).WithChannel(_channelId);
             SendAsync(new Message(cmd));
+        }
+
+        /// <summary>
+        ///     Asks the BAPS server to add a text item. 
+        /// </summary>
+        /// <param name="text">The body of the text item.</param>
+        /// <param name="summary">The optional short title of the text item.</param>
+        public void AddText(string text, string summary = null)
+        {
+            summary = summary ?? text.Summary();
+            SendAsync(MessageFactory.MakeAddTextItem(_channelId, summary, text));
         }
     }
 }
