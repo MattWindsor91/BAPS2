@@ -87,7 +87,7 @@ namespace URY.BAPS.Client.Common
         {
             try
             {
-                _sock = new ClientSocket(server, port, Token, Token);
+                _sock = new ClientSocket(server, port, Token);
             }
             catch (SocketException e)
             {

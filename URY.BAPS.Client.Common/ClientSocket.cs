@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -27,17 +26,10 @@ namespace URY.BAPS.Client.Common
         /// </summary>
         private readonly byte[] _rxBytes = new byte[MaxReceiveBuffer];
 
-        private readonly CancellationToken _sendTok;
-
-        public ClientSocket(string host, int port, CancellationToken sendTok = default,
-            CancellationToken receiveTok = default)
+        public ClientSocket(string host, int port, CancellationToken receiveTok = default)
         {
-            _sendTok = sendTok;
             _receiveTok = receiveTok;
-
-            _clientSocket = new TcpClient(host, port);
-            _clientSocket.LingerState = new LingerOption(false, 0);
-            _clientSocket.NoDelay = true;
+            _clientSocket = new TcpClient(host, port) {LingerState = new LingerOption(false, 0), NoDelay = true};
         }
 
         /// <summary>
@@ -103,7 +95,7 @@ namespace URY.BAPS.Client.Common
 
             var stream = _clientSocket.GetStream();
 
-            int nRead = 0;
+            int nRead;
             for (var offset = 0; offset < count; offset += nRead)
             {
                 _receiveTok.ThrowIfCancellationRequested();
