@@ -15,7 +15,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
     ///         The channel view model combines a player view model and a track-list.
     ///     </para>
     /// </summary>
-    public class ChannelViewModel : ChannelViewModelBase, IDisposable
+    public class ChannelViewModel : ChannelViewModelBase
     {
         [CanBeNull] private readonly AudioWallService _audioWallService;
 

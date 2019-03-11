@@ -5,7 +5,7 @@ namespace URY.BAPS.Client.Wpf.Controls
     /// <summary>
     ///     Interaction logic for TrackList.xaml
     /// </summary>
-    public partial class TrackList : UserControl
+    public partial class TrackList
     {
         public TrackList()
         {

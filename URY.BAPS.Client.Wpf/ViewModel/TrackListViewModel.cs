@@ -8,7 +8,7 @@ using URY.BAPS.Client.Common.Model;
 
 namespace URY.BAPS.Client.Wpf.ViewModel
 {
-    public class TrackListViewModel : TrackListViewModelBase, IDisposable
+    public class TrackListViewModel : TrackListViewModelBase
     {
         private int _selectedIndex = -1;
 

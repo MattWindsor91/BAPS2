@@ -1,4 +1,6 @@
-﻿using JetBrains.Annotations;
+﻿using System.Collections.Generic;
+using JetBrains.Annotations;
+using URY.BAPS.Client.Common.Utils;
 using URY.BAPS.Client.Wpf.Converters;
 using Xunit;
 
@@ -17,22 +19,66 @@ namespace URY.BAPS.Client.Wpf.Tests.Converters
             new MillisecondsToPositionStringConverter();
 
         /// <summary>
+        ///     Data for <see cref="ConvertGivesExpectedResult"/>.
+        /// </summary>
+        public class ConvertGivesExpectedResultData : TheoryData<ushort, ushort, ushort, string>
+        {
+            public ConvertGivesExpectedResultData()
+            {
+                Add(0, 0, 0, "   00:00");
+                Add(0, 0, 1, "   00:01");
+                Add(0, 0, 59, "   00:59");
+                Add(0, 1, 0, "   01:00");
+                Add(0, 59, 59, "   59:59");
+                Add(1, 0, 0, " 1:00:00");
+                Add(1, 2, 3, " 1:02:03");
+                Add(20, 0, 0, "20:00:00");
+                Add(100, 0, 0, MillisecondsToPositionStringConverter.Indeterminate);
+            }
+        }
+
+        /// <summary>
         ///     Checks whether converting a uint to a position string works as expected.
         /// </summary>
-        /// <param name="input">The input to test.</param>
+        /// <param name="h">The number of hours to input.</param>
+        /// <param name="m">The number of minutes to input.</param>
+        /// <param name="s">The number of seconds to input.</param>
         /// <param name="expected">The expected result.</param>
         [Theory]
-        [InlineData(0u, "00:00:00")]
-        [InlineData(1_000u, "00:00:01")]
-        [InlineData(59_999u, "00:00:59")]
-        [InlineData(60_000u, "00:01:00")]
-        [InlineData(3_599_999u, "00:59:59")]
-        [InlineData(3_600_000u, "01:00:00")]
-        [InlineData(3_723_000u, "01:02:03")]
-        public void ConvertGivesExpectedResult(uint input, string expected)
+        [ClassData(typeof(ConvertGivesExpectedResultData))]
+
+        public void ConvertGivesExpectedResult(int h, int m, int s, string expected)
         {
-            var output = Assert.IsAssignableFrom<string>(_conv.Convert(input, typeof(string), null, null));
-            Assert.Equal(expected, output);
+            var input = Time.BuildMilliseconds((ushort)h, (ushort)m, (ushort)s);
+            var output = _conv.Convert(input, typeof(string), null, null);
+            var outputStr = Assert.IsAssignableFrom<string>(output);
+            Assert.Equal(expected, outputStr);
+        }
+
+        /// <summary>
+        ///     Data for <see cref="ConvertHandlesInvalidTypeCorrectly"/>.
+        /// </summary>
+        public class ConvertHandlesInvalidTypeCorrectlyData : TheoryData<object>
+        {
+            public ConvertHandlesInvalidTypeCorrectlyData()
+            {
+                Add("not an integer!");
+                Add(3.14159);
+                Add(new[] {2, 4, 6, 8});
+            }
+        }
+
+        /// <summary>
+        ///     Checks whether converting an object of invalid type gives the indeterminate string.
+        /// </summary>
+        /// <param name="input">The (wrong-type) object to test.</param>
+        [Theory]
+        [ClassData(typeof(ConvertHandlesInvalidTypeCorrectlyData))]
+        public void ConvertHandlesInvalidTypeCorrectly(object input)
+        {
+            var output = _conv.Convert(input, typeof(string), null, null);
+            var outputStr = Assert.IsAssignableFrom<string>(output);
+            Assert.Equal(MillisecondsToPositionStringConverter.Indeterminate, outputStr);
         }
     }
 }
