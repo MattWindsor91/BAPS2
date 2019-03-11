@@ -47,20 +47,12 @@ namespace URY.BAPS.Client.Common
         /// </summary>
         public void Run()
         {
-            try
+            while (!_token.IsCancellationRequested)
             {
-                while (!_token.IsCancellationRequested)
-                {
-                    var msg = _queue.Take(_token);
-                    msg.Send(_socket);
-                }
-
-                _token.ThrowIfCancellationRequested();
+                var msg = _queue.Take(_token);
+                msg.Send(_socket);
             }
-            finally
-            {
-                _socket.ShutdownSend();
-            }
+            _token.ThrowIfCancellationRequested();
         }
     }
 }

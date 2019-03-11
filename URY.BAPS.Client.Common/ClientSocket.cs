@@ -18,10 +18,7 @@ namespace URY.BAPS.Client.Common
         /// <summary>
         ///     The low level socket connection
         /// </summary>
-        private readonly Socket _clientSocket =
-            new Socket(AddressFamily.InterNetwork,
-                SocketType.Stream,
-                ProtocolType.Tcp);
+        private readonly TcpClient _clientSocket;
 
         private readonly CancellationToken _receiveTok;
 
@@ -38,17 +35,9 @@ namespace URY.BAPS.Client.Common
             _sendTok = sendTok;
             _receiveTok = receiveTok;
 
-            _clientSocket.Connect(new IPEndPoint(IPAddress.Parse(host), port));
-            /** All sockets are non blocking due to lack of preemption on windows **/
-            _clientSocket.Blocking = false;
-            /** Sockets will close without delay **/
-            _clientSocket.SetSocketOption(SocketOptionLevel.Tcp,
-                SocketOptionName.NoDelay,
-                1);
-            /** Sockets shall linger for 0 milliseconds **/
-            _clientSocket.SetSocketOption(SocketOptionLevel.Socket,
-                SocketOptionName.Linger,
-                new LingerOption(false, 0));
+            _clientSocket = new TcpClient(host, port);
+            _clientSocket.LingerState = new LingerOption(false, 0);
+            _clientSocket.NoDelay = true;
         }
 
         /// <summary>
@@ -59,7 +48,6 @@ namespace URY.BAPS.Client.Common
         public void Dispose()
         {
             if (!IsValid) return;
-            _clientSocket.Shutdown(SocketShutdown.Both);
             _clientSocket.Close();
         }
 
@@ -102,30 +90,8 @@ namespace URY.BAPS.Client.Common
         /// </summary>
         private void Send(byte[] bytes)
         {
-            var nSent = 0;
-            /** If sending no data then return immediately, else wait until it is all sent **/
-            for (var index = 0; index < bytes.Length; index += nSent)
-            {
-                _sendTok.ThrowIfCancellationRequested();
-
-                /**
-                 *  Manage exceptions and maintain a count of the bytes sent and therefore the position
-                 *  in the byte array
-                **/
-                try
-                {
-                    nSent = _clientSocket.Send(bytes, index, bytes.Length - index, SocketFlags.None);
-                }
-                catch (SocketException e)
-                {
-                    /** Connection error must have occurred, rethrow exception **/
-                    if (e.SocketErrorCode != SocketError.WouldBlock) throw;
-                    /** We are flooding the connection this is bad
-                     *  WORK NEEDED: possible implementation of lossy sends for non vital data
-                    **/
-                    Thread.Sleep(1);
-                }
-            }
+            var stream = _clientSocket.GetStream();
+            stream.Write(bytes, 0, bytes.Length);
         }
 
         /// <summary>
@@ -135,35 +101,17 @@ namespace URY.BAPS.Client.Common
         {
             if (MaxReceiveBuffer < count) throw new ArgumentOutOfRangeException(nameof(count));
 
-            var nRead = 0;
+            var stream = _clientSocket.GetStream();
+
+            int nRead = 0;
             for (var offset = 0; offset < count; offset += nRead)
             {
                 _receiveTok.ThrowIfCancellationRequested();
-
-                try
-                {
-                    nRead = _clientSocket.Receive(_rxBytes, offset, count - offset, SocketFlags.None);
-                }
-                catch (SocketException e)
-                {
-                    if (e.SocketErrorCode != SocketError.WouldBlock) throw;
-                }
+                nRead = stream.Read(_rxBytes, offset, count - offset);
             }
 
             // TODO(@MattWindsor91): use a Span once we move to netcore
             return _rxBytes;
-        }
-
-        public void ShutdownReceive()
-        {
-            if (!IsValid) return;
-            _clientSocket.Shutdown(SocketShutdown.Receive);
-        }
-
-        public void ShutdownSend()
-        {
-            if (!IsValid) return;
-            _clientSocket.Shutdown(SocketShutdown.Send);
         }
 
         #region Strings
