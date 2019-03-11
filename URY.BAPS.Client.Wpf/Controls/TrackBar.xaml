@@ -43,25 +43,6 @@
             <GradientStop Color="#0063B1" Offset="1" />
         </LinearGradientBrush>
 
-        <Style x:Key="BaseVBarStyle" TargetType="{x:Type Line}">
-            <Setter Property="Y1" Value="0" />
-            <Setter Property="Y2"
-                    Value="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType={x:Type Grid}, Mode=FindAncestor}}" />
-            <Setter Property="Opacity" Value="0.8" />
-            <Setter Property="StrokeThickness" Value="4" />
-            <Setter Property="Effect">
-                <Setter.Value>
-                    <DropShadowEffect Direction="0" BlurRadius="4" ShadowDepth="3" />
-                </Setter.Value>
-            </Setter>
-            <Setter Property="RenderTransform">
-                <Setter.Value>
-                    <!-- Move the line to account for its thickness. -->
-                    <TranslateTransform X="2" />
-                </Setter.Value>
-            </Setter>
-        </Style>
-
         <Style x:Key="SliderButtonStyle" TargetType="{x:Type RepeatButton}">
             <Setter Property="SnapsToDevicePixels" Value="true" />
             <Setter Property="OverridesDefaultStyle" Value="true" />
@@ -246,25 +227,6 @@
                        Fill="{StaticResource CueBrush}" Opacity="0.5"
                        Width="{c:Binding 'Value/(Maximum-Minimum)*Width', ElementName=CueSlider}" />
         </Border>
-
-        <!-- * Vertical bars * -->
-
-        <Line x:Name="IntroVBar" Grid.Row="0" Grid.RowSpan="3"
-              Style="{StaticResource BaseVBarStyle}"
-              Stroke="{StaticResource IntroBorderBrush}"
-              X1="{Binding Width, ElementName=IntroBar}"
-              X2="{Binding X1, ElementName=IntroVBar}" />
-        <Line x:Name="PositionVBar" Grid.Row="0" Grid.RowSpan="3"
-              Style="{StaticResource BaseVBarStyle}"
-              Stroke="{StaticResource PositionBorderBrush}"
-              X1="{Binding Width, ElementName=PositionBar}"
-              X2="{Binding X1, ElementName=PositionVBar}" />
-        <Line x:Name="CueVBar" Grid.Row="0" Grid.RowSpan="3"
-              Style="{StaticResource BaseVBarStyle}"
-              Stroke="{StaticResource CueBorderBrush}"
-              X1="{Binding Width, ElementName=CueBar}"
-              X2="{Binding X1, ElementName=CueVBar}" />
-
 
         <!-- * Sliders * -->
         <!-- Intro -->
