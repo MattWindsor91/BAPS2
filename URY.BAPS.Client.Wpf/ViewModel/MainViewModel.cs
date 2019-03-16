@@ -6,8 +6,6 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Threading;
 using JetBrains.Annotations;
-using URY.BAPS.Client.Common;
-using URY.BAPS.Client.Common.Controllers;
 using URY.BAPS.Client.Common.ServerConfig;
 using URY.BAPS.Client.Wpf.Services;
 
@@ -25,7 +23,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
     {
         [NotNull] private readonly ChannelFactoryService _channelFactory;
         [NotNull] private readonly ConfigCache _config;
-        [NotNull] private readonly DirectoryControllerSet _directoryControllerSet;
+        [NotNull] private readonly DirectoryFactoryService _directoryFactory;
 
         [CanBeNull] private RelayCommand<ushort> _forwardPauseCommand;
 
@@ -37,19 +35,13 @@ namespace URY.BAPS.Client.Wpf.ViewModel
 
         public MainViewModel(
             [CanBeNull] ChannelFactoryService channelFactory,
+            [CanBeNull] DirectoryFactoryService directoryFactory,
             [CanBeNull] ConfigCache config,
-            // TODO(@MattWindsor91): this should be IServerUpdater, but I'm not sure how to get SimpleIoC to inject it otherwise.
-            [CanBeNull] IClientCore updater,
-            [CanBeNull] ITextViewModel text,
-            [CanBeNull] ChannelControllerSet controllerSet,
-            [CanBeNull] DirectoryControllerSet directoryControllerSet,
-            [CanBeNull] AudioWallService audioWallService)
+            [CanBeNull] ITextViewModel text)
         {
             _channelFactory = channelFactory ?? throw new ArgumentNullException(nameof(channelFactory));
+            _directoryFactory = directoryFactory ?? throw new ArgumentNullException(nameof(directoryFactory));
             _config = config ?? throw new ArgumentNullException(nameof(config));
-            _directoryControllerSet =
-                directoryControllerSet ?? throw new ArgumentNullException(nameof(directoryControllerSet));
-
             Text = text ?? throw new ArgumentNullException(nameof(text));
             RegisterForConfigUpdates();
         }
@@ -157,25 +149,12 @@ namespace URY.BAPS.Client.Wpf.ViewModel
 
         private void HandleChannelCountChange(int newChannelCount)
         {
-            HandleCountChange(newChannelCount, Channels, MakeChannelViewModel);
+            HandleCountChange(newChannelCount, Channels, _channelFactory.Make);
         }
 
         private void HandleDirectoryCountChange(int newDirectoryCount)
         {
-            HandleCountChange(newDirectoryCount, Directories, MakeDirectoryViewModel);
-        }
-
-        [Pure]
-        private IChannelViewModel MakeChannelViewModel(ushort channelId)
-        {
-            return _channelFactory.Make(channelId);
-        }
-
-        [Pure]
-        private DirectoryViewModel MakeDirectoryViewModel(ushort directoryId)
-        {
-            var controller = _directoryControllerSet.ControllerFor(directoryId);
-            return new DirectoryViewModel(directoryId, controller);
+            HandleCountChange(newDirectoryCount, Directories, _directoryFactory.Make);
         }
     }
 }
