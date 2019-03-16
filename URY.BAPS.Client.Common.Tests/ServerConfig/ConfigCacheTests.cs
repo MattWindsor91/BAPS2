@@ -88,11 +88,11 @@ namespace URY.BAPS.Client.Common.Tests.ServerConfig
 
         public class MockConfigServerUpdater : IConfigServerUpdater
         {
-            private IObservable<Updates.ConfigChoiceEventArgs> _observeConfigChoice;
-            private IObservable<Updates.ConfigOptionEventArgs> _observeConfigOption;
+            private IObservable<ConfigChoiceEventArgs> _observeConfigChoice;
+            private IObservable<ConfigOptionEventArgs> _observeConfigOption;
             private IObservable<(Command cmdReceived, uint optionID, ConfigResult result)> _observeConfigResult;
-            private IObservable<Updates.ConfigSettingEventArgs> _observeConfigSetting;
-            private IObservable<Updates.CountEventArgs> _observeIncomingCount;
+            private IObservable<ConfigSettingEventArgs> _observeConfigSetting;
+            private IObservable<CountEventArgs> _observeIncomingCount;
             private IObservable<object> _observeMessages;
             public Queue<object> Messages { get; } = new Queue<object>();
 
@@ -100,21 +100,21 @@ namespace URY.BAPS.Client.Common.Tests.ServerConfig
                 _observeMessages ??
                 (_observeMessages = Messages.ToObservable());
 
-            public IObservable<Updates.CountEventArgs> ObserveIncomingCount =>
+            public IObservable<CountEventArgs> ObserveIncomingCount =>
                 _observeIncomingCount ??
-                (_observeIncomingCount = ObserveMessages.OfType<Updates.CountEventArgs>());
+                (_observeIncomingCount = ObserveMessages.OfType<CountEventArgs>());
 
-            public IObservable<Updates.ConfigChoiceEventArgs> ObserveConfigChoice =>
+            public IObservable<ConfigChoiceEventArgs> ObserveConfigChoice =>
                 _observeConfigChoice ??
-                (_observeConfigChoice = ObserveMessages.OfType<Updates.ConfigChoiceEventArgs>());
+                (_observeConfigChoice = ObserveMessages.OfType<ConfigChoiceEventArgs>());
 
-            public IObservable<Updates.ConfigOptionEventArgs> ObserveConfigOption =>
+            public IObservable<ConfigOptionEventArgs> ObserveConfigOption =>
                 _observeConfigOption ??
-                (_observeConfigOption = ObserveMessages.OfType<Updates.ConfigOptionEventArgs>());
+                (_observeConfigOption = ObserveMessages.OfType<ConfigOptionEventArgs>());
 
-            public IObservable<Updates.ConfigSettingEventArgs> ObserveConfigSetting =>
+            public IObservable<ConfigSettingEventArgs> ObserveConfigSetting =>
                 _observeConfigSetting ??
-                (_observeConfigSetting = ObserveMessages.OfType<Updates.ConfigSettingEventArgs>());
+                (_observeConfigSetting = ObserveMessages.OfType<ConfigSettingEventArgs>());
 
             public IObservable<(Command cmdReceived, uint optionID, ConfigResult result)> ObserveConfigResult =>
                 _observeConfigResult ??
@@ -128,8 +128,8 @@ namespace URY.BAPS.Client.Common.Tests.ServerConfig
         public void TestReceiverString()
         {
             var receiver = new MockConfigServerUpdater();
-            receiver.Messages.Enqueue(new Updates.ConfigOptionEventArgs(64, ConfigType.Str, "Barbaz", false));
-            receiver.Messages.Enqueue(new Updates.ConfigSettingEventArgs(64, ConfigType.Str, "FrankerZ"));
+            receiver.Messages.Enqueue(new ConfigOptionEventArgs(64, ConfigType.Str, "Barbaz", false));
+            receiver.Messages.Enqueue(new ConfigSettingEventArgs(64, ConfigType.Str, "FrankerZ"));
 
             Assert.That(_configCache.GetValue<string>(64), Is.Null);
             _configCache.SubscribeToReceiver(receiver);
@@ -140,10 +140,10 @@ namespace URY.BAPS.Client.Common.Tests.ServerConfig
         public void TestReceiverChoice()
         {
             var receiver = new MockConfigServerUpdater();
-            receiver.Messages.Enqueue(new Updates.ConfigOptionEventArgs(99, ConfigType.Choice, "Keepo", false));
-            receiver.Messages.Enqueue(new Updates.ConfigChoiceEventArgs(99, 0, "Yes"));
-            receiver.Messages.Enqueue(new Updates.ConfigChoiceEventArgs(99, 1, "No"));
-            receiver.Messages.Enqueue(new Updates.ConfigSettingEventArgs(99, ConfigType.Choice, 1));
+            receiver.Messages.Enqueue(new ConfigOptionEventArgs(99, ConfigType.Choice, "Keepo", false));
+            receiver.Messages.Enqueue(new ConfigChoiceEventArgs(99, 0, "Yes"));
+            receiver.Messages.Enqueue(new ConfigChoiceEventArgs(99, 1, "No"));
+            receiver.Messages.Enqueue(new ConfigSettingEventArgs(99, ConfigType.Choice, 1));
 
             _configCache.SubscribeToReceiver(receiver);
             Assert.That(_configCache.FindChoiceIndexFor(99, "Yes"), Is.EqualTo(0), "Choice index for 'yes' incorrect");

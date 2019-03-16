@@ -150,10 +150,10 @@ namespace URY.BAPS.Client.Common.ServerConfig
 
         /// <summary>
         ///     Updates the value for a given option ID directly from a
-        ///     <see cref="Updates.ConfigSettingEventArgs" /> struct.
+        ///     <see cref="ConfigSettingEventArgs" /> struct.
         /// </summary>
-        /// <param name="args">The <see cref="Updates.ConfigSettingEventArgs" /> struct to use.</param>
-        private void AddOptionValue(Updates.ConfigSettingEventArgs args)
+        /// <param name="args">The <see cref="ConfigSettingEventArgs" /> struct to use.</param>
+        private void AddOptionValue(ConfigSettingEventArgs args)
         {
             switch (args.Type)
             {

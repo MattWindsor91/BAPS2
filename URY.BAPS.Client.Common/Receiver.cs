@@ -17,29 +17,29 @@ namespace URY.BAPS.Client.Common
     {
         private readonly ClientSocket _cs;
         private readonly CancellationToken _token;
-        private IObservable<Updates.ConfigChoiceEventArgs> _observeConfigChoice;
-        private IObservable<Updates.ConfigOptionEventArgs> _observeConfigOption;
+        private IObservable<ConfigChoiceEventArgs> _observeConfigChoice;
+        private IObservable<ConfigOptionEventArgs> _observeConfigOption;
         private IObservable<(Command cmdReceived, uint optionID, ConfigResult result)> _observeConfigResult;
-        private IObservable<Updates.ConfigSettingEventArgs> _observeConfigSetting;
-        private IObservable<Updates.DirectoryFileAddEventArgs> _observeDirectoryFileAdd;
-        private IObservable<Updates.DirectoryPrepareEventArgs> _observeDirectoryPrepare;
-        private IObservable<Updates.ErrorEventArgs> _observeError;
-        private IObservable<Updates.CountEventArgs> _observeIncomingCount;
+        private IObservable<ConfigSettingEventArgs> _observeConfigSetting;
+        private IObservable<DirectoryFileAddEventArgs> _observeDirectoryFileAdd;
+        private IObservable<DirectoryPrepareEventArgs> _observeDirectoryPrepare;
+        private IObservable<ErrorEventArgs> _observeError;
+        private IObservable<CountEventArgs> _observeIncomingCount;
         private IObservable<(Command cmdReceived, string ipAddress, uint mask)> _observeIpRestriction;
         private IObservable<(uint resultID, byte dirtyStatus, string description)> _observeLibraryResult;
         private IObservable<(uint listingID, uint channelID, string description)> _observeListingResult;
-        private IObservable<Updates.MarkerEventArgs> _observeMarker;
+        private IObservable<MarkerEventArgs> _observeMarker;
         private IObservable<(uint permissionCode, string description)> _observePermission;
 
-        private IObservable<Updates.PlayerStateEventArgs> _observePlayerState;
-        private IObservable<Updates.PlaylistResetEventArgs> _observePlaylistReset;
+        private IObservable<PlayerStateEventArgs> _observePlayerState;
+        private IObservable<PlaylistResetEventArgs> _observePlaylistReset;
         private IObservable<bool> _observeServerQuit;
         private IObservable<(uint showID, string description)> _observeShowResult;
-        private IObservable<Updates.TextSettingEventArgs> _observeTextSetting;
-        private IObservable<Updates.TrackAddEventArgs> _observeTrackAdd;
-        private IObservable<Updates.TrackDeleteEventArgs> _observeTrackDelete;
-        private IObservable<Updates.TrackLoadEventArgs> _observeTrackLoad;
-        private IObservable<Updates.TrackMoveEventArgs> _observeTrackMove;
+        private IObservable<TextSettingEventArgs> _observeTextSetting;
+        private IObservable<TrackAddEventArgs> _observeTrackAdd;
+        private IObservable<TrackDeleteEventArgs> _observeTrackDelete;
+        private IObservable<TrackLoadEventArgs> _observeTrackLoad;
+        private IObservable<TrackMoveEventArgs> _observeTrackMove;
         private IObservable<(Command command, string description)> _observeUnknownCommand;
         private IObservable<(string username, uint permissions)> _observeUser;
         private IObservable<(byte resultCode, string description)> _observeUserResult;
@@ -51,51 +51,51 @@ namespace URY.BAPS.Client.Common
             _token = token;
         }
 
-        public IObservable<Updates.PlayerStateEventArgs> ObservePlayerState =>
+        public IObservable<PlayerStateEventArgs> ObservePlayerState =>
             _observePlayerState ??
-            (_observePlayerState = Observable.FromEventPattern<Updates.PlayerStateEventArgs>(
+            (_observePlayerState = Observable.FromEventPattern<PlayerStateEventArgs>(
                 ev => PlayerState += ev,
                 ev => PlayerState -= ev
             ).Select(x => x.EventArgs));
 
-        public IObservable<Updates.MarkerEventArgs> ObserveMarker =>
+        public IObservable<MarkerEventArgs> ObserveMarker =>
             _observeMarker ??
-            (_observeMarker = Observable.FromEventPattern<Updates.MarkerEventArgs>(
+            (_observeMarker = Observable.FromEventPattern<MarkerEventArgs>(
                 ev => Marker += ev,
                 ev => Marker -= ev
             ).Select(x => x.EventArgs));
 
-        public IObservable<Updates.TrackLoadEventArgs> ObserveTrackLoad =>
+        public IObservable<TrackLoadEventArgs> ObserveTrackLoad =>
             _observeTrackLoad ??
-            (_observeTrackLoad = Observable.FromEventPattern<Updates.TrackLoadEventArgs>(
+            (_observeTrackLoad = Observable.FromEventPattern<TrackLoadEventArgs>(
                 ev => TrackLoad += ev,
                 ev => TrackLoad -= ev
             ).Select(x => x.EventArgs));
 
-        public IObservable<Updates.CountEventArgs> ObserveIncomingCount =>
+        public IObservable<CountEventArgs> ObserveIncomingCount =>
             _observeIncomingCount ??
-            (_observeIncomingCount = Observable.FromEventPattern<Updates.CountEventArgs>(
+            (_observeIncomingCount = Observable.FromEventPattern<CountEventArgs>(
                 ev => IncomingCount += ev,
                 ev => IncomingCount -= ev
             ).Select(x => x.EventArgs));
 
-        public IObservable<Updates.ConfigChoiceEventArgs> ObserveConfigChoice =>
+        public IObservable<ConfigChoiceEventArgs> ObserveConfigChoice =>
             _observeConfigChoice ??
-            (_observeConfigChoice = Observable.FromEventPattern<Updates.ConfigChoiceEventArgs>(
+            (_observeConfigChoice = Observable.FromEventPattern<ConfigChoiceEventArgs>(
                 ev => ConfigChoice += ev,
                 ev => ConfigChoice -= ev
             ).Select(x => x.EventArgs));
 
-        public IObservable<Updates.ConfigOptionEventArgs> ObserveConfigOption =>
+        public IObservable<ConfigOptionEventArgs> ObserveConfigOption =>
             _observeConfigOption ??
-            (_observeConfigOption = Observable.FromEventPattern<Updates.ConfigOptionEventArgs>(
+            (_observeConfigOption = Observable.FromEventPattern<ConfigOptionEventArgs>(
                 ev => ConfigOption += ev,
                 ev => ConfigOption -= ev
             ).Select(x => x.EventArgs));
 
-        public IObservable<Updates.ConfigSettingEventArgs> ObserveConfigSetting =>
+        public IObservable<ConfigSettingEventArgs> ObserveConfigSetting =>
             _observeConfigSetting ??
-            (_observeConfigSetting = Observable.FromEventPattern<Updates.ConfigSettingEventArgs>(
+            (_observeConfigSetting = Observable.FromEventPattern<ConfigSettingEventArgs>(
                 ev => ConfigSetting += ev,
                 ev => ConfigSetting -= ev
             ).Select(x => x.EventArgs));
@@ -108,51 +108,51 @@ namespace URY.BAPS.Client.Common
                     ev => ConfigResult -= ev
                 ).Select(x => x.EventArgs));
 
-        public IObservable<Updates.DirectoryFileAddEventArgs> ObserveDirectoryFileAdd =>
+        public IObservable<DirectoryFileAddEventArgs> ObserveDirectoryFileAdd =>
             _observeDirectoryFileAdd ??
-            (_observeDirectoryFileAdd = Observable.FromEventPattern<Updates.DirectoryFileAddEventArgs>(
+            (_observeDirectoryFileAdd = Observable.FromEventPattern<DirectoryFileAddEventArgs>(
                 ev => DirectoryFileAdd += ev,
                 ev => DirectoryFileAdd -= ev
             ).Select(x => x.EventArgs));
 
-        public IObservable<Updates.DirectoryPrepareEventArgs> ObserveDirectoryPrepare =>
+        public IObservable<DirectoryPrepareEventArgs> ObserveDirectoryPrepare =>
             _observeDirectoryPrepare ??
-            (_observeDirectoryPrepare = Observable.FromEventPattern<Updates.DirectoryPrepareEventArgs>(
+            (_observeDirectoryPrepare = Observable.FromEventPattern<DirectoryPrepareEventArgs>(
                 ev => DirectoryPrepare += ev,
                 ev => DirectoryPrepare -= ev
             ).Select(x => x.EventArgs));
 
-        public IObservable<Updates.TrackAddEventArgs> ObserveTrackAdd =>
+        public IObservable<TrackAddEventArgs> ObserveTrackAdd =>
             _observeTrackAdd ??
-            (_observeTrackAdd = Observable.FromEventPattern<Updates.TrackAddEventArgs>(
+            (_observeTrackAdd = Observable.FromEventPattern<TrackAddEventArgs>(
                 ev => TrackAdd += ev,
                 ev => TrackAdd -= ev
             ).Select(x => x.EventArgs));
 
-        public IObservable<Updates.TrackDeleteEventArgs> ObserveTrackDelete =>
+        public IObservable<TrackDeleteEventArgs> ObserveTrackDelete =>
             _observeTrackDelete ??
-            (_observeTrackDelete = Observable.FromEventPattern<Updates.TrackDeleteEventArgs>(
+            (_observeTrackDelete = Observable.FromEventPattern<TrackDeleteEventArgs>(
                 ev => TrackDelete += ev,
                 ev => TrackDelete -= ev
             ).Select(x => x.EventArgs));
 
-        public IObservable<Updates.TrackMoveEventArgs> ObserveTrackMove =>
+        public IObservable<TrackMoveEventArgs> ObserveTrackMove =>
             _observeTrackMove ??
-            (_observeTrackMove = Observable.FromEventPattern<Updates.TrackMoveEventArgs>(
+            (_observeTrackMove = Observable.FromEventPattern<TrackMoveEventArgs>(
                 ev => TrackMove += ev,
                 ev => TrackMove -= ev
             ).Select(x => x.EventArgs));
 
-        public IObservable<Updates.PlaylistResetEventArgs> ObservePlaylistReset =>
+        public IObservable<PlaylistResetEventArgs> ObservePlaylistReset =>
             _observePlaylistReset ??
-            (_observePlaylistReset = Observable.FromEventPattern<Updates.PlaylistResetEventArgs>(
+            (_observePlaylistReset = Observable.FromEventPattern<PlaylistResetEventArgs>(
                 ev => PlaylistReset += ev,
                 ev => PlaylistReset -= ev
             ).Select(x => x.EventArgs));
 
-        public IObservable<Updates.ErrorEventArgs> ObserveError =>
+        public IObservable<ErrorEventArgs> ObserveError =>
             _observeError ??
-            (_observeError = Observable.FromEventPattern<Updates.ErrorEventArgs>(
+            (_observeError = Observable.FromEventPattern<ErrorEventArgs>(
                 ev => Error += ev,
                 ev => Error -= ev
             ).Select(x => x.EventArgs));
@@ -206,9 +206,9 @@ namespace URY.BAPS.Client.Common
                 ev => ShowResult -= ev
             ).Select(x => x.EventArgs));
 
-        public IObservable<Updates.TextSettingEventArgs> ObserveTextSetting =>
+        public IObservable<TextSettingEventArgs> ObserveTextSetting =>
             _observeTextSetting ??
-            (_observeTextSetting = Observable.FromEventPattern<Updates.TextSettingEventArgs>(
+            (_observeTextSetting = Observable.FromEventPattern<TextSettingEventArgs>(
                 ev => TextSetting += ev,
                 ev => TextSetting -= ev
             ).Select(x => x.EventArgs));
@@ -256,23 +256,23 @@ namespace URY.BAPS.Client.Common
 
         #region Playback events
 
-        public event EventHandler<Updates.PlayerStateEventArgs> PlayerState;
+        public event EventHandler<PlayerStateEventArgs> PlayerState;
 
-        private void OnChannelOperation(Updates.PlayerStateEventArgs e)
+        private void OnChannelOperation(PlayerStateEventArgs e)
         {
             PlayerState?.Invoke(this, e);
         }
 
-        public event EventHandler<Updates.TrackLoadEventArgs> TrackLoad;
+        public event EventHandler<TrackLoadEventArgs> TrackLoad;
 
-        private void OnLoadedItem(Updates.TrackLoadEventArgs args)
+        private void OnLoadedItem(TrackLoadEventArgs args)
         {
             TrackLoad?.Invoke(this, args);
         }
 
-        public event EventHandler<Updates.MarkerEventArgs> Marker;
+        public event EventHandler<MarkerEventArgs> Marker;
 
-        private void OnMarker(Updates.MarkerEventArgs e)
+        private void OnMarker(MarkerEventArgs e)
         {
             Marker?.Invoke(this, e);
         }
@@ -281,30 +281,30 @@ namespace URY.BAPS.Client.Common
 
         #region Playlist events
 
-        public event EventHandler<Updates.TrackAddEventArgs> TrackAdd;
+        public event EventHandler<TrackAddEventArgs> TrackAdd;
 
-        private void OnItemAdd(Updates.TrackAddEventArgs e)
+        private void OnItemAdd(TrackAddEventArgs e)
         {
             TrackAdd?.Invoke(this, e);
         }
 
-        public event EventHandler<Updates.TrackMoveEventArgs> TrackMove;
+        public event EventHandler<TrackMoveEventArgs> TrackMove;
 
-        private void OnItemMove(Updates.TrackMoveEventArgs e)
+        private void OnItemMove(TrackMoveEventArgs e)
         {
             TrackMove?.Invoke(this, e);
         }
 
-        public event EventHandler<Updates.TrackDeleteEventArgs> TrackDelete;
+        public event EventHandler<TrackDeleteEventArgs> TrackDelete;
 
-        private void OnItemDelete(Updates.TrackDeleteEventArgs e)
+        private void OnItemDelete(TrackDeleteEventArgs e)
         {
             TrackDelete?.Invoke(this, e);
         }
 
-        public event EventHandler<Updates.PlaylistResetEventArgs> PlaylistReset;
+        public event EventHandler<PlaylistResetEventArgs> PlaylistReset;
 
-        private void OnResetPlaylist(Updates.PlaylistResetEventArgs e)
+        private void OnResetPlaylist(PlaylistResetEventArgs e)
         {
             PlaylistReset?.Invoke(this, e);
         }
@@ -338,23 +338,23 @@ namespace URY.BAPS.Client.Common
 
         #region Config events
 
-        public event EventHandler<Updates.ConfigOptionEventArgs> ConfigOption;
+        public event EventHandler<ConfigOptionEventArgs> ConfigOption;
 
-        private void OnConfigOption(Updates.ConfigOptionEventArgs args)
+        private void OnConfigOption(ConfigOptionEventArgs args)
         {
             ConfigOption?.Invoke(this, args);
         }
 
-        public event EventHandler<Updates.ConfigChoiceEventArgs> ConfigChoice;
+        public event EventHandler<ConfigChoiceEventArgs> ConfigChoice;
 
-        private void OnConfigChoice(Updates.ConfigChoiceEventArgs args)
+        private void OnConfigChoice(ConfigChoiceEventArgs args)
         {
             ConfigChoice?.Invoke(this, args);
         }
 
-        public event EventHandler<Updates.ConfigSettingEventArgs> ConfigSetting;
+        public event EventHandler<ConfigSettingEventArgs> ConfigSetting;
 
-        private void OnConfigSetting(Updates.ConfigSettingEventArgs args)
+        private void OnConfigSetting(ConfigSettingEventArgs args)
         {
             ConfigSetting?.Invoke(this, args);
         }
@@ -398,16 +398,16 @@ namespace URY.BAPS.Client.Common
 
         #region System events
 
-        public event EventHandler<Updates.DirectoryFileAddEventArgs> DirectoryFileAdd;
+        public event EventHandler<DirectoryFileAddEventArgs> DirectoryFileAdd;
 
-        private void OnDirectoryFileAdd(Updates.DirectoryFileAddEventArgs args)
+        private void OnDirectoryFileAdd(DirectoryFileAddEventArgs args)
         {
             DirectoryFileAdd?.Invoke(this, args);
         }
 
-        public event EventHandler<Updates.DirectoryPrepareEventArgs> DirectoryPrepare;
+        public event EventHandler<DirectoryPrepareEventArgs> DirectoryPrepare;
 
-        private void OnDirectoryPrepare(Updates.DirectoryPrepareEventArgs args)
+        private void OnDirectoryPrepare(DirectoryPrepareEventArgs args)
         {
             DirectoryPrepare?.Invoke(this, args);
         }
@@ -419,9 +419,9 @@ namespace URY.BAPS.Client.Common
             Version?.Invoke(this, v);
         }
 
-        public event EventHandler<Updates.TextSettingEventArgs> TextSetting;
+        public event EventHandler<TextSettingEventArgs> TextSetting;
 
-        private void OnTextSetting(Updates.TextSettingEventArgs args)
+        private void OnTextSetting(TextSettingEventArgs args)
         {
             TextSetting?.Invoke(this, args);
         }
@@ -438,16 +438,16 @@ namespace URY.BAPS.Client.Common
 
         #region General events
 
-        public event EventHandler<Updates.CountEventArgs> IncomingCount;
+        public event EventHandler<CountEventArgs> IncomingCount;
 
-        private void OnIncomingCount(Updates.CountEventArgs e)
+        private void OnIncomingCount(CountEventArgs e)
         {
             IncomingCount?.Invoke(this, e);
         }
 
-        public event EventHandler<Updates.ErrorEventArgs> Error;
+        public event EventHandler<ErrorEventArgs> Error;
 
-        private void OnError(Updates.ErrorEventArgs e)
+        private void OnError(ErrorEventArgs e)
         {
             Error?.Invoke(this, e);
         }
@@ -498,7 +498,7 @@ namespace URY.BAPS.Client.Common
                 case Command.Pause:
                 case Command.Stop:
                 {
-                    OnChannelOperation(new Updates.PlayerStateEventArgs(cmdReceived.Channel(),
+                    OnChannelOperation(new PlayerStateEventArgs(cmdReceived.Channel(),
                         cmdReceived.AsPlaybackState()));
                 }
                     break;
@@ -518,7 +518,7 @@ namespace URY.BAPS.Client.Common
                 case Command.IntroPosition:
                 {
                     var position = _cs.ReceiveI();
-                    OnMarker(new Updates.MarkerEventArgs(cmdReceived.Channel(), op.AsMarkerType(), position));
+                    OnMarker(new MarkerEventArgs(cmdReceived.Channel(), op.AsMarkerType(), position));
                 }
                     break;
                 default:
@@ -541,8 +541,8 @@ namespace URY.BAPS.Client.Common
 
             var track = TrackFactory.Create(type, description, duration, text);
 
-            OnMarker(new Updates.MarkerEventArgs(channelId, MarkerType.Position, 0U));
-            OnLoadedItem(new Updates.TrackLoadEventArgs(channelId, index, track));
+            OnMarker(new MarkerEventArgs(channelId, MarkerType.Position, 0U));
+            OnLoadedItem(new TrackLoadEventArgs(channelId, index, track));
         }
 
         private void DecodePlaylistCommand(Command cmdReceived)
@@ -557,7 +557,7 @@ namespace URY.BAPS.Client.Common
                         var type = (TrackType) _cs.ReceiveI();
                         var description = _cs.ReceiveS();
                         var entry = TrackFactory.Create(type, description);
-                        OnItemAdd(new Updates.TrackAddEventArgs(channelId, index, entry));
+                        OnItemAdd(new TrackAddEventArgs(channelId, index, entry));
                     }
                     else
                     {
@@ -571,20 +571,20 @@ namespace URY.BAPS.Client.Common
                     var channelId = cmdReceived.Channel();
                     var indexFrom = _cs.ReceiveI();
                     var indexTo = _cs.ReceiveI();
-                    OnItemMove(new Updates.TrackMoveEventArgs(channelId, indexFrom, indexTo));
+                    OnItemMove(new TrackMoveEventArgs(channelId, indexFrom, indexTo));
                 }
                     break;
                 case Command.DeleteItem:
                 {
                     var channelId = cmdReceived.Channel();
                     var index = _cs.ReceiveI();
-                    OnItemDelete(new Updates.TrackDeleteEventArgs(channelId, index));
+                    OnItemDelete(new TrackDeleteEventArgs(channelId, index));
                 }
                     break;
                 case Command.ResetPlaylist:
                 {
                     var channelId = cmdReceived.Channel();
-                    OnResetPlaylist(new Updates.PlaylistResetEventArgs(channelId));
+                    OnResetPlaylist(new PlaylistResetEventArgs(channelId));
                 }
                     break;
                 default:
@@ -608,14 +608,14 @@ namespace URY.BAPS.Client.Common
                     }
                     else
                     {
-                        DecodeCount(Updates.CountType.LibraryItem);
+                        DecodeCount(CountType.LibraryItem);
                     }
                 }
                     break;
                 case Command.LibraryError:
                 {
                     var errorCode = cmdReceived.DatabaseValue();
-                    DecodeError(Updates.ErrorType.Library, errorCode);
+                    DecodeError(ErrorType.Library, errorCode);
                 }
                     break;
                 case Command.Show:
@@ -627,7 +627,7 @@ namespace URY.BAPS.Client.Common
                     }
                     else
                     {
-                        DecodeCount(Updates.CountType.Show);
+                        DecodeCount(CountType.Show);
                     }
 
                     break;
@@ -641,12 +641,12 @@ namespace URY.BAPS.Client.Common
                     }
                     else
                     {
-                        DecodeCount(Updates.CountType.Listing);
+                        DecodeCount(CountType.Listing);
                     }
 
                     break;
                 case Command.BapsDbError:
-                    DecodeError(Updates.ErrorType.BapsDb, cmdReceived.DatabaseValue());
+                    DecodeError(ErrorType.BapsDb, cmdReceived.DatabaseValue());
                     break;
                 default:
                     OnUnknownCommand(cmdReceived, "possibly a malformed DATABASE");
@@ -667,13 +667,13 @@ namespace URY.BAPS.Client.Common
                         var optionId = _cs.ReceiveI();
                         var description = _cs.ReceiveS();
                         var type = _cs.ReceiveI();
-                        OnConfigOption(new Updates.ConfigOptionEventArgs(optionId, (ConfigType) type, description,
+                        OnConfigOption(new ConfigOptionEventArgs(optionId, (ConfigType) type, description,
                             hasIndex,
                             index));
                     }
                     else
                     {
-                        DecodeCount(Updates.CountType.ConfigOption);
+                        DecodeCount(CountType.ConfigOption);
                     }
                 }
                     break;
@@ -684,11 +684,11 @@ namespace URY.BAPS.Client.Common
                     {
                         var choiceIndex = _cs.ReceiveI();
                         var choiceDescription = _cs.ReceiveS();
-                        OnConfigChoice(new Updates.ConfigChoiceEventArgs(optionId, choiceIndex, choiceDescription));
+                        OnConfigChoice(new ConfigChoiceEventArgs(optionId, choiceIndex, choiceDescription));
                     }
                     else
                     {
-                        DecodeCount(Updates.CountType.ConfigChoice, optionId);
+                        DecodeCount(CountType.ConfigChoice, optionId);
                     }
                 }
                     break;
@@ -714,7 +714,7 @@ namespace URY.BAPS.Client.Common
                 }
                     break;
                 case Command.ConfigError:
-                    DecodeError(Updates.ErrorType.Config, cmdReceived.ConfigValue());
+                    DecodeError(ErrorType.Config, cmdReceived.ConfigValue());
                     break;
                 case Command.User:
                 {
@@ -726,7 +726,7 @@ namespace URY.BAPS.Client.Common
                     }
                     else
                     {
-                        DecodeCount(Updates.CountType.User);
+                        DecodeCount(CountType.User);
                     }
                 }
                     break;
@@ -740,7 +740,7 @@ namespace URY.BAPS.Client.Common
                     }
                     else
                     {
-                        DecodeCount(Updates.CountType.Permission);
+                        DecodeCount(CountType.Permission);
                     }
                 }
                     break;
@@ -761,7 +761,7 @@ namespace URY.BAPS.Client.Common
                     }
                     else
                     {
-                        DecodeCount(Updates.CountType.IpRestriction);
+                        DecodeCount(CountType.IpRestriction);
                     }
                 }
                     break;
@@ -792,7 +792,7 @@ namespace URY.BAPS.Client.Common
             var index = -1;
             if (cmdReceived.HasFlag(Command.ConfigUseValueMask)) index = cmdReceived.ConfigValue();
 
-            OnConfigSetting(new Updates.ConfigSettingEventArgs(optionId, type, value, index));
+            OnConfigSetting(new ConfigSettingEventArgs(optionId, type, value, index));
         }
 
         private void DecodeSystemCommand(Command cmdReceived)
@@ -808,14 +808,14 @@ namespace URY.BAPS.Client.Common
                         var directoryIndex = cmdReceived.SystemValue();
                         var index = _cs.ReceiveI();
                         var description = _cs.ReceiveS();
-                        OnDirectoryFileAdd(new Updates.DirectoryFileAddEventArgs(directoryIndex, index, description));
+                        OnDirectoryFileAdd(new DirectoryFileAddEventArgs(directoryIndex, index, description));
                     }
                     else
                     {
                         var directoryIndex = cmdReceived.SystemValue();
                         _ = _cs.ReceiveI();
                         var niceDirectoryName = _cs.ReceiveS();
-                        OnDirectoryPrepare(new Updates.DirectoryPrepareEventArgs(directoryIndex, niceDirectoryName));
+                        OnDirectoryPrepare(new DirectoryPrepareEventArgs(directoryIndex, niceDirectoryName));
                     }
 
                     break;
@@ -847,14 +847,14 @@ namespace URY.BAPS.Client.Common
                     break;
                 case Command.ScrollText:
                 {
-                    var upDown = cmdReceived.SystemValue() == 0 ? Updates.UpDown.Down : Updates.UpDown.Up;
-                    OnTextSetting(new Updates.TextSettingEventArgs(Updates.TextSetting.Scroll, upDown));
+                    var upDown = cmdReceived.SystemValue() == 0 ? UpDown.Down : UpDown.Up;
+                    OnTextSetting(new TextSettingEventArgs(Events.TextSetting.Scroll, upDown));
                 }
                     break;
                 case Command.TextSize:
                 {
-                    var upDown = cmdReceived.SystemValue() == 0 ? Updates.UpDown.Down : Updates.UpDown.Up;
-                    OnTextSetting(new Updates.TextSettingEventArgs(Updates.TextSetting.FontSize, upDown));
+                    var upDown = cmdReceived.SystemValue() == 0 ? UpDown.Down : UpDown.Up;
+                    OnTextSetting(new TextSettingEventArgs(Events.TextSetting.FontSize, upDown));
                 }
                     break;
                 case Command.Quit:
@@ -870,16 +870,16 @@ namespace URY.BAPS.Client.Common
             }
         }
 
-        private void DecodeCount(Updates.CountType type, uint extra = 0)
+        private void DecodeCount(CountType type, uint extra = 0)
         {
             var count = _cs.ReceiveI();
-            OnIncomingCount(new Updates.CountEventArgs {Count = count, Type = type, Extra = extra});
+            OnIncomingCount(new CountEventArgs {Count = count, Type = type, Extra = extra});
         }
 
-        private void DecodeError(Updates.ErrorType type, byte errorCode)
+        private void DecodeError(ErrorType type, byte errorCode)
         {
             var description = _cs.ReceiveS();
-            OnError(new Updates.ErrorEventArgs {Type = type, Code = errorCode, Description = description});
+            OnError(new ErrorEventArgs {Type = type, Code = errorCode, Description = description});
         }
 
         #endregion Command decoding

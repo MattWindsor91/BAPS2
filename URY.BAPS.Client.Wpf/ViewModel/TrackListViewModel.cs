@@ -58,7 +58,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         ///     track.
         /// </para>
         /// <param name="args"></param>
-        private void HandleTrackLoad(Updates.TrackLoadEventArgs args)
+        private void HandleTrackLoad(TrackLoadEventArgs args)
         {
             // Text-item loads are handled differently from other loads;
             // they don't change the loaded track or the track-list
@@ -142,22 +142,22 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         // NB: Anything involving the TrackList has to be done on the
         // UI thread, hence the use of Dispatcher.
 
-        private void HandleItemAdd(Updates.TrackAddEventArgs e)
+        private void HandleItemAdd(TrackAddEventArgs e)
         {
             DispatcherHelper.CheckBeginInvokeOnUI(() => Tracks.Add(new TrackViewModel(e.Item)));
         }
 
-        private void HandleItemMove(Updates.TrackMoveEventArgs e)
+        private void HandleItemMove(TrackMoveEventArgs e)
         {
             DispatcherHelper.CheckBeginInvokeOnUI(() => Tracks.Move((int) e.Index, (int) e.NewIndex));
         }
 
-        private void HandleItemDelete(Updates.TrackDeleteEventArgs e)
+        private void HandleItemDelete(TrackDeleteEventArgs e)
         {
             DispatcherHelper.CheckBeginInvokeOnUI(() => Tracks.RemoveAt((int) e.Index));
         }
 
-        private void HandleResetPlaylist(Updates.PlaylistResetEventArgs e)
+        private void HandleResetPlaylist(PlaylistResetEventArgs e)
         {
             // TODO(@MattWindsor91): this should probably _not_ clear the loaded item
             DispatcherHelper.CheckBeginInvokeOnUI(() => Tracks.Clear());

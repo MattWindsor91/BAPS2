@@ -63,7 +63,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         [NotNull]
         [Pure]
         private IObservable<TResult> OnThisDirectory<TResult>(IObservable<TResult> source)
-            where TResult : DirectoryEventArgs
+            where TResult : DirectoryEventArgsBase
         {
             return from ev in source where ev.DirectoryId == DirectoryId select ev;
         }
@@ -81,7 +81,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             foreach (var subscription in _subscriptions) subscription.Dispose();
         }
 
-        private void HandleDirectoryFileAdd(Updates.DirectoryFileAddEventArgs e)
+        private void HandleDirectoryFileAdd(DirectoryFileAddEventArgs e)
         {
             var entry = new DirectoryEntry(DirectoryId, e.Description);
             DispatcherHelper.CheckBeginInvokeOnUI(() => Files.Insert((int) e.Index, entry));
@@ -97,7 +97,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         ///     </para>
         /// </summary>
         /// <param name="e">The server update payload.</param>
-        private void HandleDirectoryPrepare(Updates.DirectoryPrepareEventArgs e)
+        private void HandleDirectoryPrepare(DirectoryPrepareEventArgs e)
         {
             Name = e.Name;
             DispatcherHelper.CheckBeginInvokeOnUI(Files.Clear);

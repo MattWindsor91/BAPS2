@@ -10,30 +10,30 @@ namespace URY.BAPS.Client.Common
 {
     public partial class ClientCore
     {
-        [NotNull] private readonly Subject<Updates.CountEventArgs> _incomingCount =
-            new Subject<Updates.CountEventArgs>();
+        [NotNull] private readonly Subject<CountEventArgs> _incomingCount =
+            new Subject<CountEventArgs>();
 
-        [NotNull] private readonly Subject<Updates.ConfigChoiceEventArgs> _observeConfigChoice =
-            new Subject<Updates.ConfigChoiceEventArgs>();
+        [NotNull] private readonly Subject<ConfigChoiceEventArgs> _observeConfigChoice =
+            new Subject<ConfigChoiceEventArgs>();
 
-        [NotNull] private readonly Subject<Updates.ConfigOptionEventArgs> _observeConfigOption =
-            new Subject<Updates.ConfigOptionEventArgs>();
+        [NotNull] private readonly Subject<ConfigOptionEventArgs> _observeConfigOption =
+            new Subject<ConfigOptionEventArgs>();
 
         [NotNull]
         private readonly Subject<(Command cmdReceived, uint optionID, ConfigResult result)> _observeConfigResult =
             new Subject<(Command cmdReceived, uint optionID, ConfigResult result)>();
 
-        [NotNull] private readonly Subject<Updates.ConfigSettingEventArgs> _observeConfigSetting =
-            new Subject<Updates.ConfigSettingEventArgs>();
+        [NotNull] private readonly Subject<ConfigSettingEventArgs> _observeConfigSetting =
+            new Subject<ConfigSettingEventArgs>();
 
-        [NotNull] private readonly Subject<Updates.DirectoryFileAddEventArgs> _observeDirectoryFileAdd =
-            new Subject<Updates.DirectoryFileAddEventArgs>();
+        [NotNull] private readonly Subject<DirectoryFileAddEventArgs> _observeDirectoryFileAdd =
+            new Subject<DirectoryFileAddEventArgs>();
 
-        [NotNull] private readonly Subject<Updates.DirectoryPrepareEventArgs> _observeDirectoryPrepare =
-            new Subject<Updates.DirectoryPrepareEventArgs>();
+        [NotNull] private readonly Subject<DirectoryPrepareEventArgs> _observeDirectoryPrepare =
+            new Subject<DirectoryPrepareEventArgs>();
 
         [NotNull]
-        private readonly Subject<Updates.ErrorEventArgs> _observeError = new Subject<Updates.ErrorEventArgs>();
+        private readonly Subject<ErrorEventArgs> _observeError = new Subject<ErrorEventArgs>();
 
         [NotNull] private readonly Subject<(Command cmdReceived, string ipAddress, uint mask)> _observeIpRestriction =
             new Subject<(Command cmdReceived, string ipAddress, uint mask)>();
@@ -45,37 +45,37 @@ namespace URY.BAPS.Client.Common
         [NotNull] private readonly Subject<(uint listingID, uint channelID, string description)> _observeListingResult =
             new Subject<(uint listingID, uint channelID, string description)>();
 
-        [NotNull] private readonly Subject<Updates.MarkerEventArgs> _observeMarker =
-            new Subject<Updates.MarkerEventArgs>();
+        [NotNull] private readonly Subject<MarkerEventArgs> _observeMarker =
+            new Subject<MarkerEventArgs>();
 
         [NotNull] private readonly Subject<(uint permissionCode, string description)> _observePermission =
             new Subject<(uint permissionCode, string description)>();
 
-        [NotNull] private readonly Subject<Updates.PlayerStateEventArgs> _observePlayerState =
-            new Subject<Updates.PlayerStateEventArgs>();
+        [NotNull] private readonly Subject<PlayerStateEventArgs> _observePlayerState =
+            new Subject<PlayerStateEventArgs>();
 
-        [NotNull] private readonly Subject<Updates.PlaylistResetEventArgs> _observePlaylistReset =
-            new Subject<Updates.PlaylistResetEventArgs>();
+        [NotNull] private readonly Subject<PlaylistResetEventArgs> _observePlaylistReset =
+            new Subject<PlaylistResetEventArgs>();
 
         [NotNull] private readonly Subject<bool> _observeServerQuit = new Subject<bool>();
 
         [NotNull] private readonly Subject<(uint showID, string description)> _observeShowResult =
             new Subject<(uint showID, string description)>();
 
-        [NotNull] private readonly Subject<Updates.TextSettingEventArgs> _observeTextSetting =
-            new Subject<Updates.TextSettingEventArgs>();
+        [NotNull] private readonly Subject<TextSettingEventArgs> _observeTextSetting =
+            new Subject<TextSettingEventArgs>();
 
-        [NotNull] private readonly Subject<Updates.TrackAddEventArgs> _observeTrackAdd =
-            new Subject<Updates.TrackAddEventArgs>();
+        [NotNull] private readonly Subject<TrackAddEventArgs> _observeTrackAdd =
+            new Subject<TrackAddEventArgs>();
 
-        [NotNull] private readonly Subject<Updates.TrackDeleteEventArgs> _observeTrackDelete =
-            new Subject<Updates.TrackDeleteEventArgs>();
+        [NotNull] private readonly Subject<TrackDeleteEventArgs> _observeTrackDelete =
+            new Subject<TrackDeleteEventArgs>();
 
-        [NotNull] private readonly Subject<Updates.TrackLoadEventArgs> _observeTrackLoad =
-            new Subject<Updates.TrackLoadEventArgs>();
+        [NotNull] private readonly Subject<TrackLoadEventArgs> _observeTrackLoad =
+            new Subject<TrackLoadEventArgs>();
 
-        [NotNull] private readonly Subject<Updates.TrackMoveEventArgs> _observeTrackMove =
-            new Subject<Updates.TrackMoveEventArgs>();
+        [NotNull] private readonly Subject<TrackMoveEventArgs> _observeTrackMove =
+            new Subject<TrackMoveEventArgs>();
 
         [NotNull] private readonly Subject<(Command command, string description)> _observeUnknownCommand =
             new Subject<(Command command, string description)>();
@@ -90,36 +90,36 @@ namespace URY.BAPS.Client.Common
 
         [NotNull] private readonly IList<IDisposable> _receiverSubscriptions = new List<IDisposable>();
 
-        public IObservable<Updates.CountEventArgs> ObserveIncomingCount => _incomingCount;
+        public IObservable<CountEventArgs> ObserveIncomingCount => _incomingCount;
 
-        public IObservable<Updates.ConfigChoiceEventArgs> ObserveConfigChoice => _observeConfigChoice;
+        public IObservable<ConfigChoiceEventArgs> ObserveConfigChoice => _observeConfigChoice;
 
-        public IObservable<Updates.ConfigOptionEventArgs> ObserveConfigOption => _observeConfigOption;
+        public IObservable<ConfigOptionEventArgs> ObserveConfigOption => _observeConfigOption;
 
-        public IObservable<Updates.ConfigSettingEventArgs> ObserveConfigSetting => _observeConfigSetting;
+        public IObservable<ConfigSettingEventArgs> ObserveConfigSetting => _observeConfigSetting;
 
         public IObservable<(Command cmdReceived, uint optionID, ConfigResult result)> ObserveConfigResult =>
             _observeConfigResult;
 
-        public IObservable<Updates.DirectoryFileAddEventArgs> ObserveDirectoryFileAdd => _observeDirectoryFileAdd;
+        public IObservable<DirectoryFileAddEventArgs> ObserveDirectoryFileAdd => _observeDirectoryFileAdd;
 
-        public IObservable<Updates.DirectoryPrepareEventArgs> ObserveDirectoryPrepare => _observeDirectoryPrepare;
+        public IObservable<DirectoryPrepareEventArgs> ObserveDirectoryPrepare => _observeDirectoryPrepare;
 
-        public IObservable<Updates.PlayerStateEventArgs> ObservePlayerState => _observePlayerState;
+        public IObservable<PlayerStateEventArgs> ObservePlayerState => _observePlayerState;
 
-        public IObservable<Updates.MarkerEventArgs> ObserveMarker => _observeMarker;
+        public IObservable<MarkerEventArgs> ObserveMarker => _observeMarker;
 
-        public IObservable<Updates.TrackLoadEventArgs> ObserveTrackLoad => _observeTrackLoad;
+        public IObservable<TrackLoadEventArgs> ObserveTrackLoad => _observeTrackLoad;
 
-        public IObservable<Updates.TrackAddEventArgs> ObserveTrackAdd => _observeTrackAdd;
+        public IObservable<TrackAddEventArgs> ObserveTrackAdd => _observeTrackAdd;
 
-        public IObservable<Updates.TrackDeleteEventArgs> ObserveTrackDelete => _observeTrackDelete;
+        public IObservable<TrackDeleteEventArgs> ObserveTrackDelete => _observeTrackDelete;
 
-        public IObservable<Updates.TrackMoveEventArgs> ObserveTrackMove => _observeTrackMove;
+        public IObservable<TrackMoveEventArgs> ObserveTrackMove => _observeTrackMove;
 
-        public IObservable<Updates.PlaylistResetEventArgs> ObservePlaylistReset => _observePlaylistReset;
+        public IObservable<PlaylistResetEventArgs> ObservePlaylistReset => _observePlaylistReset;
 
-        public IObservable<Updates.ErrorEventArgs> ObserveError => _observeError;
+        public IObservable<ErrorEventArgs> ObserveError => _observeError;
 
         public IObservable<bool> ObserveServerQuit => _observeServerQuit;
 
@@ -138,7 +138,7 @@ namespace URY.BAPS.Client.Common
 
         public IObservable<(uint showID, string description)> ObserveShowResult => _observeShowResult;
 
-        public IObservable<Updates.TextSettingEventArgs> ObserveTextSetting => _observeTextSetting;
+        public IObservable<TextSettingEventArgs> ObserveTextSetting => _observeTextSetting;
 
         public IObservable<(Command command, string description)> ObserveUnknownCommand => _observeUnknownCommand;
 

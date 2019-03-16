@@ -223,12 +223,12 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             foreach (var subscription in _subscriptions) subscription.Dispose();
         }
 
-        private void HandlePlayerState(Updates.PlayerStateEventArgs id)
+        private void HandlePlayerState(PlayerStateEventArgs id)
         {
             State = id.State;
         }
 
-        private void HandleMarker(Updates.MarkerEventArgs args)
+        private void HandleMarker(MarkerEventArgs args)
         {
             switch (args.Marker)
             {
@@ -275,7 +275,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             IntroPosition = 0;
         }
 
-        private void HandleTrackLoad(Updates.TrackLoadEventArgs args)
+        private void HandleTrackLoad(TrackLoadEventArgs args)
         {
             if (args.ChannelId != ChannelId) return;
             var track = args.Track;

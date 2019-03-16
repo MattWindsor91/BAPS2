@@ -30,7 +30,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         /// <returns></returns>
         [Pure]
         protected IObservable<TResult> OnThisChannel<TResult>(IObservable<TResult> source)
-            where TResult : ChannelEventArgs
+            where TResult : ChannelEventArgsBase
         {
             return from ev in source where ev.ChannelId == ChannelId select ev;
         }

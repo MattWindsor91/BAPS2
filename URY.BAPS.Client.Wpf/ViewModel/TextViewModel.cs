@@ -78,9 +78,9 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             updater.ObserveTextSetting.Subscribe(OnTextSetting);
         }
 
-        private void AdjustFontSize(Updates.UpDown direction)
+        private void AdjustFontSize(UpDown direction)
         {
-            var delta = direction == Updates.UpDown.Up ? 1 : -1;
+            var delta = direction == UpDown.Up ? 1 : -1;
             DispatcherHelper.CheckBeginInvokeOnUI(() => FontSize += delta);
         }
 
@@ -93,7 +93,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         ///     </para>
         /// </summary>
         /// <param name="args">Information about the newly-loaded track.</param>
-        private void OnTrackLoad(Updates.TrackLoadEventArgs args)
+        private void OnTrackLoad(TrackLoadEventArgs args)
         {
             if (!args.Track.IsTextItem) return;
             Text = args.Track.Text;
@@ -103,14 +103,14 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         ///     Observes a text setting change from the server.
         /// </summary>
         /// <param name="args">Information about the text setting change.</param>
-        private void OnTextSetting(Updates.TextSettingEventArgs args)
+        private void OnTextSetting(TextSettingEventArgs args)
         {
             switch (args.Setting)
             {
-                case Updates.TextSetting.FontSize:
+                case TextSetting.FontSize:
                     AdjustFontSize(args.Direction);
                     break;
-                case Updates.TextSetting.Scroll:
+                case TextSetting.Scroll:
                     // TODO(@MattWindsor91): handle scroll somehow.
                     break;
                 default:
