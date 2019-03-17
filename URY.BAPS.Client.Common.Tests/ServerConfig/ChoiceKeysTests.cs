@@ -1,30 +1,42 @@
-using NUnit.Framework;
 using URY.BAPS.Client.Common.ServerConfig;
+using Xunit;
 
 namespace URY.BAPS.Client.Common.Tests.ServerConfig
 {
     /// <summary>
     ///     Tests various <see cref="ChoiceKeys" /> extensions and related code.
     /// </summary>
-    [TestFixture]
     public class ChoiceKeysTests
     {
         /// <summary>
         ///     Tests that <code>false</code> maps to <see cref="ChoiceKeys.No" />.
         /// </summary>
-        [Test]
+        [Fact]
         public void TestBooleanToChoice_FalseIsNo()
         {
-            Assert.That(ChoiceKeys.BooleanToChoice(false), Is.EqualTo(ChoiceKeys.No));
+            Assert.Equal(ChoiceKeys.No, ChoiceKeys.BooleanToChoice(false));
         }
 
         /// <summary>
         ///     Tests that <code>true</code> maps to <see cref="ChoiceKeys.Yes" />.
         /// </summary>
-        [Test]
+        [Fact]
         public void TestBooleanToChoice_TrueIsYes()
         {
-            Assert.That(ChoiceKeys.BooleanToChoice(true), Is.EqualTo(ChoiceKeys.Yes));
+            Assert.Equal(ChoiceKeys.Yes, ChoiceKeys.BooleanToChoice(true));
+        }
+
+        public static TheoryData<bool> FallbackData => new TheoryData<bool> { true, false };
+
+        public static TheoryData<string, bool> InvalidChoiceData {
+            get {
+                var data = new TheoryData<string, bool>();
+                foreach (var choice in new[]{"", ChoiceKeys.RepeatAll, "いいえ"})
+                {
+                    foreach (var fallback in new[] { true, false }) data.Add(choice, fallback);
+                }
+                return data;
+            }
         }
 
         /// <summary>
@@ -33,12 +45,10 @@ namespace URY.BAPS.Client.Common.Tests.ServerConfig
         /// </summary>
         /// <param name="input">The input to test against.</param>
         /// <param name="fallback">The fallback to test against.</param>
-        [Test]
-        [Combinatorial]
-        public void TestChoiceToBoolean_AnythingElseIsFallback([Values("", ChoiceKeys.RepeatAll, "いいえ")]
-            string input, [Values(true, false)] bool fallback)
+        [Theory, MemberData(nameof(InvalidChoiceData))]
+        public void TestChoiceToBoolean_AnythingElseIsFallback(string input, bool fallback)
         {
-            Assert.That(ChoiceKeys.ChoiceToBoolean(input, fallback), Is.EqualTo(fallback));
+            Assert.Equal(fallback, ChoiceKeys.ChoiceToBoolean(input, fallback));
         }
 
         /// <summary>
@@ -46,10 +56,10 @@ namespace URY.BAPS.Client.Common.Tests.ServerConfig
         ///     returns <code>false</code>.
         /// </summary>
         /// <param name="fallback">The fallback to test against.</param>
-        [Test]
-        public void TestChoiceToBoolean_NoIsFalse([Values(true, false)] bool fallback)
+        [Theory, MemberData(nameof(FallbackData))]
+        public void TestChoiceToBoolean_NoIsFalse(bool fallback)
         {
-            Assert.That(ChoiceKeys.ChoiceToBoolean(ChoiceKeys.No, fallback), Is.False);
+            Assert.False(ChoiceKeys.ChoiceToBoolean(ChoiceKeys.No, fallback));
         }
 
         /// <summary>
@@ -57,10 +67,10 @@ namespace URY.BAPS.Client.Common.Tests.ServerConfig
         ///     returns <code>true</code>.
         /// </summary>
         /// <param name="fallback">The fallback to test against.</param>
-        [Test]
-        public void TestChoiceToBoolean_YesIsTrue([Values(true, false)] bool fallback)
+        [Theory, MemberData(nameof(FallbackData))]
+        public void TestChoiceToBoolean_YesIsTrue(bool fallback)
         {
-            Assert.That(ChoiceKeys.ChoiceToBoolean(ChoiceKeys.Yes, fallback), Is.True);
+            Assert.True(ChoiceKeys.ChoiceToBoolean(ChoiceKeys.Yes, fallback));
         }
     }
 }

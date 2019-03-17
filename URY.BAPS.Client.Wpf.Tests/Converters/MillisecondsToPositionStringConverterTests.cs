@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 using URY.BAPS.Client.Common.Utils;
 using URY.BAPS.Client.Wpf.Converters;
 using Xunit;
@@ -19,23 +18,21 @@ namespace URY.BAPS.Client.Wpf.Tests.Converters
             new MillisecondsToPositionStringConverter();
 
         /// <summary>
-        ///     Data for <see cref="ConvertGivesExpectedResult"/>.
+        ///     Data for <see cref="ConvertGivesExpectedResult" />.
         /// </summary>
-        public class ConvertGivesExpectedResultData : TheoryData<ushort, ushort, ushort, string>
-        {
-            public ConvertGivesExpectedResultData()
+        public static TheoryData<ushort, ushort, ushort, string> ConvertGivesExpectedResultData =>
+            new TheoryData<ushort, ushort, ushort, string>
             {
-                Add(0, 0, 0, "   00:00");
-                Add(0, 0, 1, "   00:01");
-                Add(0, 0, 59, "   00:59");
-                Add(0, 1, 0, "   01:00");
-                Add(0, 59, 59, "   59:59");
-                Add(1, 0, 0, " 1:00:00");
-                Add(1, 2, 3, " 1:02:03");
-                Add(20, 0, 0, "20:00:00");
-                Add(100, 0, 0, MillisecondsToPositionStringConverter.Indeterminate);
-            }
-        }
+                {0, 0, 0, "   00:00"},
+                {0, 0, 1, "   00:01"},
+                {0, 0, 59, "   00:59"},
+                {0, 1, 0, "   01:00"},
+                {0, 59, 59, "   59:59"},
+                {1, 0, 0, " 1:00:00"},
+                {1, 2, 3, " 1:02:03"},
+                {20, 0, 0, "20:00:00"},
+                {100, 0, 0, MillisecondsToPositionStringConverter.Indeterminate}
+            };
 
         /// <summary>
         ///     Checks whether converting a uint to a position string works as expected.
@@ -45,27 +42,13 @@ namespace URY.BAPS.Client.Wpf.Tests.Converters
         /// <param name="s">The number of seconds to input.</param>
         /// <param name="expected">The expected result.</param>
         [Theory]
-        [ClassData(typeof(ConvertGivesExpectedResultData))]
-
+        [MemberData(nameof(ConvertGivesExpectedResultData))]
         public void ConvertGivesExpectedResult(int h, int m, int s, string expected)
         {
-            var input = Time.BuildMilliseconds((ushort)h, (ushort)m, (ushort)s);
+            var input = Time.BuildMilliseconds((ushort) h, (ushort) m, (ushort) s);
             var output = _conv.Convert(input, typeof(string), null, null);
             var outputStr = Assert.IsAssignableFrom<string>(output);
             Assert.Equal(expected, outputStr);
-        }
-
-        /// <summary>
-        ///     Data for <see cref="ConvertHandlesInvalidTypeCorrectly"/>.
-        /// </summary>
-        public class ConvertHandlesInvalidTypeCorrectlyData : TheoryData<object>
-        {
-            public ConvertHandlesInvalidTypeCorrectlyData()
-            {
-                Add("not an integer!");
-                Add(3.14159);
-                Add(new[] {2, 4, 6, 8});
-            }
         }
 
         /// <summary>
@@ -79,6 +62,19 @@ namespace URY.BAPS.Client.Wpf.Tests.Converters
             var output = _conv.Convert(input, typeof(string), null, null);
             var outputStr = Assert.IsAssignableFrom<string>(output);
             Assert.Equal(MillisecondsToPositionStringConverter.Indeterminate, outputStr);
+        }
+
+        /// <summary>
+        ///     Data for <see cref="ConvertHandlesInvalidTypeCorrectly" />.
+        /// </summary>
+        public class ConvertHandlesInvalidTypeCorrectlyData : TheoryData<object>
+        {
+            public ConvertHandlesInvalidTypeCorrectlyData()
+            {
+                Add("not an integer!");
+                Add(3.14159);
+                Add(new[] {2, 4, 6, 8});
+            }
         }
     }
 }

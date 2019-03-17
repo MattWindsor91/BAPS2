@@ -1,27 +1,27 @@
-﻿using NUnit.Framework;
-using URY.BAPS.Client.Common.Utils;
+﻿using URY.BAPS.Client.Common.Utils;
+using Xunit;
 
 namespace URY.BAPS.Client.Common.Tests
 {
     /// <summary>
     ///     Tests for the <see cref="Time" /> static class.
     /// </summary>
-    internal class TimeUtilsTests
+    public class TimeUtilsTests
     {
-        [Test]
-        public void TestMillisecondsToTimeString()
+        public static TheoryData<ushort, ushort, ushort, string> MillisecondsToTimeStringData =>
+            new TheoryData<ushort, ushort, ushort, string>
+            {
+                {1, 2, 3, "1:02:03"},
+                {21, 42, 53, "21:42:53"},
+                {0, 0, 0, "00:00"},
+                {100, 0, 0, "100:00:00"}
+            };
+
+        [Theory, MemberData(nameof(MillisecondsToTimeStringData))]
+        public void TestMillisecondsToTimeString(ushort hours, ushort minutes, ushort seconds, string expected)
         {
-            var time1 = Time.BuildMilliseconds(1, 2, 3);
-            Assert.That(Time.MillisecondsToTimeString(time1), Is.EqualTo("1:02:03"));
-
-            var time2 = Time.BuildMilliseconds(21, 42, 53);
-            Assert.That(Time.MillisecondsToTimeString(time2), Is.EqualTo("21:42:53"));
-
-            var time3 = Time.BuildMilliseconds(0, 0, 0);
-            Assert.That(Time.MillisecondsToTimeString(time3), Is.EqualTo("00:00"));
-
-            var time4 = Time.BuildMilliseconds(100, 0, 0);
-            Assert.That(Time.MillisecondsToTimeString(time4), Is.EqualTo("100:00:00"));
+            var time = Time.BuildMilliseconds(hours, minutes, seconds);
+            Assert.Equal(expected, Time.MillisecondsToTimeString(time));
         }
     }
 }

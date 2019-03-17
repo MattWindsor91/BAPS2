@@ -1,146 +1,116 @@
-﻿using System.Text;
-using NUnit.Framework;
+﻿using System;
+using System.Text;
 using URY.BAPS.Client.Common.BapsNet;
+using Xunit;
 
 namespace URY.BAPS.Client.Common.Tests.BapsNet
 {
     /// <summary>
     ///     Tests that <see cref="Message" />'s construction and sending methods behave properly.
     /// </summary>
-    [TestFixture]
     public class MessageTests
     {
-        [SetUp]
-        public void SetUp()
+        private void AssertMessage(Message message, Command expectedCommand, uint expectedLength,
+            params Action<object>[] elementInspectors)
         {
-            _sink.Clear();
+            var sink = new DebugSink();
+            message.Send(sink);
+
+            var finalElementInspectors = new Action<object>[elementInspectors.Length + 2];
+            finalElementInspectors[0] = actualCmd =>
+                Assert.Equal(expectedCommand, Assert.IsAssignableFrom<Command>(actualCmd));
+            finalElementInspectors[1] = length =>
+                Assert.Equal(expectedLength, Assert.IsAssignableFrom<uint>(length));
+            Array.Copy(elementInspectors, 0, finalElementInspectors, 2, elementInspectors.Length);
+
+            Assert.Collection(sink.Items, finalElementInspectors);
         }
 
-        /// <summary>
-        ///     A sink that just collects the raw BapsNet primitives sent to it.
-        /// </summary>
-        private readonly DebugSink _sink = new DebugSink();
+        private void AssertEqualUint(uint expected, object actual)
+        {
+            var actualUint = Assert.IsAssignableFrom<uint>(actual);
+            Assert.Equal(expected, actualUint);
+        }
 
         /// <summary>
         ///     Tests sending a command with a floating-point argument.
         /// </summary>
-        [Test]
+        [Fact]
         public void TestFloatChannelCommandSend()
         {
             const Command cmd = Command.Playback | Command.Volume;
             const float value = 0.75f;
 
             var m = new Message(cmd).Add(value);
-            m.Send(_sink);
-
-            var result = _sink.Items;
-            Assert.That(result, Has.Length.EqualTo(3));
-
-            var actualCmd = result[0];
-            Assert.That(actualCmd, Is.InstanceOf<Command>().And.EqualTo(cmd));
 
             // Floats are 32-bit, so the length should be 4.
-            var length = result[1];
-            Assert.That(length, Is.InstanceOf<uint>().And.EqualTo(4));
+            const uint expectedLength = 4;
 
-            var actualValue = result[2];
-            Assert.That(actualValue, Is.InstanceOf<float>().And.EqualTo(value).Within(1).Percent);
+            AssertMessage(m, cmd, expectedLength, actualValue => Assert.Equal(value, Assert.IsAssignableFrom<float>(actualValue), 2));
         }
 
-        [Test]
-        [Combinatorial]
-        public void TestStringSystemCommandSend([Values("", "The system is down.", "バップス")]
-            string value)
+        public static TheoryData<string> StringSystemCommandSendData =>
+            new TheoryData<string> {"", "The system is down.", "バップス"};
+
+        [Theory, MemberData(nameof(StringSystemCommandSendData))]
+        public void TestStringSystemCommandSend(string value)
         {
             const Command cmd = Command.System | Command.SendLogMessage;
-
-            var m = new Message(cmd).Add(value);
-            m.Send(_sink);
-
-            var result = _sink.Items;
-            Assert.That(result, Has.Length.EqualTo(3));
-
-            var actualCmd = result[0];
-            Assert.That(actualCmd, Is.InstanceOf<Command>().And.EqualTo(cmd));
 
             // Strings are UTF-8, so the command length is equal to the number of UTF-8 bytes in the value, plus four
             // characters for the on-wire representation of the string's length.
             var valueLength = Encoding.UTF8.GetByteCount(value);
-            var length = result[1];
-            Assert.That(length, Is.InstanceOf<uint>().And.EqualTo(valueLength + 4));
+            var expectedLength = (uint)valueLength + 4;
 
-            var actualValue = result[2];
-            Assert.That(actualValue, Is.InstanceOf<string>().And.EqualTo(value));
+            var m = new Message(cmd).Add(value);
+
+            AssertMessage(m, cmd, expectedLength,
+            actualValue => Assert.Equal(value, Assert.IsAssignableFrom<string>(actualValue)));
         }
 
         /// <summary>
         ///     Tests sending a command with an unsigned integer argument.
         /// </summary>
-        [Test]
+        [Fact]
         public void TestU32ChannelCommandSend()
         {
             const Command cmd = Command.Playback | Command.CuePosition;
             const uint value = 3600;
 
             var m = new Message(cmd).Add(value);
-            m.Send(_sink);
-
-            var result = _sink.Items;
-            Assert.That(result, Has.Length.EqualTo(3));
-
-            var actualCmd = result[0];
-            Assert.That(actualCmd, Is.InstanceOf<Command>().And.EqualTo(cmd));
 
             // Being one 32-bit argument, the length should be 4.
-            var length = result[1];
-            Assert.That(length, Is.InstanceOf<uint>().And.EqualTo(4));
+            const uint expectedLength = 4;
 
-            var actualValue = result[2];
-            Assert.That(actualValue, Is.InstanceOf<uint>().And.EqualTo(value));
+            AssertMessage(m, cmd, expectedLength, 
+            actualValue => AssertEqualUint(value, actualValue));
         }
 
         /// <summary>
         ///     Tests sending a command with zero trailing arguments, but an inline channel argument.
         /// </summary>
-        [Test]
+        [Fact]
         public void TestZeroArgumentChannelCommandSend()
         {
             var cmd = (Command.Playback | Command.Play).WithChannel(42);
-
             var m = new Message(cmd);
-            m.Send(_sink);
-
-            var result = _sink.Items;
-            Assert.That(result, Has.Length.EqualTo(2));
-
-            var actualCmd = result[0];
-            Assert.That(actualCmd, Is.InstanceOf<Command>().And.EqualTo(cmd));
-
-            var length = result[1];
-            Assert.That(length, Is.InstanceOf<uint>().And.EqualTo(0));
+            // Even zero-argument commands have a trailing length (of 0).
+            const uint expectedLength = 0;
+            AssertMessage(m, cmd, expectedLength);
         }
 
 
         /// <summary>
         ///     Tests sending a command with zero arguments.
         /// </summary>
-        [Test]
+        [Fact]
         public void TestZeroArgumentCommandSend()
         {
             const Command cmd = Command.System | Command.Quit;
-
             var m = new Message(cmd);
-            m.Send(_sink);
-
-            var result = _sink.Items;
-            Assert.That(result, Has.Length.EqualTo(2));
-
-            var actualCmd = result[0];
-            Assert.That(actualCmd, Is.InstanceOf<Command>().And.EqualTo(cmd));
-
             // Even zero-argument commands have a trailing length (of 0).
-            var length = result[1];
-            Assert.That(length, Is.InstanceOf<uint>().And.EqualTo(0));
+            const uint expectedLength = 0;
+            AssertMessage(m, cmd, expectedLength);
         }
     }
 }
