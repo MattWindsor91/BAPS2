@@ -13,31 +13,31 @@ namespace URY.BAPS.Client.Common
     {
         [ItemNotNull] [NotNull] private readonly BlockingCollection<Message> _queue = new BlockingCollection<Message>();
 
-        [NotNull] private readonly ClientSocket _socket;
+        [NotNull] private readonly ISink _sink;
         private readonly CancellationToken _token;
 
         /// <summary>
         ///     Constructs a new <see cref="Sender" />.
         /// </summary>
+        /// <param name="sink">
+        ///     The <see cref="ISink" /> that the <see cref="Sender" /> will
+        ///     send packed BapsNet messages on.
+        /// </param>
         /// <param name="token">
         ///     The cancellation token that the <see cref="Sender" /> will check
         ///     to see if it should shut down.
         /// </param>
-        /// <param name="socket">
-        ///     The <see cref="ClientSocket" /> that the <see cref="Sender" /> will
-        ///     send packed BapsNet messages on.
-        /// </param>
-        public Sender(CancellationToken token, ClientSocket socket)
+        public Sender(ISink sink, CancellationToken token)
         {
             _token = token;
-            _socket = socket ?? throw new ArgumentNullException(nameof(socket));
+            _sink = sink ?? throw new ArgumentNullException(nameof(sink));
         }
 
         /// <summary>
-        ///     Asynchronously sends a message through this <see cref="Sender" />.
+        ///     Queues up a message to send through this <see cref="Sender" />.
         /// </summary>
         /// <param name="message">The message to send.</param>
-        public void SendAsync([CanBeNull] Message message)
+        public void Enqueue([CanBeNull] Message message)
         {
             if (message != null) _queue.Add(message, _token);
         }
@@ -50,7 +50,7 @@ namespace URY.BAPS.Client.Common
             while (!_token.IsCancellationRequested)
             {
                 var msg = _queue.Take(_token);
-                msg.Send(_socket);
+                msg.Send(_sink);
             }
             _token.ThrowIfCancellationRequested();
         }

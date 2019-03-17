@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reactive.Linq;
 using System.Threading;
+using JetBrains.Annotations;
 using URY.BAPS.Client.Common.BapsNet;
 using URY.BAPS.Client.Common.Events;
 using URY.BAPS.Client.Common.Model;
@@ -10,12 +11,16 @@ using URY.BAPS.Client.Common.Updaters;
 namespace URY.BAPS.Client.Common
 {
     /// <summary>
-    ///     Listens on a <see cref="ClientSocket" /> for incoming BapsNet commands, decodes them, and sends server update
+    ///     Listens on an <see cref="ISource" /> for incoming BapsNet commands, decodes them, and sends server update
     ///     events.
     /// </summary>
     public class Receiver : IServerUpdater
     {
-        private readonly ClientSocket _cs;
+        /// <summary>
+        ///     The BapsNet connection on which we're receiving commands.
+        /// </summary>
+        [NotNull] private readonly ISource _bapsNet;
+
         private readonly CancellationToken _token;
         private IObservable<ConfigChoiceEventArgs> _observeConfigChoice;
         private IObservable<ConfigOptionEventArgs> _observeConfigOption;
@@ -45,9 +50,9 @@ namespace URY.BAPS.Client.Common
         private IObservable<(byte resultCode, string description)> _observeUserResult;
         private IObservable<VersionInfo> _observeVersion;
 
-        public Receiver(ClientSocket cs, CancellationToken token)
+        public Receiver([CanBeNull] ISource bapsNet, CancellationToken token)
         {
-            _cs = cs;
+            _bapsNet = bapsNet ?? throw new ArgumentNullException(nameof(bapsNet));
             _token = token;
         }
 
@@ -238,13 +243,36 @@ namespace URY.BAPS.Client.Common
         {
             while (!_token.IsCancellationRequested)
             {
-                var cmdReceived = _cs.ReceiveC();
+                var cmdReceived = ReceiveCommand();
                 DecodeCommand(cmdReceived);
             }
 
             _token.ThrowIfCancellationRequested();
         }
 
+        #region Shortcuts for receiving from the BapsNet connection
+
+        private Command ReceiveCommand()
+        {
+            return _bapsNet.ReceiveCommand(_token);
+        }
+
+        private string ReceiveString()
+        {
+            return _bapsNet.ReceiveString(_token);
+        }
+
+        private float ReceiveFloat()
+        {
+            return _bapsNet.ReceiveFloat(_token);
+        }
+
+        private uint ReceiveUint()
+        {
+            return _bapsNet.ReceiveUint(_token);
+        }
+
+        #endregion Shortcuts for receiving from the BapsNet connection
 
         public struct VersionInfo
         {
@@ -465,7 +493,7 @@ namespace URY.BAPS.Client.Common
 
         private void DecodeCommand(Command cmdReceived)
         {
-            _ /* length */ = _cs.ReceiveI();
+            _ /* length */ = ReceiveUint();
             switch (cmdReceived & Command.GroupMask)
             {
                 case Command.Playback:
@@ -505,7 +533,7 @@ namespace URY.BAPS.Client.Common
                 case Command.Volume:
                 {
                     // Deliberately ignore
-                    _ = _cs.ReceiveF();
+                    _ = ReceiveFloat();
                 }
                     break;
                 case Command.Load:
@@ -517,7 +545,7 @@ namespace URY.BAPS.Client.Common
                 case Command.CuePosition:
                 case Command.IntroPosition:
                 {
-                    var position = _cs.ReceiveI();
+                    var position = ReceiveUint();
                     OnMarker(new MarkerEventArgs(cmdReceived.Channel(), op.AsMarkerType(), position));
                 }
                     break;
@@ -529,15 +557,15 @@ namespace URY.BAPS.Client.Common
 
         private void DecodeLoad(ushort channelId)
         {
-            var index = _cs.ReceiveI();
-            var type = (TrackType) _cs.ReceiveI();
-            var description = _cs.ReceiveS();
+            var index = ReceiveUint();
+            var type = (TrackType)ReceiveUint();
+            var description = ReceiveString();
 
             var duration = 0U;
-            if (type.HasAudio()) duration = _cs.ReceiveI();
+            if (type.HasAudio()) duration = ReceiveUint();
 
             var text = "";
-            if (type.HasText()) text = _cs.ReceiveS();
+            if (type.HasText()) text = ReceiveString();
 
             var track = TrackFactory.Create(type, description, duration, text);
 
@@ -553,32 +581,32 @@ namespace URY.BAPS.Client.Common
                     if (cmdReceived.HasFlag(Command.PlaylistModeMask))
                     {
                         var channelId = cmdReceived.Channel();
-                        var index = _cs.ReceiveI();
-                        var type = (TrackType) _cs.ReceiveI();
-                        var description = _cs.ReceiveS();
+                        var index = ReceiveUint();
+                        var type = (TrackType) ReceiveUint();
+                        var description = ReceiveString();
                         var entry = TrackFactory.Create(type, description);
                         OnItemAdd(new TrackAddEventArgs(channelId, index, entry));
                     }
                     else
                     {
                         // Deliberately ignore?
-                        _ = _cs.ReceiveI();
+                        _ = ReceiveUint();
                     }
 
                     break;
                 case Command.MoveItemTo:
                 {
                     var channelId = cmdReceived.Channel();
-                    var indexFrom = _cs.ReceiveI();
-                    var indexTo = _cs.ReceiveI();
+                    var indexFrom = ReceiveUint();
+                    var indexTo = ReceiveUint();
                     OnItemMove(new TrackMoveEventArgs(channelId, indexFrom, indexTo));
                 }
                     break;
                 case Command.DeleteItem:
                 {
                     var channelId = cmdReceived.Channel();
-                    var index = _cs.ReceiveI();
-                    OnItemDelete(new TrackDeleteEventArgs(channelId, index));
+                    var index = ReceiveUint();
+                        OnItemDelete(new TrackDeleteEventArgs(channelId, index));
                 }
                     break;
                 case Command.ResetPlaylist:
@@ -602,8 +630,8 @@ namespace URY.BAPS.Client.Common
                     if (cmdReceived.HasFlag(Command.DatabaseModeMask))
                     {
                         var dirtyStatus = cmdReceived.DatabaseValue();
-                        var resultId = _cs.ReceiveI();
-                        var description = _cs.ReceiveS();
+                        var resultId = ReceiveUint();
+                            var description = ReceiveString();
                         OnLibraryResult(resultId, dirtyStatus, description);
                     }
                     else
@@ -621,8 +649,8 @@ namespace URY.BAPS.Client.Common
                 case Command.Show:
                     if (cmdReceived.HasFlag(Command.DatabaseModeMask))
                     {
-                        var showId = _cs.ReceiveI();
-                        var description = _cs.ReceiveS();
+                        var showId = ReceiveUint();
+                        var description = ReceiveString();
                         OnShowResult(showId, description);
                     }
                     else
@@ -634,9 +662,9 @@ namespace URY.BAPS.Client.Common
                 case Command.Listing:
                     if (cmdReceived.HasFlag(Command.DatabaseModeMask))
                     {
-                        var listingId = _cs.ReceiveI();
-                        var channelId = _cs.ReceiveI();
-                        var description = _cs.ReceiveS();
+                        var listingId = ReceiveUint();
+                        var channelId = ReceiveUint();
+                        var description = ReceiveString();
                         OnListingResult(listingId, channelId, description);
                     }
                     else
@@ -664,9 +692,9 @@ namespace URY.BAPS.Client.Common
                     {
                         var hasIndex = cmdReceived.HasFlag(Command.ConfigUseValueMask);
                         var index = cmdReceived.ConfigValue();
-                        var optionId = _cs.ReceiveI();
-                        var description = _cs.ReceiveS();
-                        var type = _cs.ReceiveI();
+                        var optionId = ReceiveUint();
+                        var description = ReceiveString();
+                        var type = ReceiveUint();
                         OnConfigOption(new ConfigOptionEventArgs(optionId, (ConfigType) type, description,
                             hasIndex,
                             index));
@@ -679,11 +707,11 @@ namespace URY.BAPS.Client.Common
                     break;
                 case Command.OptionChoice:
                 {
-                    var optionId = _cs.ReceiveI();
+                    var optionId = ReceiveUint();
                     if (cmdReceived.HasFlag(Command.ConfigModeMask))
                     {
-                        var choiceIndex = _cs.ReceiveI();
-                        var choiceDescription = _cs.ReceiveS();
+                        var choiceIndex = ReceiveUint();
+                        var choiceDescription = ReceiveString();
                         OnConfigChoice(new ConfigChoiceEventArgs(optionId, choiceIndex, choiceDescription));
                     }
                     else
@@ -696,20 +724,20 @@ namespace URY.BAPS.Client.Common
                 {
                     if (cmdReceived.HasFlag(Command.ConfigModeMask))
                     {
-                        var optionId = _cs.ReceiveI();
-                        var type = _cs.ReceiveI();
+                        var optionId = ReceiveUint();
+                        var type = ReceiveUint();
                         DecodeConfigSetting(cmdReceived, optionId, (ConfigType) type);
                     }
                     else
                     {
-                        _ = _cs.ReceiveI();
+                        _ = ReceiveUint();
                     }
                 }
                     break;
                 case Command.ConfigResult:
                 {
-                    var optionId = _cs.ReceiveI();
-                    var result = _cs.ReceiveI();
+                    var optionId = ReceiveUint();
+                    var result = ReceiveUint();
                     OnConfigResult(cmdReceived, optionId, (ConfigResult) result);
                 }
                     break;
@@ -720,8 +748,8 @@ namespace URY.BAPS.Client.Common
                 {
                     if (cmdReceived.HasFlag(Command.ConfigModeMask))
                     {
-                        var username = _cs.ReceiveS();
-                        var permissions = _cs.ReceiveI();
+                        var username = ReceiveString();
+                        var permissions = ReceiveUint();
                         OnUser(username, permissions);
                     }
                     else
@@ -734,8 +762,8 @@ namespace URY.BAPS.Client.Common
                 {
                     if (cmdReceived.HasFlag(Command.ConfigModeMask))
                     {
-                        var permissionCode = _cs.ReceiveI();
-                        var description = _cs.ReceiveS();
+                        var permissionCode = ReceiveUint();
+                        var description = ReceiveString();
                         OnPermission(permissionCode, description);
                     }
                     else
@@ -747,7 +775,7 @@ namespace URY.BAPS.Client.Common
                 case Command.UserResult:
                 {
                     var resultCode = cmdReceived.ConfigValue();
-                    var description = _cs.ReceiveS();
+                    var description = ReceiveString();
                     OnUserResult(resultCode, description);
                 }
                     break;
@@ -755,8 +783,8 @@ namespace URY.BAPS.Client.Common
                 {
                     if (cmdReceived.HasFlag(Command.ConfigModeMask))
                     {
-                        var ipAddress = _cs.ReceiveS();
-                        var mask = _cs.ReceiveI();
+                        var ipAddress = ReceiveString();
+                        var mask = ReceiveUint();
                         OnIpRestriction(cmdReceived, ipAddress, mask);
                     }
                     else
@@ -779,10 +807,10 @@ namespace URY.BAPS.Client.Common
             {
                 case ConfigType.Int:
                 case ConfigType.Choice:
-                    value = (int) _cs.ReceiveI();
+                    value = (int) ReceiveUint();
                     break;
                 case ConfigType.Str:
-                    value = _cs.ReceiveS();
+                    value = ReceiveString();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, "Invalid type received");
@@ -800,49 +828,49 @@ namespace URY.BAPS.Client.Common
             switch (cmdReceived & Command.SystemOpMask)
             {
                 case Command.SendLogMessage:
-                    _cs.ReceiveS();
+                    ReceiveString();
                     break;
                 case Command.Filename:
                     if (cmdReceived.HasFlag(Command.SystemModeMask))
                     {
                         var directoryIndex = cmdReceived.SystemValue();
-                        var index = _cs.ReceiveI();
-                        var description = _cs.ReceiveS();
+                        var index = ReceiveUint();
+                        var description = ReceiveString();
                         OnDirectoryFileAdd(new DirectoryFileAddEventArgs(directoryIndex, index, description));
                     }
                     else
                     {
                         var directoryIndex = cmdReceived.SystemValue();
-                        _ = _cs.ReceiveI();
-                        var niceDirectoryName = _cs.ReceiveS();
+                        _ = ReceiveUint();
+                        var niceDirectoryName = ReceiveString();
                         OnDirectoryPrepare(new DirectoryPrepareEventArgs(directoryIndex, niceDirectoryName));
                     }
 
                     break;
                 case Command.Version:
                 {
-                    var version = _cs.ReceiveS();
-                    var date = _cs.ReceiveS();
-                    var time = _cs.ReceiveS();
-                    var author = _cs.ReceiveS();
+                    var version = ReceiveString();
+                    var date = ReceiveString();
+                    var time = ReceiveString();
+                    var author = ReceiveString();
                     OnVersion(new VersionInfo {Version = version, Date = date, Time = time, Author = author});
                 }
                     break;
                 case Command.Feedback:
                 {
-                    _ = _cs.ReceiveI();
+                    _ = ReceiveUint();
                 }
                     break;
                 case Command.SendMessage:
                 {
-                    _ = _cs.ReceiveS();
-                    _ = _cs.ReceiveS();
-                    _ = _cs.ReceiveS();
+                    _ = ReceiveString();
+                    _ = ReceiveString();
+                    _ = ReceiveString();
                 }
                     break;
                 case Command.ClientChange:
                 {
-                    _ = _cs.ReceiveS();
+                    _ = ReceiveString();
                 }
                     break;
                 case Command.ScrollText:
@@ -860,7 +888,7 @@ namespace URY.BAPS.Client.Common
                 case Command.Quit:
                 {
                     //The server should send an int representing if this is an expected quit (0) or an exception error (1)."
-                    var expected = _cs.ReceiveI() == 0;
+                    var expected = ReceiveUint() == 0;
                     OnServerQuit(expected);
                 }
                     break;
@@ -872,13 +900,13 @@ namespace URY.BAPS.Client.Common
 
         private void DecodeCount(CountType type, uint extra = 0)
         {
-            var count = _cs.ReceiveI();
+            var count = ReceiveUint();
             OnIncomingCount(new CountEventArgs {Count = count, Type = type, Extra = extra});
         }
 
         private void DecodeError(ErrorType type, byte errorCode)
         {
-            var description = _cs.ReceiveS();
+            var description = ReceiveString();
             OnError(new ErrorEventArgs {Type = type, Code = errorCode, Description = description});
         }
 

@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 
 namespace URY.BAPS.Client.Common.BapsNet
@@ -31,7 +32,7 @@ namespace URY.BAPS.Client.Common.BapsNet
         /// <returns>This.</returns>
         public Message Add(string value)
         {
-            return Add(new SArgument {Value = value});
+            return Add(new StringArgument {Value = value});
         }
 
         /// <summary>
@@ -41,7 +42,7 @@ namespace URY.BAPS.Client.Common.BapsNet
         /// <returns>This.</returns>
         public Message Add(uint value)
         {
-            return Add(new U32Argument {Value = value});
+            return Add(new UintArgument {Value = value});
         }
 
 
@@ -52,25 +53,25 @@ namespace URY.BAPS.Client.Common.BapsNet
         /// <returns>This.</returns>
         public Message Add(float value)
         {
-            return Add(new FArgument {Value = value});
+            return Add(new FloatArgument {Value = value});
         }
 
         /// <summary>
-        ///     Sends this command over a client socket.
+        ///     Sends this command to a sink.
         /// </summary>
-        /// <param name="sock">The socket to send onto.</param>
-        public void Send(ISink sock)
+        /// <param name="sink">The socket to send onto.</param>
+        public void Send(ISink sink)
         {
-            sock.SendCommand(_cmd);
-            SendLength(sock);
-            foreach (var arg in _args) arg.Send(sock);
+            sink.SendCommand(_cmd);
+            SendLength(sink);
+            foreach (var arg in _args) arg.Send(sink);
         }
 
         private void SendLength(ISink sock)
         {
             var length = (from arg in _args select arg.Length()).Sum();
             Debug.Assert(0 <= length, "negative length");
-            sock.SendU32((uint) length);
+            sock.SendUint((uint) length);
         }
 
         private Message Add(IArgument arg)
@@ -87,7 +88,7 @@ namespace URY.BAPS.Client.Common.BapsNet
             void Send(ISink sock);
         }
 
-        private struct SArgument : IArgument
+        private struct StringArgument : IArgument
         {
             public string Value;
 
@@ -103,7 +104,7 @@ namespace URY.BAPS.Client.Common.BapsNet
             }
         }
 
-        private struct U32Argument : IArgument
+        private struct UintArgument : IArgument
         {
             public uint Value;
 
@@ -115,11 +116,11 @@ namespace URY.BAPS.Client.Common.BapsNet
 
             public void Send(ISink sock)
             {
-                sock.SendU32(Value);
+                sock.SendUint(Value);
             }
         }
 
-        private struct FArgument : IArgument
+        private struct FloatArgument : IArgument
         {
             public float Value;
 

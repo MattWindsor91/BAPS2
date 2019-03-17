@@ -24,13 +24,12 @@ namespace URY.BAPS.Client.Common
         private Sender _sender;
         private Task _senderTask;
 
-        private ClientSocket _socket;
+        private TcpConnection _socket;
 
 
         public ClientCore([NotNull] Authenticator auth)
         {
             _auth = auth;
-            _auth.Token = _dead.Token;
         }
 
         /// <inheritdoc />
@@ -40,7 +39,7 @@ namespace URY.BAPS.Client.Common
         /// <param name="message">The message to send.  If null, nothing is sent.</param>
         public void SendAsync(Message message)
         {
-            if (message != null) _sender?.SendAsync(message);
+            if (message != null) _sender?.Enqueue(message);
         }
 
         /// <summary>
@@ -80,14 +79,14 @@ namespace URY.BAPS.Client.Common
 
         private void CreateAndLaunchReceiver(TaskFactory tf)
         {
-            _receiver = new Receiver(_socket, _dead.Token);
+            _receiver = new Receiver(_socket.Source, _dead.Token);
             SubscribeToReceiver();
             _receiverTask = tf.StartNew(_receiver.Run);
         }
 
         private void CreateAndLaunchSender(TaskFactory tf)
         {
-            _sender = new Sender(_dead.Token, _socket);
+            _sender = new Sender(_socket.Sink, _dead.Token);
             _senderTask = tf.StartNew(_sender.Run);
         }
 

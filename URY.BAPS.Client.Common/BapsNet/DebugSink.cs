@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace URY.BAPS.Client.Common.BapsNet
 {
@@ -27,7 +28,7 @@ namespace URY.BAPS.Client.Common.BapsNet
             _items.Enqueue(f);
         }
 
-        public void SendU32(uint i)
+        public void SendUint(uint i)
         {
             _items.Enqueue(i);
         }

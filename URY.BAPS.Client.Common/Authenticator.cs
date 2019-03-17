@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 using URY.BAPS.Client.Common.BapsNet;
 
@@ -20,11 +21,10 @@ namespace URY.BAPS.Client.Common
     {
         private readonly Func<Response> _loginCallback;
 
-        private bool _done;
         private int _lastPort = -1;
         private string _lastServer;
         private string _seed;
-        [CanBeNull] private ClientSocket _sock;
+        [CanBeNull] private TcpConnection _conn;
 
         /// <summary>
         ///     Constructs a <see cref="Authenticator" />.
@@ -35,12 +35,7 @@ namespace URY.BAPS.Client.Common
             _loginCallback = loginCallback;
         }
 
-        /// <summary>
-        ///     The cancellation token that this <see cref="Authenticator" /> will send to any constructed sockets.
-        /// </summary>
-        public CancellationToken Token { private get; set; }
-
-        private bool ConnectionReady => _sock != null && _seed != null;
+        private bool ConnectionReady => _conn != null && _seed != null;
 
         /// <summary>
         ///     Raised with a description when a server error occurs.
@@ -53,19 +48,20 @@ namespace URY.BAPS.Client.Common
         public event EventHandler<string> UserError;
 
         /// <summary>
-        ///     Tries to construct an authenticated <see cref="ClientSocket" />.
+        ///     Tries to construct an authenticated <see cref="TcpConnection" />.
         /// </summary>
         /// <returns>Null, if we gave up trying to log in; a connected and ready client socket, otherwise.</returns>
-        public ClientSocket Run()
+        public TcpConnection Run()
         {
-            while (!_done) Attempt();
-            return _sock; // may be null if we gave up
+            var done = false;
+            while (!done) done = Attempt();
+            return _conn; // may be null if we gave up
         }
 
         private void DisposeSocketIfExists()
         {
-            _sock?.Dispose();
-            _sock = null;
+            _conn?.Dispose();
+            _conn = null;
         }
 
         [Pure]
@@ -83,18 +79,30 @@ namespace URY.BAPS.Client.Common
             MakeNewConnection(response.Server, response.Port);
         }
 
+        private (Command command, string payload) ReceiveSystemStringCommand(Command expectedCommand, ISource src)
+        {
+            var cmd = src.ReceiveCommand();
+            _ = src.ReceiveUint(); // Discard length
+            var isRightGroup = cmd.Group() == CommandGroup.System;
+            var isRightOp = (cmd & Command.SystemOpMask) == expectedCommand;
+            var isRightCommand = isRightGroup && isRightOp;
+            if (isRightCommand) return (cmd, src.ReceiveString());
+            IncompatibleLoginProcedure();
+            return (default, null);
+        }
+
         private void MakeNewConnection(string server, int port)
         {
             try
             {
-                _sock = new ClientSocket(server, port, Token);
+                _conn = new TcpConnection(server, port);
             }
             catch (SocketException e)
             {
                 /** If an error occurs just give the exception message and start again **/
                 var errorMessage = $"System Error:\n{e.Message}\nStack Trace:\n{e.StackTrace}";
                 ServerError?.Invoke(this, errorMessage);
-                _sock = null;
+                _conn = null;
                 return;
             }
 
@@ -102,21 +110,11 @@ namespace URY.BAPS.Client.Common
                 that does not follow the 'command' 'command-length' 'argument1'...
                 structure
              **/
-            _ = _sock.ReceiveS();
+            _ = _conn.Source.ReceiveString();
             var binaryModeCmd = new Message(Command.System | Command.SetBinaryMode);
-            binaryModeCmd.Send(_sock);
-            /** Receive what should be the SEED command **/
-            var seedCmd = _sock.ReceiveC();
-            /** Receive the length of the seed command **/
-            _sock.ReceiveI();
-            /** Verify the server is sending what we expect **/
-            if ((seedCmd & (Command.GroupMask | Command.SystemOpMask)) != (Command.System | Command.Seed))
-            {
-                IncompatibleLoginProcedure();
-                return;
-            }
+            binaryModeCmd.Send(_conn.Sink);
 
-            _seed = _sock.ReceiveS();
+            _seed = ReceiveSystemStringCommand(Command.Seed, _conn.Source).payload;
             Debug.Assert(_seed != null, "Got a null seed despite making a connection");
         }
 
@@ -128,24 +126,20 @@ namespace URY.BAPS.Client.Common
             _seed = null;
         }
 
-        private void Attempt()
+        private bool Attempt()
         {
             var result = _loginCallback();
             if (result.IsGivingUp)
             {
                 DisposeSocketIfExists();
-                _done = true;
-                return;
+                return true;
             }
-
-            Debug.Assert(!_done, "should only be done if we gave up or a previous attempt succeeded");
 
             MakeNewConnectionIfNeeded(result);
             _lastServer = result.Server;
             _lastPort = result.Port;
 
-            if (!ConnectionReady) return;
-            TryLogin(result.Username, result.Password);
+            return ConnectionReady && TryLogin(result.Username, result.Password);
         }
 
         /** Generate an md5 sum of the raw argument **/
@@ -160,38 +154,26 @@ namespace URY.BAPS.Client.Common
             return stringBuilder.ToString();
         }
 
-        private void TryLogin(string username, string password)
+        private bool TryLogin(string username, string password)
         {
             Debug.Assert(ConnectionReady, "tried to login without a waiting connection");
-            if (_sock == null) return;
+            if (_conn == null) return false;
 
             var securedPassword = Md5Sum(string.Concat(_seed, Md5Sum(password)));
 
             var loginCmd = new Message(Command.System | Command.Login).Add(username).Add(securedPassword);
-            loginCmd.Send(_sock);
+            loginCmd.Send(_conn.Sink);
 
-            var authResult = _sock.ReceiveC();
-            /** Verify it is what we expected **/
-            if ((authResult & (Command.GroupMask | Command.SystemOpMask)) != (Command.System | Command.LoginResult))
-            {
-                IncompatibleLoginProcedure();
-                return;
-            }
-
-            /** Receive the result command length **/
-            _sock.ReceiveI();
-            /** Receive the description of the result code **/
-            var description = _sock.ReceiveS();
-            /** Check the value for '0' meaning success **/
-            var authenticated = (authResult & Command.SystemValueMask) == 0;
+            var (authResult, description) = ReceiveSystemStringCommand(Command.LoginResult, _conn.Source);
+            var authenticated = authResult.SystemValue() == 0;
             if (!authenticated)
             {
                 UserError?.Invoke(this, description);
-                return;
+                return false;
             }
 
             Debug.Assert(ConnectionReady, "was about to hand over a non-ready connection");
-            _done = true;
+            return true;
         }
 
         /// <summary>
