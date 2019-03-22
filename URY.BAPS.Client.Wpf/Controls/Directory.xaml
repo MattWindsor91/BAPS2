@@ -5,7 +5,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:dd="urn:gong-wpf-dragdrop"
              xmlns:controls="clr-namespace:URY.BAPS.Client.Wpf.Controls"
+             xmlns:fa="http://schemas.fontawesome.io/icons/"
+             xmlns:designData="clr-namespace:URY.BAPS.Client.Wpf.DesignData"
              mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance designData:MockDirectoryViewModel, IsDesignTimeCreatable=True}"
              d:DesignHeight="240" d:DesignWidth="300" MaxHeight="300">
     <Grid>
         <Grid.RowDefinitions>
@@ -16,7 +19,9 @@
                          Icon="FolderOpen"
                          Text="{Binding Name, FallbackValue='Unknown Directory'}"
                          x:Name="DirectoryHeader">
-            <Button Width="32px" />
+            <Button Width="32px" Command="{Binding RefreshCommand }">
+                <fa:ImageAwesome Icon="Refresh" Margin="2px" />
+            </Button>
         </controls:Header>
         <ListBox Grid.Row="1" Grid.Column="0" Name="FileList"
                  dd:DragDrop.IsDragSource="true"

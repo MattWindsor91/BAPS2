@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Reactive.Linq;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Threading;
 using JetBrains.Annotations;
 using URY.BAPS.Client.Common.Controllers;
@@ -14,29 +15,28 @@ namespace URY.BAPS.Client.Wpf.ViewModel
     /// <summary>
     ///     The view model for a directory.
     /// </summary>
-    public class DirectoryViewModel : ViewModelBase, IDisposable
+    public class DirectoryViewModel : DirectoryViewModelBase, IDisposable
     {
         [CanBeNull] private readonly DirectoryController _controller;
 
         [NotNull] private readonly IList<IDisposable> _subscriptions = new List<IDisposable>();
         private string _name;
 
-        public DirectoryViewModel(ushort directoryId, [CanBeNull] DirectoryController controller)
+        /// <summary>
+        ///     Constructs a directory view model.
+        /// </summary>
+        /// <param name="directoryId">The server-assigned ID for this directory.</param>
+        /// <param name="controller">The controller used to send refresh messages.</param>
+        public DirectoryViewModel(ushort directoryId, [CanBeNull] DirectoryController controller) : base(directoryId)
         {
             _controller = controller;
-            DirectoryId = directoryId;
             SubscribeToServerUpdates();
         }
 
-        public ushort DirectoryId { get; }
-
-        /// <summary>
-        ///     The human-readable name of this directory.
-        /// </summary>
-        public string Name
+        public override string Name
         {
             get => _name;
-            set
+            protected set
             {
                 if (_name == value) return;
                 _name = value;
@@ -44,14 +44,19 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             }
         }
 
-        /// <summary>
-        ///     The collection of files the server reports as being in this directory.
-        /// </summary>
-        public ObservableCollection<DirectoryEntry> Files { get; } = new ObservableCollection<DirectoryEntry>();
-
-        public void Dispose()
+        public override void Dispose()
         {
             UnsubscribeFromServerUpdates();
+        }
+
+        protected override void Refresh()
+        {
+            _controller?.Refresh();
+        }
+
+        protected override bool CanRefresh()
+        {
+            return true;
         }
 
         /// <summary>

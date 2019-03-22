@@ -53,8 +53,8 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         public ObservableCollection<IChannelViewModel> Channels { get; } = new ObservableCollection<IChannelViewModel>();
 
         [NotNull]
-        public ObservableCollection<DirectoryViewModel> Directories { get; } =
-            new ObservableCollection<DirectoryViewModel>();
+        public ObservableCollection<IDirectoryViewModel> Directories { get; } =
+            new ObservableCollection<IDirectoryViewModel>();
 
         /// <summary>
         ///     A command that, when executed, sends a play command to the channel

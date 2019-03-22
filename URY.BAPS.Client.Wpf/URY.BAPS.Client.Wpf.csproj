@@ -109,8 +109,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DesignData\MockDirectoryViewModel.cs" />
     <Compile Include="Services\DirectoryFactoryService.cs" />
     <Compile Include="Services\WallServiceBase.cs" />
+    <Compile Include="ViewModel\DirectoryViewModelBase.cs" />
+    <Compile Include="ViewModel\IDirectoryViewModel.cs" />
     <Compile Include="Walls\AudioWall.xaml.cs">
       <DependentUpon>AudioWall.xaml</DependentUpon>
     </Compile>

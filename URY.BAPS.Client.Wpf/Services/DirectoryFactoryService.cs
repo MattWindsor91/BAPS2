@@ -31,7 +31,7 @@ namespace URY.BAPS.Client.Wpf.Services
         /// <param name="id">The ID of the channel whose view model is being created.</param>
         /// <returns>A <see cref="IChannelViewModel"/> over channel <see cref="id"/>.</returns>
         [Pure]
-        public DirectoryViewModel Make(ushort id)
+        public IDirectoryViewModel Make(ushort id)
         {
             var controller = _controllerSet.ControllerFor(id);
             return new DirectoryViewModel(id, controller);
