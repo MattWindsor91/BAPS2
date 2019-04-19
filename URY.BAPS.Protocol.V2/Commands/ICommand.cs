@@ -1,4 +1,4 @@
-﻿namespace URY.BAPS.Client.Common.BapsNet
+﻿namespace URY.BAPS.Protocol.V2.Commands
 {
     /// <summary>
     ///     Interface for unpacked command structures.
@@ -8,15 +8,6 @@
         void Accept(ICommandVisitor? visitor);
 
         CommandWord Packed { get; }
-    }
-
-    public interface ICommandVisitor
-    {
-        void Visit(PlaybackCommand command);
-        void Visit(PlaylistCommand command);
-        void Visit(DatabaseCommand command);
-        void Visit(SystemCommand command);
-        void Visit(ConfigCommand command);
     }
 
     public abstract class CommandBase<TOp> : ICommand

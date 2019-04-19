@@ -5,6 +5,9 @@ using System.Security.Cryptography;
 using System.Text;
 using JetBrains.Annotations;
 using URY.BAPS.Client.Common.BapsNet;
+using URY.BAPS.Protocol.V2.Commands;
+using URY.BAPS.Protocol.V2.Io;
+using URY.BAPS.Protocol.V2.Messages;
 
 namespace URY.BAPS.Client.Common
 {
@@ -108,11 +111,11 @@ namespace URY.BAPS.Client.Common
                 that does not follow the 'command' 'command-length' 'argument1'...
                 structure
              **/
-            _ = _conn.Source.ReceiveString();
+            _ = _conn.ReceiveString();
             var binaryModeCmd = new Message(CommandWord.System | CommandWord.SetBinaryMode);
-            binaryModeCmd.Send(_conn.Sink);
+            binaryModeCmd.Send(_conn);
 
-            _seed = ReceiveSystemStringCommand(SystemOp.Seed, _conn.Source).payload;
+            _seed = ReceiveSystemStringCommand(SystemOp.Seed, _conn).payload;
             Debug.Assert(_seed != null, "Got a null seed despite making a connection");
         }
 
@@ -160,9 +163,9 @@ namespace URY.BAPS.Client.Common
             var securedPassword = Md5Sum(string.Concat(_seed, Md5Sum(password)));
 
             var loginCmd = new Message(CommandWord.System | CommandWord.Login).Add(username).Add(securedPassword);
-            loginCmd.Send(_conn.Sink);
+            loginCmd.Send(_conn);
 
-            var (authResult, description) = ReceiveSystemStringCommand(SystemOp.LoginResult, _conn.Source);
+            var (authResult, description) = ReceiveSystemStringCommand(SystemOp.LoginResult, _conn);
             var authenticated = authResult.Value() == 0;
             if (!authenticated)
             {

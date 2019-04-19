@@ -1,8 +1,9 @@
 using System;
 using System.Reactive.Linq;
 using JetBrains.Annotations;
-using URY.BAPS.Client.Common.BapsNet;
 using URY.BAPS.Client.Common.ServerConfig;
+using URY.BAPS.Protocol.V2.Commands;
+using URY.BAPS.Protocol.V2.Messages;
 
 namespace URY.BAPS.Client.Common.Controllers
 {

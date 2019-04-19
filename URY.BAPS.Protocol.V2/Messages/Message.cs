@@ -2,10 +2,11 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using JetBrains.Annotations;
+using URY.BAPS.Protocol.V2.Commands;
+using URY.BAPS.Protocol.V2.Io;
 
-namespace URY.BAPS.Client.Common.BapsNet
+namespace URY.BAPS.Protocol.V2.Messages
 {
     /// <summary>
     ///     A BapsNet message.

@@ -2,11 +2,12 @@
 using System.Reactive.Linq;
 using System.Threading;
 using JetBrains.Annotations;
-using URY.BAPS.Client.Common.BapsNet;
 using URY.BAPS.Client.Common.Events;
 using URY.BAPS.Client.Common.Model;
 using URY.BAPS.Client.Common.ServerConfig;
 using URY.BAPS.Client.Common.Updaters;
+using URY.BAPS.Protocol.V2.Commands;
+using URY.BAPS.Protocol.V2.Io;
 
 namespace URY.BAPS.Client.Common
 {

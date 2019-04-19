@@ -3,7 +3,9 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
-using URY.BAPS.Client.Common.BapsNet;
+using URY.BAPS.Protocol.V2.Commands;
+using URY.BAPS.Protocol.V2.Io;
+using URY.BAPS.Protocol.V2.Messages;
 
 namespace URY.BAPS.Client.Common
 {
@@ -79,14 +81,14 @@ namespace URY.BAPS.Client.Common
 
         private void CreateAndLaunchReceiver(TaskFactory tf)
         {
-            _receiver = new Receiver(_socket?.Source, _dead.Token);
+            _receiver = new Receiver(_socket, _dead.Token);
             SubscribeToReceiver();
             _receiverTask = tf.StartNew(_receiver.Run);
         }
 
         private void CreateAndLaunchSender(TaskFactory tf)
         {
-            _sender = new Sender(_socket?.Sink, _dead.Token);
+            _sender = new Sender(_socket, _dead.Token);
             _senderTask = tf.StartNew(_sender.Run);
         }
 

@@ -3,10 +3,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using JetBrains.Annotations;
-using URY.BAPS.Client.Common.BapsNet;
+using URY.BAPS.Protocol.V2.Commands;
+using URY.BAPS.Protocol.V2.Io;
 using Xunit;
 
-namespace URY.BAPS.Client.Common.Tests.BapsNet
+namespace URY.BAPS.Protocol.V2.Tests.Io
 {
     /// <summary>
     ///     Tests that exercise both <see cref="StreamSink"/> and <see cref="StreamSource"/>,

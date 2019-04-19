@@ -18,6 +18,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\URY.BAPS.Client.Common\URY.BAPS.Client.Common.csproj" />
+    <ProjectReference Include="..\URY.BAPS.Protocol.V2\URY.BAPS.Protocol.V2.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="BapsNet\" />
   </ItemGroup>
 
 </Project>

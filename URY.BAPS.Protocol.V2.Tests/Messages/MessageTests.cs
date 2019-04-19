@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Text;
-using URY.BAPS.Client.Common.BapsNet;
+using URY.BAPS.Protocol.V2.Commands;
+using URY.BAPS.Protocol.V2.Io;
+using URY.BAPS.Protocol.V2.Messages;
 using Xunit;
 
-namespace URY.BAPS.Client.Common.Tests.BapsNet
+namespace URY.BAPS.Protocol.V2.Tests.Messages
 {
     /// <summary>
     ///     Tests that <see cref="Message" />'s construction and sending methods behave properly.
@@ -32,6 +34,26 @@ namespace URY.BAPS.Client.Common.Tests.BapsNet
             Assert.Equal(expected, actualUint);
         }
 
+        public static TheoryData<string> StringSystemCommandSendData =>
+            new TheoryData<string> {"", "The system is down.", "バップス"};
+
+        [Theory]
+        [MemberData(nameof(StringSystemCommandSendData))]
+        public void TestStringSystemCommandSend(string value)
+        {
+            const CommandWord cmd = CommandWord.System | CommandWord.SendLogMessage;
+
+            // Strings are UTF-8, so the command length is equal to the number of UTF-8 bytes in the value, plus four
+            // characters for the on-wire representation of the string's length.
+            var valueLength = Encoding.UTF8.GetByteCount(value);
+            var expectedLength = (uint) valueLength + 4;
+
+            var m = new Message(cmd).Add(value);
+
+            AssertMessage(m, cmd, expectedLength,
+                actualValue => Assert.Equal(value, Assert.IsAssignableFrom<string>(actualValue)));
+        }
+
         /// <summary>
         ///     Tests sending a command with a floating-point argument.
         /// </summary>
@@ -46,26 +68,8 @@ namespace URY.BAPS.Client.Common.Tests.BapsNet
             // Floats are 32-bit, so the length should be 4.
             const uint expectedLength = 4;
 
-            AssertMessage(m, cmd, expectedLength, actualValue => Assert.Equal(value, Assert.IsAssignableFrom<float>(actualValue), 2));
-        }
-
-        public static TheoryData<string> StringSystemCommandSendData =>
-            new TheoryData<string> {"", "The system is down.", "バップス"};
-
-        [Theory, MemberData(nameof(StringSystemCommandSendData))]
-        public void TestStringSystemCommandSend(string value)
-        {
-            const CommandWord cmd = CommandWord.System | CommandWord.SendLogMessage;
-
-            // Strings are UTF-8, so the command length is equal to the number of UTF-8 bytes in the value, plus four
-            // characters for the on-wire representation of the string's length.
-            var valueLength = Encoding.UTF8.GetByteCount(value);
-            var expectedLength = (uint)valueLength + 4;
-
-            var m = new Message(cmd).Add(value);
-
             AssertMessage(m, cmd, expectedLength,
-            actualValue => Assert.Equal(value, Assert.IsAssignableFrom<string>(actualValue)));
+                actualValue => Assert.Equal(value, Assert.IsAssignableFrom<float>(actualValue), 2));
         }
 
         /// <summary>
@@ -82,8 +86,8 @@ namespace URY.BAPS.Client.Common.Tests.BapsNet
             // Being one 32-bit argument, the length should be 4.
             const uint expectedLength = 4;
 
-            AssertMessage(m, cmd, expectedLength, 
-            actualValue => AssertEqualUint(value, actualValue));
+            AssertMessage(m, cmd, expectedLength,
+                actualValue => AssertEqualUint(value, actualValue));
         }
 
         /// <summary>

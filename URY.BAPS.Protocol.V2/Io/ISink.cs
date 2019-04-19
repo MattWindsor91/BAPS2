@@ -1,4 +1,6 @@
-﻿namespace URY.BAPS.Client.Common.BapsNet
+﻿using URY.BAPS.Protocol.V2.Commands;
+
+namespace URY.BAPS.Protocol.V2.Io
 {
     /// <summary>
     ///     Low-level interface for objects that can consume items of the

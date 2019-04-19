@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace URY.BAPS.Client.Common.Utils
+namespace URY.BAPS.Protocol.V2.Io
 {
     /// <summary>
     ///     Utilities for bit twiddling.

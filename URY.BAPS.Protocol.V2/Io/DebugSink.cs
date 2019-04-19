@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+using URY.BAPS.Protocol.V2.Commands;
 
-namespace URY.BAPS.Client.Common.BapsNet
+namespace URY.BAPS.Protocol.V2.Io
 {
     /// <inheritdoc />
     /// <summary>

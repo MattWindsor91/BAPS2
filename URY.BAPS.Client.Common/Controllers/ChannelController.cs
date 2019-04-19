@@ -5,6 +5,8 @@ using URY.BAPS.Client.Common.Model;
 using URY.BAPS.Client.Common.ServerConfig;
 using URY.BAPS.Client.Common.Updaters;
 using URY.BAPS.Client.Common.Utils;
+using URY.BAPS.Protocol.V2.Commands;
+using URY.BAPS.Protocol.V2.Messages;
 
 namespace URY.BAPS.Client.Common.Controllers
 {

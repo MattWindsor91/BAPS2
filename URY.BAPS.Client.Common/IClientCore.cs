@@ -1,7 +1,7 @@
 using System;
 using JetBrains.Annotations;
-using URY.BAPS.Client.Common.BapsNet;
 using URY.BAPS.Client.Common.Updaters;
+using URY.BAPS.Protocol.V2.Messages;
 
 namespace URY.BAPS.Client.Common
 {

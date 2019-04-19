@@ -1,6 +1,7 @@
 ﻿using System.Threading;
+using URY.BAPS.Protocol.V2.Commands;
 
-namespace URY.BAPS.Client.Common.BapsNet
+namespace URY.BAPS.Protocol.V2.Io
 {
     /// <summary>
     ///     Low-level interface for objects that can produce items of the

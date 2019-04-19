@@ -1,4 +1,6 @@
 ﻿using URY.BAPS.Client.Common.Model;
+using URY.BAPS.Protocol.V2.Commands;
+using URY.BAPS.Protocol.V2.Messages;
 
 namespace URY.BAPS.Client.Common.BapsNet
 {

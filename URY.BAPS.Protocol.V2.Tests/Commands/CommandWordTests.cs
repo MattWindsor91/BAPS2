@@ -1,13 +1,13 @@
 using System.Linq;
-using URY.BAPS.Client.Common.BapsNet;
+using URY.BAPS.Protocol.V2.Commands;
 using Xunit;
 
-namespace URY.BAPS.Client.Common.Tests.BapsNet
+namespace URY.BAPS.Protocol.V2.Tests.Commands
 {
     /// <summary>
     ///     Tests for low-level BapsNet commands and their extensions.
     /// </summary>
-    public class CommandTests
+    public class CommandWordTests
     {
         public static TheoryData<ushort> ChannelRoundTripData =>
             new TheoryData<ushort>
