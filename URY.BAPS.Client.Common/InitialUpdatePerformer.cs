@@ -110,7 +110,7 @@ namespace URY.BAPS.Client.Common
         private void RequestDirectoryRefreshes()
         {
             var count = DirectoryCount;
-            for (ushort i = 0; i < count; i++) _directories.ControllerFor(i).Refresh();
+            for (byte i = 0; i < count; i++) _directories.ControllerFor(i).Refresh();
         }
 
         /// <summary>

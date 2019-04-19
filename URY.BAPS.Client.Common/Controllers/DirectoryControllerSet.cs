@@ -12,7 +12,7 @@ namespace URY.BAPS.Client.Common.Controllers
         }
 
         [Pure]
-        protected override DirectoryController MakeController(ushort directoryId)
+        protected override DirectoryController MakeController(byte directoryId)
         {
             return new DirectoryController(directoryId, Core);
         }

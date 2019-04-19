@@ -22,222 +22,196 @@ namespace URY.BAPS.Client.Common
         [NotNull] private readonly ISource _bapsNet;
 
         private readonly CancellationToken _token;
-        private IObservable<ConfigChoiceEventArgs> _observeConfigChoice;
-        private IObservable<ConfigOptionEventArgs> _observeConfigOption;
-        private IObservable<(Command cmdReceived, uint optionID, ConfigResult result)> _observeConfigResult;
-        private IObservable<ConfigSettingEventArgs> _observeConfigSetting;
-        private IObservable<DirectoryFileAddEventArgs> _observeDirectoryFileAdd;
-        private IObservable<DirectoryPrepareEventArgs> _observeDirectoryPrepare;
-        private IObservable<ErrorEventArgs> _observeError;
-        private IObservable<CountEventArgs> _observeIncomingCount;
-        private IObservable<(Command cmdReceived, string ipAddress, uint mask)> _observeIpRestriction;
-        private IObservable<(uint resultID, byte dirtyStatus, string description)> _observeLibraryResult;
-        private IObservable<(uint listingID, uint channelID, string description)> _observeListingResult;
-        private IObservable<MarkerEventArgs> _observeMarker;
-        private IObservable<(uint permissionCode, string description)> _observePermission;
+        private IObservable<ConfigChoiceEventArgs>? _observeConfigChoice;
+        private IObservable<ConfigOptionEventArgs>? _observeConfigOption;
+        private IObservable<(CommandWord cmdReceived, uint optionID, ConfigResult result)>? _observeConfigResult;
+        private IObservable<ConfigSettingEventArgs>? _observeConfigSetting;
+        private IObservable<DirectoryFileAddEventArgs>? _observeDirectoryFileAdd;
+        private IObservable<DirectoryPrepareEventArgs>? _observeDirectoryPrepare;
+        private IObservable<ErrorEventArgs>? _observeError;
+        private IObservable<CountEventArgs>? _observeIncomingCount;
+        private IObservable<(CommandWord cmdReceived, string ipAddress, uint mask)>? _observeIpRestriction;
+        private IObservable<(uint resultID, byte dirtyStatus, string description)>? _observeLibraryResult;
+        private IObservable<(uint listingID, uint channelID, string description)>? _observeListingResult;
+        private IObservable<MarkerEventArgs>? _observeMarker;
+        private IObservable<(uint permissionCode, string description)>? _observePermission;
 
-        private IObservable<PlayerStateEventArgs> _observePlayerState;
-        private IObservable<PlaylistResetEventArgs> _observePlaylistReset;
-        private IObservable<bool> _observeServerQuit;
-        private IObservable<(uint showID, string description)> _observeShowResult;
-        private IObservable<TextSettingEventArgs> _observeTextSetting;
-        private IObservable<TrackAddEventArgs> _observeTrackAdd;
-        private IObservable<TrackDeleteEventArgs> _observeTrackDelete;
-        private IObservable<TrackLoadEventArgs> _observeTrackLoad;
-        private IObservable<TrackMoveEventArgs> _observeTrackMove;
-        private IObservable<(Command command, string description)> _observeUnknownCommand;
-        private IObservable<(string username, uint permissions)> _observeUser;
-        private IObservable<(byte resultCode, string description)> _observeUserResult;
-        private IObservable<VersionInfo> _observeVersion;
+        private IObservable<PlayerStateEventArgs>? _observePlayerState;
+        private IObservable<PlaylistResetEventArgs>? _observePlaylistReset;
+        private IObservable<bool>? _observeServerQuit;
+        private IObservable<(uint showID, string description)>? _observeShowResult;
+        private IObservable<TextSettingEventArgs>? _observeTextSetting;
+        private IObservable<TrackAddEventArgs>? _observeTrackAdd;
+        private IObservable<TrackDeleteEventArgs>? _observeTrackDelete;
+        private IObservable<TrackLoadEventArgs>? _observeTrackLoad;
+        private IObservable<TrackMoveEventArgs>? _observeTrackMove;
+        private IObservable<(CommandWord command, string description)>? _observeUnknownCommand;
+        private IObservable<(string username, uint permissions)>? _observeUser;
+        private IObservable<(byte resultCode, string description)>? _observeUserResult;
+        private IObservable<VersionInfo>? _observeVersion;
 
-        public Receiver([CanBeNull] ISource bapsNet, CancellationToken token)
+        public Receiver(ISource? bapsNet, CancellationToken token)
         {
             _bapsNet = bapsNet ?? throw new ArgumentNullException(nameof(bapsNet));
             _token = token;
         }
 
         public IObservable<PlayerStateEventArgs> ObservePlayerState =>
-            _observePlayerState ??
-            (_observePlayerState = Observable.FromEventPattern<PlayerStateEventArgs>(
+            _observePlayerState ??= Observable.FromEventPattern<PlayerStateEventArgs>(
                 ev => PlayerState += ev,
                 ev => PlayerState -= ev
-            ).Select(x => x.EventArgs));
+            ).Select(x => x.EventArgs);
 
         public IObservable<MarkerEventArgs> ObserveMarker =>
-            _observeMarker ??
-            (_observeMarker = Observable.FromEventPattern<MarkerEventArgs>(
+            _observeMarker ??= Observable.FromEventPattern<MarkerEventArgs>(
                 ev => Marker += ev,
                 ev => Marker -= ev
-            ).Select(x => x.EventArgs));
+            ).Select(x => x.EventArgs);
 
         public IObservable<TrackLoadEventArgs> ObserveTrackLoad =>
-            _observeTrackLoad ??
-            (_observeTrackLoad = Observable.FromEventPattern<TrackLoadEventArgs>(
+            _observeTrackLoad ??= Observable.FromEventPattern<TrackLoadEventArgs>(
                 ev => TrackLoad += ev,
                 ev => TrackLoad -= ev
-            ).Select(x => x.EventArgs));
+            ).Select(x => x.EventArgs);
 
         public IObservable<CountEventArgs> ObserveIncomingCount =>
-            _observeIncomingCount ??
-            (_observeIncomingCount = Observable.FromEventPattern<CountEventArgs>(
+            _observeIncomingCount ??= Observable.FromEventPattern<CountEventArgs>(
                 ev => IncomingCount += ev,
                 ev => IncomingCount -= ev
-            ).Select(x => x.EventArgs));
+            ).Select(x => x.EventArgs);
 
         public IObservable<ConfigChoiceEventArgs> ObserveConfigChoice =>
-            _observeConfigChoice ??
-            (_observeConfigChoice = Observable.FromEventPattern<ConfigChoiceEventArgs>(
+            _observeConfigChoice ??= Observable.FromEventPattern<ConfigChoiceEventArgs>(
                 ev => ConfigChoice += ev,
                 ev => ConfigChoice -= ev
-            ).Select(x => x.EventArgs));
+            ).Select(x => x.EventArgs);
 
         public IObservable<ConfigOptionEventArgs> ObserveConfigOption =>
-            _observeConfigOption ??
-            (_observeConfigOption = Observable.FromEventPattern<ConfigOptionEventArgs>(
+            _observeConfigOption ??= Observable.FromEventPattern<ConfigOptionEventArgs>(
                 ev => ConfigOption += ev,
                 ev => ConfigOption -= ev
-            ).Select(x => x.EventArgs));
+            ).Select(x => x.EventArgs);
 
         public IObservable<ConfigSettingEventArgs> ObserveConfigSetting =>
-            _observeConfigSetting ??
-            (_observeConfigSetting = Observable.FromEventPattern<ConfigSettingEventArgs>(
+            _observeConfigSetting ??= Observable.FromEventPattern<ConfigSettingEventArgs>(
                 ev => ConfigSetting += ev,
                 ev => ConfigSetting -= ev
-            ).Select(x => x.EventArgs));
+            ).Select(x => x.EventArgs);
 
-        public IObservable<(Command cmdReceived, uint optionID, ConfigResult result)> ObserveConfigResult =>
-            _observeConfigResult ??
-            (_observeConfigResult = Observable
-                .FromEventPattern<(Command cmdReceived, uint optionID, ConfigResult result)>(
+        public IObservable<(CommandWord cmdReceived, uint optionID, ConfigResult result)> ObserveConfigResult =>
+            _observeConfigResult ??= Observable
+                .FromEventPattern<(CommandWord cmdReceived, uint optionID, ConfigResult result)>(
                     ev => ConfigResult += ev,
                     ev => ConfigResult -= ev
-                ).Select(x => x.EventArgs));
+                ).Select(x => x.EventArgs);
 
         public IObservable<DirectoryFileAddEventArgs> ObserveDirectoryFileAdd =>
-            _observeDirectoryFileAdd ??
-            (_observeDirectoryFileAdd = Observable.FromEventPattern<DirectoryFileAddEventArgs>(
+            _observeDirectoryFileAdd ??= Observable.FromEventPattern<DirectoryFileAddEventArgs>(
                 ev => DirectoryFileAdd += ev,
                 ev => DirectoryFileAdd -= ev
-            ).Select(x => x.EventArgs));
+            ).Select(x => x.EventArgs);
 
         public IObservable<DirectoryPrepareEventArgs> ObserveDirectoryPrepare =>
-            _observeDirectoryPrepare ??
-            (_observeDirectoryPrepare = Observable.FromEventPattern<DirectoryPrepareEventArgs>(
+            _observeDirectoryPrepare ??= Observable.FromEventPattern<DirectoryPrepareEventArgs>(
                 ev => DirectoryPrepare += ev,
                 ev => DirectoryPrepare -= ev
-            ).Select(x => x.EventArgs));
+            ).Select(x => x.EventArgs);
 
         public IObservable<TrackAddEventArgs> ObserveTrackAdd =>
-            _observeTrackAdd ??
-            (_observeTrackAdd = Observable.FromEventPattern<TrackAddEventArgs>(
+            _observeTrackAdd ??= Observable.FromEventPattern<TrackAddEventArgs>(
                 ev => TrackAdd += ev,
                 ev => TrackAdd -= ev
-            ).Select(x => x.EventArgs));
+            ).Select(x => x.EventArgs);
 
         public IObservable<TrackDeleteEventArgs> ObserveTrackDelete =>
-            _observeTrackDelete ??
-            (_observeTrackDelete = Observable.FromEventPattern<TrackDeleteEventArgs>(
+            _observeTrackDelete ??= Observable.FromEventPattern<TrackDeleteEventArgs>(
                 ev => TrackDelete += ev,
                 ev => TrackDelete -= ev
-            ).Select(x => x.EventArgs));
+            ).Select(x => x.EventArgs);
 
         public IObservable<TrackMoveEventArgs> ObserveTrackMove =>
-            _observeTrackMove ??
-            (_observeTrackMove = Observable.FromEventPattern<TrackMoveEventArgs>(
+            _observeTrackMove ??= Observable.FromEventPattern<TrackMoveEventArgs>(
                 ev => TrackMove += ev,
                 ev => TrackMove -= ev
-            ).Select(x => x.EventArgs));
+            ).Select(x => x.EventArgs);
 
         public IObservable<PlaylistResetEventArgs> ObservePlaylistReset =>
-            _observePlaylistReset ??
-            (_observePlaylistReset = Observable.FromEventPattern<PlaylistResetEventArgs>(
+            _observePlaylistReset ??= Observable.FromEventPattern<PlaylistResetEventArgs>(
                 ev => PlaylistReset += ev,
                 ev => PlaylistReset -= ev
-            ).Select(x => x.EventArgs));
+            ).Select(x => x.EventArgs);
 
         public IObservable<ErrorEventArgs> ObserveError =>
-            _observeError ??
-            (_observeError = Observable.FromEventPattern<ErrorEventArgs>(
+            _observeError ??= Observable.FromEventPattern<ErrorEventArgs>(
                 ev => Error += ev,
                 ev => Error -= ev
-            ).Select(x => x.EventArgs));
+            ).Select(x => x.EventArgs);
 
         public IObservable<bool> ObserveServerQuit =>
-            _observeServerQuit ??
-            (_observeServerQuit = Observable.FromEventPattern<bool>(
+            _observeServerQuit ??= Observable.FromEventPattern<bool>(
                 ev => ServerQuit += ev,
                 ev => ServerQuit -= ev
-            ).Select(x => x.EventArgs));
+            ).Select(x => x.EventArgs);
 
         public IObservable<VersionInfo> ObserveVersion =>
-            _observeVersion ??
-            (_observeVersion = Observable.FromEventPattern<VersionInfo>(
+            _observeVersion ??= Observable.FromEventPattern<VersionInfo>(
                 ev => Version += ev,
                 ev => Version -= ev
-            ).Select(x => x.EventArgs));
+            ).Select(x => x.EventArgs);
 
-        public IObservable<(Command cmdReceived, string ipAddress, uint mask)> ObserveIpRestriction =>
-            _observeIpRestriction ??
-            (_observeIpRestriction = Observable.FromEventPattern<(Command cmdReceived, string ipAddress, uint mask)>(
+        public IObservable<(CommandWord cmdReceived, string ipAddress, uint mask)> ObserveIpRestriction =>
+            _observeIpRestriction ??= Observable.FromEventPattern<(CommandWord cmdReceived, string ipAddress, uint mask)>(
                 ev => IpRestriction += ev,
                 ev => IpRestriction -= ev
-            ).Select(x => x.EventArgs));
+            ).Select(x => x.EventArgs);
 
         public IObservable<(uint resultID, byte dirtyStatus, string description)> ObserveLibraryResult =>
-            _observeLibraryResult ??
-            (_observeLibraryResult = Observable.FromEventPattern<(uint resultID, byte dirtyStatus, string description)>(
+            _observeLibraryResult ??= Observable.FromEventPattern<(uint resultID, byte dirtyStatus, string description)>(
                 ev => LibraryResult += ev,
                 ev => LibraryResult -= ev
-            ).Select(x => x.EventArgs));
+            ).Select(x => x.EventArgs);
 
         public IObservable<(uint listingID, uint channelID, string description)> ObserveListingResult =>
-            _observeListingResult ??
-            (_observeListingResult = Observable.FromEventPattern<(uint listingID, uint channelID, string description)>(
+            _observeListingResult ??= Observable.FromEventPattern<(uint listingID, uint channelID, string description)>(
                 ev => ListingResult += ev,
                 ev => ListingResult -= ev
-            ).Select(x => x.EventArgs));
+            ).Select(x => x.EventArgs);
 
         public IObservable<(uint permissionCode, string description)> ObservePermission =>
-            _observePermission ??
-            (_observePermission = Observable.FromEventPattern<(uint permissionCode, string description)>(
+            _observePermission ??= Observable.FromEventPattern<(uint permissionCode, string description)>(
                 ev => Permission += ev,
                 ev => Permission -= ev
-            ).Select(x => x.EventArgs));
+            ).Select(x => x.EventArgs);
 
         public IObservable<(uint showID, string description)> ObserveShowResult =>
-            _observeShowResult ??
-            (_observeShowResult = Observable.FromEventPattern<(uint showID, string description)>(
+            _observeShowResult ??= Observable.FromEventPattern<(uint showID, string description)>(
                 ev => ShowResult += ev,
                 ev => ShowResult -= ev
-            ).Select(x => x.EventArgs));
+            ).Select(x => x.EventArgs);
 
         public IObservable<TextSettingEventArgs> ObserveTextSetting =>
-            _observeTextSetting ??
-            (_observeTextSetting = Observable.FromEventPattern<TextSettingEventArgs>(
+            _observeTextSetting ??= Observable.FromEventPattern<TextSettingEventArgs>(
                 ev => TextSetting += ev,
                 ev => TextSetting -= ev
-            ).Select(x => x.EventArgs));
+            ).Select(x => x.EventArgs);
 
-        public IObservable<(Command command, string description)> ObserveUnknownCommand =>
-            _observeUnknownCommand ??
-            (_observeUnknownCommand = Observable.FromEventPattern<(Command command, string description)>(
+        public IObservable<(CommandWord command, string description)> ObserveUnknownCommand =>
+            _observeUnknownCommand ??= Observable.FromEventPattern<(CommandWord command, string description)>(
                 ev => UnknownCommand += ev,
                 ev => UnknownCommand -= ev
-            ).Select(x => x.EventArgs));
+            ).Select(x => x.EventArgs);
 
         public IObservable<(string username, uint permissions)> ObserveUser =>
-            _observeUser ??
-            (_observeUser = Observable.FromEventPattern<(string username, uint permissions)>(
+            _observeUser ??= Observable.FromEventPattern<(string username, uint permissions)>(
                 ev => User += ev,
                 ev => User -= ev
-            ).Select(x => x.EventArgs));
+            ).Select(x => x.EventArgs);
 
         public IObservable<(byte resultCode, string description)> ObserveUserResult =>
-            _observeUserResult ??
-            (_observeUserResult = Observable.FromEventPattern<(byte resultCode, string description)>(
+            _observeUserResult ??= Observable.FromEventPattern<(byte resultCode, string description)>(
                 ev => UserResult += ev,
                 ev => UserResult -= ev
-            ).Select(x => x.EventArgs));
+            ).Select(x => x.EventArgs);
 
         public void Run()
         {
@@ -252,7 +226,7 @@ namespace URY.BAPS.Client.Common
 
         #region Shortcuts for receiving from the BapsNet connection
 
-        private Command ReceiveCommand()
+        private CommandWord ReceiveCommand()
         {
             return _bapsNet.ReceiveCommand(_token);
         }
@@ -387,9 +361,9 @@ namespace URY.BAPS.Client.Common
             ConfigSetting?.Invoke(this, args);
         }
 
-        public event EventHandler<(Command cmdReceived, uint optionID, ConfigResult result)> ConfigResult;
+        public event EventHandler<(CommandWord cmdReceived, uint optionID, ConfigResult result)> ConfigResult;
 
-        private void OnConfigResult(Command cmdReceived, uint optionId, ConfigResult result)
+        private void OnConfigResult(CommandWord cmdReceived, uint optionId, ConfigResult result)
         {
             ConfigResult?.Invoke(this, (cmdReceived, optionID: optionId, result));
         }
@@ -415,9 +389,9 @@ namespace URY.BAPS.Client.Common
             UserResult?.Invoke(this, (resultCode, description));
         }
 
-        public event EventHandler<(Command cmdReceived, string ipAddress, uint mask)> IpRestriction;
+        public event EventHandler<(CommandWord cmdReceived, string ipAddress, uint mask)> IpRestriction;
 
-        private void OnIpRestriction(Command cmdReceived, string ipAddress, uint mask)
+        private void OnIpRestriction(CommandWord cmdReceived, string ipAddress, uint mask)
         {
             IpRestriction?.Invoke(this, (cmdReceived, ipAddress, mask));
         }
@@ -480,35 +454,35 @@ namespace URY.BAPS.Client.Common
             Error?.Invoke(this, e);
         }
 
-        public event EventHandler<(Command command, string description)> UnknownCommand;
+        public event EventHandler<(CommandWord command, string description)> UnknownCommand;
 
-        private void OnUnknownCommand(Command command, string description)
+        private void OnUnknownCommand(CommandWord commandWord, string description)
         {
-            UnknownCommand?.Invoke(this, (command, description));
+            UnknownCommand?.Invoke(this, (commandWord, description));
         }
 
         #endregion General events
 
         #region Command decoding
 
-        private void DecodeCommand(Command cmdReceived)
+        private void DecodeCommand(CommandWord cmdReceived)
         {
             _ /* length */ = ReceiveUint();
-            switch (cmdReceived & Command.GroupMask)
+            switch (cmdReceived.Group())
             {
-                case Command.Playback:
+                case CommandGroup.Playback:
                     DecodePlaybackCommand(cmdReceived);
                     break;
-                case Command.Playlist:
+                case CommandGroup.Playlist:
                     DecodePlaylistCommand(cmdReceived);
                     break;
-                case Command.Database:
+                case CommandGroup.Database:
                     DecodeDatabaseCommand(cmdReceived);
                     break;
-                case Command.Config:
+                case CommandGroup.Config:
                     DecodeConfigCommand(cmdReceived);
                     break;
-                case Command.System:
+                case CommandGroup.System:
                     DecodeSystemCommand(cmdReceived);
                     break;
                 default:
@@ -517,33 +491,33 @@ namespace URY.BAPS.Client.Common
             }
         }
 
-        private void DecodePlaybackCommand(Command cmdReceived)
+        private void DecodePlaybackCommand(CommandWord cmdReceived)
         {
-            var op = cmdReceived & Command.PlaybackOpMask;
+            var op = cmdReceived.PlaybackOp();
             switch (op)
             {
-                case Command.Play:
-                case Command.Pause:
-                case Command.Stop:
+                case PlaybackOp.Play:
+                case PlaybackOp.Pause:
+                case PlaybackOp.Stop:
                 {
                     OnChannelOperation(new PlayerStateEventArgs(cmdReceived.Channel(),
                         cmdReceived.AsPlaybackState()));
                 }
                     break;
-                case Command.Volume:
+                case PlaybackOp.Volume:
                 {
                     // Deliberately ignore
                     _ = ReceiveFloat();
                 }
                     break;
-                case Command.Load:
+                case PlaybackOp.Load:
                 {
                     DecodeLoad(cmdReceived.Channel());
                 }
                     break;
-                case Command.Position:
-                case Command.CuePosition:
-                case Command.IntroPosition:
+                case PlaybackOp.Position:
+                case PlaybackOp.CuePosition:
+                case PlaybackOp.IntroPosition:
                 {
                     var position = ReceiveUint();
                     OnMarker(new MarkerEventArgs(cmdReceived.Channel(), op.AsMarkerType(), position));
@@ -573,12 +547,12 @@ namespace URY.BAPS.Client.Common
             OnLoadedItem(new TrackLoadEventArgs(channelId, index, track));
         }
 
-        private void DecodePlaylistCommand(Command cmdReceived)
+        private void DecodePlaylistCommand(CommandWord cmdReceived)
         {
-            switch (cmdReceived & Command.PlaylistOpMask)
+            switch (cmdReceived.PlaylistOp())
             {
-                case Command.Item:
-                    if (cmdReceived.HasFlag(Command.PlaylistModeMask))
+                case PlaylistOp.Item:
+                    if (cmdReceived.HasChannelModeFlag())
                     {
                         var channelId = cmdReceived.Channel();
                         var index = ReceiveUint();
@@ -594,7 +568,7 @@ namespace URY.BAPS.Client.Common
                     }
 
                     break;
-                case Command.MoveItemTo:
+                case PlaylistOp.MoveItemTo:
                 {
                     var channelId = cmdReceived.Channel();
                     var indexFrom = ReceiveUint();
@@ -602,14 +576,14 @@ namespace URY.BAPS.Client.Common
                     OnItemMove(new TrackMoveEventArgs(channelId, indexFrom, indexTo));
                 }
                     break;
-                case Command.DeleteItem:
+                case PlaylistOp.DeleteItem:
                 {
                     var channelId = cmdReceived.Channel();
                     var index = ReceiveUint();
                         OnItemDelete(new TrackDeleteEventArgs(channelId, index));
                 }
                     break;
-                case Command.ResetPlaylist:
+                case PlaylistOp.ResetPlaylist:
                 {
                     var channelId = cmdReceived.Channel();
                     OnResetPlaylist(new PlaylistResetEventArgs(channelId));
@@ -621,15 +595,15 @@ namespace URY.BAPS.Client.Common
             }
         }
 
-        private void DecodeDatabaseCommand(Command cmdReceived)
+        private void DecodeDatabaseCommand(CommandWord cmdReceived)
         {
-            switch (cmdReceived & Command.DatabaseOpMask)
+            switch (cmdReceived.DatabaseOp())
             {
-                case Command.LibraryResult:
+                case DatabaseOp.LibraryResult:
                 {
-                    if (cmdReceived.HasFlag(Command.DatabaseModeMask))
+                    if (cmdReceived.HasModeFlag())
                     {
-                        var dirtyStatus = cmdReceived.DatabaseValue();
+                        var dirtyStatus = cmdReceived.Value();
                         var resultId = ReceiveUint();
                             var description = ReceiveString();
                         OnLibraryResult(resultId, dirtyStatus, description);
@@ -640,14 +614,14 @@ namespace URY.BAPS.Client.Common
                     }
                 }
                     break;
-                case Command.LibraryError:
+                case DatabaseOp.LibraryError:
                 {
-                    var errorCode = cmdReceived.DatabaseValue();
+                    var errorCode = cmdReceived.Value();
                     DecodeError(ErrorType.Library, errorCode);
                 }
                     break;
-                case Command.Show:
-                    if (cmdReceived.HasFlag(Command.DatabaseModeMask))
+                case DatabaseOp.Show:
+                    if (cmdReceived.HasModeFlag())
                     {
                         var showId = ReceiveUint();
                         var description = ReceiveString();
@@ -659,8 +633,8 @@ namespace URY.BAPS.Client.Common
                     }
 
                     break;
-                case Command.Listing:
-                    if (cmdReceived.HasFlag(Command.DatabaseModeMask))
+                case DatabaseOp.Listing:
+                    if (cmdReceived.HasModeFlag())
                     {
                         var listingId = ReceiveUint();
                         var channelId = ReceiveUint();
@@ -673,8 +647,8 @@ namespace URY.BAPS.Client.Common
                     }
 
                     break;
-                case Command.BapsDbError:
-                    DecodeError(ErrorType.BapsDb, cmdReceived.DatabaseValue());
+                case DatabaseOp.BapsDbError:
+                    DecodeError(ErrorType.BapsDb, cmdReceived.Value());
                     break;
                 default:
                     OnUnknownCommand(cmdReceived, "possibly a malformed DATABASE");
@@ -682,16 +656,16 @@ namespace URY.BAPS.Client.Common
             }
         }
 
-        private void DecodeConfigCommand(Command cmdReceived)
+        private void DecodeConfigCommand(CommandWord cmdReceived)
         {
-            switch (cmdReceived & Command.ConfigOpMask)
+            switch (cmdReceived.ConfigOp())
             {
-                case Command.Option:
+                case ConfigOp.Option:
                 {
-                    if (cmdReceived.HasFlag(Command.ConfigModeMask))
+                    if (cmdReceived.HasModeFlag())
                     {
-                        var hasIndex = cmdReceived.HasFlag(Command.ConfigUseValueMask);
-                        var index = cmdReceived.ConfigValue();
+                        var hasIndex = cmdReceived.HasConfigIndexedFlag();
+                        var index = cmdReceived.ConfigIndex();
                         var optionId = ReceiveUint();
                         var description = ReceiveString();
                         var type = ReceiveUint();
@@ -705,10 +679,10 @@ namespace URY.BAPS.Client.Common
                     }
                 }
                     break;
-                case Command.OptionChoice:
+                case ConfigOp.OptionChoice:
                 {
                     var optionId = ReceiveUint();
-                    if (cmdReceived.HasFlag(Command.ConfigModeMask))
+                    if (cmdReceived.HasModeFlag())
                     {
                         var choiceIndex = ReceiveUint();
                         var choiceDescription = ReceiveString();
@@ -720,9 +694,9 @@ namespace URY.BAPS.Client.Common
                     }
                 }
                     break;
-                case Command.ConfigSetting:
+                case ConfigOp.ConfigSetting:
                 {
-                    if (cmdReceived.HasFlag(Command.ConfigModeMask))
+                    if (cmdReceived.HasModeFlag())
                     {
                         var optionId = ReceiveUint();
                         var type = ReceiveUint();
@@ -734,19 +708,19 @@ namespace URY.BAPS.Client.Common
                     }
                 }
                     break;
-                case Command.ConfigResult:
+                case ConfigOp.ConfigResult:
                 {
                     var optionId = ReceiveUint();
                     var result = ReceiveUint();
                     OnConfigResult(cmdReceived, optionId, (ConfigResult) result);
                 }
                     break;
-                case Command.ConfigError:
-                    DecodeError(ErrorType.Config, cmdReceived.ConfigValue());
+                case ConfigOp.ConfigError:
+                    DecodeError(ErrorType.Config, cmdReceived.ConfigIndex());
                     break;
-                case Command.User:
+                case ConfigOp.User:
                 {
-                    if (cmdReceived.HasFlag(Command.ConfigModeMask))
+                    if (cmdReceived.HasModeFlag())
                     {
                         var username = ReceiveString();
                         var permissions = ReceiveUint();
@@ -758,9 +732,9 @@ namespace URY.BAPS.Client.Common
                     }
                 }
                     break;
-                case Command.Permission:
+                case ConfigOp.Permission:
                 {
-                    if (cmdReceived.HasFlag(Command.ConfigModeMask))
+                    if (cmdReceived.HasModeFlag())
                     {
                         var permissionCode = ReceiveUint();
                         var description = ReceiveString();
@@ -772,16 +746,16 @@ namespace URY.BAPS.Client.Common
                     }
                 }
                     break;
-                case Command.UserResult:
+                case ConfigOp.UserResult:
                 {
-                    var resultCode = cmdReceived.ConfigValue();
+                    var resultCode = cmdReceived.Value();
                     var description = ReceiveString();
                     OnUserResult(resultCode, description);
                 }
                     break;
-                case Command.IpRestriction:
+                case ConfigOp.IpRestriction:
                 {
-                    if (cmdReceived.HasFlag(Command.ConfigModeMask))
+                    if (cmdReceived.HasModeFlag())
                     {
                         var ipAddress = ReceiveString();
                         var mask = ReceiveUint();
@@ -799,7 +773,7 @@ namespace URY.BAPS.Client.Common
             }
         }
 
-        private void DecodeConfigSetting(Command cmdReceived, uint optionId, ConfigType type)
+        private void DecodeConfigSetting(CommandWord cmdReceived, uint optionId, ConfigType type)
         {
             object value;
             /** Determine what the final argument is going to be and retrieve it **/
@@ -818,36 +792,36 @@ namespace URY.BAPS.Client.Common
 
             /** Use index=-1 to represent a non indexed setting **/
             var index = -1;
-            if (cmdReceived.HasFlag(Command.ConfigUseValueMask)) index = cmdReceived.ConfigValue();
+            if (cmdReceived.HasConfigIndexedFlag()) index = cmdReceived.ConfigIndex();
 
             OnConfigSetting(new ConfigSettingEventArgs(optionId, type, value, index));
         }
 
-        private void DecodeSystemCommand(Command cmdReceived)
+        private void DecodeSystemCommand(CommandWord cmdReceived)
         {
-            switch (cmdReceived & Command.SystemOpMask)
+            switch (cmdReceived.SystemOp())
             {
-                case Command.SendLogMessage:
+                case SystemOp.SendLogMessage:
                     ReceiveString();
                     break;
-                case Command.Filename:
-                    if (cmdReceived.HasFlag(Command.SystemModeMask))
+                case SystemOp.Filename:
+                    if (cmdReceived.HasModeFlag())
                     {
-                        var directoryIndex = cmdReceived.SystemValue();
+                        var directoryIndex = cmdReceived.Value();
                         var index = ReceiveUint();
                         var description = ReceiveString();
                         OnDirectoryFileAdd(new DirectoryFileAddEventArgs(directoryIndex, index, description));
                     }
                     else
                     {
-                        var directoryIndex = cmdReceived.SystemValue();
+                        var directoryIndex = cmdReceived.Value();
                         _ = ReceiveUint();
                         var niceDirectoryName = ReceiveString();
                         OnDirectoryPrepare(new DirectoryPrepareEventArgs(directoryIndex, niceDirectoryName));
                     }
 
                     break;
-                case Command.Version:
+                case SystemOp.Version:
                 {
                     var version = ReceiveString();
                     var date = ReceiveString();
@@ -856,36 +830,36 @@ namespace URY.BAPS.Client.Common
                     OnVersion(new VersionInfo {Version = version, Date = date, Time = time, Author = author});
                 }
                     break;
-                case Command.Feedback:
+                case SystemOp.Feedback:
                 {
                     _ = ReceiveUint();
                 }
                     break;
-                case Command.SendMessage:
+                case SystemOp.SendMessage:
                 {
                     _ = ReceiveString();
                     _ = ReceiveString();
                     _ = ReceiveString();
                 }
                     break;
-                case Command.ClientChange:
+                case SystemOp.ClientChange:
                 {
                     _ = ReceiveString();
                 }
                     break;
-                case Command.ScrollText:
+                case SystemOp.ScrollText:
                 {
-                    var upDown = cmdReceived.SystemValue() == 0 ? UpDown.Down : UpDown.Up;
+                    var upDown = cmdReceived.Value() == 0 ? UpDown.Down : UpDown.Up;
                     OnTextSetting(new TextSettingEventArgs(Events.TextSetting.Scroll, upDown));
                 }
                     break;
-                case Command.TextSize:
+                case SystemOp.TextSize:
                 {
-                    var upDown = cmdReceived.SystemValue() == 0 ? UpDown.Down : UpDown.Up;
+                    var upDown = cmdReceived.Value() == 0 ? UpDown.Down : UpDown.Up;
                     OnTextSetting(new TextSettingEventArgs(Events.TextSetting.FontSize, upDown));
                 }
                     break;
-                case Command.Quit:
+                case SystemOp.Quit:
                 {
                     //The server should send an int representing if this is an expected quit (0) or an exception error (1)."
                     var expected = ReceiveUint() == 0;

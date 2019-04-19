@@ -9,9 +9,9 @@ namespace URY.BAPS.Client.Common.Controllers
     /// </summary>
     public class DirectoryController : BapsNetControllerBase
     {
-        private readonly ushort _directoryId;
+        private readonly byte _directoryId;
 
-        public DirectoryController(ushort directoryId, [CanBeNull] IClientCore core) : base(core)
+        public DirectoryController(byte directoryId, [CanBeNull] IClientCore core) : base(core)
         {
             _directoryId = directoryId;
         }
@@ -30,7 +30,7 @@ namespace URY.BAPS.Client.Common.Controllers
         /// </summary>
         public void Refresh()
         {
-            var cmd = Command.System | Command.ListFiles | (Command) _directoryId;
+            var cmd = CommandWord.System | CommandWord.ListFiles | (CommandWord) _directoryId;
             SendAsync(new Message(cmd));
         }
     }

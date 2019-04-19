@@ -18,34 +18,36 @@ namespace URY.BAPS.Client.Common.Model
     /// </summary>
     public static class MarkerTypeExtensions
     {
-        public static Command AsCommand(this MarkerType pt)
+        public static PlaybackOp AsPlaybackOp(this MarkerType pt)
         {
-            switch (pt)
-            {
-                case MarkerType.Position:
-                    return Command.Position;
-                case MarkerType.Cue:
-                    return Command.CuePosition;
-                case MarkerType.Intro:
-                    return Command.IntroPosition;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(pt), pt, "Not a valid marker type");
-            }
+            return pt switch
+                {
+                MarkerType.Position => PlaybackOp.Position,
+                MarkerType.Cue => PlaybackOp.CuePosition,
+                MarkerType.Intro => PlaybackOp.IntroPosition,
+                _ => throw new ArgumentOutOfRangeException(nameof(pt), pt, "Not a valid marker type")
+                };
         }
 
-        public static MarkerType AsMarkerType(this Command c)
+        public static CommandWord AsCommandWord(this MarkerType pt)
         {
-            switch (c & Command.PlaybackOpMask)
-            {
-                case Command.Position:
-                    return MarkerType.Position;
-                case Command.CuePosition:
-                    return MarkerType.Cue;
-                case Command.IntroPosition:
-                    return MarkerType.Intro;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(c), c, "Command is not a valid marker type");
-            }
+            return pt.AsPlaybackOp().AsCommandWord();
+        }
+
+        public static MarkerType AsMarkerType(this PlaybackOp op)
+        {
+            return op switch
+                {
+                PlaybackOp.Position => MarkerType.Position,
+                PlaybackOp.CuePosition => MarkerType.Cue,
+                PlaybackOp.IntroPosition => MarkerType.Intro,
+                _ => throw new ArgumentOutOfRangeException(nameof(op), op, "Op is not a valid marker type")
+                };
+        }
+
+        public static MarkerType AsMarkerType(this CommandWord c)
+        {
+            return c.PlaybackOp().AsMarkerType();
         }
     }
 }

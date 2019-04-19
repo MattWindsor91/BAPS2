@@ -32,9 +32,9 @@ namespace URY.BAPS.Client.Common.ServerConfig
             ///     The cache whose event handlers should be invoked whenever
             ///     this option changes value.
             /// </summary>
-            [CanBeNull] protected readonly ConfigCache Parent;
+            protected readonly ConfigCache? Parent;
 
-            protected Option([CanBeNull] ConfigCache parent, uint optionId, [CanBeNull] string description,
+            protected Option(ConfigCache? parent, uint optionId, string? description,
                 bool isIndexed)
             {
                 Parent = parent;
@@ -44,8 +44,6 @@ namespace URY.BAPS.Client.Common.ServerConfig
             }
 
             private bool IsIndexed { get; }
-            [CanBeNull] protected T Value => ValueAt(NoIndex);
-
 
             /// <summary>
             ///     Gets the known BapsNet key of this setting.
@@ -62,9 +60,9 @@ namespace URY.BAPS.Client.Common.ServerConfig
 
             public abstract ConfigType Type { get; }
 
-            public T ValueAt(int index)
+            public T ValueAt(int index, T ifNotCached)
             {
-                return _values.TryGetValue(index, out var x) ? x : default;
+                return _values.TryGetValue(index, out var x) ? x : ifNotCached;
             }
 
             /// <summary>
@@ -106,7 +104,7 @@ namespace URY.BAPS.Client.Common.ServerConfig
         /// </summary>
         private class StringOption : Option<string>
         {
-            public StringOption(ConfigCache parent, uint optionId, [CanBeNull] string description, bool isIndexed)
+            public StringOption(ConfigCache? parent, uint optionId, string? description, bool isIndexed)
                 : base(parent, optionId, description, isIndexed)
             {
             }
@@ -120,7 +118,7 @@ namespace URY.BAPS.Client.Common.ServerConfig
 
             protected override void SendChangeEvent(int index)
             {
-                Parent?.OnStringChanged(new StringChangeEventArgs(Key, ValueAt(index), index));
+                Parent?.OnStringChanged(new StringChangeEventArgs(Key, ValueAt(index, ""), index));
             }
         }
 
@@ -130,7 +128,7 @@ namespace URY.BAPS.Client.Common.ServerConfig
         /// </summary>
         private class IntOption : Option<int>
         {
-            public IntOption([CanBeNull] ConfigCache parent, uint optionId, string description, bool isIndexed)
+            public IntOption(ConfigCache? parent, uint optionId, string description, bool isIndexed)
                 : base(parent, optionId, description, isIndexed)
             {
             }
@@ -144,7 +142,7 @@ namespace URY.BAPS.Client.Common.ServerConfig
 
             protected override void SendChangeEvent(int index)
             {
-                Parent?.OnIntChanged(new IntChangeEventArgs(Key, ValueAt(index), index));
+                Parent?.OnIntChanged(new IntChangeEventArgs(Key, ValueAt(index, -1), index));
             }
         }
 
@@ -156,26 +154,29 @@ namespace URY.BAPS.Client.Common.ServerConfig
         {
             [NotNull] private readonly Dictionary<string, int> _choiceList = new Dictionary<string, int>();
 
-            public ChoiceOption([CanBeNull] ConfigCache parent, uint optionId, string description, bool isIndexed)
+            public ChoiceOption(ConfigCache? parent, uint optionId, string description, bool isIndexed)
                 : base(parent, optionId, description, isIndexed)
             {
             }
 
             public override ConfigType Type => ConfigType.Choice;
-            [CanBeNull] public string Choice => ChoiceDescriptionFor(Value);
 
+            /// <summary>
+            ///     Registers a possible choice with this option.
+            /// </summary>
+            /// <param name="choiceId">The ID of the choice to register.</param>
+            /// <param name="description">The string description of the choice to register.</param>
             public void AddChoice(int choiceId, string description)
             {
                 _choiceList[description] = choiceId;
             }
 
-            public int ChoiceIndexFor([CanBeNull] string description)
+            public int ChoiceIndexFor(string? description)
             {
                 return description != null && _choiceList.TryGetValue(description, out var v) ? v : NoIndex;
             }
 
-            [CanBeNull]
-            private string ChoiceDescriptionFor(int index)
+            private string? ChoiceDescriptionFor(int index)
             {
                 return _choiceList.FirstOrDefault(pair => index == pair.Value).Key;
             }
@@ -186,15 +187,19 @@ namespace URY.BAPS.Client.Common.ServerConfig
                     throw new ArgumentOutOfRangeException(nameof(value), value, "Value not a valid choice ID.");
             }
 
-            [CanBeNull]
-            public string ChoiceAt(int index)
+            /// <summary>
+            ///     Tries to get the description of the choice at the given index.
+            /// </summary>
+            /// <param name="index">The index to query; use <see cref="NoIndex"/> if this option isn't indexed.</param>
+            /// <returns>The description of the choice at <paramref name="index"/>, or null if said index doesn't have a valid choice set.</returns>
+            public string? ChoiceAt(int index)
             {
-                return ChoiceDescriptionFor(ValueAt(index));
+                return ChoiceDescriptionFor(ValueAt(index, -1));
             }
 
             protected override void SendChangeEvent(int index)
             {
-                Parent?.OnChoiceChanged(new ChoiceChangeEventArgs(Key, ChoiceAt(index), index));
+                Parent?.OnChoiceChanged(new ChoiceChangeEventArgs(Key, ChoiceAt(index) ?? "?", index));
             }
         }
     }

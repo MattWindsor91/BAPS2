@@ -13,10 +13,10 @@ namespace URY.BAPS.Client.Common.Controllers
     /// </summary>
     public class ChannelController : BapsNetControllerBase, IPlaybackController
     {
-        private readonly ushort _channelId;
+        private readonly byte _channelId;
         [NotNull] private readonly ConfigController _config;
 
-        public ChannelController(ushort channelId, [CanBeNull] IClientCore core, [CanBeNull] ConfigController config) :
+        public ChannelController(byte channelId, [CanBeNull] IClientCore core, [CanBeNull] ConfigController config) :
             base(core)
         {
             _channelId = channelId;
@@ -47,7 +47,7 @@ namespace URY.BAPS.Client.Common.Controllers
         /// <param name="state">The intended new state of the channel.</param>
         public void SetState(PlaybackState state)
         {
-            SendAsync(new Message(state.AsCommand().WithChannel(_channelId)));
+            SendAsync(new Message(state.AsCommandWord().WithChannel(_channelId)));
         }
 
         /// <summary>
@@ -57,13 +57,13 @@ namespace URY.BAPS.Client.Common.Controllers
         /// <param name="newValue">The requested new value.</param>
         public void SetMarker(MarkerType type, uint newValue)
         {
-            var cmd = (Command.Playback | type.AsCommand()).WithChannel(_channelId);
+            var cmd = type.AsCommandWord().WithChannel(_channelId);
             SendAsync(new Message(cmd).Add(newValue));
         }
 
         public void Select(uint index)
         {
-            const Command cmd = Command.Playback | Command.Load;
+            const CommandWord cmd = CommandWord.Playback | CommandWord.Load;
             SendAsync(new Message(cmd.WithChannel(_channelId)).Add(index));
         }
 
@@ -91,7 +91,7 @@ namespace URY.BAPS.Client.Common.Controllers
         /// <param name="index">The 0-based index of the item to delete.</param>
         public void DeleteItemAt(uint index)
         {
-            var cmd = (Command.Playlist | Command.DeleteItem).WithChannel(_channelId);
+            var cmd = (CommandWord.Playlist | CommandWord.DeleteItem).WithChannel(_channelId);
             SendAsync(new Message(cmd).Add(index));
         }
 
@@ -101,7 +101,7 @@ namespace URY.BAPS.Client.Common.Controllers
         /// </summary>
         public void Reset()
         {
-            var cmd = (Command.Playlist | Command.ResetPlaylist).WithChannel(_channelId);
+            var cmd = (CommandWord.Playlist | CommandWord.ResetPlaylist).WithChannel(_channelId);
             SendAsync(new Message(cmd));
         }
 
@@ -110,9 +110,9 @@ namespace URY.BAPS.Client.Common.Controllers
         /// </summary>
         /// <param name="text">The body of the text item.</param>
         /// <param name="summary">The optional short title of the text item.</param>
-        public void AddText(string text, string summary = null)
+        public void AddText(string text, string? summary = null)
         {
-            summary = summary ?? text.Summary();
+            summary ??= text.Summary();
             SendAsync(MessageFactory.MakeAddTextItem(_channelId, summary, text));
         }
     }

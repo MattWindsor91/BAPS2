@@ -138,12 +138,12 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             foreach (var o in objects) target.Add(o);
         }
 
-        private static void HandleCountChange<T>(int newCount, ICollection<T> observableTarget, Func<ushort, T> factory)
+        private static void HandleCountChange<T>(int newCount, ICollection<T> observableTarget, Func<byte, T> factory)
             where T : IDisposable
         {
             if (newCount == observableTarget.Count) return;
             var newObjects = new T[newCount];
-            for (ushort i = 0; i < newCount; i++) newObjects[i] = factory(i);
+            for (byte i = 0; i < newCount; i++) newObjects[i] = factory(i);
             DispatcherHelper.CheckBeginInvokeOnUI(() => UpdateObservable(newObjects, observableTarget));
         }
 

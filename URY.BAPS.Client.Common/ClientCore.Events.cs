@@ -20,8 +20,8 @@ namespace URY.BAPS.Client.Common
             new Subject<ConfigOptionEventArgs>();
 
         [NotNull]
-        private readonly Subject<(Command cmdReceived, uint optionID, ConfigResult result)> _observeConfigResult =
-            new Subject<(Command cmdReceived, uint optionID, ConfigResult result)>();
+        private readonly Subject<(CommandWord cmdReceived, uint optionID, ConfigResult result)> _observeConfigResult =
+            new Subject<(CommandWord cmdReceived, uint optionID, ConfigResult result)>();
 
         [NotNull] private readonly Subject<ConfigSettingEventArgs> _observeConfigSetting =
             new Subject<ConfigSettingEventArgs>();
@@ -35,8 +35,8 @@ namespace URY.BAPS.Client.Common
         [NotNull]
         private readonly Subject<ErrorEventArgs> _observeError = new Subject<ErrorEventArgs>();
 
-        [NotNull] private readonly Subject<(Command cmdReceived, string ipAddress, uint mask)> _observeIpRestriction =
-            new Subject<(Command cmdReceived, string ipAddress, uint mask)>();
+        [NotNull] private readonly Subject<(CommandWord cmdReceived, string ipAddress, uint mask)> _observeIpRestriction =
+            new Subject<(CommandWord cmdReceived, string ipAddress, uint mask)>();
 
         [NotNull] private readonly Subject<(uint resultID, byte dirtyStatus, string description)> _observeLibraryResult
             =
@@ -77,8 +77,8 @@ namespace URY.BAPS.Client.Common
         [NotNull] private readonly Subject<TrackMoveEventArgs> _observeTrackMove =
             new Subject<TrackMoveEventArgs>();
 
-        [NotNull] private readonly Subject<(Command command, string description)> _observeUnknownCommand =
-            new Subject<(Command command, string description)>();
+        [NotNull] private readonly Subject<(CommandWord command, string description)> _observeUnknownCommand =
+            new Subject<(CommandWord command, string description)>();
 
         [NotNull] private readonly Subject<(string username, uint permissions)> _observeUser =
             new Subject<(string username, uint permissions)>();
@@ -98,7 +98,7 @@ namespace URY.BAPS.Client.Common
 
         public IObservable<ConfigSettingEventArgs> ObserveConfigSetting => _observeConfigSetting;
 
-        public IObservable<(Command cmdReceived, uint optionID, ConfigResult result)> ObserveConfigResult =>
+        public IObservable<(CommandWord cmdReceived, uint optionID, ConfigResult result)> ObserveConfigResult =>
             _observeConfigResult;
 
         public IObservable<DirectoryFileAddEventArgs> ObserveDirectoryFileAdd => _observeDirectoryFileAdd;
@@ -125,7 +125,7 @@ namespace URY.BAPS.Client.Common
 
         public IObservable<Receiver.VersionInfo> ObserveVersion => _observeVersion;
 
-        public IObservable<(Command cmdReceived, string ipAddress, uint mask)> ObserveIpRestriction =>
+        public IObservable<(CommandWord cmdReceived, string ipAddress, uint mask)> ObserveIpRestriction =>
             _observeIpRestriction;
 
         public IObservable<(uint resultID, byte dirtyStatus, string description)> ObserveLibraryResult =>
@@ -140,7 +140,7 @@ namespace URY.BAPS.Client.Common
 
         public IObservable<TextSettingEventArgs> ObserveTextSetting => _observeTextSetting;
 
-        public IObservable<(Command command, string description)> ObserveUnknownCommand => _observeUnknownCommand;
+        public IObservable<(CommandWord command, string description)> ObserveUnknownCommand => _observeUnknownCommand;
 
         public IObservable<(string username, uint permissions)> ObserveUser => _observeUser;
 

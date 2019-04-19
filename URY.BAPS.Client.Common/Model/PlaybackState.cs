@@ -15,34 +15,35 @@ namespace URY.BAPS.Client.Common.Model
 
     public static class PlaybackStateExtensions
     {
-        public static Command AsCommand(this PlaybackState pt)
+        public static PlaybackOp AsPlaybackOp(this PlaybackState pt)
         {
-            switch (pt)
+            return pt switch
             {
-                case PlaybackState.Playing:
-                    return Command.Playback | Command.Play;
-                case PlaybackState.Paused:
-                    return Command.Playback | Command.Pause;
-                case PlaybackState.Stopped:
-                    return Command.Playback | Command.Stop;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(pt), pt, "Not a valid channel state");
-            }
+                PlaybackState.Playing => PlaybackOp.Play,
+                PlaybackState.Paused => PlaybackOp.Pause,
+                PlaybackState.Stopped => PlaybackOp.Stop,
+                _ => throw new ArgumentOutOfRangeException(nameof(pt), pt, "Not a valid channel state")
+            };
         }
 
-        public static PlaybackState AsPlaybackState(this Command c)
+        public static PlaybackState AsPlaybackState(this PlaybackOp op)
         {
-            switch (c & Command.PlaybackOpMask)
-            {
-                case Command.Play:
-                    return PlaybackState.Playing;
-                case Command.Pause:
-                    return PlaybackState.Paused;
-                case Command.Stop:
-                    return PlaybackState.Stopped;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(c), c, "Command is not a valid channel state");
-            }
+            return op switch {
+                PlaybackOp.Play => PlaybackState.Playing,
+                PlaybackOp.Pause => PlaybackState.Paused,
+                PlaybackOp.Stop => PlaybackState.Stopped,
+                _ => throw new ArgumentOutOfRangeException(nameof(op), op, "Command is not a valid channel state")
+                };
+        }
+
+        public static CommandWord AsCommandWord(this PlaybackState pt)
+        {
+            return pt.AsPlaybackOp().AsCommandWord();
+        }
+
+        public static PlaybackState AsPlaybackState(this CommandWord c)
+        {
+            return c.PlaybackOp().AsPlaybackState();
         }
     }
 }

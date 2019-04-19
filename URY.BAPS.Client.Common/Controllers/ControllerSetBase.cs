@@ -17,8 +17,8 @@ namespace URY.BAPS.Client.Common.Controllers
     /// </typeparam>
     public abstract class ControllerSetBase<TController>
     {
-        [NotNull] private readonly ConcurrentDictionary<ushort, TController> _controllers =
-            new ConcurrentDictionary<ushort, TController>();
+        [NotNull] private readonly ConcurrentDictionary<byte, TController> _controllers =
+            new ConcurrentDictionary<byte, TController>();
 
         /// <summary>
         ///     The client core.
@@ -45,7 +45,7 @@ namespace URY.BAPS.Client.Common.Controllers
         ///     Any controllers this set previously constructed for the given ID will be reused.
         /// </returns>
         [NotNull]
-        public TController ControllerFor(ushort id)
+        public TController ControllerFor(byte id)
         {
             return _controllers.GetOrAdd(id, MakeController);
         }
@@ -61,6 +61,6 @@ namespace URY.BAPS.Client.Common.Controllers
         ///     <see cref="id" />.
         /// </returns>
         [NotNull]
-        protected abstract TController MakeController(ushort id);
+        protected abstract TController MakeController(byte id);
     }
 }

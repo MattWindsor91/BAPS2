@@ -10,7 +10,7 @@
         ///     Synchronously sends a command down this sink.
         /// </summary>
         /// <param name="cmd">The command to send.</param>
-        void SendCommand(Command cmd);
+        void SendCommand(CommandWord cmd);
 
         /// <summary>
         ///     Synchronously sends a string down this sink.

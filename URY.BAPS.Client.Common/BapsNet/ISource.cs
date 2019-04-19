@@ -12,8 +12,8 @@ namespace URY.BAPS.Client.Common.BapsNet
         ///     Performs a blocking (synchronous) read of a command word.
         /// </summary>
         /// <param name="token">An optional cancellation token that can be used to abort the receive.</param>
-        /// <returns>The resulting <see cref="Command"/>.</returns>
-        Command ReceiveCommand(CancellationToken token = default);
+        /// <returns>The resulting <see cref="CommandWord"/>.</returns>
+        CommandWord ReceiveCommand(CancellationToken token = default);
 
         /// <summary>
         ///     Performs a blocking (synchronous) read of a string

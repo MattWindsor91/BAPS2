@@ -18,13 +18,13 @@ namespace URY.BAPS.Client.Common
 
         private readonly CancellationTokenSource _dead = new CancellationTokenSource();
 
-        private Receiver _receiver;
-        private Task _receiverTask;
+        private Receiver? _receiver;
+        private Task? _receiverTask;
 
-        private Sender _sender;
-        private Task _senderTask;
+        private Sender? _sender;
+        private Task? _senderTask;
 
-        private TcpConnection _socket;
+        private TcpConnection? _socket;
 
 
         public ClientCore([NotNull] Authenticator auth)
@@ -79,14 +79,14 @@ namespace URY.BAPS.Client.Common
 
         private void CreateAndLaunchReceiver(TaskFactory tf)
         {
-            _receiver = new Receiver(_socket.Source, _dead.Token);
+            _receiver = new Receiver(_socket?.Source, _dead.Token);
             SubscribeToReceiver();
             _receiverTask = tf.StartNew(_receiver.Run);
         }
 
         private void CreateAndLaunchSender(TaskFactory tf)
         {
-            _sender = new Sender(_socket.Sink, _dead.Token);
+            _sender = new Sender(_socket?.Sink, _dead.Token);
             _senderTask = tf.StartNew(_sender.Run);
         }
 
@@ -102,7 +102,7 @@ namespace URY.BAPS.Client.Common
         /// </summary>
         private void NotifyServerOfQuit()
         {
-            const Command cmd = Command.System | Command.End;
+            const CommandWord cmd = CommandWord.System | CommandWord.End;
             SendAsync(new Message(cmd).Add("Normal Termination"));
         }
 
@@ -124,7 +124,7 @@ namespace URY.BAPS.Client.Common
         ///     Waits for the given task to finish, then disposes it.
         /// </summary>
         /// <param name="task">The task to join.</param>
-        private static void Join(Task task)
+        private static void Join(Task? task)
         {
             if (task == null) return;
             try

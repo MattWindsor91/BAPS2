@@ -16,7 +16,7 @@ namespace URY.BAPS.Client.Common.Controllers
         }
 
         [Pure]
-        protected override ChannelController MakeController(ushort channelId)
+        protected override ChannelController MakeController(byte channelId)
         {
             return new ChannelController(channelId, Core, _config);
         }

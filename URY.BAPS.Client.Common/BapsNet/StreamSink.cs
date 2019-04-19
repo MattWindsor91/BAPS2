@@ -22,7 +22,7 @@ namespace URY.BAPS.Client.Common.BapsNet
         }
 
         /// <inheritdoc cref="ISink"/>
-        public void SendCommand(Command cmd)
+        public void SendCommand(CommandWord cmd)
         {
             SendNetworkOrder(BitConverter.GetBytes((ushort)cmd));
         }

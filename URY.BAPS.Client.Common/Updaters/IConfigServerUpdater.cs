@@ -26,6 +26,6 @@ namespace URY.BAPS.Client.Common.Updaters
         /// </summary>
         IObservable<ConfigSettingEventArgs> ObserveConfigSetting { get; }
 
-        IObservable<(Command cmdReceived, uint optionID, ConfigResult result)> ObserveConfigResult { get; }
+        IObservable<(CommandWord cmdReceived, uint optionID, ConfigResult result)> ObserveConfigResult { get; }
     }
 }

@@ -44,7 +44,7 @@ namespace URY.BAPS.Client.Wpf.Services
         /// <param name="id">The ID of the channel whose view model is being created.</param>
         /// <returns>A <see cref="IChannelViewModel"/> over channel <see cref="id"/>.</returns>
         [Pure]
-        public IChannelViewModel Make(ushort id)
+        public IChannelViewModel Make(byte id)
         {
             var controller = _controllerSet.ControllerFor(id);
             var player = new PlayerViewModel(id, controller);

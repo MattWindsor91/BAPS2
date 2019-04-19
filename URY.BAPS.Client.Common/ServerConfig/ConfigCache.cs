@@ -36,17 +36,13 @@ namespace URY.BAPS.Client.Common.ServerConfig
 
         private IOption MakeOption(uint optionId, ConfigType type, string description, bool isIndexed)
         {
-            switch (type)
+            return type switch
             {
-                case ConfigType.Choice:
-                    return new ChoiceOption(this, optionId, description, isIndexed);
-                case ConfigType.Int:
-                    return new IntOption(this, optionId, description, isIndexed);
-                case ConfigType.Str:
-                    return new StringOption(this, optionId, description, isIndexed);
-                default:
-                    throw new InvalidEnumArgumentException(nameof(type), (int) type, typeof(ConfigType));
-            }
+                ConfigType.Choice => (IOption)new ChoiceOption(this, optionId, description, isIndexed),
+                ConfigType.Int => new IntOption(this, optionId, description, isIndexed),
+                ConfigType.Str => new StringOption(this, optionId, description, isIndexed),
+                _ => throw new InvalidEnumArgumentException(nameof(type), (int)type, typeof(ConfigType))
+            };
         }
 
         public int ChoiceIndexFor(uint optionId, [ValueProvider("ChoiceKeys")] string choiceKey)
@@ -80,7 +76,7 @@ namespace URY.BAPS.Client.Common.ServerConfig
             (option as ChoiceOption)?.AddChoice(choiceId, description);
         }
 
-        private IOption GetOption(uint optionId)
+        private IOption? GetOption(uint optionId)
         {
             return _idLookup.TryGetValue(optionId, out var x) ? x : null;
         }
@@ -110,21 +106,21 @@ namespace URY.BAPS.Client.Common.ServerConfig
             if (choice != -1) o.AddValue(choice, index);
         }
 
-        public string GetChoice(OptionKey sk, int index = NoIndex)
+        public string GetChoice(OptionKey sk, string ifNotCached, int index)
         {
-            return GetChoice((uint) sk, index);
+            return GetChoice((uint) sk, ifNotCached, index);
         }
 
-        public string GetChoice(uint optionId, int index = NoIndex)
+        public string GetChoice(uint optionId, string ifNotCached, int index)
         {
-            if (GetOption(optionId) is ChoiceOption option) return option.ChoiceAt(index);
-            return null;
+            if (GetOption(optionId) is ChoiceOption option) return option.ChoiceAt(index) ?? ifNotCached;
+            return ifNotCached;
         }
 
-        public T GetValue<T>(uint optionId, int index = NoIndex)
+        public T GetValue<T>(uint optionId, T ifNotCached, int index)
         {
-            if (GetOption(optionId) is Option<T> option) return option.ValueAt(index);
-            return default;
+            if (GetOption(optionId) is Option<T> option) return option.ValueAt(index, ifNotCached);
+            return ifNotCached;
         }
 
         /// <summary>

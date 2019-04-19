@@ -10,7 +10,7 @@ namespace URY.BAPS.Client.Common.Tests.BapsNet
     /// </summary>
     public class MessageTests
     {
-        private void AssertMessage(Message message, Command expectedCommand, uint expectedLength,
+        private void AssertMessage(Message message, CommandWord expectedCommandWord, uint expectedLength,
             params Action<object>[] elementInspectors)
         {
             var sink = new DebugSink();
@@ -18,7 +18,7 @@ namespace URY.BAPS.Client.Common.Tests.BapsNet
 
             var finalElementInspectors = new Action<object>[elementInspectors.Length + 2];
             finalElementInspectors[0] = actualCmd =>
-                Assert.Equal(expectedCommand, Assert.IsAssignableFrom<Command>(actualCmd));
+                Assert.Equal(expectedCommandWord, Assert.IsAssignableFrom<CommandWord>(actualCmd));
             finalElementInspectors[1] = length =>
                 Assert.Equal(expectedLength, Assert.IsAssignableFrom<uint>(length));
             Array.Copy(elementInspectors, 0, finalElementInspectors, 2, elementInspectors.Length);
@@ -38,7 +38,7 @@ namespace URY.BAPS.Client.Common.Tests.BapsNet
         [Fact]
         public void TestFloatChannelCommandSend()
         {
-            const Command cmd = Command.Playback | Command.Volume;
+            const CommandWord cmd = CommandWord.Playback | CommandWord.Volume;
             const float value = 0.75f;
 
             var m = new Message(cmd).Add(value);
@@ -55,7 +55,7 @@ namespace URY.BAPS.Client.Common.Tests.BapsNet
         [Theory, MemberData(nameof(StringSystemCommandSendData))]
         public void TestStringSystemCommandSend(string value)
         {
-            const Command cmd = Command.System | Command.SendLogMessage;
+            const CommandWord cmd = CommandWord.System | CommandWord.SendLogMessage;
 
             // Strings are UTF-8, so the command length is equal to the number of UTF-8 bytes in the value, plus four
             // characters for the on-wire representation of the string's length.
@@ -74,7 +74,7 @@ namespace URY.BAPS.Client.Common.Tests.BapsNet
         [Fact]
         public void TestU32ChannelCommandSend()
         {
-            const Command cmd = Command.Playback | Command.CuePosition;
+            const CommandWord cmd = CommandWord.Playback | CommandWord.CuePosition;
             const uint value = 3600;
 
             var m = new Message(cmd).Add(value);
@@ -92,7 +92,7 @@ namespace URY.BAPS.Client.Common.Tests.BapsNet
         [Fact]
         public void TestZeroArgumentChannelCommandSend()
         {
-            var cmd = (Command.Playback | Command.Play).WithChannel(42);
+            var cmd = (CommandWord.Playback | CommandWord.Play).WithChannel(42);
             var m = new Message(cmd);
             // Even zero-argument commands have a trailing length (of 0).
             const uint expectedLength = 0;
@@ -106,7 +106,7 @@ namespace URY.BAPS.Client.Common.Tests.BapsNet
         [Fact]
         public void TestZeroArgumentCommandSend()
         {
-            const Command cmd = Command.System | Command.Quit;
+            const CommandWord cmd = CommandWord.System | CommandWord.Quit;
             var m = new Message(cmd);
             // Even zero-argument commands have a trailing length (of 0).
             const uint expectedLength = 0;

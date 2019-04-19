@@ -59,9 +59,9 @@ namespace URY.BAPS.Client.Common.BapsNet
             return buf;
         }
 
-        public Command ReceiveCommand(CancellationToken token = default)
+        public CommandWord ReceiveCommand(CancellationToken token = default)
         {
-            return (Command)BitConverter.ToUInt16(ReceiveNetworkOrder(2, token), 0);
+            return (CommandWord)BitConverter.ToUInt16(ReceiveNetworkOrder(2, token), 0);
         }
 
         public string ReceiveString(CancellationToken token = default)

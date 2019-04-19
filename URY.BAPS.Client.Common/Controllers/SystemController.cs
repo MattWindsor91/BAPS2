@@ -19,7 +19,7 @@ namespace URY.BAPS.Client.Common.Controllers
         public void AutoUpdate()
         {
             // Add the auto-update message onto the queue (chat(2) and general(1))
-            const Command cmd = Command.System | Command.AutoUpdate | (Command) 2 | (Command) 1;
+            const CommandWord cmd = CommandWord.System | CommandWord.AutoUpdate | (CommandWord) 2 | (CommandWord) 1;
             SendAsync(new Message(cmd));
         }
     }

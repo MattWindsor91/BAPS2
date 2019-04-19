@@ -14,13 +14,13 @@ namespace URY.BAPS.Client.Common.BapsNet
     {
         [NotNull] private readonly Queue<IArgument> _args = new Queue<IArgument>();
 
-        private readonly Command _cmd;
+        private readonly CommandWord _cmd;
 
         /// <summary>
         ///     Constructs a message containing the given command word.
         /// </summary>
         /// <param name="cmd">The command word.</param>
-        public Message(Command cmd)
+        public Message(CommandWord cmd)
         {
             _cmd = cmd;
         }

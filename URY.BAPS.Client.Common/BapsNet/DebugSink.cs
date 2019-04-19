@@ -13,7 +13,7 @@ namespace URY.BAPS.Client.Common.BapsNet
 
         public object[] Items => _items.ToArray();
 
-        public void SendCommand(Command cmd)
+        public void SendCommand(CommandWord cmd)
         {
             _items.Enqueue(cmd);
         }

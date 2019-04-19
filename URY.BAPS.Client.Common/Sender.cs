@@ -27,7 +27,7 @@ namespace URY.BAPS.Client.Common
         ///     The cancellation token that the <see cref="Sender" /> will check
         ///     to see if it should shut down.
         /// </param>
-        public Sender(ISink sink, CancellationToken token)
+        public Sender(ISink? sink, CancellationToken token)
         {
             _token = token;
             _sink = sink ?? throw new ArgumentNullException(nameof(sink));
@@ -37,7 +37,7 @@ namespace URY.BAPS.Client.Common
         ///     Queues up a message to send through this <see cref="Sender" />.
         /// </summary>
         /// <param name="message">The message to send.</param>
-        public void Enqueue([CanBeNull] Message message)
+        public void Enqueue(Message? message)
         {
             if (message != null) _queue.Add(message, _token);
         }

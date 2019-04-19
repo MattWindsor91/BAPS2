@@ -42,8 +42,8 @@ namespace URY.BAPS.Client.Common.Controllers
         {
             var optionId = (uint) optionKey;
             var choiceIndex = _cache.ChoiceIndexFor(optionId, choiceKey);
-            var cmd = Command.Config | Command.SetConfigValue;
-            if (index != ConfigCache.NoIndex) cmd |= Command.ConfigUseValueMask | (Command) index;
+            var cmd = CommandWord.Config | CommandWord.SetConfigValue;
+            if (index != ConfigCache.NoIndex) cmd = cmd.WithConfigIndexedFlag(true).WithConfigIndex((byte)index);
             SendAsync(new Message(cmd).Add(optionId).Add((uint) ConfigType.Choice).Add((uint) choiceIndex));
         }
 
@@ -66,7 +66,7 @@ namespace URY.BAPS.Client.Common.Controllers
                     // This is a strange place to put this, but necessary;
                     // the BapsNet conversation that results in receiving the config setting has to
                     // take place within the time window that 'ev' is registered.
-                    SendAsync(new Message(Command.Config | Command.GetConfigSetting).Add((uint) key));
+                    SendAsync(new Message(CommandWord.Config | CommandWord.GetConfigSetting).Add((uint) key));
                 },
                 ev => _cache.IntChanged -= ev
             ).FirstAsync(

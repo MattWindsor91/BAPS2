@@ -35,7 +35,7 @@ namespace URY.BAPS.Client.Common.Tests.BapsNet
         [Fact]
         public void TestSendAndReceiveCommand()
         {
-            const Command expectedCommand = Command.System | Command.AutoUpdate;
+            const CommandWord expectedCommand = CommandWord.System | CommandWord.AutoUpdate;
             _sink.SendCommand(expectedCommand);
             Debug.Assert(_source != null, nameof(_source) + " != null");
             var actualCommand = SeekAndReceive(_source.ReceiveCommand);

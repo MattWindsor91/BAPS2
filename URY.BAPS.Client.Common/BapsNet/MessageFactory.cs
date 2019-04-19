@@ -12,9 +12,9 @@ namespace URY.BAPS.Client.Common.BapsNet
         /// </summary>
         /// <param name="channelId">The ID of the channel to which we are adding.</param>
         /// <returns>A command for adding an item to <paramref name="channelId"/>.</returns>
-        private static Command MakeAddItemCommand(ushort channelId)
+        private static CommandWord MakeAddItemCommand(byte channelId)
         {
-            return (Command.Playlist | Command.AddItem).WithChannel(channelId);
+            return new PlaylistCommand(PlaylistOp.AddItem, channelId, false).Packed;
         }
 
         /// <summary>
@@ -23,22 +23,22 @@ namespace URY.BAPS.Client.Common.BapsNet
         /// <param name="channelId">The ID of the channel to which we are adding.</param>
         /// <param name="trackType">The type of track we are adding.</param>
         /// <returns>A message, to which we can add type-specific arguments.</returns>
-        private static Message MakeAddItemBase(ushort channelId, TrackType trackType)
+        private static Message MakeAddItemBase(byte channelId, TrackType trackType)
         {
             return new Message(MakeAddItemCommand(channelId)).Add((uint)trackType);
         }
 
-        public static Message MakeAddFileItem(ushort channelId, uint directoryNumber, string filename)
+        public static Message MakeAddFileItem(byte channelId, uint directoryNumber, string filename)
         {
             return MakeAddItemBase(channelId, TrackType.File).Add(directoryNumber).Add(filename);
         }
 
-        public static Message MakeAddLibraryItem(ushort channelId, uint searchItemIndex)
+        public static Message MakeAddLibraryItem(byte channelId, uint searchItemIndex)
         {
             return MakeAddItemBase(channelId, TrackType.Library).Add(searchItemIndex);
         }
 
-        public static Message MakeAddTextItem(ushort channelId, string briefDescription, string details)
+        public static Message MakeAddTextItem(byte channelId, string briefDescription, string details)
         {
             return MakeAddItemBase(channelId, TrackType.Text).Add(briefDescription).Add(details);
         }

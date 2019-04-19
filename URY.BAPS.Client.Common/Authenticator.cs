@@ -3,8 +3,6 @@ using System.Diagnostics;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using JetBrains.Annotations;
 using URY.BAPS.Client.Common.BapsNet;
 
@@ -22,9 +20,9 @@ namespace URY.BAPS.Client.Common
         private readonly Func<Response> _loginCallback;
 
         private int _lastPort = -1;
-        private string _lastServer;
-        private string _seed;
-        [CanBeNull] private TcpConnection _conn;
+        private string? _lastServer;
+        private string? _seed;
+        private TcpConnection? _conn;
 
         /// <summary>
         ///     Constructs a <see cref="Authenticator" />.
@@ -51,7 +49,7 @@ namespace URY.BAPS.Client.Common
         ///     Tries to construct an authenticated <see cref="TcpConnection" />.
         /// </summary>
         /// <returns>Null, if we gave up trying to log in; a connected and ready client socket, otherwise.</returns>
-        public TcpConnection Run()
+        public TcpConnection? Run()
         {
             var done = false;
             while (!done) done = Attempt();
@@ -79,12 +77,12 @@ namespace URY.BAPS.Client.Common
             MakeNewConnection(response.Server, response.Port);
         }
 
-        private (Command command, string payload) ReceiveSystemStringCommand(Command expectedCommand, ISource src)
+        private (CommandWord command, string? payload) ReceiveSystemStringCommand(SystemOp expectedOp, ISource src)
         {
             var cmd = src.ReceiveCommand();
             _ = src.ReceiveUint(); // Discard length
             var isRightGroup = cmd.Group() == CommandGroup.System;
-            var isRightOp = (cmd & Command.SystemOpMask) == expectedCommand;
+            var isRightOp = cmd.SystemOp() == expectedOp;
             var isRightCommand = isRightGroup && isRightOp;
             if (isRightCommand) return (cmd, src.ReceiveString());
             IncompatibleLoginProcedure();
@@ -111,10 +109,10 @@ namespace URY.BAPS.Client.Common
                 structure
              **/
             _ = _conn.Source.ReceiveString();
-            var binaryModeCmd = new Message(Command.System | Command.SetBinaryMode);
+            var binaryModeCmd = new Message(CommandWord.System | CommandWord.SetBinaryMode);
             binaryModeCmd.Send(_conn.Sink);
 
-            _seed = ReceiveSystemStringCommand(Command.Seed, _conn.Source).payload;
+            _seed = ReceiveSystemStringCommand(SystemOp.Seed, _conn.Source).payload;
             Debug.Assert(_seed != null, "Got a null seed despite making a connection");
         }
 
@@ -161,14 +159,14 @@ namespace URY.BAPS.Client.Common
 
             var securedPassword = Md5Sum(string.Concat(_seed, Md5Sum(password)));
 
-            var loginCmd = new Message(Command.System | Command.Login).Add(username).Add(securedPassword);
+            var loginCmd = new Message(CommandWord.System | CommandWord.Login).Add(username).Add(securedPassword);
             loginCmd.Send(_conn.Sink);
 
-            var (authResult, description) = ReceiveSystemStringCommand(Command.LoginResult, _conn.Source);
-            var authenticated = authResult.SystemValue() == 0;
+            var (authResult, description) = ReceiveSystemStringCommand(SystemOp.LoginResult, _conn.Source);
+            var authenticated = authResult.Value() == 0;
             if (!authenticated)
             {
-                UserError?.Invoke(this, description);
+                UserError?.Invoke(this, description ?? "(no description)");
                 return false;
             }
 
