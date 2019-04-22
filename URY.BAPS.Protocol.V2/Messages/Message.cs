@@ -17,13 +17,13 @@ namespace URY.BAPS.Protocol.V2.Messages
         /// </summary>
         [NotNull] private readonly Queue<IArgument> _arguments = new Queue<IArgument>();
 
-        private readonly CommandWord _cmd;
+        private readonly ICommand _cmd;
 
         /// <summary>
-        ///     Constructs a message containing the given command word.
+        ///     Constructs a message containing the given command.
         /// </summary>
         /// <param name="cmd">The command word.</param>
-        public Message(CommandWord cmd)
+        public Message(ICommand cmd)
         {
             _cmd = cmd;
         }
@@ -47,7 +47,6 @@ namespace URY.BAPS.Protocol.V2.Messages
         {
             return Add(new UintArgument {Value = value});
         }
-
 
         /// <summary>
         ///     Adds an float to this message.
@@ -77,7 +76,7 @@ namespace URY.BAPS.Protocol.V2.Messages
         /// <param name="sink">The (non-null) sink to send onto.</param>
         private void SendCommand(ISink sink)
         {
-            sink.SendCommand(_cmd);
+            sink.SendCommand(_cmd.Packed);
         }
 
         /// <summary>

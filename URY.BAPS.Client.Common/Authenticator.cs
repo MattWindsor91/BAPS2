@@ -112,8 +112,9 @@ namespace URY.BAPS.Client.Common
                 structure
              **/
             _ = _conn.ReceiveString();
-            var binaryModeCmd = new Message(CommandWord.System | CommandWord.SetBinaryMode);
-            binaryModeCmd.Send(_conn);
+            var binaryModeCommand = new SystemCommand(SystemOp.SetBinaryMode, 0, false);
+            var binaryModeMessage = new Message(binaryModeCommand);
+            binaryModeMessage.Send(_conn);
 
             _seed = ReceiveSystemStringCommand(SystemOp.Seed, _conn).payload;
             Debug.Assert(_seed != null, "Got a null seed despite making a connection");
@@ -162,8 +163,9 @@ namespace URY.BAPS.Client.Common
 
             var securedPassword = Md5Sum(string.Concat(_seed, Md5Sum(password)));
 
-            var loginCmd = new Message(CommandWord.System | CommandWord.Login).Add(username).Add(securedPassword);
-            loginCmd.Send(_conn);
+            var loginCmd = new SystemCommand(SystemOp.Login);
+            var loginMessage = new Message(loginCmd).Add(username).Add(securedPassword);
+            loginMessage.Send(_conn);
 
             var (authResult, description) = ReceiveSystemStringCommand(SystemOp.LoginResult, _conn);
             var authenticated = authResult.Value() == 0;

@@ -32,8 +32,8 @@ namespace URY.BAPS.Client.Common.Controllers
         /// </summary>
         public void Refresh()
         {
-            var cmd = CommandWord.System | CommandWord.ListFiles | (CommandWord) _directoryId;
-            SendAsync(new Message(cmd));
+            var cmd = new SystemCommand(SystemOp.ListFiles, _directoryId);
+            Send(new Message(cmd));
         }
     }
 }

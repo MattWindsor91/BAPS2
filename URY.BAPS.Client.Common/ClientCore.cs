@@ -39,7 +39,7 @@ namespace URY.BAPS.Client.Common
         ///     Sends a message to the BapsNet server.
         /// </summary>
         /// <param name="message">The message to send.  If null, nothing is sent.</param>
-        public void SendAsync(Message message)
+        public void Send(Message? message)
         {
             if (message != null) _sender?.Enqueue(message);
         }
@@ -104,8 +104,8 @@ namespace URY.BAPS.Client.Common
         /// </summary>
         private void NotifyServerOfQuit()
         {
-            const CommandWord cmd = CommandWord.System | CommandWord.End;
-            SendAsync(new Message(cmd).Add("Normal Termination"));
+            var cmd = new SystemCommand(SystemOp.End);
+            Send(new Message(cmd).Add("Normal Termination"));
         }
 
         /// <summary>

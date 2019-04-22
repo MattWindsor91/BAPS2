@@ -2,110 +2,6 @@
 
 namespace URY.BAPS.Protocol.V2.Commands
 {
-    // The numbers assigned to each of these enum values are significant:
-    // when shifted left by the appropriate member of CommandShifts,
-    // they form the BapsNet flags.
-    // As such, _do not_ change them without good reason.
-
-    /// <summary>
-    ///     Enumeration of command groups.
-    /// </summary>
-    public enum CommandGroup : byte
-    {
-        Playback = 0,
-        Playlist = 1,
-        Database = 3,
-        Config = 5,
-        System = 7
-    }
-
-    /// <summary>
-    ///     Enumeration of playlist operations.
-    /// </summary>
-    public enum PlaylistOp : byte
-    {
-        AddItem = 0,
-        DeleteItem = 1,
-        MoveItemTo = 2,
-        Item = 3,
-        GetPlaylist = 4,
-        ResetPlaylist = 5,
-        CopyItem = 6,
-    }
-
-    /// <summary>
-    ///     Enumeration of database operations.
-    /// </summary>
-    public enum DatabaseOp : byte
-    {
-        LibrarySearch = 0,
-        LibraryOrdering = 1,
-        LibraryResult = 2,
-        LibraryError = 3,
-        GetShows = 4,
-        Show = 5,
-        GetListings = 6,
-        Listing = 7,
-        AssignListing = 8,
-        BapsDbError = 9
-    }
-
-    /// <summary>
-    ///     Enumeration of config operations.
-    /// </summary>
-    public enum ConfigOp : byte
-    {
-        GetOptions = 0,
-        GetOptionChoices = 1,
-        GetConfigSettings = 2,
-        GetConfigSetting = 3,
-        GetOption = 4,
-        SetConfigValue = 5,
-        GetUsers = 6,
-        GetPermissions = 7,
-        GetUser = 8,
-        AddUser = 9,
-        RemoveUser = 10,
-        SetPassword = 11,
-        GrantPermission = 12,
-        RevokePermission = 13,
-        // 14 - 15: unused
-        Option = 16,
-        OptionChoice = 17,
-        ConfigSetting = 18,
-        User = 19,
-        Permission = 20,
-        UserResult = 21,
-        ConfigResult = 22,
-        ConfigError = 23,
-        GetIpRestrictions = 24,
-        IpRestriction = 25,
-        AlterIpRestriction = 26,
-    }
-
-    /// <summary>
-    ///     Enumeration of system operations.
-    /// </summary>
-    public enum SystemOp : byte
-    {
-        ListFiles = 0,
-        Filename = 1,
-        SendMessage = 2,
-        AutoUpdate = 3,
-        End = 4,
-        SendLogMessage = 5,
-        SetBinaryMode = 6,
-        Seed = 7,
-        Login = 8,
-        LoginResult = 9,
-        Version = 10,
-        Feedback = 11,
-        ClientChange = 12,
-        ScrollText = 13,
-        TextSize = 14,
-        Quit = 15
-    }
-
     public static class CommandShifts
     {
         /// <summary>
@@ -194,6 +90,7 @@ namespace URY.BAPS.Protocol.V2.Commands
     ///         abstraction, see <see cref="ICommand"/> and its implementations.
     ///     </para>
     /// </summary>
+    /// <seealso cref="ICommand"/>
     [Flags]
     public enum CommandWord : ushort
     {
@@ -261,16 +158,16 @@ namespace URY.BAPS.Protocol.V2.Commands
         /**
          * Library orderings
         **/
-        OrderByArtist = 0,
-        OrderByTitle = 1,
-        OrderByDateAdded = 2,
-        OrderByDateReleased = 3,
+        //OrderByArtist = 0,
+        //OrderByTitle = 1,
+        //OrderByDateAdded = 2,
+        //OrderByDateReleased = 3,
 
-        OrderAscending = 0,
-        OrderDescending = 1,
+        //OrderAscending = 0,
+        //OrderDescending = 1,
 
-        LibraryMaybeDirty = 1,
-        LibraryDirty = 2,
+        //LibraryMaybeDirty = 1,
+        //LibraryDirty = 2,
 
         #region Config commands
         GetOptions = ConfigOp.GetOptions << CommandShifts.Op,

@@ -14,9 +14,9 @@ namespace URY.BAPS.Client.Common.BapsNet
         /// </summary>
         /// <param name="channelId">The ID of the channel to which we are adding.</param>
         /// <returns>A command for adding an item to <paramref name="channelId"/>.</returns>
-        private static CommandWord MakeAddItemCommand(byte channelId)
+        private static ICommand MakeAddItemCommand(byte channelId)
         {
-            return new PlaylistCommand(PlaylistOp.AddItem, channelId, false).Packed;
+            return new PlaylistCommand(PlaylistOp.AddItem, channelId, false);
         }
 
         /// <summary>

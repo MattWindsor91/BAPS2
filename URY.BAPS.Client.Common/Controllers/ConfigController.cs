@@ -34,6 +34,17 @@ namespace URY.BAPS.Client.Common.Controllers
         }
 
         /// <summary>
+        ///     Constructs the appropriate command object for a config operation that may contain an index.
+        /// </summary>
+        /// <param name="op">The config operation to lift to a command object.</param>
+        /// <param name="index">An index, or absence thereof (<see cref="ConfigCache.NoIndex"/>).</param>
+        /// <returns>The appropriate command for <paramref name="op"/> and <paramref name="index"/>.</returns>
+        private ICommand PossiblyIndexedConfigCommand(ConfigOp op, int index = ConfigCache.NoIndex)
+        {
+            return index == ConfigCache.NoIndex ? (ICommand) new ConfigCommand(op) : new IndexedConfigCommand(op, (byte)index);
+        }
+
+        /// <summary>
         ///     Sends a BAPSNet message to set an option to one of its choices.
         /// </summary>
         /// <param name="optionKey">The key of the option to set.</param>
@@ -43,9 +54,8 @@ namespace URY.BAPS.Client.Common.Controllers
         {
             var optionId = (uint) optionKey;
             var choiceIndex = _cache.ChoiceIndexFor(optionId, choiceKey);
-            var cmd = CommandWord.Config | CommandWord.SetConfigValue;
-            if (index != ConfigCache.NoIndex) cmd = cmd.WithConfigIndexedFlag(true).WithConfigIndex((byte)index);
-            SendAsync(new Message(cmd).Add(optionId).Add((uint) ConfigType.Choice).Add((uint) choiceIndex));
+            var cmd = PossiblyIndexedConfigCommand(ConfigOp.SetConfigValue, index);
+            Send(new Message(cmd).Add(optionId).Add((uint) ConfigType.Choice).Add((uint) choiceIndex));
         }
 
 
@@ -67,7 +77,8 @@ namespace URY.BAPS.Client.Common.Controllers
                     // This is a strange place to put this, but necessary;
                     // the BapsNet conversation that results in receiving the config setting has to
                     // take place within the time window that 'ev' is registered.
-                    SendAsync(new Message(CommandWord.Config | CommandWord.GetConfigSetting).Add((uint) key));
+                    var cmd = new ConfigCommand(ConfigOp.GetConfigSetting);
+                    Send(new Message(cmd).Add((uint) key));
                 },
                 ev => _cache.IntChanged -= ev
             ).FirstAsync(

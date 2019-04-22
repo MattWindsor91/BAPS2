@@ -1,5 +1,6 @@
 using System;
 using JetBrains.Annotations;
+using URY.BAPS.Protocol.V2.Commands;
 using URY.BAPS.Protocol.V2.Messages;
 
 namespace URY.BAPS.Client.Common.Controllers
@@ -16,7 +17,7 @@ namespace URY.BAPS.Client.Common.Controllers
         ///     Base constructor for BapsNet controllers.
         /// </summary>
         /// <param name="core">The client core to use to send messages.</param>
-        protected BapsNetControllerBase([CanBeNull] IClientCore core)
+        protected BapsNetControllerBase(IClientCore? core)
         {
             Core = core ?? throw new ArgumentNullException(nameof(core));
         }
@@ -25,9 +26,18 @@ namespace URY.BAPS.Client.Common.Controllers
         ///     Sends a BapsNet message through this controller's queue.
         /// </summary>
         /// <param name="message">The message to send.</param>
-        protected void SendAsync([CanBeNull] Message message)
+        protected void Send(Message? message)
         {
-            Core.SendAsync(message);
+            Core.Send(message);
+        }
+
+        /// <summary>
+        ///     Sends a BapsNet message containing one command and no arguments through this controller's queue.
+        /// </summary>
+        /// <param name="command">The command to send (as a no-argument message).</param>
+        protected void Send(ICommand? command)
+        {
+            if (command != null) Send(new Message(command));
         }
     }
 }

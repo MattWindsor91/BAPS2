@@ -49,8 +49,35 @@ namespace URY.BAPS.Client.Common.Controllers
         /// <param name="state">The intended new state of the channel.</param>
         public void SetState(PlaybackState state)
         {
-            SendAsync(new Message(state.AsCommandWord().WithChannel(_channelId)));
+            var cmd = new PlaybackCommand(state.AsPlaybackOp(), _channelId);
+            Send(new Message(cmd));
         }
+
+        #region Command factories
+
+        /// <summary>
+        ///     Creates a playback command over this controller's channel.
+        /// </summary>
+        /// <param name="op">The playback op code for this command.</param>
+        /// <param name="modeFlag">Optional mode flag (off by default).</param>
+        /// <returns>A <see cref="PlaybackCommand"/> with this controller's channel and the given op and mode flag.</returns>
+        private PlaybackCommand PlaybackCommand(PlaybackOp op, bool modeFlag = false)
+        {
+            return new PlaybackCommand(op, _channelId, modeFlag);
+        }
+
+        /// <summary>
+        ///     Creates a playlist command over this controller's channel.
+        /// </summary>
+        /// <param name="op">The playlist op code for this command.</param>
+        /// <param name="modeFlag">Optional mode flag (off by default).</param>
+        /// <returns>A <see cref="PlaylistCommand"/> with this controller's channel and the given op and mode flag.</returns>
+        private PlaylistCommand PlaylistCommand(PlaylistOp op, bool modeFlag = false)
+        {
+            return new PlaylistCommand(op, _channelId, modeFlag);
+        }
+
+        #endregion Command factories
 
         /// <summary>
         ///     Asks the BAPS server to move one of this channel's markers.
@@ -59,14 +86,14 @@ namespace URY.BAPS.Client.Common.Controllers
         /// <param name="newValue">The requested new value.</param>
         public void SetMarker(MarkerType type, uint newValue)
         {
-            var cmd = type.AsCommandWord().WithChannel(_channelId);
-            SendAsync(new Message(cmd).Add(newValue));
+            var cmd = new PlaybackCommand(type.AsPlaybackOp(), _channelId);
+            Send(new Message(cmd).Add(newValue));
         }
 
         public void Select(uint index)
         {
-            const CommandWord cmd = CommandWord.Playback | CommandWord.Load;
-            SendAsync(new Message(cmd.WithChannel(_channelId)).Add(index));
+            var cmd = new PlaybackCommand(PlaybackOp.Load, _channelId);
+            Send(new Message(cmd).Add(index));
         }
 
         public void SetFlag(ChannelFlag flag, bool value)
@@ -83,7 +110,7 @@ namespace URY.BAPS.Client.Common.Controllers
 
         public void AddFile(DirectoryEntry file)
         {
-            SendAsync(MessageFactory.MakeAddFileItem(_channelId, file.DirectoryId, file.Description));
+            Send(MessageFactory.MakeAddFileItem(_channelId, file.DirectoryId, file.Description));
         }
 
         /// <summary>
@@ -93,8 +120,8 @@ namespace URY.BAPS.Client.Common.Controllers
         /// <param name="index">The 0-based index of the item to delete.</param>
         public void DeleteItemAt(uint index)
         {
-            var cmd = (CommandWord.Playlist | CommandWord.DeleteItem).WithChannel(_channelId);
-            SendAsync(new Message(cmd).Add(index));
+            var cmd = PlaylistCommand(PlaylistOp.DeleteItem);
+            Send(new Message(cmd).Add(index));
         }
 
         /// <summary>
@@ -103,8 +130,8 @@ namespace URY.BAPS.Client.Common.Controllers
         /// </summary>
         public void Reset()
         {
-            var cmd = (CommandWord.Playlist | CommandWord.ResetPlaylist).WithChannel(_channelId);
-            SendAsync(new Message(cmd));
+            var cmd = PlaylistCommand(PlaylistOp.ResetPlaylist);
+            Send(new Message(cmd));
         }
 
         /// <summary>
@@ -115,7 +142,7 @@ namespace URY.BAPS.Client.Common.Controllers
         public void AddText(string text, string? summary = null)
         {
             summary ??= text.Summary();
-            SendAsync(MessageFactory.MakeAddTextItem(_channelId, summary, text));
+            Send(MessageFactory.MakeAddTextItem(_channelId, summary, text));
         }
     }
 }

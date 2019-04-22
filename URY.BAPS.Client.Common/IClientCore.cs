@@ -15,7 +15,7 @@ namespace URY.BAPS.Client.Common
         ///     BapsNet connection.
         /// </summary>
         /// <param name="message">The message to send.  If null, nothing is sent.</param>
-        void SendAsync([CanBeNull] Message message);
+        void Send(Message? message);
 
         /// <summary>
         ///     Event raised just before authentication.
