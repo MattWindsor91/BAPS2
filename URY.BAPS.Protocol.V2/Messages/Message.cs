@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using JetBrains.Annotations;
 using URY.BAPS.Protocol.V2.Commands;
 using URY.BAPS.Protocol.V2.Io;
@@ -13,7 +12,10 @@ namespace URY.BAPS.Protocol.V2.Messages
     /// </summary>
     public class Message
     {
-        [NotNull] private readonly Queue<IArgument> _args = new Queue<IArgument>();
+        /// <summary>
+        ///     Queue of arguments added to this message.
+        /// </summary>
+        [NotNull] private readonly Queue<IArgument> _arguments = new Queue<IArgument>();
 
         private readonly CommandWord _cmd;
 
@@ -58,83 +60,46 @@ namespace URY.BAPS.Protocol.V2.Messages
         }
 
         /// <summary>
-        ///     Sends this command to a sink.
+        ///     Sends this message to a sink, flushing at the end.
         /// </summary>
-        /// <param name="sink">The socket to send onto.</param>
+        /// <param name="sink">The (non-null) sink to send onto.</param>
         public void Send(ISink sink)
         {
-            sink.SendCommand(_cmd);
+            SendCommand(sink);
             SendLength(sink);
-            foreach (var arg in _args) arg.Send(sink);
+            SendArguments(sink);
+            sink.Flush();
+        }
+
+        /// <summary>
+        ///     Sends this message's command to the given sink.
+        /// </summary>
+        /// <param name="sink">The (non-null) sink to send onto.</param>
+        private void SendCommand(ISink sink)
+        {
+            sink.SendCommand(_cmd);
+        }
+
+        /// <summary>
+        ///     Sends each argument in this message to the given sink.
+        /// </summary>
+        /// <param name="sink">The (non-null) sink to send onto.</param>
+        private void SendArguments(ISink sink)
+        {
+            foreach (var arg in _arguments) arg.Send(sink);
         }
 
         private void SendLength(ISink sock)
         {
-            var length = (from arg in _args select arg.Length()).Sum();
+            var length = (from arg in _arguments select arg.Length).Sum();
             Debug.Assert(0 <= length, "negative length");
             sock.SendUint((uint) length);
         }
 
         private Message Add(IArgument arg)
         {
-            _args.Enqueue(arg);
+            _arguments.Enqueue(arg);
             return this;
-        }
-
-        private interface IArgument
-        {
-            [Pure]
-            int Length();
-
-            void Send(ISink sock);
-        }
-
-        private struct StringArgument : IArgument
-        {
-            public string Value;
-
-            [Pure]
-            public int Length()
-            {
-                return Encoding.UTF8.GetByteCount(Value) + sizeof(uint);
-            }
-
-            public void Send(ISink sock)
-            {
-                sock.SendString(Value);
-            }
-        }
-
-        private struct UintArgument : IArgument
-        {
-            public uint Value;
-
-            [Pure]
-            public int Length()
-            {
-                return sizeof(uint);
-            }
-
-            public void Send(ISink sock)
-            {
-                sock.SendUint(Value);
-            }
-        }
-
-        private struct FloatArgument : IArgument
-        {
-            public float Value;
-
-            [Pure]
-            public int Length()
-            {
-                return sizeof(float);
-            }
-
-            public void Send(ISink sock)
-            {
-                sock.SendFloat(Value);
-            }
         }
     }
 }

@@ -11,8 +11,8 @@ namespace URY.BAPS.Protocol.V2.Io
     /// </summary>
     public class TcpConnection : IConnection, IDisposable
     {
-        private readonly ISink _sink;
-        private readonly ISource _source;
+        private readonly StreamSink _sink;
+        private readonly StreamSource _source;
 
         /// <summary>
         ///     The low level socket connection
@@ -36,6 +36,8 @@ namespace URY.BAPS.Protocol.V2.Io
         public void Dispose()
         {
             if (!IsValid) return;
+            _sink.Dispose();
+            _source.Dispose();
             _clientSocket.Close();
         }
 
@@ -77,6 +79,11 @@ namespace URY.BAPS.Protocol.V2.Io
         public void SendUint(uint i)
         {
             _sink.SendUint(i);
+        }
+
+        public void Flush()
+        {
+            _sink.Flush();
         }
     }
 }

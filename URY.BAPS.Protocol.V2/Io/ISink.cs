@@ -9,27 +9,36 @@ namespace URY.BAPS.Protocol.V2.Io
     public interface ISink
     {
         /// <summary>
-        ///     Synchronously sends a command down this sink.
+        ///     Sends a command down this sink.
         /// </summary>
         /// <param name="cmd">The command to send.</param>
+        /// <seealso cref="Flush"/>
         void SendCommand(CommandWord cmd);
 
         /// <summary>
-        ///     Synchronously sends a string down this sink.
+        ///     Sends a string down this sink.
         /// </summary>
         /// <param name="s">The string to send.</param>
+        /// <seealso cref="Flush"/>
         void SendString(string s);
 
         /// <summary>
-        ///     Synchronously sends a float down this sink.
+        ///     Sends a float down this sink.
         /// </summary>
         /// <param name="f">The float to send.</param>
+        /// <seealso cref="Flush"/>
         void SendFloat(float f);
 
         /// <summary>
-        ///     Synchronously sends a 32-bit unsigned integer down this sink.
+        ///     Sends a 32-bit unsigned integer down this sink.
         /// </summary>
         /// <param name="i">The integer to send.</param>
+        /// <seealso cref="Flush"/>
         void SendUint(uint i);
+
+        /// <summary>
+        ///     Forces the sink to propagate any sent BapsNet primitives.
+        /// </summary>
+        void Flush();
     }
 }

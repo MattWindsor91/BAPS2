@@ -17,7 +17,7 @@ namespace URY.BAPS.Protocol.V2.Tests.Io
     {
         [NotNull] private readonly StreamSink _sink;
         [NotNull] private readonly StreamSource _source;
-        [NotNull] private readonly Stream _stream = new MemoryStream();
+        [NotNull] private readonly BufferedStream _stream = new BufferedStream(new MemoryStream());
 
         public StreamSinkToSourceTests()
         {
@@ -38,7 +38,7 @@ namespace URY.BAPS.Protocol.V2.Tests.Io
         {
             const CommandWord expectedCommand = CommandWord.System | CommandWord.AutoUpdate;
             _sink.SendCommand(expectedCommand);
-            Debug.Assert(_source != null, nameof(_source) + " != null");
+            _sink.Flush();
             var actualCommand = SeekAndReceive(_source.ReceiveCommand);
             Assert.Equal(expectedCommand, actualCommand);
         }
@@ -49,6 +49,22 @@ namespace URY.BAPS.Protocol.V2.Tests.Io
             const string expectedString = "It's the end of the world as we know it (and I feel fine).";
             _sink.SendString(expectedString);
             var actualString = SeekAndReceive(_source.ReceiveString);
+            Assert.Equal(expectedString, actualString);
+        }
+
+        /// <summary>
+        ///     Like <see cref="TestSendAndReceiveString"/>, but with a stream source and sink that we
+        ///     explicitly dispose (to exercise their respective disposal methods).
+        /// </summary>
+        [Fact]
+        public void TestSendAndReceiveString_Dispose()
+        {
+            const string expectedString = "LEONARD BERNSTEIN!";
+            using (var sink = new StreamSink(_stream)) sink.SendString(expectedString);
+            _stream.Flush();
+            _stream.Seek(0, SeekOrigin.Begin);
+            using var source = new StreamSource(_stream);
+            var actualString = source.ReceiveString();
             Assert.Equal(expectedString, actualString);
         }
 

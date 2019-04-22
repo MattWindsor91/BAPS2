@@ -9,33 +9,34 @@ namespace URY.BAPS.Protocol.V2.Io
     /// </summary>
     public class DebugSink : ISink
     {
-        private readonly Queue<object> _items = new Queue<object>();
+        private readonly Queue<object> _itemQueue = new Queue<object>();
 
-        public object[] Items => _items.ToArray();
+        public object[] Items { get; private set; } = { };
 
         public void SendCommand(CommandWord cmd)
         {
-            _items.Enqueue(cmd);
+            _itemQueue.Enqueue(cmd);
         }
 
         public void SendString(string s)
         {
-            _items.Enqueue(s);
+            _itemQueue.Enqueue(s);
         }
 
         public void SendFloat(float f)
         {
-            _items.Enqueue(f);
+            _itemQueue.Enqueue(f);
         }
 
         public void SendUint(uint i)
         {
-            _items.Enqueue(i);
+            _itemQueue.Enqueue(i);
         }
 
-        public void Clear()
+
+        public void Flush()
         {
-            _items.Clear();
+            Items = _itemQueue.ToArray();
         }
     }
 }

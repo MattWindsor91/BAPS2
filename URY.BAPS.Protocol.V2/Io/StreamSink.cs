@@ -9,14 +9,23 @@ namespace URY.BAPS.Protocol.V2.Io
     /// <summary>
     ///     Takes requests to send BapsNet primitives, and applies them to a
     ///     <see cref="Stream"/> of bytes.
+    ///
+    ///     <para>
+    ///         Disposing the <see cref="StreamSink"/> does NOT dispose the underlying stream.
+    ///     </para>
     /// </summary>
-    public class StreamSink : ISink
+    public class StreamSink : ISink, IDisposable
     {
-        [NotNull] private readonly Stream _stream;
+        /// <summary>
+        ///     A writer used to send bytes to a stream.
+        /// </summary>
+        [NotNull] private readonly BinaryWriter _writer;
 
-        public StreamSink([CanBeNull] Stream stream)
+        public StreamSink(Stream? stream)
         {
-            _stream = stream ?? throw new ArgumentNullException(nameof(stream));
+            if (stream is null) throw new ArgumentNullException(nameof(stream));
+            if (!stream.CanWrite) throw new ArgumentException("Stream must be readable", nameof(stream));
+            _writer = new BinaryWriter(stream, Encoding.UTF8, true);
         }
 
         /// <inheritdoc cref="ISink"/>
@@ -29,7 +38,7 @@ namespace URY.BAPS.Protocol.V2.Io
         public void SendString(string s)
         {
             SendUint((uint)Encoding.UTF8.GetByteCount(s));
-            Send(Encoding.UTF8.GetBytes(s));
+            _writer.Write(s.ToCharArray());
         }
 
         /// <inheritdoc cref="ISink"/>
@@ -44,6 +53,11 @@ namespace URY.BAPS.Protocol.V2.Io
             SendNetworkOrder(BitConverter.GetBytes(i));
         }
 
+        public void Flush()
+        {
+            _writer.Flush();
+        }
+
         /// <summary>
         ///     Sends all given data to the stream synchronously, in
         ///     network (big-endian) order.
@@ -56,16 +70,12 @@ namespace URY.BAPS.Protocol.V2.Io
         private void SendNetworkOrder(byte[] bytes)
         {
             BitManipulation.ShuffleForNetworkOrder(bytes, bytes.Length);
-            Send(bytes);
+            _writer.Write(bytes);
         }
 
-        /// <summary>
-        ///     Sends all given data to the stream synchronously.
-        /// </summary>
-        /// <param name="bytes">The data to send (in its entirety).</param>
-        [Pure] private void Send(byte[] bytes)
+        public void Dispose()
         {
-            _stream.Write(bytes, 0, bytes.Length);
+            _writer.Dispose();
         }
     }
 }
