@@ -86,7 +86,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             foreach (var subscription in _subscriptions) subscription.Dispose();
         }
 
-        private void HandleDirectoryFileAdd(DirectoryFileAddEventArgs e)
+        private void HandleDirectoryFileAdd(DirectoryFileAddArgs e)
         {
             var entry = new DirectoryEntry(DirectoryId, e.Description);
             DispatcherHelper.CheckBeginInvokeOnUI(() => Files.Insert((int) e.Index, entry));

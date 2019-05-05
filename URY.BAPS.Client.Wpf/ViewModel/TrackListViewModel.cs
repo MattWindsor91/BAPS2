@@ -58,7 +58,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         ///     track.
         /// </para>
         /// <param name="args"></param>
-        private void HandleTrackLoad(TrackLoadEventArgs args)
+        private void HandleTrackLoad(TrackLoadArgs args)
         {
             // Text-item loads are handled differently from other loads;
             // they don't change the loaded track or the track-list

@@ -11,16 +11,16 @@ namespace URY.BAPS.Client.Common.Updaters
         /// <summary>
         ///     Observable that reports when the server reports a change in channel state.
         /// </summary>
-        IObservable<PlayerStateEventArgs> ObservePlayerState { get; }
+        IObservable<PlaybackStateChangeArgs> ObservePlayerState { get; }
 
         /// <summary>
         ///     Observable that reports when the server reports a change in channel marker.
         /// </summary>
-        IObservable<MarkerEventArgs> ObserveMarker { get; }
+        IObservable<MarkerChangeArgs> ObserveMarker { get; }
 
         /// <summary>
         ///     Observable that reports when the server reports that a new track has been loaded into the player.
         /// </summary>
-        IObservable<TrackLoadEventArgs> ObserveTrackLoad { get; }
+        IObservable<TrackLoadArgs> ObserveTrackLoad { get; }
     }
 }

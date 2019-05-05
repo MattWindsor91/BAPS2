@@ -2,7 +2,7 @@
 {
     public class PlaylistCommand : ChannelCommandBase<PlaylistOp>
     {
-        public PlaylistCommand(PlaylistOp op, byte channel, bool modeFlag = false) : base(op, channel, modeFlag)
+        public PlaylistCommand(PlaylistOp op, byte channelId, bool modeFlag = false) : base(op, channelId, modeFlag)
         {
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using URY.BAPS.Client.Common.BapsNet;
+using URY.BAPS.Client.Common.Events;
 using URY.BAPS.Protocol.V2.Commands;
 
 namespace URY.BAPS.Client.Common.Updaters
@@ -11,7 +12,7 @@ namespace URY.BAPS.Client.Common.Updaters
         : IConfigServerUpdater, IDirectoryServerUpdater, IPlaybackServerUpdater, IPlaylistServerUpdater,
             ISystemServerUpdater
     {
-        IObservable<(CommandWord cmdReceived, string ipAddress, uint mask)> ObserveIpRestriction { get; }
+        IObservable<IpRestriction> ObserveIpRestriction { get; }
 
         IObservable<(uint resultID, byte dirtyStatus, string description)> ObserveLibraryResult { get; }
         IObservable<(uint listingID, uint channelID, string description)> ObserveListingResult { get; }

@@ -3,12 +3,14 @@
     /// <summary>
     ///     Unpacked BapsNet config command containing an index.
     /// </summary>
-    /// <seealso cref="ConfigCommand"/>
-    public class IndexedConfigCommand : ConfigCommandBase
+    /// <seealso cref="NonIndexedConfigCommand"/>
+    public class IndexedConfigCommand : IndexableConfigCommandBase
     {
-        public byte Index { get; }
+        public override bool HasIndex => true;
 
-        public IndexedConfigCommand(ConfigOp op, byte index) : base(op)
+        public override byte Index { get; }
+
+        public IndexedConfigCommand(ConfigOp op, byte index, bool modeFlag) : base(op, modeFlag)
         {
             Index = index;
         }
@@ -17,8 +19,8 @@
         {
             visitor?.Visit(this);
         }
-
+        
         public override CommandWord Packed =>
-            OpAsCommandWord(Op).WithConfigIndexedFlag(true).WithConfigIndex(Index);
+            OpAsCommandWord(Op).WithConfigIndexedFlag(true).WithModeFlag(ModeFlag).WithConfigIndex(Index);
     }
 }

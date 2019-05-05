@@ -6,9 +6,9 @@ namespace URY.BAPS.Client.Common.Events
     ///     Payload for a server update mentioning a change in the
     ///     loaded track of a channel.
     /// </summary>
-    public class TrackLoadEventArgs : TrackIndexEventArgsBase
+    public class TrackLoadArgs : TrackIndexEventArgsBase
     {
-        public TrackLoadEventArgs(ushort channelId, uint index, Track track) : base(channelId, index)
+        public TrackLoadArgs(ushort channelId, uint index, Track track) : base(channelId, index)
         {
             Track = track;
         }
@@ -22,9 +22,9 @@ namespace URY.BAPS.Client.Common.Events
     /// <summary>
     ///     Payload for a channel state (play/pause/stop) server update.
     /// </summary>
-    public class PlayerStateEventArgs : ChannelEventArgsBase
+    public class PlaybackStateChangeArgs : ChannelEventArgsBase
     {
-        public PlayerStateEventArgs(ushort channelId, PlaybackState state) : base(channelId)
+        public PlaybackStateChangeArgs(ushort channelId, PlaybackState state) : base(channelId)
         {
             State = state;
         }
@@ -38,7 +38,7 @@ namespace URY.BAPS.Client.Common.Events
     /// <summary>
     ///     Payload for a channel marker (position/cue/intro) server update.
     /// </summary>
-    public class MarkerEventArgs : ChannelEventArgsBase
+    public class MarkerChangeArgs : ChannelEventArgsBase
     {
         /// <summary>
         ///     Constructs a channel marker server update.
@@ -46,7 +46,7 @@ namespace URY.BAPS.Client.Common.Events
         /// <param name="channelId">The ID of the channel whose marker is being moved.</param>
         /// <param name="marker">The marker being moved.</param>
         /// <param name="newValue">The new value of the marker.</param>
-        public MarkerEventArgs(ushort channelId, MarkerType marker, uint newValue) : base(channelId)
+        public MarkerChangeArgs(ushort channelId, MarkerType marker, uint newValue) : base(channelId)
         {
             Marker = marker;
             NewValue = newValue;

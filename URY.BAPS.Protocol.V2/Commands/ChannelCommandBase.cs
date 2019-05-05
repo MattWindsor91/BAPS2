@@ -6,15 +6,13 @@
     /// <typeparam name="TOp">The op enum (eg <see cref="PlaybackOp"/>) that this command type uses.</typeparam>
     public abstract class ChannelCommandBase<TOp> : CommandBase<TOp>
     {
-        public byte Channel { get; }
-        public bool ModeFlag { get; }
+        public byte ChannelId { get; }
 
-        protected ChannelCommandBase(TOp op, byte channel, bool modeFlag) : base(op)
+        protected ChannelCommandBase(TOp op, byte channelId, bool modeFlag) : base(op, modeFlag)
         {
-            Channel = channel;
-            ModeFlag = modeFlag;
+            ChannelId = channelId;
         }
 
-        public override CommandWord Packed => OpAsCommandWord(Op).WithChannelModeFlag(ModeFlag).WithChannel(Channel);
+        public override CommandWord Packed => OpAsCommandWord(Op).WithChannelModeFlag(ModeFlag).WithChannel(ChannelId);
     }
 }

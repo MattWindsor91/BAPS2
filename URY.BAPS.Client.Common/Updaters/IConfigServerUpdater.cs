@@ -14,19 +14,19 @@ namespace URY.BAPS.Client.Common.Updaters
         /// <summary>
         ///     Observable that reports when the server declares a config choice.
         /// </summary>
-        IObservable<ConfigChoiceEventArgs> ObserveConfigChoice { get; }
+        IObservable<ConfigChoiceArgs> ObserveConfigChoice { get; }
 
         /// <summary>
         ///     Observable that reports when the server declares a config option.
         /// </summary>
-        IObservable<ConfigOptionEventArgs> ObserveConfigOption { get; }
+        IObservable<ConfigOptionArgs> ObserveConfigOption { get; }
 
         /// <summary>
         ///     Event raised when the server declares that a setting on a
         ///     config option has changed.
         /// </summary>
-        IObservable<ConfigSettingEventArgs> ObserveConfigSetting { get; }
+        IObservable<ConfigSettingArgs> ObserveConfigSetting { get; }
 
-        IObservable<(CommandWord cmdReceived, uint optionID, ConfigResult result)> ObserveConfigResult { get; }
+        IObservable<ConfigResultArgs> ObserveConfigResult { get; }
     }
 }

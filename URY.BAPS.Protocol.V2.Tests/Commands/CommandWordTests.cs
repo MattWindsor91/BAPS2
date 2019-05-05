@@ -76,5 +76,17 @@ namespace URY.BAPS.Protocol.V2.Tests.Commands
         {
             Assert.Equal(expectedGroup, commandWord.Group());
         }
+        
+        #region Extension tests
+
+        [Fact]
+        public void TestPlaylistOp_AsCommandWord()
+        {
+            const CommandWord expected = CommandWord.Playlist | CommandWord.ResetPlaylist;
+            var actual = PlaylistOp.ResetPlaylist.AsCommandWord();
+            Assert.Equal(expected, actual);
+        }
+
+        #endregion Extension tests       
     }
 }

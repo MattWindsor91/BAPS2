@@ -31,6 +31,11 @@ namespace URY.BAPS.Protocol.V2.Commands
          * [F|D|E|C|B|A|9|8|7|6|5|4|3|2|1|0]
          *
          * (M = mode flag; X = is-indexed flag).
+         *
+         * Some config commands don't have an index, but instead use the six
+         * lowest bits as a value.  We mask them like normal 'indexed'
+         * config commands, but need to make sure that we ignore the
+         * is-indexed flag.
          */
 
         /// <summary>
@@ -208,7 +213,7 @@ namespace URY.BAPS.Protocol.V2.Commands
         Seed = SystemOp.Seed << CommandShifts.Op,
         Login = SystemOp.Login << CommandShifts.Op,
         LoginResult = SystemOp.LoginResult << CommandShifts.Op,
-        Version = SystemOp.Version << CommandShifts.Op,
+        Version = SystemOp.ServerVersion << CommandShifts.Op,
         Feedback = SystemOp.Feedback << CommandShifts.Op,
         ClientChange = SystemOp.ClientChange << CommandShifts.Op,
         ScrollText = SystemOp.ScrollText << CommandShifts.Op,

@@ -17,7 +17,7 @@ namespace URY.BAPS.Client.Common.Controllers
         /// </summary>
         [NotNull] private readonly ConfigCache _cache;
 
-        public ConfigController([CanBeNull] IClientCore core, [CanBeNull] ConfigCache cache) : base(core)
+        public ConfigController(IClientCore? core, ConfigCache? cache) : base(core)
         {
             _cache = cache ?? throw new ArgumentNullException(nameof(cache));
         }
@@ -38,10 +38,11 @@ namespace URY.BAPS.Client.Common.Controllers
         /// </summary>
         /// <param name="op">The config operation to lift to a command object.</param>
         /// <param name="index">An index, or absence thereof (<see cref="ConfigCache.NoIndex"/>).</param>
+        /// <param name="modeFlag">The mode flag.</param>
         /// <returns>The appropriate command for <paramref name="op"/> and <paramref name="index"/>.</returns>
-        private ICommand PossiblyIndexedConfigCommand(ConfigOp op, int index = ConfigCache.NoIndex)
+        private ICommand PossiblyIndexedConfigCommand(ConfigOp op, int index = ConfigCache.NoIndex, bool modeFlag = false)
         {
-            return index == ConfigCache.NoIndex ? (ICommand) new ConfigCommand(op) : new IndexedConfigCommand(op, (byte)index);
+            return index == ConfigCache.NoIndex ? (ICommand) new NonIndexedConfigCommand(op, modeFlag) : new IndexedConfigCommand(op, (byte)index, modeFlag);
         }
 
         /// <summary>
@@ -77,7 +78,7 @@ namespace URY.BAPS.Client.Common.Controllers
                     // This is a strange place to put this, but necessary;
                     // the BapsNet conversation that results in receiving the config setting has to
                     // take place within the time window that 'ev' is registered.
-                    var cmd = new ConfigCommand(ConfigOp.GetConfigSetting);
+                    var cmd = new NonIndexedConfigCommand(ConfigOp.GetConfigSetting, false);
                     Send(new Message(cmd).Add((uint) key));
                 },
                 ev => _cache.IntChanged -= ev

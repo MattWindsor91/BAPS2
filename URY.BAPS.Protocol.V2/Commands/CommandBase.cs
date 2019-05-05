@@ -8,9 +8,10 @@
     {
         public TOp Op { get; }
 
-        protected CommandBase(TOp op)
+        protected CommandBase(TOp op, bool modeFlag)
         {
             Op = op;
+            ModeFlag = modeFlag;
         }
 
         protected abstract CommandWord OpAsCommandWord(TOp op);
@@ -18,5 +19,6 @@
         public abstract void Accept(ICommandVisitor? visitor);
 
         public abstract CommandWord Packed { get; }
+        public bool ModeFlag { get; }
     }
 }

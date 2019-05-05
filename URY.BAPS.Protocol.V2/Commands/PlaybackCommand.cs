@@ -2,7 +2,7 @@
 {
     public class PlaybackCommand : ChannelCommandBase<PlaybackOp>
     {
-        public PlaybackCommand(PlaybackOp op, byte channel, bool modeFlag = false) : base(op, channel, modeFlag)
+        public PlaybackCommand(PlaybackOp op, byte channelId, bool modeFlag = false) : base(op, channelId, modeFlag)
         {
         }
 

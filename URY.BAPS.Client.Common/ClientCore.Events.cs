@@ -2,9 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Reactive.Subjects;
 using JetBrains.Annotations;
-using URY.BAPS.Client.Common.BapsNet;
 using URY.BAPS.Client.Common.Events;
-using URY.BAPS.Client.Common.ServerConfig;
+using URY.BAPS.Client.Common.Model;
 using URY.BAPS.Protocol.V2.Commands;
 
 namespace URY.BAPS.Client.Common
@@ -14,21 +13,21 @@ namespace URY.BAPS.Client.Common
         [NotNull] private readonly Subject<CountEventArgs> _incomingCount =
             new Subject<CountEventArgs>();
 
-        [NotNull] private readonly Subject<ConfigChoiceEventArgs> _observeConfigChoice =
-            new Subject<ConfigChoiceEventArgs>();
+        [NotNull] private readonly Subject<ConfigChoiceArgs> _observeConfigChoice =
+            new Subject<ConfigChoiceArgs>();
 
-        [NotNull] private readonly Subject<ConfigOptionEventArgs> _observeConfigOption =
-            new Subject<ConfigOptionEventArgs>();
+        [NotNull] private readonly Subject<ConfigOptionArgs> _observeConfigOption =
+            new Subject<ConfigOptionArgs>();
 
         [NotNull]
-        private readonly Subject<(CommandWord cmdReceived, uint optionID, ConfigResult result)> _observeConfigResult =
-            new Subject<(CommandWord cmdReceived, uint optionID, ConfigResult result)>();
+        private readonly Subject<ConfigResultArgs> _observeConfigResult =
+            new Subject<ConfigResultArgs>();
 
-        [NotNull] private readonly Subject<ConfigSettingEventArgs> _observeConfigSetting =
-            new Subject<ConfigSettingEventArgs>();
+        [NotNull] private readonly Subject<ConfigSettingArgs> _observeConfigSetting =
+            new Subject<ConfigSettingArgs>();
 
-        [NotNull] private readonly Subject<DirectoryFileAddEventArgs> _observeDirectoryFileAdd =
-            new Subject<DirectoryFileAddEventArgs>();
+        [NotNull] private readonly Subject<DirectoryFileAddArgs> _observeDirectoryFileAdd =
+            new Subject<DirectoryFileAddArgs>();
 
         [NotNull] private readonly Subject<DirectoryPrepareEventArgs> _observeDirectoryPrepare =
             new Subject<DirectoryPrepareEventArgs>();
@@ -36,8 +35,8 @@ namespace URY.BAPS.Client.Common
         [NotNull]
         private readonly Subject<ErrorEventArgs> _observeError = new Subject<ErrorEventArgs>();
 
-        [NotNull] private readonly Subject<(CommandWord cmdReceived, string ipAddress, uint mask)> _observeIpRestriction =
-            new Subject<(CommandWord cmdReceived, string ipAddress, uint mask)>();
+        [NotNull] private readonly Subject<IpRestriction> _observeIpRestriction =
+            new Subject<IpRestriction>();
 
         [NotNull] private readonly Subject<(uint resultID, byte dirtyStatus, string description)> _observeLibraryResult
             =
@@ -46,14 +45,14 @@ namespace URY.BAPS.Client.Common
         [NotNull] private readonly Subject<(uint listingID, uint channelID, string description)> _observeListingResult =
             new Subject<(uint listingID, uint channelID, string description)>();
 
-        [NotNull] private readonly Subject<MarkerEventArgs> _observeMarker =
-            new Subject<MarkerEventArgs>();
+        [NotNull] private readonly Subject<MarkerChangeArgs> _observeMarker =
+            new Subject<MarkerChangeArgs>();
 
         [NotNull] private readonly Subject<(uint permissionCode, string description)> _observePermission =
             new Subject<(uint permissionCode, string description)>();
 
-        [NotNull] private readonly Subject<PlayerStateEventArgs> _observePlayerState =
-            new Subject<PlayerStateEventArgs>();
+        [NotNull] private readonly Subject<PlaybackStateChangeArgs> _observePlayerState =
+            new Subject<PlaybackStateChangeArgs>();
 
         [NotNull] private readonly Subject<PlaylistResetEventArgs> _observePlaylistReset =
             new Subject<PlaylistResetEventArgs>();
@@ -72,8 +71,8 @@ namespace URY.BAPS.Client.Common
         [NotNull] private readonly Subject<TrackDeleteEventArgs> _observeTrackDelete =
             new Subject<TrackDeleteEventArgs>();
 
-        [NotNull] private readonly Subject<TrackLoadEventArgs> _observeTrackLoad =
-            new Subject<TrackLoadEventArgs>();
+        [NotNull] private readonly Subject<TrackLoadArgs> _observeTrackLoad =
+            new Subject<TrackLoadArgs>();
 
         [NotNull] private readonly Subject<TrackMoveEventArgs> _observeTrackMove =
             new Subject<TrackMoveEventArgs>();
@@ -87,30 +86,30 @@ namespace URY.BAPS.Client.Common
         [NotNull] private readonly Subject<(byte resultCode, string description)> _observeUserResult =
             new Subject<(byte resultCode, string description)>();
 
-        [NotNull] private readonly Subject<Receiver.VersionInfo> _observeVersion = new Subject<Receiver.VersionInfo>();
+        [NotNull] private readonly Subject<ServerVersion> _observeVersion = new Subject<ServerVersion>();
 
         [NotNull] private readonly IList<IDisposable> _receiverSubscriptions = new List<IDisposable>();
 
         public IObservable<CountEventArgs> ObserveIncomingCount => _incomingCount;
 
-        public IObservable<ConfigChoiceEventArgs> ObserveConfigChoice => _observeConfigChoice;
+        public IObservable<ConfigChoiceArgs> ObserveConfigChoice => _observeConfigChoice;
 
-        public IObservable<ConfigOptionEventArgs> ObserveConfigOption => _observeConfigOption;
+        public IObservable<ConfigOptionArgs> ObserveConfigOption => _observeConfigOption;
 
-        public IObservable<ConfigSettingEventArgs> ObserveConfigSetting => _observeConfigSetting;
+        public IObservable<ConfigSettingArgs> ObserveConfigSetting => _observeConfigSetting;
 
-        public IObservable<(CommandWord cmdReceived, uint optionID, ConfigResult result)> ObserveConfigResult =>
+        public IObservable<ConfigResultArgs> ObserveConfigResult =>
             _observeConfigResult;
 
-        public IObservable<DirectoryFileAddEventArgs> ObserveDirectoryFileAdd => _observeDirectoryFileAdd;
+        public IObservable<DirectoryFileAddArgs> ObserveDirectoryFileAdd => _observeDirectoryFileAdd;
 
         public IObservable<DirectoryPrepareEventArgs> ObserveDirectoryPrepare => _observeDirectoryPrepare;
 
-        public IObservable<PlayerStateEventArgs> ObservePlayerState => _observePlayerState;
+        public IObservable<PlaybackStateChangeArgs> ObservePlayerState => _observePlayerState;
 
-        public IObservable<MarkerEventArgs> ObserveMarker => _observeMarker;
+        public IObservable<MarkerChangeArgs> ObserveMarker => _observeMarker;
 
-        public IObservable<TrackLoadEventArgs> ObserveTrackLoad => _observeTrackLoad;
+        public IObservable<TrackLoadArgs> ObserveTrackLoad => _observeTrackLoad;
 
         public IObservable<TrackAddEventArgs> ObserveTrackAdd => _observeTrackAdd;
 
@@ -124,9 +123,9 @@ namespace URY.BAPS.Client.Common
 
         public IObservable<bool> ObserveServerQuit => _observeServerQuit;
 
-        public IObservable<Receiver.VersionInfo> ObserveVersion => _observeVersion;
+        public IObservable<ServerVersion> ObserveServerVersion => _observeVersion;
 
-        public IObservable<(CommandWord cmdReceived, string ipAddress, uint mask)> ObserveIpRestriction =>
+        public IObservable<IpRestriction> ObserveIpRestriction =>
             _observeIpRestriction;
 
         public IObservable<(uint resultID, byte dirtyStatus, string description)> ObserveLibraryResult =>
@@ -180,7 +179,7 @@ namespace URY.BAPS.Client.Common
             _receiverSubscriptions.Add(_receiver.ObserveUnknownCommand.Subscribe(_observeUnknownCommand));
             _receiverSubscriptions.Add(_receiver.ObserveUser.Subscribe(_observeUser));
             _receiverSubscriptions.Add(_receiver.ObserveUserResult.Subscribe(_observeUserResult));
-            _receiverSubscriptions.Add(_receiver.ObserveVersion.Subscribe(_observeVersion));
+            _receiverSubscriptions.Add(_receiver.ObserveServerVersion.Subscribe(_observeVersion));
         }
 
         /// <summary>

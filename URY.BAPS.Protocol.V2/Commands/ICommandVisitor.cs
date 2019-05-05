@@ -33,12 +33,19 @@
         ///     Visits a non-indexed config command.
         /// </summary>
         /// <param name="command">The command to visit.</param>
-        void Visit(ConfigCommand command);
+        void Visit(NonIndexedConfigCommand command);
 
         /// <summary>
         ///     Visits a indexed config command.
         /// </summary>
         /// <param name="command">The command to visit.</param>
         void Visit(IndexedConfigCommand command);
+        
+        /// <summary>
+        ///     Visits a value-carrying config command.
+        /// </summary>
+        /// <param name="command">The command to visit.</param>
+        void Visit(ValueConfigCommand command);
+       
     }
 }

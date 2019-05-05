@@ -10,9 +10,21 @@ namespace URY.BAPS.Protocol.V2.Commands
         private static ICommand UnpackConfig(CommandWord word)
         {
             var op = word.ConfigOp();
-            return word.HasConfigIndexedFlag()
-                ? (ICommand) new IndexedConfigCommand(op, word.ConfigIndex())
-                : new ConfigCommand(op);
+            var modeFlag = word.HasModeFlag();
+
+            // Both config indices and config values only take up six bytes,
+            // so we use the same mask.
+            return op.CanTakeIndex()
+                ? UnpackIndexableConfig(op, modeFlag, word)
+                : new ValueConfigCommand(op, word.ConfigIndex(), modeFlag);
+        }
+        
+        private static ICommand UnpackIndexableConfig(ConfigOp op, bool modeFlag, CommandWord word)
+        {
+            var indexedFlag = word.HasConfigIndexedFlag();
+            return indexedFlag
+                ? (ICommand) new IndexedConfigCommand(op, word.ConfigIndex(), modeFlag)
+                : new NonIndexedConfigCommand(op, modeFlag);
         }
 
         private static ICommand UnpackDatabase(CommandWord word)

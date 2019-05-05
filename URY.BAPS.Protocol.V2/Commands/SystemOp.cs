@@ -20,7 +20,7 @@
         Seed = 7,
         Login = 8,
         LoginResult = 9,
-        Version = 10,
+        ServerVersion = 10,
         Feedback = 11,
         ClientChange = 12,
         ScrollText = 13,

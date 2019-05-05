@@ -93,7 +93,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         ///     </para>
         /// </summary>
         /// <param name="args">Information about the newly-loaded track.</param>
-        private void OnTrackLoad(TrackLoadEventArgs args)
+        private void OnTrackLoad(TrackLoadArgs args)
         {
             if (!args.Track.IsTextItem) return;
             Text = args.Track.Text;

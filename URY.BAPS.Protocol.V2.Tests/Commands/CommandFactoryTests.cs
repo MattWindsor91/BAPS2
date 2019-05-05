@@ -1,4 +1,5 @@
-﻿using URY.BAPS.Protocol.V2.Commands;
+﻿using JetBrains.Annotations;
+using URY.BAPS.Protocol.V2.Commands;
 using Xunit;
 
 namespace URY.BAPS.Protocol.V2.Tests.Commands
@@ -27,6 +28,7 @@ namespace URY.BAPS.Protocol.V2.Tests.Commands
 
         private const CommandWord SystemTest = CommandWord.System | CommandWord.Quit;
 
+        [UsedImplicitly]
         public static TheoryData<CommandWord> CommandWordRoundTripData =>
             new TheoryData<CommandWord>
             {
@@ -46,7 +48,7 @@ namespace URY.BAPS.Protocol.V2.Tests.Commands
         public void TestUnpack_NonIndexedConfig()
         {
             var raw = NonIndexedConfigTest.Unpack();
-            var unpacked = Assert.IsAssignableFrom<ConfigCommand>(raw);
+            var unpacked = Assert.IsAssignableFrom<NonIndexedConfigCommand>(raw);
             Assert.Equal(ConfigOp.SetConfigValue, unpacked.Op);
         }
 
@@ -83,7 +85,7 @@ namespace URY.BAPS.Protocol.V2.Tests.Commands
             var raw = PlaybackTest.Unpack();
             var unpacked = Assert.IsAssignableFrom<PlaybackCommand>(raw);
             Assert.Equal(PlaybackOp.Play, unpacked.Op);
-            Assert.Equal(42, unpacked.Channel);
+            Assert.Equal(42, unpacked.ChannelId);
             Assert.False(unpacked.ModeFlag);
         }
 
@@ -96,7 +98,7 @@ namespace URY.BAPS.Protocol.V2.Tests.Commands
             var raw = PlaylistTest.Unpack();
             var unpacked = Assert.IsAssignableFrom<PlaylistCommand>(raw);
             Assert.Equal(PlaylistOp.ResetPlaylist, unpacked.Op);
-            Assert.Equal(63, unpacked.Channel);
+            Assert.Equal(63, unpacked.ChannelId);
             Assert.False(unpacked.ModeFlag);
         }
 
@@ -123,17 +125,5 @@ namespace URY.BAPS.Protocol.V2.Tests.Commands
             var actualCmd = unpacked.Packed;
             Assert.Equal(cmd, actualCmd);
         }
-
-        #region Extension tests
-
-        [Fact]
-        public void TestPlaylistOp_AsCommandWord()
-        {
-            const CommandWord expected = CommandWord.Playlist | CommandWord.ResetPlaylist;
-            var actual = PlaylistOp.ResetPlaylist.AsCommandWord();
-            Assert.Equal(expected, actual);
-        }
-
-        #endregion Extension tests
     }
 }

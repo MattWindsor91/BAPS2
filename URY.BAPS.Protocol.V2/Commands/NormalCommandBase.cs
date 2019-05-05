@@ -7,13 +7,10 @@
     /// <typeparam name="TOp">The enumeration of allowed operations.</typeparam>
     public abstract class NormalCommandBase<TOp> : CommandBase<TOp>
     {
-        public bool ModeFlag { get; }
-
         public byte Value { get; }
 
-        public NormalCommandBase(TOp op, byte value, bool modeFlag) : base(op)
+        protected NormalCommandBase(TOp op, byte value, bool modeFlag) : base(op, modeFlag)
         {
-            ModeFlag = modeFlag;
             Value = value;
         }
 

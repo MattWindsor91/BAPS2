@@ -23,9 +23,9 @@
     /// <summary>
     ///     Event payload for when the server adds a file to a directory.
     /// </summary>
-    public class DirectoryFileAddEventArgs : DirectoryEventArgsBase
+    public class DirectoryFileAddArgs : DirectoryEventArgsBase
     {
-        public DirectoryFileAddEventArgs(ushort directoryId, uint index, string description)
+        public DirectoryFileAddArgs(ushort directoryId, uint index, string description)
             : base(directoryId)
         {
             Index = index;

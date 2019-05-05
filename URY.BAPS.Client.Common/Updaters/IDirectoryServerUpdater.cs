@@ -8,7 +8,7 @@ namespace URY.BAPS.Client.Common.Updaters
     /// </summary>
     public interface IDirectoryServerUpdater : IBaseServerUpdater
     {
-        IObservable<DirectoryFileAddEventArgs> ObserveDirectoryFileAdd { get; }
+        IObservable<DirectoryFileAddArgs> ObserveDirectoryFileAdd { get; }
         IObservable<DirectoryPrepareEventArgs> ObserveDirectoryPrepare { get; }
     }
 }
