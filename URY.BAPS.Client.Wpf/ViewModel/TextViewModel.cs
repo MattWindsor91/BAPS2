@@ -78,9 +78,9 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             updater.ObserveTextSetting.Subscribe(OnTextSetting);
         }
 
-        private void AdjustFontSize(UpDown direction)
+        private void AdjustFontSize(TextSettingDirection direction)
         {
-            var delta = direction == UpDown.Up ? 1 : -1;
+            var delta = direction == TextSettingDirection.Up ? 1 : -1;
             DispatcherHelper.CheckBeginInvokeOnUI(() => FontSize += delta);
         }
 
@@ -103,7 +103,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         ///     Observes a text setting change from the server.
         /// </summary>
         /// <param name="args">Information about the text setting change.</param>
-        private void OnTextSetting(TextSettingEventArgs args)
+        private void OnTextSetting(TextSettingArgs args)
         {
             switch (args.Setting)
             {

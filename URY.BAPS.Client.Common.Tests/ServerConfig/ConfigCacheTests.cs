@@ -102,15 +102,23 @@ namespace URY.BAPS.Client.Common.Tests.ServerConfig
             private IObservable<ConfigOptionArgs> _observeConfigOption;
             private IObservable<ConfigResultArgs> _observeConfigResult;
             private IObservable<ConfigSettingArgs> _observeConfigSetting;
-            private IObservable<CountEventArgs> _observeIncomingCount;
+            private IObservable<CountArgs> _observeIncomingCount;
             private IObservable<object> _observeMessages;
+            private IObservable<UnknownCommandArgs> _observeUnknownCommand;
+            private IObservable<IpRestrictionArgs> _observeIpRestriction;
+            private IObservable<PermissionArgs> _observePermission;
+            private IObservable<UserArgs> _observeUser;
+            private IObservable<UserResultArgs> _observeUserResult;
             public Queue<object> Messages { get; } = new Queue<object>();
 
             private IObservable<object> ObserveMessages =>
                 _observeMessages ??= Messages.ToObservable();
 
-            public IObservable<CountEventArgs> ObserveIncomingCount =>
-                _observeIncomingCount ??= ObserveMessages.OfType<CountEventArgs>();
+            public IObservable<CountArgs> ObserveIncomingCount =>
+                _observeIncomingCount ??= ObserveMessages.OfType<CountArgs>();
+
+            public IObservable<UnknownCommandArgs> ObserveUnknownCommand =>
+                _observeUnknownCommand ??= ObserveMessages.OfType<UnknownCommandArgs>();
 
             public IObservable<ConfigChoiceArgs> ObserveConfigChoice =>
                 _observeConfigChoice ??= ObserveMessages.OfType<ConfigChoiceArgs>();
@@ -123,6 +131,18 @@ namespace URY.BAPS.Client.Common.Tests.ServerConfig
 
             public IObservable<ConfigResultArgs> ObserveConfigResult =>
                 _observeConfigResult ??= ObserveMessages.OfType<ConfigResultArgs>();
+
+            public IObservable<IpRestrictionArgs> ObserveIpRestriction =>
+                _observeIpRestriction ??= ObserveMessages.OfType<IpRestrictionArgs>();
+
+            public IObservable<PermissionArgs> ObservePermission =>
+                _observePermission ??= ObserveMessages.OfType<PermissionArgs>();
+
+            public IObservable<UserArgs> ObserveUser =>
+                _observeUser ??= ObserveMessages.OfType<UserArgs>();
+
+            public IObservable<UserResultArgs> ObserveUserResult =>
+                _observeUserResult ??= ObserveMessages.OfType<UserResultArgs>();
         }
 
         #region Events interface

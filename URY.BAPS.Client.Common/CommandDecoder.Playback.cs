@@ -37,7 +37,7 @@ namespace URY.BAPS.Client.Common
                 }
                     break;
                 default:
-                    _receiver.OnUnknownCommand(command.Packed, "possibly a malformed PLAYBACK");
+                    ReportMalformedCommand(command, CommandGroup.Playback);
                     break;
             }
         }
@@ -56,19 +56,19 @@ namespace URY.BAPS.Client.Common
 
             var track = TrackFactory.Create(type, description, duration, text);
 
-            _receiver.OnMarkerChange(new MarkerChangeArgs(channelId, MarkerType.Position, 0U));
-            _receiver.OnLoadedItem(new TrackLoadArgs(channelId, index, track));
+            Dispatch(new MarkerChangeArgs(channelId, MarkerType.Position, 0U));
+            Dispatch(new TrackLoadArgs(channelId, index, track));
         }
 
         private void DecodeMarkerChange(byte channelId, MarkerType markerType)
         {
             var position = ReceiveUint();
-            _receiver.OnMarkerChange(new MarkerChangeArgs(channelId, markerType, position));
+            Dispatch(new MarkerChangeArgs(channelId, markerType, position));
         }
 
         private void DecodePlaybackStateChange(byte channelId, PlaybackState state)
         {
-            _receiver.OnPlaybackStateChange(new PlaybackStateChangeArgs(channelId, state));
+            Dispatch(new PlaybackStateChangeArgs(channelId, state));
         }
     }
 }

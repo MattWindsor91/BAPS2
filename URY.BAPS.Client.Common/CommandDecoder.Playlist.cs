@@ -38,7 +38,7 @@ namespace URY.BAPS.Client.Common
                 }
                     break;
                 default:
-                    _receiver.OnUnknownCommand(command.Packed, "possibly a malformed PLAYLIST");
+                    ReportMalformedCommand(command, CommandGroup.Playlist);
                     break;
             }
         }
@@ -49,25 +49,25 @@ namespace URY.BAPS.Client.Common
             var type = (TrackType) ReceiveUint();
             var description = ReceiveString();
             var entry = TrackFactory.Create(type, description);
-            _receiver.OnItemAdd(new TrackAddEventArgs(channelId, index, entry));
+            Dispatch(new TrackAddArgs(channelId, index, entry));
         }
 
         private void DecodeResetPlaylist(byte channelId)
         {
-            _receiver.OnResetPlaylist(new PlaylistResetEventArgs(channelId));
+            Dispatch(new PlaylistResetArgs(channelId));
         }
 
         private void DecodeDeleteItem(byte channelId)
         {
             var index = ReceiveUint();
-            _receiver.OnItemDelete(new TrackDeleteEventArgs(channelId, index));
+            Dispatch(new TrackDeleteArgs(channelId, index));
         }
 
         private void DecodeMoveItemTo(byte channelId)
         {
             var indexFrom = ReceiveUint();
             var indexTo = ReceiveUint();
-            _receiver.OnItemMove(new TrackMoveEventArgs(channelId, indexFrom, indexTo));
+            Dispatch(new TrackMoveArgs(channelId, indexFrom, indexTo));
         }
     }
 }

@@ -142,22 +142,22 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         // NB: Anything involving the TrackList has to be done on the
         // UI thread, hence the use of Dispatcher.
 
-        private void HandleItemAdd(TrackAddEventArgs e)
+        private void HandleItemAdd(TrackAddArgs e)
         {
             DispatcherHelper.CheckBeginInvokeOnUI(() => Tracks.Add(new TrackViewModel(e.Item)));
         }
 
-        private void HandleItemMove(TrackMoveEventArgs e)
+        private void HandleItemMove(TrackMoveArgs e)
         {
             DispatcherHelper.CheckBeginInvokeOnUI(() => Tracks.Move((int) e.Index, (int) e.NewIndex));
         }
 
-        private void HandleItemDelete(TrackDeleteEventArgs e)
+        private void HandleItemDelete(TrackDeleteArgs e)
         {
             DispatcherHelper.CheckBeginInvokeOnUI(() => Tracks.RemoveAt((int) e.Index));
         }
 
-        private void HandleResetPlaylist(PlaylistResetEventArgs e)
+        private void HandleResetPlaylist(PlaylistResetArgs e)
         {
             // TODO(@MattWindsor91): this should probably _not_ clear the loaded item
             DispatcherHelper.CheckBeginInvokeOnUI(() => Tracks.Clear());

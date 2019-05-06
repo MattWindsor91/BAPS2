@@ -8,10 +8,10 @@ namespace URY.BAPS.Client.Common.Updaters
     /// </summary>
     public interface IPlaylistServerUpdater : IBaseServerUpdater
     {
-        IObservable<TrackAddEventArgs> ObserveTrackAdd { get; }
-        IObservable<TrackDeleteEventArgs> ObserveTrackDelete { get; }
-        IObservable<TrackMoveEventArgs> ObserveTrackMove { get; }
+        IObservable<TrackAddArgs> ObserveTrackAdd { get; }
+        IObservable<TrackDeleteArgs> ObserveTrackDelete { get; }
+        IObservable<TrackMoveArgs> ObserveTrackMove { get; }
 
-        IObservable<PlaylistResetEventArgs> ObservePlaylistReset { get; }
+        IObservable<PlaylistResetArgs> ObservePlaylistReset { get; }
     }
 }

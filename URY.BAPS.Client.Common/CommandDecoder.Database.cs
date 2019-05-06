@@ -52,7 +52,7 @@ namespace URY.BAPS.Client.Common
                     DecodeError(ErrorType.BapsDb, command.Value);
                     break;
                 default:
-                    _receiver.OnUnknownCommand(command.Packed, "possibly a malformed DATABASE");
+                    ReportMalformedCommand(command, CommandGroup.Database);
                     break;
             }
         }
@@ -62,21 +62,21 @@ namespace URY.BAPS.Client.Common
             var listingId = ReceiveUint();
             var channelId = ReceiveUint();
             var description = ReceiveString();
-            _receiver.OnListingResult(listingId, channelId, description);
+            Dispatch(new ListingResultArgs(listingId, channelId, description));
         }
 
         private void DecodeShow()
         {
             var showId = ReceiveUint();
             var description = ReceiveString();
-            _receiver.OnShowResult(showId, description);
+            Dispatch(new ShowResultArgs(showId, description));
         }
 
         private void DecodeLibraryResult(byte dirtyStatus)
         {
             var resultId = ReceiveUint();
             var description = ReceiveString();
-            _receiver.OnLibraryResult(resultId, dirtyStatus, description);
+            Dispatch(new LibraryResultArgs(resultId, dirtyStatus, description));
         }
     }
 }

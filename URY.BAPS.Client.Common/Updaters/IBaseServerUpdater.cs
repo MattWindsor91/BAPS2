@@ -11,6 +11,11 @@ namespace URY.BAPS.Client.Common.Updaters
         /// <summary>
         ///     Observable that notifies subscribers that a particular number of items is en route.
         /// </summary>
-        IObservable<CountEventArgs> ObserveIncomingCount { get; }
+        IObservable<CountArgs> ObserveIncomingCount { get; }
+        
+        /// <summary>
+        ///     Observable that notifies subscribers that an unknown command was received.
+        /// </summary>
+        IObservable<UnknownCommandArgs> ObserveUnknownCommand { get; }
     }
 }

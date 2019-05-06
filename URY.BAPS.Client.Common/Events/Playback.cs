@@ -6,7 +6,7 @@ namespace URY.BAPS.Client.Common.Events
     ///     Payload for a server update mentioning a change in the
     ///     loaded track of a channel.
     /// </summary>
-    public class TrackLoadArgs : TrackIndexEventArgsBase
+    public class TrackLoadArgs : TrackIndexArgsBase
     {
         public TrackLoadArgs(ushort channelId, uint index, Track track) : base(channelId, index)
         {
@@ -22,7 +22,7 @@ namespace URY.BAPS.Client.Common.Events
     /// <summary>
     ///     Payload for a channel state (play/pause/stop) server update.
     /// </summary>
-    public class PlaybackStateChangeArgs : ChannelEventArgsBase
+    public class PlaybackStateChangeArgs : ChannelArgsBase
     {
         public PlaybackStateChangeArgs(ushort channelId, PlaybackState state) : base(channelId)
         {
@@ -38,7 +38,7 @@ namespace URY.BAPS.Client.Common.Events
     /// <summary>
     ///     Payload for a channel marker (position/cue/intro) server update.
     /// </summary>
-    public class MarkerChangeArgs : ChannelEventArgsBase
+    public class MarkerChangeArgs : ChannelArgsBase
     {
         /// <summary>
         ///     Constructs a channel marker server update.

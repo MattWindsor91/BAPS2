@@ -27,6 +27,31 @@ namespace URY.BAPS.Client.Common.Updaters
         /// </summary>
         IObservable<ConfigSettingArgs> ObserveConfigSetting { get; }
 
+        /// <summary>
+        ///     Observable that reports when the server responds to a
+        ///     configuration change request.
+        /// </summary>
         IObservable<ConfigResultArgs> ObserveConfigResult { get; }
+        
+        /// <summary>
+        ///     Observable that reports when the server declares an IP restriction record.
+        /// </summary>
+        IObservable<IpRestrictionArgs> ObserveIpRestriction { get; }
+        
+        /// <summary>
+        ///     Observable that reports when the server declares a permission record.
+        /// </summary>
+        IObservable<PermissionArgs> ObservePermission { get; }
+        
+        /// <summary>
+        ///     Observable that reports when the server declares a user record.
+        /// </summary>
+        IObservable<UserArgs> ObserveUser { get; }
+        
+        /// <summary>
+        ///     Observable that reports when the server responds to a
+        ///     user change request.
+        /// </summary>
+        IObservable<UserResultArgs> ObserveUserResult { get; }
     }
 }

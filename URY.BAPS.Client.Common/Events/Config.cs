@@ -1,4 +1,5 @@
 ﻿using System;
+using URY.BAPS.Client.Common.Model;
 using URY.BAPS.Client.Common.ServerConfig;
 
 namespace URY.BAPS.Client.Common.Events
@@ -8,7 +9,7 @@ namespace URY.BAPS.Client.Common.Events
     /// <summary>
     ///     Abstract base class of event payloads over config options.
     /// </summary>
-    public abstract class ConfigOptionArgsBase
+    public abstract class ConfigOptionArgsBase : ArgsBase
     {
         protected ConfigOptionArgsBase(uint optionId)
         {
@@ -127,32 +128,40 @@ namespace URY.BAPS.Client.Common.Events
     
     #endregion Config settings
 
-    /// <summary>
-    ///     An IP restriction entry.
-    /// </summary>
-    public class IpRestriction
+    public class UserArgs : ArgsBase
     {
-        public IpRestrictionType Type { get; }
-
-        public string IpAddress { get; }
+        public string Username { get; }
+        public uint Permissions { get; }
         
-        public uint Mask { get; }
-        
-        public IpRestriction(IpRestrictionType type, string ipAddress, uint mask)
+        public UserArgs(string username, uint permissions)
         {
-            Type = type;
-            IpAddress = ipAddress;
-            Mask = mask;
+            Username = username;
+            Permissions = permissions;
+        }
+    }
+
+    public class UserResultArgs : ArgsBase
+    {
+        public byte ResultCode { get; }
+        public string Description { get; }
+        
+        public UserResultArgs(byte resultCode, string description)
+        {
+            ResultCode = resultCode;
+            Description = description;
         }
     }
 
     /// <summary>
-    ///     Type of IP restriction entries.
+    ///     Event payload sent when a server announces an IP restriction.
     /// </summary>
-    public enum IpRestrictionType
+    public class IpRestrictionArgs : ArgsBase
     {
-        // TODO(@MattWindsor91): replace with polymorphism
-        Allow = 0,
-        Deny = 1
+        public IpRestriction Restriction { get; }
+
+        public IpRestrictionArgs(IpRestriction restriction)
+        {
+            Restriction = restriction;
+        }
     }
 }

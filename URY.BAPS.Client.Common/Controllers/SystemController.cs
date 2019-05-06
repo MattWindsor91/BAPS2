@@ -15,7 +15,7 @@ namespace URY.BAPS.Client.Common.Controllers
         {
         }
 
-        public ISystemServerUpdater Updater => Core;
+        public ISystemServerUpdater Updater => Core.Updater;
 
         public void AutoUpdate()
         {

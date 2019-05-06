@@ -41,7 +41,7 @@ namespace URY.BAPS.Client.Common
                     DecodeQuit();
                     break;
                 default:
-                    _receiver.OnUnknownCommand(command.Packed, "possibly a malformed SYSTEM");
+                    ReportMalformedCommand(command, CommandGroup.System);
                     break;
             }
         }
@@ -55,14 +55,14 @@ namespace URY.BAPS.Client.Common
         {
             var index = ReceiveUint();
             var description = ReceiveString();
-            _receiver.OnDirectoryFileAdd(new DirectoryFileAddArgs(directoryIndex, index, description));
+            Dispatch(new DirectoryFileAddArgs(directoryIndex, index, description));
         }
 
         private void DecodeDirectoryPrepare(byte directoryIndex)
         {
             _ = ReceiveUint();
             var niceDirectoryName = ReceiveString();
-            _receiver.OnDirectoryPrepare(new DirectoryPrepareEventArgs(directoryIndex, niceDirectoryName));
+            Dispatch(new DirectoryPrepareEventArgs(directoryIndex, niceDirectoryName));
         }
 
         private void DecodeServerVersion()
@@ -71,7 +71,8 @@ namespace URY.BAPS.Client.Common
             var date = ReceiveString();
             var time = ReceiveString();
             var author = ReceiveString();
-            _receiver.OnVersion(new ServerVersion(version, date, time, author));
+            var sv = new ServerVersion(version, date, time, author);
+            Dispatch(new ServerVersionArgs(sv));
         }
 
         private void DecodeFeedback()
@@ -94,19 +95,19 @@ namespace URY.BAPS.Client.Common
         private void DecodeTextSetting(byte value, TextSetting setting)
         {
             var upDown = ValueToUpDown(value);
-            _receiver.OnTextSetting(new TextSettingEventArgs(setting, upDown));
+            Dispatch(new TextSettingArgs(setting, upDown));
         }
 
         private void DecodeQuit()
         {
             //The server should send an int representing if this is an expected quit (0) or an exception error (1)."
             var expected = ReceiveUint() == 0;
-            _receiver.OnServerQuit(expected);
+            Dispatch(new ServerQuitArgs(expected));
         }
 
-        private static UpDown ValueToUpDown(byte value)
+        private static TextSettingDirection ValueToUpDown(byte value)
         {
-            return value == 0 ? UpDown.Down : UpDown.Up;
+            return value == 0 ? TextSettingDirection.Down : TextSettingDirection.Up;
         }
     }
 }

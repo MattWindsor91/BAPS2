@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
+using URY.BAPS.Client.Common.Updaters;
 using URY.BAPS.Protocol.V2.Commands;
 using URY.BAPS.Protocol.V2.Io;
 using URY.BAPS.Protocol.V2.Messages;
@@ -27,8 +28,7 @@ namespace URY.BAPS.Client.Common
         private Task? _senderTask;
 
         private TcpConnection? _socket;
-
-
+        
         public ClientCore([NotNull] Authenticator auth)
         {
             _auth = auth;

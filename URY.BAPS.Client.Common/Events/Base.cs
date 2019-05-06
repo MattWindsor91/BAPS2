@@ -1,12 +1,33 @@
-﻿namespace URY.BAPS.Client.Common.Events
+﻿using System;
+using URY.BAPS.Protocol.V2.Commands;
+
+namespace URY.BAPS.Client.Common.Events
 {
+    /// <summary>
+    ///     Abstract base class of event payloads that derive from
+    ///     BapsNet server messages.
+    /// </summary>
+    public abstract class ArgsBase : EventArgs
+    {
+    }
+
+    public abstract class ChannelArgsBase : ArgsBase
+    {
+        protected ChannelArgsBase(ushort channelId)
+        {
+            ChannelId = channelId;
+        }
+
+        public ushort ChannelId { get; }
+    }
+
     /// <summary>
     ///     Abstract base class of event payloads that reference
     ///     indices in channel track lists.
     /// </summary>
-    public abstract class TrackIndexEventArgsBase : ChannelEventArgsBase
+    public abstract class TrackIndexArgsBase : ChannelArgsBase
     {
-        protected TrackIndexEventArgsBase(ushort channelId, uint index) : base(channelId)
+        protected TrackIndexArgsBase(ushort channelId, uint index) : base(channelId)
         {
             Index = index;
         }
@@ -17,21 +38,18 @@
         public uint Index { get; }
     }
 
-    public struct ErrorEventArgs
+    public class ErrorEventArgs : ArgsBase
     {
-        public ErrorType Type;
-        public byte Code;
-        public string Description;
-    }
+        public ErrorType Type { get; }
+        public byte Code { get; }
+        public string Description { get; }
 
-    public abstract class ChannelEventArgsBase
-    {
-        protected ChannelEventArgsBase(ushort channelId)
+        public ErrorEventArgs(ErrorType type, byte code, string description)
         {
-            ChannelId = channelId;
+            Type = type;
+            Code = code;
+            Description = description;
         }
-
-        public ushort ChannelId { get; }
     }
 
     /// <summary>
@@ -42,5 +60,17 @@
         Library,
         BapsDb,
         Config
+    }
+
+    public class UnknownCommandArgs : ArgsBase
+    {
+        public CommandWord PackedCommand { get; }
+        public string Description { get; }
+
+        public UnknownCommandArgs(CommandWord packedCommand, string description)
+        {
+            PackedCommand = packedCommand;
+            Description = description;
+        }
     }
 }

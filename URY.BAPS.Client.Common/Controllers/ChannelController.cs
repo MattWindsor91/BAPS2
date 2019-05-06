@@ -32,7 +32,7 @@ namespace URY.BAPS.Client.Common.Controllers
         ///         must check incoming events to see if they affect the right channel.
         ///     </para>
         /// </summary>
-        public IPlaylistServerUpdater PlaylistUpdater => Core;
+        public IPlaylistServerUpdater PlaylistUpdater => Core.Updater;
 
         /// <summary>
         ///     An event interface that broadcasts playback server updates.
@@ -41,7 +41,7 @@ namespace URY.BAPS.Client.Common.Controllers
         ///         must check incoming events to see if they affect the right channel.
         ///     </para>
         /// </summary>
-        public IPlaybackServerUpdater PlaybackUpdater => Core;
+        public IPlaybackServerUpdater PlaybackUpdater => Core.Updater;
 
         /// <summary>
         ///     Asks the server to set this channel's state to <see cref="state" />.

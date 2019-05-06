@@ -5,9 +5,9 @@ namespace URY.BAPS.Client.Common.Events
     /// <summary>
     ///     Payload for a track-list item delete server update.
     /// </summary>
-    public class TrackDeleteEventArgs : TrackIndexEventArgsBase
+    public class TrackDeleteArgs : TrackIndexArgsBase
     {
-        public TrackDeleteEventArgs(ushort channelId, uint index) : base(channelId, index)
+        public TrackDeleteArgs(ushort channelId, uint index) : base(channelId, index)
         {
         }
     }
@@ -15,9 +15,9 @@ namespace URY.BAPS.Client.Common.Events
     /// <summary>
     ///     Payload for a track-list item move server update.
     /// </summary>
-    public class TrackMoveEventArgs : TrackIndexEventArgsBase
+    public class TrackMoveArgs : TrackIndexArgsBase
     {
-        public TrackMoveEventArgs(ushort channelId, uint fromIndex, uint toIndex)
+        public TrackMoveArgs(ushort channelId, uint fromIndex, uint toIndex)
             : base(channelId, fromIndex)
         {
             NewIndex = toIndex;
@@ -29,9 +29,9 @@ namespace URY.BAPS.Client.Common.Events
     /// <summary>
     ///     Payload for a track-list item add server update.
     /// </summary>
-    public class TrackAddEventArgs : TrackIndexEventArgsBase
+    public class TrackAddArgs : TrackIndexArgsBase
     {
-        public TrackAddEventArgs(ushort channelId, uint index, Track item)
+        public TrackAddArgs(ushort channelId, uint index, Track item)
             : base(channelId, index)
         {
             Item = item;
@@ -43,9 +43,9 @@ namespace URY.BAPS.Client.Common.Events
     /// <summary>
     ///     Payload for a channel track-list reset server update.
     /// </summary>
-    public class PlaylistResetEventArgs : ChannelEventArgsBase
+    public class PlaylistResetArgs : ChannelArgsBase
     {
-        public PlaylistResetEventArgs(ushort channelId) : base(channelId)
+        public PlaylistResetArgs(ushort channelId) : base(channelId)
         {
         }
     }

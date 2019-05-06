@@ -1,5 +1,6 @@
 using System;
 using URY.BAPS.Client.Common.Events;
+using URY.BAPS.Client.Common.Model;
 using URY.BAPS.Client.Common.ServerConfig;
 using URY.BAPS.Protocol.V2.Commands;
 
@@ -47,7 +48,7 @@ namespace URY.BAPS.Client.Common
             var optionId = ReceiveUint();
             var choiceIndex = ReceiveUint();
             var choiceDescription = ReceiveString();
-            _receiver.OnConfigChoice(new ConfigChoiceArgs(optionId, choiceIndex, choiceDescription));
+            Dispatch(new ConfigChoiceArgs(optionId, choiceIndex, choiceDescription));
         }
 
         private void DecodeOptionChoiceCount()
@@ -60,7 +61,7 @@ namespace URY.BAPS.Client.Common
         {
             var username = ReceiveString();
             var permissions = ReceiveUint();
-            _receiver.OnUser(username, permissions);
+            Dispatch(new UserArgs(username, permissions));
         }
 
         private void DecodeUserCount()
@@ -72,7 +73,7 @@ namespace URY.BAPS.Client.Common
         {
             var permissionCode = ReceiveUint();
             var description = ReceiveString();
-            _receiver.OnPermission(permissionCode, description);
+            Dispatch(new PermissionArgs(permissionCode, description));
         }
 
         private void DecodePermissionCount()
@@ -83,7 +84,7 @@ namespace URY.BAPS.Client.Common
         private void DecodeUserResult(byte resultCode)
         {
             var description = ReceiveString();
-            _receiver.OnUserResult(resultCode, description);
+            Dispatch(new UserResultArgs(resultCode, description));
         }
 
         private void DecodeConfigError(byte value)
@@ -134,7 +135,7 @@ namespace URY.BAPS.Client.Common
                     DecodeIpRestrictionCount();
                     break;               
                 default:
-                    ReportMalformedCommand(command, "config");
+                    ReportMalformedCommand(command, CommandGroup.Config);
                     break;
             }
         }
@@ -144,14 +145,15 @@ namespace URY.BAPS.Client.Common
             var type = DecodeIpRestrictionType(indexBitSet);
             var ipAddress = ReceiveString();
             var mask = ReceiveUint();
-            _receiver.OnIpRestriction(new IpRestriction(type, ipAddress, mask));
+            var restriction = new IpRestriction(type, ipAddress, mask);
+            Dispatch(new IpRestrictionArgs(restriction));
         }
 
         private void DecodeConfigResult(int maybeIndex)
         {
             var optionId = ReceiveUint();
             var result = DecodeConfigResult();
-            _receiver.OnConfigResult(new ConfigResultArgs(optionId, result, maybeIndex));
+            Dispatch(new ConfigResultArgs(optionId, result, maybeIndex));
         }
 
         private void DecodeOption(int index)
@@ -159,7 +161,7 @@ namespace URY.BAPS.Client.Common
             var optionId = ReceiveUint();
             var description = ReceiveString();
             var type = DecodeConfigType();
-            _receiver.OnConfigOption(new ConfigOptionArgs(optionId, type, description, index));
+            Dispatch(new ConfigOptionArgs(optionId, type, description, index));
         }
 
         private void DecodeOptionCount()
@@ -172,7 +174,7 @@ namespace URY.BAPS.Client.Common
             var optionId = ReceiveUint();
             var type = DecodeConfigType();
             var value = DecodeConfigSettingValue(type);
-            _receiver.OnConfigSetting(new ConfigSettingArgs(optionId, type, value, index));           
+            Dispatch(new ConfigSettingArgs(optionId, type, value, index));           
         }
 
         private void DecodeConfigSettingCount()

@@ -1,5 +1,21 @@
 ﻿namespace URY.BAPS.Client.Common.Events
 {
+    /// <summary>
+    ///     Base class for all directory update event payloads.
+    /// </summary>
+    public abstract class DirectoryEventArgsBase : ArgsBase
+    {
+        protected DirectoryEventArgsBase(ushort directoryId)
+        {
+            DirectoryId = directoryId;
+        }
+
+        /// <summary>
+        ///     The ID of the directory this update concerns.
+        /// </summary>
+        public ushort DirectoryId { get; }
+    }
+
     /// <inheritdoc />
     /// <summary>
     ///     Event payload for when the server clears out and renames a directory,
@@ -41,21 +57,5 @@
         ///     The description of the file.
         /// </summary>
         public string Description { get; }
-    }
-
-    /// <summary>
-    ///     Base class for all directory update event payloads.
-    /// </summary>
-    public abstract class DirectoryEventArgsBase
-    {
-        protected DirectoryEventArgsBase(ushort directoryId)
-        {
-            DirectoryId = directoryId;
-        }
-
-        /// <summary>
-        ///     The ID of the directory this update concerns.
-        /// </summary>
-        public ushort DirectoryId { get; }
     }
 }

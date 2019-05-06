@@ -25,7 +25,7 @@ namespace URY.BAPS.Client.Common.Controllers
         ///         must check incoming events to see if they affect the right channel.
         ///     </para>
         /// </summary>
-        public IDirectoryServerUpdater Updater => Core;
+        public IDirectoryServerUpdater Updater => Core.Updater;
 
         /// <summary>
         ///     Asks the server to refresh this directory's listing.
