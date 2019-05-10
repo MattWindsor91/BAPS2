@@ -1,6 +1,6 @@
 using System;
 using System.Reactive.Linq;
-using URY.BAPS.Client.Common.Events;
+using URY.BAPS.Model.MessageEvents;
 
 namespace URY.BAPS.Client.Common.Updaters
 {
@@ -11,12 +11,12 @@ namespace URY.BAPS.Client.Common.Updaters
     /// </summary>
     public class FilteringServerUpdater : IServerUpdater
     {
-        public FilteringServerUpdater(IObservable<ArgsBase> master)
+        public FilteringServerUpdater(IObservable<MessageArgsBase> master)
         {
             ObserveMessages = master;
         }
 
-        protected IObservable<ArgsBase> ObserveMessages { get; set; }
+        protected IObservable<MessageArgsBase> ObserveMessages { get; set; }
         
          /// <summary>
         ///     Convenience observable for observing all protocol messages

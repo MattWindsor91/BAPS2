@@ -1,6 +1,7 @@
-﻿using URY.BAPS.Client.Common.Model;
+﻿using URY.BAPS.Model.Track;
 using URY.BAPS.Protocol.V2.Commands;
-using URY.BAPS.Protocol.V2.Messages;
+using URY.BAPS.Protocol.V2.Encode;
+using URY.BAPS.Protocol.V2.Model;
 
 namespace URY.BAPS.Client.Common.BapsNet
 {
@@ -25,22 +26,22 @@ namespace URY.BAPS.Client.Common.BapsNet
         /// <param name="channelId">The ID of the channel to which we are adding.</param>
         /// <param name="trackType">The type of track we are adding.</param>
         /// <returns>A message, to which we can add type-specific arguments.</returns>
-        private static Message MakeAddItemBase(byte channelId, TrackType trackType)
+        private static MessageBuilder MakeAddItemBase(byte channelId, TrackType trackType)
         {
-            return new Message(MakeAddItemCommand(channelId)).Add((uint)trackType);
+            return new MessageBuilder(MakeAddItemCommand(channelId)).Add((uint)trackType);
         }
 
-        public static Message MakeAddFileItem(byte channelId, uint directoryNumber, string filename)
+        public static MessageBuilder MakeAddFileItem(byte channelId, uint directoryNumber, string filename)
         {
             return MakeAddItemBase(channelId, TrackType.File).Add(directoryNumber).Add(filename);
         }
 
-        public static Message MakeAddLibraryItem(byte channelId, uint searchItemIndex)
+        public static MessageBuilder MakeAddLibraryItem(byte channelId, uint searchItemIndex)
         {
             return MakeAddItemBase(channelId, TrackType.Library).Add(searchItemIndex);
         }
 
-        public static Message MakeAddTextItem(byte channelId, string briefDescription, string details)
+        public static MessageBuilder MakeAddTextItem(byte channelId, string briefDescription, string details)
         {
             return MakeAddItemBase(channelId, TrackType.Text).Add(briefDescription).Add(details);
         }

@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using JetBrains.Annotations;
 using URY.BAPS.Client.Common.Updaters;
 using URY.BAPS.Protocol.V2.Commands;
+using URY.BAPS.Protocol.V2.Encode;
 using URY.BAPS.Protocol.V2.Io;
-using URY.BAPS.Protocol.V2.Messages;
 
 namespace URY.BAPS.Client.Common
 {
@@ -38,10 +38,10 @@ namespace URY.BAPS.Client.Common
         /// <summary>
         ///     Sends a message to the BapsNet server.
         /// </summary>
-        /// <param name="message">The message to send.  If null, nothing is sent.</param>
-        public void Send(Message? message)
+        /// <param name="messageBuilder">The message to send.  If null, nothing is sent.</param>
+        public void Send(MessageBuilder? messageBuilder)
         {
-            if (message != null) _sender?.Enqueue(message);
+            if (messageBuilder != null) _sender?.Enqueue(messageBuilder);
         }
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace URY.BAPS.Client.Common
         private void NotifyServerOfQuit()
         {
             var cmd = new SystemCommand(SystemOp.End);
-            Send(new Message(cmd).Add("Normal Termination"));
+            Send(new MessageBuilder(cmd).Add("Normal Termination"));
         }
 
         /// <summary>

@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using JetBrains.Annotations;
-using URY.BAPS.Client.Common.BapsNet;
-using URY.BAPS.Client.Common.Events;
 using URY.BAPS.Client.Common.ServerConfig;
 using URY.BAPS.Client.Common.Updaters;
-using URY.BAPS.Protocol.V2.Commands;
+using URY.BAPS.Model.MessageEvents;
+using URY.BAPS.Model.ServerConfig;
 using Xunit;
 
 namespace URY.BAPS.Client.Common.Tests.ServerConfig

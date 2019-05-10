@@ -10,19 +10,19 @@ using Xunit;
 namespace URY.BAPS.Protocol.V2.Tests.Io
 {
     /// <summary>
-    ///     Tests that exercise both <see cref="StreamSink"/> and <see cref="StreamSource"/>,
+    ///     Tests that exercise both <see cref="StreamSink"/> and <see cref="StreamBapsNetSource"/>,
     ///     by applying them to the same stream.
     /// </summary>
     public class StreamSinkToSourceTests
     {
         [NotNull] private readonly StreamSink _sink;
-        [NotNull] private readonly StreamSource _source;
+        [NotNull] private readonly StreamBapsNetSource _bapsNetSource;
         [NotNull] private readonly BufferedStream _stream = new BufferedStream(new MemoryStream());
 
         public StreamSinkToSourceTests()
         {
             _sink = new StreamSink(_stream);
-            _source = new StreamSource(_stream);
+            _bapsNetSource = new StreamBapsNetSource(_stream);
         }
 
         private T SeekAndReceive<T>(Func<CancellationToken, T> receive)
@@ -39,7 +39,7 @@ namespace URY.BAPS.Protocol.V2.Tests.Io
             const CommandWord expectedCommand = CommandWord.System | CommandWord.AutoUpdate;
             _sink.SendCommand(expectedCommand);
             _sink.Flush();
-            var actualCommand = SeekAndReceive(_source.ReceiveCommand);
+            var actualCommand = SeekAndReceive(_bapsNetSource.ReceiveCommand);
             Assert.Equal(expectedCommand, actualCommand);
         }
 
@@ -48,7 +48,7 @@ namespace URY.BAPS.Protocol.V2.Tests.Io
         {
             const string expectedString = "It's the end of the world as we know it (and I feel fine).";
             _sink.SendString(expectedString);
-            var actualString = SeekAndReceive(_source.ReceiveString);
+            var actualString = SeekAndReceive(_bapsNetSource.ReceiveString);
             Assert.Equal(expectedString, actualString);
         }
 
@@ -63,7 +63,7 @@ namespace URY.BAPS.Protocol.V2.Tests.Io
             using (var sink = new StreamSink(_stream)) sink.SendString(expectedString);
             _stream.Flush();
             _stream.Seek(0, SeekOrigin.Begin);
-            using var source = new StreamSource(_stream);
+            using var source = new StreamBapsNetSource(_stream);
             var actualString = source.ReceiveString();
             Assert.Equal(expectedString, actualString);
         }
@@ -73,7 +73,7 @@ namespace URY.BAPS.Protocol.V2.Tests.Io
         {
             const uint expectedUint = 867_5309;
             _sink.SendUint(expectedUint);
-            var actualUint = SeekAndReceive(_source.ReceiveUint);
+            var actualUint = SeekAndReceive(_bapsNetSource.ReceiveUint);
             Assert.Equal(expectedUint, actualUint);
         }
 
@@ -82,7 +82,7 @@ namespace URY.BAPS.Protocol.V2.Tests.Io
         {
             const float expectedFloat = 1024.25f;
             _sink.SendFloat(expectedFloat);
-            var actualFloat = SeekAndReceive(_source.ReceiveFloat);
+            var actualFloat = SeekAndReceive(_bapsNetSource.ReceiveFloat);
             Assert.Equal(expectedFloat, actualFloat, 2);
         }
     }

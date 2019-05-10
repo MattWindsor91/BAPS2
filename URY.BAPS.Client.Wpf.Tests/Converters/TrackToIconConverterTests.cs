@@ -93,7 +93,7 @@ namespace URY.BAPS.Client.Wpf.Tests.Converters
         [Fact]
         public void Test_ConvertBack_NullTrack()
         {
-            var trackObject = _conv.ConvertBack(FontAwesomeIcon.FileAudioOutline, typeof(Track), null,
+            var trackObject = _conv.ConvertBack(FontAwesomeIcon.FileAudioOutline, typeof(TrackBase), null,
                 CultureInfo.CurrentCulture);
             Assert.NotNull(trackObject);
             Assert.IsAssignableFrom<ITrack>(trackObject);

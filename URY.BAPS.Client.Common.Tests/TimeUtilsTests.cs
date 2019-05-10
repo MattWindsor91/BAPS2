@@ -1,4 +1,5 @@
-﻿using URY.BAPS.Client.Common.Utils;
+﻿using JetBrains.Annotations;
+using URY.BAPS.Client.Common.Utils;
 using Xunit;
 
 namespace URY.BAPS.Client.Common.Tests
@@ -8,6 +9,7 @@ namespace URY.BAPS.Client.Common.Tests
     /// </summary>
     public class TimeUtilsTests
     {
+        [UsedImplicitly]
         public static TheoryData<ushort, ushort, ushort, string> MillisecondsToTimeStringData =>
             new TheoryData<ushort, ushort, ushort, string>
             {

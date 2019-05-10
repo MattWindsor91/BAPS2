@@ -6,8 +6,8 @@ using System.Text;
 using JetBrains.Annotations;
 using URY.BAPS.Client.Common.BapsNet;
 using URY.BAPS.Protocol.V2.Commands;
+using URY.BAPS.Protocol.V2.Encode;
 using URY.BAPS.Protocol.V2.Io;
-using URY.BAPS.Protocol.V2.Messages;
 
 namespace URY.BAPS.Client.Common
 {
@@ -80,7 +80,7 @@ namespace URY.BAPS.Client.Common
             MakeNewConnection(response.Server, response.Port);
         }
 
-        private (CommandWord command, string? payload) ReceiveSystemStringCommand(SystemOp expectedOp, ISource src)
+        private (CommandWord command, string? payload) ReceiveSystemStringCommand(SystemOp expectedOp, IBapsNetSource src)
         {
             var cmd = src.ReceiveCommand();
             _ = src.ReceiveUint(); // Discard length
@@ -113,7 +113,7 @@ namespace URY.BAPS.Client.Common
              **/
             _ = _conn.ReceiveString();
             var binaryModeCommand = new SystemCommand(SystemOp.SetBinaryMode, 0, false);
-            var binaryModeMessage = new Message(binaryModeCommand);
+            var binaryModeMessage = new MessageBuilder(binaryModeCommand);
             binaryModeMessage.Send(_conn);
 
             _seed = ReceiveSystemStringCommand(SystemOp.Seed, _conn).payload;
@@ -164,7 +164,7 @@ namespace URY.BAPS.Client.Common
             var securedPassword = Md5Sum(string.Concat(_seed, Md5Sum(password)));
 
             var loginCmd = new SystemCommand(SystemOp.Login);
-            var loginMessage = new Message(loginCmd).Add(username).Add(securedPassword);
+            var loginMessage = new MessageBuilder(loginCmd).Add(username).Add(securedPassword);
             loginMessage.Send(_conn);
 
             var (authResult, description) = ReceiveSystemStringCommand(SystemOp.LoginResult, _conn);

@@ -2,7 +2,7 @@ using JetBrains.Annotations;
 using URY.BAPS.Client.Common.BapsNet;
 using URY.BAPS.Client.Common.Updaters;
 using URY.BAPS.Protocol.V2.Commands;
-using URY.BAPS.Protocol.V2.Messages;
+using URY.BAPS.Protocol.V2.Encode;
 
 namespace URY.BAPS.Client.Common.Controllers
 {
@@ -33,7 +33,7 @@ namespace URY.BAPS.Client.Common.Controllers
         public void Refresh()
         {
             var cmd = new SystemCommand(SystemOp.ListFiles, _directoryId);
-            Send(new Message(cmd));
+            Send(new MessageBuilder(cmd));
         }
     }
 }

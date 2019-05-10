@@ -24,7 +24,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="BapsNet\" />
+    <Compile Remove="BapsNet\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="BapsNet\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="BapsNet\**" />
   </ItemGroup>
 
 </Project>

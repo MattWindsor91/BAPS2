@@ -12,7 +12,7 @@ namespace URY.BAPS.Client.Common.Utils
         /// <summary>
         ///     The default maximum length of <see cref="Summary"/>.
         /// </summary>
-        public const ushort DefaultSummaryLength = 32;
+        private const ushort DefaultSummaryLength = 32;
 
         /// <summary>
         ///     The ellipsis that <see cref="Summary"/> adds to over-long strings.

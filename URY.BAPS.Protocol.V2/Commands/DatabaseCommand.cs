@@ -1,4 +1,6 @@
-﻿namespace URY.BAPS.Protocol.V2.Commands
+﻿using URY.BAPS.Protocol.V2.Ops;
+
+namespace URY.BAPS.Protocol.V2.Commands
 {
     public class DatabaseCommand : NormalCommandBase<DatabaseOp>
     {

@@ -1,6 +1,5 @@
 using System;
-using URY.BAPS.Client.Common.Events;
-using URY.BAPS.Client.Common.Model;
+using URY.BAPS.Model.MessageEvents;
 
 namespace URY.BAPS.Client.Common.Updaters
 {

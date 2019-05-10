@@ -15,11 +15,11 @@ namespace URY.BAPS.Protocol.V2.Io
     ///         Disposing the <see cref="StreamSink"/> does NOT dispose the underlying stream.
     ///     </para>
     /// </summary>
-    public class StreamSource : ISource, IDisposable
+    public class StreamBapsNetSource : IBapsNetSource, IDisposable
     {
         [NotNull] private readonly BinaryReader _reader;
 
-        public StreamSource(Stream? stream)
+        public StreamBapsNetSource(Stream? stream)
         {
             if (stream is null) throw new ArgumentNullException(nameof(stream));
             if (!stream.CanRead) throw new ArgumentException("Stream must be readable", nameof(stream));

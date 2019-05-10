@@ -1,4 +1,5 @@
 using System;
+using URY.BAPS.Model.ServerConfig;
 
 namespace URY.BAPS.Client.Common.ServerConfig
 {

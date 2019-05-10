@@ -2,6 +2,7 @@ using System;
 using JetBrains.Annotations;
 using URY.BAPS.Client.Common.Controllers;
 using URY.BAPS.Client.Common.ServerConfig;
+using URY.BAPS.Model.ServerConfig;
 
 namespace URY.BAPS.Client.Common
 {

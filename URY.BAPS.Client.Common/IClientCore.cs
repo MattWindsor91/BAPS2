@@ -1,7 +1,7 @@
 using System;
 using JetBrains.Annotations;
 using URY.BAPS.Client.Common.Updaters;
-using URY.BAPS.Protocol.V2.Messages;
+using URY.BAPS.Protocol.V2.Encode;
 
 namespace URY.BAPS.Client.Common
 {
@@ -19,8 +19,8 @@ namespace URY.BAPS.Client.Common
         ///     Sends a BapsNet message asynchronously through this client's
         ///     BapsNet connection.
         /// </summary>
-        /// <param name="message">The message to send.  If null, nothing is sent.</param>
-        void Send(Message? message);
+        /// <param name="messageBuilder">The message to send.  If null, nothing is sent.</param>
+        void Send(MessageBuilder? messageBuilder);
 
         /// <summary>
         ///     Event raised just before authentication.

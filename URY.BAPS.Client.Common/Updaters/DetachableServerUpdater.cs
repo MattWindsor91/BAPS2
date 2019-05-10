@@ -1,7 +1,7 @@
 using System;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using URY.BAPS.Client.Common.Events;
+using URY.BAPS.Model.MessageEvents;
 
 namespace URY.BAPS.Client.Common.Updaters
 {
@@ -13,16 +13,16 @@ namespace URY.BAPS.Client.Common.Updaters
     public class DetachableServerUpdater : FilteringServerUpdater
 
     {
-        private Subject<ArgsBase> bridge = new Subject<ArgsBase>();
+        private Subject<MessageArgsBase> bridge = new Subject<MessageArgsBase>();
 
         private IDisposable? subscription = null;
         
-        public DetachableServerUpdater() : base(Observable.Empty<ArgsBase>())
+        public DetachableServerUpdater() : base(Observable.Empty<MessageArgsBase>())
         {
             ObserveMessages = bridge;
         }
 
-        public void Attach(IObservable<ArgsBase> obs)
+        public void Attach(IObservable<MessageArgsBase> obs)
         {
             subscription ??= obs.Subscribe(bridge);
         }

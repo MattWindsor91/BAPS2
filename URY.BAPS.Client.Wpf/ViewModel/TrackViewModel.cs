@@ -6,16 +6,16 @@ using URY.BAPS.Client.Common.Model;
 namespace URY.BAPS.Client.Wpf.ViewModel
 {
     /// <summary>
-    ///     A view model that wraps a <see cref="Track" />, adding tracking for
+    ///     A view model that wraps a <see cref="TrackBase" />, adding tracking for
     ///     whether the item is loaded.
     /// </summary>
     public class TrackViewModel : ViewModelBase, ITrack
     {
-        [NotNull] private readonly Track _underlyingTrack;
+        [NotNull] private readonly TrackBase _underlyingTrack;
 
         private bool _isLoaded;
 
-        public TrackViewModel([CanBeNull] Track underlyingTrack)
+        public TrackViewModel([CanBeNull] TrackBase underlyingTrack)
         {
             _underlyingTrack = underlyingTrack ?? throw new ArgumentNullException(nameof(underlyingTrack));
         }

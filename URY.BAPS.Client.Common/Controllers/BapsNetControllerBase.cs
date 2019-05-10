@@ -1,7 +1,7 @@
 using System;
 using JetBrains.Annotations;
 using URY.BAPS.Protocol.V2.Commands;
-using URY.BAPS.Protocol.V2.Messages;
+using URY.BAPS.Protocol.V2.Encode;
 
 namespace URY.BAPS.Client.Common.Controllers
 {
@@ -25,10 +25,10 @@ namespace URY.BAPS.Client.Common.Controllers
         /// <summary>
         ///     Sends a BapsNet message through this controller's queue.
         /// </summary>
-        /// <param name="message">The message to send.</param>
-        protected void Send(Message? message)
+        /// <param name="messageBuilder">The message to send.</param>
+        protected void Send(MessageBuilder? messageBuilder)
         {
-            Core.Send(message);
+            Core.Send(messageBuilder);
         }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace URY.BAPS.Client.Common.Controllers
         /// <param name="command">The command to send (as a no-argument message).</param>
         protected void Send(ICommand? command)
         {
-            if (command != null) Send(new Message(command));
+            if (command != null) Send(new MessageBuilder(command));
         }
     }
 }

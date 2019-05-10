@@ -1,12 +1,14 @@
 ﻿using System;
 using JetBrains.Annotations;
 using URY.BAPS.Client.Common.BapsNet;
-using URY.BAPS.Client.Common.Model;
 using URY.BAPS.Client.Common.ServerConfig;
 using URY.BAPS.Client.Common.Updaters;
 using URY.BAPS.Client.Common.Utils;
+using URY.BAPS.Model.Playback;
+using URY.BAPS.Model.ServerConfig;
+using URY.BAPS.Model.Track;
 using URY.BAPS.Protocol.V2.Commands;
-using URY.BAPS.Protocol.V2.Messages;
+using URY.BAPS.Protocol.V2.Encode;
 
 namespace URY.BAPS.Client.Common.Controllers
 {
@@ -50,7 +52,7 @@ namespace URY.BAPS.Client.Common.Controllers
         public void SetState(PlaybackState state)
         {
             var cmd = new PlaybackCommand(state.AsPlaybackOp(), _channelId);
-            Send(new Message(cmd));
+            Send(new MessageBuilder(cmd));
         }
 
         #region Command factories
@@ -87,13 +89,13 @@ namespace URY.BAPS.Client.Common.Controllers
         public void SetMarker(MarkerType type, uint newValue)
         {
             var cmd = new PlaybackCommand(type.AsPlaybackOp(), _channelId);
-            Send(new Message(cmd).Add(newValue));
+            Send(new MessageBuilder(cmd).Add(newValue));
         }
 
         public void Select(uint index)
         {
             var cmd = new PlaybackCommand(PlaybackOp.Load, _channelId);
-            Send(new Message(cmd).Add(index));
+            Send(new MessageBuilder(cmd).Add(index));
         }
 
         public void SetFlag(ChannelFlag flag, bool value)
@@ -121,7 +123,7 @@ namespace URY.BAPS.Client.Common.Controllers
         public void DeleteItemAt(uint index)
         {
             var cmd = PlaylistCommand(PlaylistOp.DeleteItem);
-            Send(new Message(cmd).Add(index));
+            Send(new MessageBuilder(cmd).Add(index));
         }
 
         /// <summary>
@@ -131,7 +133,7 @@ namespace URY.BAPS.Client.Common.Controllers
         public void Reset()
         {
             var cmd = PlaylistCommand(PlaylistOp.ResetPlaylist);
-            Send(new Message(cmd));
+            Send(new MessageBuilder(cmd));
         }
 
         /// <summary>

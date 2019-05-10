@@ -1,4 +1,5 @@
 ﻿using URY.BAPS.Protocol.V2.Commands;
+using URY.BAPS.Protocol.V2.Ops;
 using Xunit;
 
 namespace URY.BAPS.Protocol.V2.Tests.Commands

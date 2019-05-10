@@ -7,7 +7,7 @@ namespace URY.BAPS.Protocol.V2.Io
     ///     Low-level interface for objects that can produce items of the
     ///     primitive BapsNet types: commands, strings, floats, and uints.
     /// </summary>
-    public interface ISource
+    public interface IBapsNetSource
     {
         /// <summary>
         ///     Performs a blocking (synchronous) read of a command word.

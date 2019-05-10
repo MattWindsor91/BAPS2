@@ -12,7 +12,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\URY.BAPS.Model\URY.BAPS.Model.csproj" />
     <ProjectReference Include="..\URY.BAPS.Protocol.V2\URY.BAPS.Protocol.V2.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Model" />
   </ItemGroup>
 
 </Project>

@@ -2,8 +2,8 @@
 using System.Collections.Concurrent;
 using System.Threading;
 using JetBrains.Annotations;
+using URY.BAPS.Protocol.V2.Encode;
 using URY.BAPS.Protocol.V2.Io;
-using URY.BAPS.Protocol.V2.Messages;
 
 namespace URY.BAPS.Client.Common
 {
@@ -12,7 +12,7 @@ namespace URY.BAPS.Client.Common
     /// </summary>
     public class Sender
     {
-        [ItemNotNull] [NotNull] private readonly BlockingCollection<Message> _queue = new BlockingCollection<Message>();
+        [ItemNotNull] [NotNull] private readonly BlockingCollection<MessageBuilder> _queue = new BlockingCollection<MessageBuilder>();
 
         [NotNull] private readonly ISink _sink;
         private readonly CancellationToken _token;
@@ -37,10 +37,10 @@ namespace URY.BAPS.Client.Common
         /// <summary>
         ///     Queues up a message to send through this <see cref="Sender" />.
         /// </summary>
-        /// <param name="message">The message to send.</param>
-        public void Enqueue(Message? message)
+        /// <param name="messageBuilder">The message to send.</param>
+        public void Enqueue(MessageBuilder? messageBuilder)
         {
-            if (message != null) _queue.Add(message, _token);
+            if (messageBuilder != null) _queue.Add(messageBuilder, _token);
         }
 
         /// <summary>

@@ -2,8 +2,9 @@ using System;
 using System.Reactive.Linq;
 using JetBrains.Annotations;
 using URY.BAPS.Client.Common.ServerConfig;
+using URY.BAPS.Model.ServerConfig;
 using URY.BAPS.Protocol.V2.Commands;
-using URY.BAPS.Protocol.V2.Messages;
+using URY.BAPS.Protocol.V2.Encode;
 
 namespace URY.BAPS.Client.Common.Controllers
 {
@@ -56,7 +57,7 @@ namespace URY.BAPS.Client.Common.Controllers
             var optionId = (uint) optionKey;
             var choiceIndex = _cache.ChoiceIndexFor(optionId, choiceKey);
             var cmd = PossiblyIndexedConfigCommand(ConfigOp.SetConfigValue, index);
-            Send(new Message(cmd).Add(optionId).Add((uint) ConfigType.Choice).Add((uint) choiceIndex));
+            Send(new MessageBuilder(cmd).Add(optionId).Add((uint) ConfigType.Choice).Add((uint) choiceIndex));
         }
 
 
@@ -79,7 +80,7 @@ namespace URY.BAPS.Client.Common.Controllers
                     // the BapsNet conversation that results in receiving the config setting has to
                     // take place within the time window that 'ev' is registered.
                     var cmd = new NonIndexedConfigCommand(ConfigOp.GetConfigSetting, false);
-                    Send(new Message(cmd).Add((uint) key));
+                    Send(new MessageBuilder(cmd).Add((uint) key));
                 },
                 ev => _cache.IntChanged -= ev
             ).FirstAsync(

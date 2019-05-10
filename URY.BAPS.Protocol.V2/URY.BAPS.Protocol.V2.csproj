@@ -10,4 +10,8 @@
     <PackageReference Include="JetBrains.Annotations" Version="2018.3.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\URY.BAPS.Model\URY.BAPS.Model.csproj" />
+  </ItemGroup>
+
 </Project>

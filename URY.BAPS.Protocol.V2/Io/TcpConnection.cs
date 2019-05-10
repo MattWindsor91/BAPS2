@@ -12,7 +12,7 @@ namespace URY.BAPS.Protocol.V2.Io
     public class TcpConnection : IConnection, IDisposable
     {
         private readonly StreamSink _sink;
-        private readonly StreamSource _source;
+        private readonly StreamBapsNetSource _bapsNetSource;
 
         /// <summary>
         ///     The low level socket connection
@@ -25,7 +25,7 @@ namespace URY.BAPS.Protocol.V2.Io
             var stream = _clientSocket.GetStream();
 
             _sink = new StreamSink(stream);
-            _source = new StreamSource(stream);
+            _bapsNetSource = new StreamBapsNetSource(stream);
         }
 
         /// <summary>
@@ -37,28 +37,28 @@ namespace URY.BAPS.Protocol.V2.Io
         {
             if (!IsValid) return;
             _sink.Dispose();
-            _source.Dispose();
+            _bapsNetSource.Dispose();
             _clientSocket.Close();
         }
 
         public CommandWord ReceiveCommand(CancellationToken token = default)
         {
-            return _source.ReceiveCommand(token);
+            return _bapsNetSource.ReceiveCommand(token);
         }
 
         public string ReceiveString(CancellationToken token = default)
         {
-            return _source.ReceiveString(token);
+            return _bapsNetSource.ReceiveString(token);
         }
 
         public float ReceiveFloat(CancellationToken token = default)
         {
-            return _source.ReceiveFloat(token);
+            return _bapsNetSource.ReceiveFloat(token);
         }
 
         public uint ReceiveUint(CancellationToken token = default)
         {
-            return _source.ReceiveUint(token);
+            return _bapsNetSource.ReceiveUint(token);
         }
 
         public void SendCommand(CommandWord cmd)

@@ -3,8 +3,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using JetBrains.Annotations;
-using URY.BAPS.Client.Common.Events;
 using URY.BAPS.Client.Common.Updaters;
+using URY.BAPS.Model.MessageEvents;
+using URY.BAPS.Model.ServerConfig;
 
 namespace URY.BAPS.Client.Common.ServerConfig
 {

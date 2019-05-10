@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Reactive.Subjects;
 using JetBrains.Annotations;
-using URY.BAPS.Client.Common.Events;
-using URY.BAPS.Client.Common.Model;
 using URY.BAPS.Client.Common.Updaters;
 using URY.BAPS.Protocol.V2.Commands;
 
