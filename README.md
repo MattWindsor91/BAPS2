@@ -13,7 +13,7 @@ This is a part-time project _not_ formally under the auspices of URY's
 computing team, so don't expect amazing things.  Contributions and suggestions
 are, of course, welcome.
 
-## Build caveats
+## Build caveats
 
 At time of writing, the BAPS fork uses .NET Core 3.0-preview and some
 C# 8-preview features.  The practical upshot of this is that you'll need
