@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reactive.Subjects;
 using JetBrains.Annotations;
 using URY.BAPS.Client.Common.Updaters;
-using URY.BAPS.Protocol.V2.Commands;
+using URY.BAPS.Common.Protocol.V2.Commands;
 
 namespace URY.BAPS.Client.Common
 {

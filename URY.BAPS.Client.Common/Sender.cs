@@ -2,8 +2,8 @@
 using System.Collections.Concurrent;
 using System.Threading;
 using JetBrains.Annotations;
-using URY.BAPS.Protocol.V2.Encode;
-using URY.BAPS.Protocol.V2.Io;
+using URY.BAPS.Common.Protocol.V2.Encode;
+using URY.BAPS.Common.Protocol.V2.Io;
 
 namespace URY.BAPS.Client.Common
 {

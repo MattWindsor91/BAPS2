@@ -1,8 +1,8 @@
 using JetBrains.Annotations;
 using URY.BAPS.Client.Common.BapsNet;
 using URY.BAPS.Client.Common.Updaters;
-using URY.BAPS.Protocol.V2.Commands;
-using URY.BAPS.Protocol.V2.Encode;
+using URY.BAPS.Common.Protocol.V2.Commands;
+using URY.BAPS.Common.Protocol.V2.Encode;
 
 namespace URY.BAPS.Client.Common.Controllers
 {

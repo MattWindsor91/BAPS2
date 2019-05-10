@@ -4,11 +4,11 @@ using URY.BAPS.Client.Common.BapsNet;
 using URY.BAPS.Client.Common.ServerConfig;
 using URY.BAPS.Client.Common.Updaters;
 using URY.BAPS.Client.Common.Utils;
-using URY.BAPS.Model.Playback;
-using URY.BAPS.Model.ServerConfig;
-using URY.BAPS.Model.Track;
-using URY.BAPS.Protocol.V2.Commands;
-using URY.BAPS.Protocol.V2.Encode;
+using URY.BAPS.Common.Model.Playback;
+using URY.BAPS.Common.Model.ServerConfig;
+using URY.BAPS.Common.Model.Track;
+using URY.BAPS.Common.Protocol.V2.Commands;
+using URY.BAPS.Common.Protocol.V2.Encode;
 
 namespace URY.BAPS.Client.Common.Controllers
 {

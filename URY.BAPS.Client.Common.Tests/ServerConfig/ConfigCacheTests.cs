@@ -5,8 +5,8 @@ using System.Reactive.Linq;
 using JetBrains.Annotations;
 using URY.BAPS.Client.Common.ServerConfig;
 using URY.BAPS.Client.Common.Updaters;
-using URY.BAPS.Model.MessageEvents;
-using URY.BAPS.Model.ServerConfig;
+using URY.BAPS.Common.Model.MessageEvents;
+using URY.BAPS.Common.Model.ServerConfig;
 using Xunit;
 
 namespace URY.BAPS.Client.Common.Tests.ServerConfig

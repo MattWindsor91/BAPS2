@@ -4,9 +4,9 @@ using System.Threading;
 using JetBrains.Annotations;
 using URY.BAPS.Client.Common.ServerConfig;
 using URY.BAPS.Client.Common.Updaters;
-using URY.BAPS.Model.MessageEvents;
-using URY.BAPS.Protocol.V2.Commands;
-using URY.BAPS.Protocol.V2.Io;
+using URY.BAPS.Common.Model.MessageEvents;
+using URY.BAPS.Common.Protocol.V2.Commands;
+using URY.BAPS.Common.Protocol.V2.Io;
 
 namespace URY.BAPS.Client.Common
 {
@@ -39,14 +39,14 @@ namespace URY.BAPS.Client.Common
         /// <summary>
         ///     The decoder used to receive and process the bodies of BapsNet messages.
         /// </summary>
-        private readonly Protocol.V2.Decode.CommandDecoder _decoder;
+        private readonly BAPS.Common.Protocol.V2.Decode.CommandDecoder _decoder;
         
         public Receiver(IBapsNetSource? bapsNet, CancellationToken token)
         {
             _bapsNet = bapsNet ?? throw new ArgumentNullException(nameof(bapsNet));
             _token = token;
             // TODO(@MattWindsor91): inject this dependency.
-            _decoder = new Protocol.V2.Decode.CommandDecoder(this, _bapsNet, _token);
+            _decoder = new BAPS.Common.Protocol.V2.Decode.CommandDecoder(this, _bapsNet, _token);
         }
         
         public void Run()

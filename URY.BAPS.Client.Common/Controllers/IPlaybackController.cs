@@ -1,5 +1,5 @@
 using URY.BAPS.Client.Common.Updaters;
-using URY.BAPS.Model.Playback;
+using URY.BAPS.Common.Model.Playback;
 
 namespace URY.BAPS.Client.Common.Controllers
 {

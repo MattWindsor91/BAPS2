@@ -1,7 +1,7 @@
 using System;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using URY.BAPS.Model.MessageEvents;
+using URY.BAPS.Common.Model.MessageEvents;
 
 namespace URY.BAPS.Client.Common.Updaters
 {
