@@ -1,17 +1,19 @@
 using System;
 using System.Reactive.Linq;
 using JetBrains.Annotations;
+using URY.BAPS.Client.Common.Controllers;
 using URY.BAPS.Client.Common.ServerConfig;
+using URY.BAPS.Client.Protocol.V2.Core;
 using URY.BAPS.Common.Model.ServerConfig;
 using URY.BAPS.Common.Protocol.V2.Commands;
 using URY.BAPS.Common.Protocol.V2.Encode;
 
-namespace URY.BAPS.Client.Common.Controllers
+namespace URY.BAPS.Client.Protocol.V2.Controllers
 {
     /// <summary>
     ///     Controller for requesting server config changes through BapsNet.
     /// </summary>
-    public class ConfigController : BapsNetControllerBase
+    public class ConfigController : BapsNetControllerBase, IConfigController
     {
         /// <summary>
         ///     The config cache, used for looking up details about configuration options.

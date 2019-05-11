@@ -1,19 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Reactive.Subjects;
-using JetBrains.Annotations;
 using URY.BAPS.Client.Common.Updaters;
-using URY.BAPS.Common.Protocol.V2.Commands;
 
-namespace URY.BAPS.Client.Common
+namespace URY.BAPS.Client.Protocol.V2.Core
 {
     public partial class ClientCore
     {
-        private DetachableServerUpdater _updater = new DetachableServerUpdater();
+        private readonly DetachableServerUpdater _updater = new DetachableServerUpdater();
         public IServerUpdater Updater => _updater;
         
         /// <summary>
-        ///     Subscribes the forwarding <see cref="Subject{T}" /> on the client core to
+        ///     Subscribes the server updater on the client core to
         ///     that on the receiver.
         /// </summary>
         private void SubscribeToReceiver()

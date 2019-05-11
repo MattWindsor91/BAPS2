@@ -1,9 +1,8 @@
 using System;
-using JetBrains.Annotations;
 using URY.BAPS.Client.Common.Updaters;
 using URY.BAPS.Common.Protocol.V2.Encode;
 
-namespace URY.BAPS.Client.Common
+namespace URY.BAPS.Client.Protocol.V2.Core
 {
     /// <summary>
     ///     Interface for objects encapsulating the core features of a BapsNet client.

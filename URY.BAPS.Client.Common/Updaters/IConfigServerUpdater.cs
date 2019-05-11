@@ -1,8 +1,5 @@
 using System;
-using URY.BAPS.Client.Common.BapsNet;
-using URY.BAPS.Client.Common.ServerConfig;
 using URY.BAPS.Common.Model.MessageEvents;
-using URY.BAPS.Common.Protocol.V2.Commands;
 
 namespace URY.BAPS.Client.Common.Updaters
 {

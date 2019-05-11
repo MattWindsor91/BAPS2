@@ -1,10 +1,10 @@
 using System;
 using JetBrains.Annotations;
-using URY.BAPS.Client.Common.Controllers;
 using URY.BAPS.Client.Common.ServerConfig;
+using URY.BAPS.Client.Protocol.V2.Controllers;
 using URY.BAPS.Common.Model.ServerConfig;
 
-namespace URY.BAPS.Client.Common
+namespace URY.BAPS.Client.Protocol.V2.Core
 {
     /// <summary>
     ///     An object that, given a <see cref="ConfigCache" /> and various controllers, performs a full first-update
@@ -53,8 +53,8 @@ namespace URY.BAPS.Client.Common
         /// <param name="directories">The controller set for accessing directory controllers.</param>
         /// <param name="system">The system controller.</param>
         /// <param name="config">The config controller.</param>
-        public InitialUpdatePerformer([CanBeNull] ConfigCache cache, [CanBeNull] DirectoryControllerSet directories,
-            [CanBeNull] SystemController system, [CanBeNull] ConfigController config)
+        public InitialUpdatePerformer(ConfigCache? cache, DirectoryControllerSet? directories,
+            SystemController? system, ConfigController? config)
         {
             _cache = cache ?? throw new ArgumentNullException(nameof(cache));
             _directories = directories ?? throw new ArgumentNullException(nameof(directories));

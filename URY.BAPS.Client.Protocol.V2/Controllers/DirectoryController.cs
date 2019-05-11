@@ -1,15 +1,16 @@
 using JetBrains.Annotations;
-using URY.BAPS.Client.Common.BapsNet;
+using URY.BAPS.Client.Common.Controllers;
 using URY.BAPS.Client.Common.Updaters;
+using URY.BAPS.Client.Protocol.V2.Core;
 using URY.BAPS.Common.Protocol.V2.Commands;
 using URY.BAPS.Common.Protocol.V2.Encode;
 
-namespace URY.BAPS.Client.Common.Controllers
+namespace URY.BAPS.Client.Protocol.V2.Controllers
 {
     /// <summary>
     ///     Controller for directories.
     /// </summary>
-    public class DirectoryController : BapsNetControllerBase
+    public class DirectoryController : BapsNetControllerBase, IDirectoryController
     {
         private readonly byte _directoryId;
 
@@ -27,9 +28,6 @@ namespace URY.BAPS.Client.Common.Controllers
         /// </summary>
         public IDirectoryServerUpdater Updater => Core.Updater;
 
-        /// <summary>
-        ///     Asks the server to refresh this directory's listing.
-        /// </summary>
         public void Refresh()
         {
             var cmd = new SystemCommand(SystemOp.ListFiles, _directoryId);

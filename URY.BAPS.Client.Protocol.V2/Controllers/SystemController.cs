@@ -1,8 +1,9 @@
 using JetBrains.Annotations;
 using URY.BAPS.Client.Common.Updaters;
+using URY.BAPS.Client.Protocol.V2.Core;
 using URY.BAPS.Common.Protocol.V2.Commands;
 
-namespace URY.BAPS.Client.Common.Controllers
+namespace URY.BAPS.Client.Protocol.V2.Controllers
 {
     /// <summary>
     ///     Controller for general BAPS system requests and updates.
@@ -10,7 +11,7 @@ namespace URY.BAPS.Client.Common.Controllers
     [UsedImplicitly]
     public class SystemController : BapsNetControllerBase
     {
-        public SystemController([CanBeNull] IClientCore core) : base(core)
+        public SystemController(IClientCore? core) : base(core)
         {
         }
 

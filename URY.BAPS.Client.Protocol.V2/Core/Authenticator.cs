@@ -4,12 +4,11 @@ using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
 using JetBrains.Annotations;
-using URY.BAPS.Client.Common.BapsNet;
 using URY.BAPS.Common.Protocol.V2.Commands;
 using URY.BAPS.Common.Protocol.V2.Encode;
 using URY.BAPS.Common.Protocol.V2.Io;
 
-namespace URY.BAPS.Client.Common
+namespace URY.BAPS.Client.Protocol.V2.Core
 {
     /// <summary>
     ///     Represents an attempt to create an authenticated BAPSNet connection.

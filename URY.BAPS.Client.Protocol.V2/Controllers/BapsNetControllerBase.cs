@@ -1,9 +1,10 @@
 using System;
 using JetBrains.Annotations;
+using URY.BAPS.Client.Protocol.V2.Core;
 using URY.BAPS.Common.Protocol.V2.Commands;
 using URY.BAPS.Common.Protocol.V2.Encode;
 
-namespace URY.BAPS.Client.Common.Controllers
+namespace URY.BAPS.Client.Protocol.V2.Controllers
 {
     /// <summary>
     ///     Base class of controllers that perform actions by sending BapsNet

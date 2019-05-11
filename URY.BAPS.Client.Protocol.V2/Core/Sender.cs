@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 using URY.BAPS.Common.Protocol.V2.Encode;
 using URY.BAPS.Common.Protocol.V2.Io;
 
-namespace URY.BAPS.Client.Common
+namespace URY.BAPS.Client.Protocol.V2.Core
 {
     /// <summary>
     ///     A message-send loop for BapsNet.

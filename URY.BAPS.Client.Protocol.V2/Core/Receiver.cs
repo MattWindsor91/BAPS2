@@ -2,13 +2,11 @@
 using System.Reactive.Linq;
 using System.Threading;
 using JetBrains.Annotations;
-using URY.BAPS.Client.Common.ServerConfig;
-using URY.BAPS.Client.Common.Updaters;
 using URY.BAPS.Common.Model.MessageEvents;
 using URY.BAPS.Common.Protocol.V2.Commands;
 using URY.BAPS.Common.Protocol.V2.Io;
 
-namespace URY.BAPS.Client.Common
+namespace URY.BAPS.Client.Protocol.V2.Core
 {
     /// <summary>
     ///     Listens on an <see cref="IBapsNetSource" /> for incoming BapsNet commands, decodes them, and sends server update
