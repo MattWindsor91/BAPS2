@@ -1,10 +1,9 @@
 ﻿using System.IO;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Console;
-using URY.BAPS.Server.V3.Config;
+using URY.BAPS.Server.Reference.Config;
 
-namespace URY.BAPS.Server.V3
+namespace URY.BAPS.Server.Reference
 {
     class Program
     {

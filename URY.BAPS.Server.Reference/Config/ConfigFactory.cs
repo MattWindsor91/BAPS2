@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace URY.BAPS.Server.V3.Config
+namespace URY.BAPS.Server.Reference.Config
 {
     /// <summary>
     ///     Factory for building an initial BAPS server config.
