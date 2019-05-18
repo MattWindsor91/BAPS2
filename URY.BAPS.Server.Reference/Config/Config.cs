@@ -1,4 +1,3 @@
-using System;
 using Microsoft.Extensions.Logging;
 
 namespace URY.BAPS.Server.Reference.Config
@@ -19,15 +18,15 @@ namespace URY.BAPS.Server.Reference.Config
     /// </summary>
     public class ServerConfig : IConfig
     {
-        private ILogger<ServerConfig> _logger;
-        
-        public ListenConfig Listen { get; }
+        private readonly ILogger<ServerConfig> _logger;
 
         public ServerConfig(ListenConfig listen, ILogger<ServerConfig> logger)
         {
             Listen = listen;
             _logger = logger;
         }
+
+        public ListenConfig Listen { get; }
 
         public void DumpToLogger()
         {

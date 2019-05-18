@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using JetBrains.Annotations;
-using URY.BAPS.Client.Common;
-using URY.BAPS.Client.Common.Controllers;
-using URY.BAPS.Client.Common.Model;
-using URY.BAPS.Client.Common.ServerConfig;
+﻿using URY.BAPS.Client.Common.ServerConfig;
 using URY.BAPS.Client.Wpf.Services;
 
 namespace URY.BAPS.Client.Wpf.ViewModel

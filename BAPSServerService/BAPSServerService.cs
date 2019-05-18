@@ -1,13 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.ServiceProcess;
-using System.Text;
-
-using BAPSServerAssembly;
-
 namespace BAPSServerService
 {
     public partial class BAPSServerService : ServiceBase
@@ -16,7 +6,7 @@ namespace BAPSServerService
         {
             InitializeComponent();
 #if DEBUG
-			this.ServiceName = "BAPS (DEBUG) Server Service";
+            this.ServiceName = "BAPS (DEBUG) Server Service";
 #else
 			this.ServiceName = "BAPS Server Service";
 #endif
@@ -32,9 +22,10 @@ namespace BAPSServerService
         {
             BAPSServerAssembly.Utility.stop();
         }
+
         protected override void OnShutdown()
-		{
-			OnStop();
-		}
+        {
+            OnStop();
+        }
     }
 }

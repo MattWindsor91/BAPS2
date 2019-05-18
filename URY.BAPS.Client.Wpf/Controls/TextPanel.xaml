@@ -18,9 +18,9 @@
     <DockPanel>
         <controls:Header DockPanel.Dock="Top" Icon="CommentOutline" Text="Text" />
         <TextBox DockPanel.Dock="Bottom" MinHeight="72pt"
-            Style="{StaticResource MainTextBoxStyle}"
-            TextWrapping="Wrap"
-            VerticalScrollBarVisibility="Auto"
-            Text="{Binding Text, Mode=TwoWay}" />
+                 Style="{StaticResource MainTextBoxStyle}"
+                 TextWrapping="Wrap"
+                 VerticalScrollBarVisibility="Auto"
+                 Text="{Binding Text, Mode=TwoWay}" />
     </DockPanel>
 </UserControl>

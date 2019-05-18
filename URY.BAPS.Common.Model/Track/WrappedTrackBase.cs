@@ -1,14 +1,14 @@
 namespace URY.BAPS.Common.Model.Track
 {
     /// <summary>
-    ///     Abstract implementation of <see cref="ITrack"/> that
+    ///     Abstract implementation of <see cref="ITrack" /> that
     ///     delegates all properties to another underlying instance of
-    ///     <see cref="ITrack"/>.
+    ///     <see cref="ITrack" />.
     /// </summary>
     public abstract class WrappedTrackBase : ITrack
     {
         /// <summary>
-        ///     Constructs a <see cref="WrappedTrackBase"/> wrapping
+        ///     Constructs a <see cref="WrappedTrackBase" /> wrapping
         ///     the given track.
         /// </summary>
         /// <param name="underlyingTrack">The track to wrap.</param>
@@ -37,6 +37,5 @@ namespace URY.BAPS.Common.Model.Track
         public virtual bool IsFromLibrary => UnderlyingTrack.IsFromLibrary;
 
         public virtual uint Duration => UnderlyingTrack.Duration;
-       
     }
 }

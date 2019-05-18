@@ -1,9 +1,4 @@
-﻿using System.Windows;
-using System.Windows.Input;
-using System.Windows.Media;
-using FontAwesome.WPF;
-
-namespace URY.BAPS.Client.Wpf.Controls
+﻿namespace URY.BAPS.Client.Wpf.Controls
 {
     /// <summary>
     ///     Interaction logic for TransportButton.xaml

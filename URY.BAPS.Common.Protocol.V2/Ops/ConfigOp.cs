@@ -24,6 +24,7 @@
         SetPassword = 11,
         GrantPermission = 12,
         RevokePermission = 13,
+
         // 14 - 15: unused
         Option = 16,
         OptionChoice = 17,
@@ -35,7 +36,7 @@
         ConfigError = 23,
         GetIpRestrictions = 24,
         IpRestriction = 25,
-        AlterIpRestriction = 26,
+        AlterIpRestriction = 26
     }
 
     public static class ConfigOpExtensions
@@ -44,10 +45,11 @@
         ///     Gets whether a particular config operation can take an index.
         /// </summary>
         /// <param name="op">The operation to check.</param>
-        /// <returns>True if <paramref name="op"/> can take an index (that is, its
-        ///  packed representation's lowest 7 bits are a has-index flag followed by
-        ///  6 index bits); false if not (and the packed representation's lowest
-        ///  7 bits are one don't-care bit followed by 6 value bits).
+        /// <returns>
+        ///     True if <paramref name="op" /> can take an index (that is, its
+        ///     packed representation's lowest 7 bits are a has-index flag followed by
+        ///     6 index bits); false if not (and the packed representation's lowest
+        ///     7 bits are one don't-care bit followed by 6 value bits).
         /// </returns>
         public static bool CanTakeIndex(this ConfigOp op)
         {
@@ -62,7 +64,7 @@
                 // this as an indexed command.
                 ConfigOp.IpRestriction => true,
                 _ => false
-            };
+                };
         }
     }
 }

@@ -37,18 +37,6 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
         }
 
         /// <summary>
-        ///     Constructs the appropriate command object for a config operation that may contain an index.
-        /// </summary>
-        /// <param name="op">The config operation to lift to a command object.</param>
-        /// <param name="index">An index, or absence thereof (<see cref="ConfigCache.NoIndex"/>).</param>
-        /// <param name="modeFlag">The mode flag.</param>
-        /// <returns>The appropriate command for <paramref name="op"/> and <paramref name="index"/>.</returns>
-        private ICommand PossiblyIndexedConfigCommand(ConfigOp op, int index = ConfigCache.NoIndex, bool modeFlag = false)
-        {
-            return index == ConfigCache.NoIndex ? (ICommand) new NonIndexedConfigCommand(op, modeFlag) : new IndexedConfigCommand(op, (byte)index, modeFlag);
-        }
-
-        /// <summary>
         ///     Sends a BAPSNet message to set an option to one of its choices.
         /// </summary>
         /// <param name="optionKey">The key of the option to set.</param>
@@ -92,6 +80,21 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
             );
             var fallbackObservable = Observable.Return(fallback).Delay(timeout);
             return mainObservable.Amb(fallbackObservable).Wait();
+        }
+
+        /// <summary>
+        ///     Constructs the appropriate command object for a config operation that may contain an index.
+        /// </summary>
+        /// <param name="op">The config operation to lift to a command object.</param>
+        /// <param name="index">An index, or absence thereof (<see cref="ConfigCache.NoIndex" />).</param>
+        /// <param name="modeFlag">The mode flag.</param>
+        /// <returns>The appropriate command for <paramref name="op" /> and <paramref name="index" />.</returns>
+        private ICommand PossiblyIndexedConfigCommand(ConfigOp op, int index = ConfigCache.NoIndex,
+            bool modeFlag = false)
+        {
+            return index == ConfigCache.NoIndex
+                ? (ICommand) new NonIndexedConfigCommand(op, modeFlag)
+                : new IndexedConfigCommand(op, (byte) index, modeFlag);
         }
     }
 }

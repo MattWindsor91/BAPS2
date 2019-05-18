@@ -1,6 +1,4 @@
-﻿using System.Windows;
-
-namespace URY.BAPS.Client.Wpf.Controls
+﻿namespace URY.BAPS.Client.Wpf.Controls
 {
     /// <summary>
     ///     Interaction logic for PositionDisplay.xaml

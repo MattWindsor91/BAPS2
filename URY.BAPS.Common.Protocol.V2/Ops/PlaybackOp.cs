@@ -22,18 +22,18 @@ namespace URY.BAPS.Common.Protocol.V2.Commands
         CuePosition = 6,
         IntroPosition = 7
     }
-    
+
     public static class PlaybackOpExtensions
     {
         public static PlaybackOp AsPlaybackOp(this PlaybackState pt)
         {
             return pt switch
-            {
+                {
                 PlaybackState.Playing => PlaybackOp.Play,
                 PlaybackState.Paused => PlaybackOp.Pause,
                 PlaybackState.Stopped => PlaybackOp.Stop,
                 _ => throw new ArgumentOutOfRangeException(nameof(pt), pt, "Not a valid channel state")
-            };
+                };
         }
 
         public static PlaybackState AsPlaybackState(this PlaybackOp op)
@@ -55,7 +55,7 @@ namespace URY.BAPS.Common.Protocol.V2.Commands
         {
             return c.PlaybackOp().AsPlaybackState();
         }
-        
+
         public static PlaybackOp AsPlaybackOp(this MarkerType pt)
         {
             return pt switch
@@ -86,6 +86,6 @@ namespace URY.BAPS.Common.Protocol.V2.Commands
         public static MarkerType AsMarkerType(this CommandWord c)
         {
             return c.PlaybackOp().AsMarkerType();
-        }       
+        }
     }
 }

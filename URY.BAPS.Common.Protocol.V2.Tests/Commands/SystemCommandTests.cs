@@ -4,7 +4,7 @@ using Xunit;
 namespace URY.BAPS.Common.Protocol.V2.Tests.Commands
 {
     /// <summary>
-    ///     Tests for <see cref="SystemCommand"/>.
+    ///     Tests for <see cref="SystemCommand" />.
     /// </summary>
     public class SystemCommandTests
     {

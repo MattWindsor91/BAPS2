@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using JetBrains.Annotations;
-using URY.BAPS.Client.Wpf.ViewModel;
+﻿using URY.BAPS.Client.Wpf.ViewModel;
 using URY.BAPS.Client.Wpf.Walls;
 
 namespace URY.BAPS.Client.Wpf.Services
@@ -17,7 +11,7 @@ namespace URY.BAPS.Client.Wpf.Services
     {
         protected override TextWall MakeWall(ITextViewModel model)
         {
-            return new TextWall { DataContext = model };
+            return new TextWall {DataContext = model};
         }
     }
 }

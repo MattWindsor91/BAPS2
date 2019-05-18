@@ -1,10 +1,4 @@
-﻿using System;
-using System.Globalization;
-using System.Windows.Data;
-using FontAwesome.WPF;
-using URY.BAPS.Client.Common.Model;
-
-namespace URY.BAPS.Client.Wpf.Converters
+﻿namespace URY.BAPS.Client.Wpf.Converters
 {
     /// <summary>
     ///     Converts the type of a track-list entry to a Font Awesome icon.

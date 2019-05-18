@@ -4,6 +4,10 @@ namespace URY.BAPS.Common.Protocol.V2.Commands
 {
     public class DatabaseCommand : NormalCommandBase<DatabaseOp>
     {
+        public DatabaseCommand(DatabaseOp op, byte value, bool modeFlag) : base(op, value, modeFlag)
+        {
+        }
+
         protected override CommandWord OpAsCommandWord(DatabaseOp op)
         {
             return op.AsCommandWord();
@@ -12,10 +16,6 @@ namespace URY.BAPS.Common.Protocol.V2.Commands
         public override void Accept(ICommandVisitor? visitor)
         {
             visitor?.Visit(this);
-        }
-
-        public DatabaseCommand(DatabaseOp op, byte value, bool modeFlag) : base(op, value, modeFlag)
-        {
         }
     }
 }

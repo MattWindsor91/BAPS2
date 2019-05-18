@@ -3,7 +3,7 @@ using URY.BAPS.Common.Model.Track;
 namespace URY.BAPS.Server.Reference.Model
 {
     /// <summary>
-    ///     Null-object implementation of <see cref="IPlaylistItem"/>.
+    ///     Null-object implementation of <see cref="IPlaylistItem" />.
     /// </summary>
     public class NullPlaylistItem : NullTrack, IPlaylistItem
     {

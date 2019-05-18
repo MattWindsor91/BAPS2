@@ -7,7 +7,7 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
         <SolidColorBrush x:Key="NameBgBrush" Color="black" />
-        <SolidColorBrush x:Key="NameInactiveFgBrush" Color="#10893E"/>
+        <SolidColorBrush x:Key="NameInactiveFgBrush" Color="#10893E" />
         <SolidColorBrush x:Key="NameFgBrush" Color="#00CC6A" />
         <SolidColorBrush x:Key="NameWarningFgBrush" Color="#E2293A" />
         <SolidColorBrush x:Key="NameLoadingFgBrush" Color="#0078D7" />
@@ -17,7 +17,7 @@
             TextTrimming="CharacterEllipsis"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Center"
-            TextAlignment="Center"                
+            TextAlignment="Center"
             FontSize="16px"
             Padding="4px"
             ToolTip="{Binding Description}"
@@ -25,7 +25,7 @@
             <TextBlock.Style>
                 <!-- Change background when the track appears to have failed to load. -->
                 <Style TargetType="{x:Type TextBlock}">
-                    <Setter Property="Foreground" Value="{StaticResource NameInactiveFgBrush}"/>
+                    <Setter Property="Foreground" Value="{StaticResource NameInactiveFgBrush}" />
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding IsAudioItem}" Value="True">
                             <DataTrigger.Setters>

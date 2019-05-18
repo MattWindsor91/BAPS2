@@ -19,7 +19,8 @@ namespace URY.BAPS.Client.Common.Tests
                 {100, 0, 0, "100:00:00"}
             };
 
-        [Theory, MemberData(nameof(MillisecondsToTimeStringData))]
+        [Theory]
+        [MemberData(nameof(MillisecondsToTimeStringData))]
         public void TestMillisecondsToTimeString(ushort hours, ushort minutes, ushort seconds, string expected)
         {
             var time = Time.BuildMilliseconds(hours, minutes, seconds);

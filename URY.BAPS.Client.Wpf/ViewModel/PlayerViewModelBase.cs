@@ -1,7 +1,3 @@
-using GalaSoft.MvvmLight.CommandWpf;
-using JetBrains.Annotations;
-using URY.BAPS.Client.Common.Model;
-
 namespace URY.BAPS.Client.Wpf.ViewModel
 {
     /// <summary>
@@ -22,6 +18,12 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         }
 
         protected abstract PlaybackState State { get; set; }
+
+        public double PositionScale => (double) Position / Duration;
+
+        public double CuePositionScale => (double) CuePosition / Duration;
+
+        public double IntroPositionScale => (double) IntroPosition / Duration;
 
         [NotNull]
         public virtual RelayCommand<uint> SetCueCommand => _setCueCommand
@@ -48,19 +50,13 @@ namespace URY.BAPS.Client.Wpf.ViewModel
 
         public abstract uint Position { get; set; }
 
-        public double PositionScale => (double) Position / Duration;
-
         public uint Duration => LoadedTrack?.Duration ?? 0;
 
         public uint Remaining => Duration - Position;
 
         public abstract uint CuePosition { get; set; }
 
-        public double CuePositionScale => (double) CuePosition / Duration;
-
         public abstract uint IntroPosition { get; set; }
-
-        public double IntroPositionScale => (double) IntroPosition / Duration;
 
         [NotNull]
         public virtual RelayCommand PlayCommand => _playCommand

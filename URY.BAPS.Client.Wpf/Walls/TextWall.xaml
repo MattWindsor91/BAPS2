@@ -9,6 +9,6 @@
         d:DataContext="{d:DesignInstance designData:MockTextViewModel, IsDesignTimeCreatable=True}"
         Title="Text Wall" Height="450" Width="800" WindowStyle="ToolWindow">
     <Grid>
-        <controls:TextPanel/>
+        <controls:TextPanel />
     </Grid>
 </Window>

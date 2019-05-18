@@ -22,7 +22,7 @@ namespace URY.BAPS.Client.Common.Controllers
         void Reset();
 
         /// <summary>
-        ///     Asks the BAPS server to add a text item. 
+        ///     Asks the BAPS server to add a text item.
         /// </summary>
         /// <param name="text">The body of the text item.</param>
         /// <param name="summary">The optional short title of the text item.</param>

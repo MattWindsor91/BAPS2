@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using URY.BAPS.Client.Common.Model;
-using URY.BAPS.Client.Wpf.ViewModel;
+﻿using URY.BAPS.Client.Wpf.ViewModel;
 
 namespace URY.BAPS.Client.Wpf.DesignData
 {
@@ -37,7 +31,7 @@ namespace URY.BAPS.Client.Wpf.DesignData
             Files.Add(new DirectoryEntry(DirectoryId, "The More Beautiful Game (Promo)"));
         }
 
-        public override string Name { get; protected set;  }
+        public override string Name { get; protected set; }
 
         protected override void Refresh()
         {

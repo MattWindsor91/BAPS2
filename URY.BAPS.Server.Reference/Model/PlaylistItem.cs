@@ -4,16 +4,15 @@ namespace URY.BAPS.Server.Reference.Model
 {
     /// <summary>
     ///     An item in a BAPS server playlist, consisting of an
-    ///     <see cref="ITrack"/> and various server-specific pieces
+    ///     <see cref="ITrack" /> and various server-specific pieces
     ///     of information.
     /// </summary>
     public class PlaylistItem : WrappedTrackBase, IPlaylistItem
     {
-
         private bool _isLoaded;
 
         public PlaylistItem(ITrack underlyingTrack, uint index)
-        : base(underlyingTrack)
+            : base(underlyingTrack)
         {
             Index = index;
         }

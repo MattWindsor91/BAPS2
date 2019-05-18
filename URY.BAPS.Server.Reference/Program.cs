@@ -5,7 +5,7 @@ using URY.BAPS.Server.Reference.Config;
 
 namespace URY.BAPS.Server.Reference
 {
-    class Program
+    internal class Program
     {
         private readonly string[] _args;
 
@@ -13,19 +13,19 @@ namespace URY.BAPS.Server.Reference
         {
             _args = args;
         }
-        
+
         public void Run()
         {
             var configuration = MakeConfiguration();
             var loggerFactory = MakeLoggerFactory(configuration);
             var configFactory = new ConfigFactory(loggerFactory);
             var config = configFactory.FromConfiguration(configuration);
-            
+
             config.DumpToLogger();
         }
-        
 
-        private IConfigurationRoot MakeConfiguration() 
+
+        private IConfigurationRoot MakeConfiguration()
         {
             IConfigurationBuilder confBuilder = new ConfigurationBuilder();
             confBuilder = SetupConfiguration(confBuilder);
@@ -47,8 +47,8 @@ namespace URY.BAPS.Server.Reference
                     .AddIniFile("baps.ini")
                     .AddCommandLine(_args);
         }
-        
-        static void Main(string[] args)
+
+        private static void Main(string[] args)
         {
             new Program(args).Run();
         }

@@ -13,7 +13,7 @@ namespace URY.BAPS.Client.Protocol.V2.Core
         ///     Gets a server updater instance connected to this client core.
         /// </summary>
         IServerUpdater Updater { get; }
-        
+
         /// <summary>
         ///     Sends a BapsNet message asynchronously through this client's
         ///     BapsNet connection.

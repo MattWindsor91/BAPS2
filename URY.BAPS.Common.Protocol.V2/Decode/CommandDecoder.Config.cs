@@ -7,6 +7,11 @@ namespace URY.BAPS.Common.Protocol.V2.Decode
 {
     public partial class CommandDecoder
     {
+        private static int IndexAsInt(IndexableConfigCommandBase c)
+        {
+            return c.HasIndex ? c.Index : -1;
+        }
+
         #region Value commands
 
         public void Visit(ValueConfigCommand command)
@@ -22,7 +27,7 @@ namespace URY.BAPS.Common.Protocol.V2.Decode
                 case ConfigOp.User when command.ModeFlag:
                     DecodeUser();
                     break;
-                case ConfigOp.User when !command.ModeFlag:    
+                case ConfigOp.User when !command.ModeFlag:
                     DecodeUserCount();
                     break;
                 case ConfigOp.Permission when command.ModeFlag:
@@ -36,7 +41,7 @@ namespace URY.BAPS.Common.Protocol.V2.Decode
                     break;
                 case ConfigOp.ConfigError:
                     DecodeConfigError(command.Value);
-                    break;               
+                    break;
                 // ConfigOp.IpRestriction doesn't have an index, but we model it as if it does.
                 // See ConfigOpExtensions.CanTakeIndex for explanation.
             }
@@ -92,9 +97,9 @@ namespace URY.BAPS.Common.Protocol.V2.Decode
         }
 
         #endregion Value commands
-        
+
         #region Indexable commands
-        
+
         public void Visit(NonIndexedConfigCommand command)
         {
             DecodeIndexableConfigCommand(command);
@@ -108,7 +113,7 @@ namespace URY.BAPS.Common.Protocol.V2.Decode
         private void DecodeIndexableConfigCommand(IndexableConfigCommandBase command)
         {
             var maybeIndex = IndexAsInt(command);
-            
+
             switch (command.Op)
             {
                 case ConfigOp.Option when command.ModeFlag:
@@ -132,7 +137,7 @@ namespace URY.BAPS.Common.Protocol.V2.Decode
                     break;
                 case ConfigOp.IpRestriction when !command.ModeFlag:
                     DecodeIpRestrictionCount();
-                    break;               
+                    break;
                 default:
                     ReportMalformedCommand(CommandGroup.Config);
                     break;
@@ -173,7 +178,7 @@ namespace URY.BAPS.Common.Protocol.V2.Decode
             var optionId = ReceiveUint();
             var type = DecodeConfigType();
             var value = DecodeConfigSettingValue(type);
-            Dispatch(new ConfigSettingArgs(optionId, type, value, index));           
+            Dispatch(new ConfigSettingArgs(optionId, type, value, index));
         }
 
         private void DecodeConfigSettingCount()
@@ -197,36 +202,32 @@ namespace URY.BAPS.Common.Protocol.V2.Decode
                 ConfigType.Int => (object) (int) ReceiveUint(),
                 ConfigType.Choice => (int) ReceiveUint(),
                 ConfigType.Str => ReceiveString(),
-                _ => throw new ArgumentOutOfRangeException(nameof(type), type, "Invalid type received") 
+                _ => throw new ArgumentOutOfRangeException(nameof(type), type, "Invalid type received")
                 };
         }
+
         #endregion Indexable commands
 
         #region Decoding enumerations
-        
+
         /// <summary>
-        ///     Receives and decodes a <see cref="ConfigResult"/> from the protocol source.
+        ///     Receives and decodes a <see cref="ConfigResult" /> from the protocol source.
         /// </summary>
-        /// <returns>A <see cref="ConfigResult"/> received from upstream.</returns>
+        /// <returns>A <see cref="ConfigResult" /> received from upstream.</returns>
         private ConfigResult DecodeConfigResult()
         {
             return (ConfigResult) ReceiveUint();
         }
-        
+
         /// <summary>
-        ///     Receives and decodes a <see cref="ConfigType"/> from the protocol source.
+        ///     Receives and decodes a <see cref="ConfigType" /> from the protocol source.
         /// </summary>
-        /// <returns>A <see cref="ConfigType"/> received from upstream.</returns>
+        /// <returns>A <see cref="ConfigType" /> received from upstream.</returns>
         private ConfigType DecodeConfigType()
         {
             return (ConfigType) ReceiveUint();
         }
-        
-        #endregion Decoding enumerations
 
-        private static int IndexAsInt(IndexableConfigCommandBase c)
-        {
-            return c.HasIndex ? c.Index : -1;
-        }
+        #endregion Decoding enumerations
     }
 }

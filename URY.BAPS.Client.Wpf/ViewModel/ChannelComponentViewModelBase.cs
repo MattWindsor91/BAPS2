@@ -1,9 +1,3 @@
-using System;
-using System.Reactive.Linq;
-using GalaSoft.MvvmLight;
-using JetBrains.Annotations;
-using URY.BAPS.Client.Common.Events;
-
 namespace URY.BAPS.Client.Wpf.ViewModel
 {
     /// <summary>

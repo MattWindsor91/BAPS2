@@ -1,11 +1,3 @@
-using System;
-using System.Collections.Generic;
-using GalaSoft.MvvmLight.Threading;
-using JetBrains.Annotations;
-using URY.BAPS.Client.Common.Controllers;
-using URY.BAPS.Client.Common.Events;
-using URY.BAPS.Client.Common.Model;
-
 namespace URY.BAPS.Client.Wpf.ViewModel
 {
     public class TrackListViewModel : TrackListViewModelBase

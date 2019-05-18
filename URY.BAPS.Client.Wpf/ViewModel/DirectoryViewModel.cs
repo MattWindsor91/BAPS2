@@ -1,16 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Reactive.Linq;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.CommandWpf;
-using GalaSoft.MvvmLight.Threading;
-using JetBrains.Annotations;
-using URY.BAPS.Client.Common.Controllers;
-using URY.BAPS.Client.Common.Events;
-using URY.BAPS.Client.Common.Model;
-
-namespace URY.BAPS.Client.Wpf.ViewModel
+﻿namespace URY.BAPS.Client.Wpf.ViewModel
 {
     /// <summary>
     ///     The view model for a directory.

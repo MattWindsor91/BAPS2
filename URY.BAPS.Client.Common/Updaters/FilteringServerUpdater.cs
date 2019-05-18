@@ -5,8 +5,8 @@ using URY.BAPS.Common.Model.MessageEvents;
 namespace URY.BAPS.Client.Common.Updaters
 {
     /// <summary>
-    ///     A <see cref="IBaseServerUpdater"/> that works by filtering
-    ///     the message stream of a <see cref="Receiver"/> for various types of
+    ///     A <see cref="IBaseServerUpdater" /> that works by filtering
+    ///     the message stream of a <see cref="Receiver" /> for various types of
     ///     server update messages.
     /// </summary>
     public class FilteringServerUpdater : IServerUpdater
@@ -17,18 +17,18 @@ namespace URY.BAPS.Client.Common.Updaters
         }
 
         protected IObservable<MessageArgsBase> ObserveMessages { get; set; }
-        
-         /// <summary>
+
+        /// <summary>
         ///     Convenience observable for observing all protocol messages
-        ///     in <see cref="ObserveMessages"/> that concern playback state
+        ///     in <see cref="ObserveMessages" /> that concern playback state
         ///     changes.
         /// </summary>
         public IObservable<PlaybackStateChangeArgs> ObservePlayerState =>
             ObserveMessages.OfType<PlaybackStateChangeArgs>();
-        
+
         /// <summary>
         ///     Convenience observable for observing all protocol messages
-        ///     in <see cref="ObserveMessages"/> that concern marker changes.
+        ///     in <see cref="ObserveMessages" /> that concern marker changes.
         /// </summary>
         public IObservable<MarkerChangeArgs> ObserveMarker =>
             ObserveMessages.OfType<MarkerChangeArgs>();
@@ -104,6 +104,5 @@ namespace URY.BAPS.Client.Common.Updaters
 
         public IObservable<UserResultArgs> ObserveUserResult =>
             ObserveMessages.OfType<UserResultArgs>();
-       
     }
 }

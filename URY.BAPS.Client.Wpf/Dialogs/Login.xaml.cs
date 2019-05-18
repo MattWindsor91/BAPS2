@@ -1,5 +1,4 @@
-﻿using System.Windows;
-using URY.BAPS.Client.Wpf.ViewModel;
+﻿using URY.BAPS.Client.Wpf.ViewModel;
 
 namespace URY.BAPS.Client.Wpf.Dialogs
 {

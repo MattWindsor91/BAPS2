@@ -41,14 +41,14 @@ namespace URY.BAPS.Common.Protocol.V2.Commands
 
         /// <summary>
         ///     Mask used, alongside a shift of 13, to select the
-        ///     <see cref="CommandGroup"/> part of a command word.
+        ///     <see cref="CommandGroup" /> part of a command word.
         /// </summary>
         public const ushort Group = 0b11100000_00000000;
 
         /// <summary>
         ///     Mask used, alongside a shift of 7, to select the
-        ///     <see cref="PlaybackOp"/> or
-        ///     <see cref="PlaylistOp"/> part of a command word.
+        ///     <see cref="PlaybackOp" /> or
+        ///     <see cref="PlaylistOp" /> part of a command word.
         /// </summary>
         public const ushort ChannelOp = 0b00011111_10000000;
 
@@ -91,16 +91,17 @@ namespace URY.BAPS.Common.Protocol.V2.Commands
     /// <summary>
     ///     A packed BapsNet command word.
     ///     <para>
-    ///         The various methods and extensions defined on <see cref="CommandWord"/> are
+    ///         The various methods and extensions defined on <see cref="CommandWord" /> are
     ///         thin, low-level layers over bit manipulation.  For a more user-friendly
-    ///         abstraction, see <see cref="ICommand"/> and its implementations.
+    ///         abstraction, see <see cref="ICommand" /> and its implementations.
     ///     </para>
     /// </summary>
-    /// <seealso cref="ICommand"/>
+    /// <seealso cref="ICommand" />
     [Flags]
     public enum CommandWord : ushort
     {
         #region Command groups
+
         /// <summary>
         ///     The BapsNet command-word flag for the Playback command group.
         /// </summary>
@@ -125,9 +126,11 @@ namespace URY.BAPS.Common.Protocol.V2.Commands
         ///     The BapsNet command-word flag for the System command group.
         /// </summary>
         System = CommandGroup.System << CommandShifts.Group,
+
         #endregion Command groups
 
         #region Playback commands
+
         Play = PlaybackOp.Play << CommandShifts.ChannelOp,
         Stop = PlaybackOp.Stop << CommandShifts.ChannelOp,
         Pause = PlaybackOp.Pause << CommandShifts.ChannelOp,
@@ -136,9 +139,11 @@ namespace URY.BAPS.Common.Protocol.V2.Commands
         Load = PlaybackOp.Load << CommandShifts.ChannelOp,
         CuePosition = PlaybackOp.CuePosition << CommandShifts.ChannelOp,
         IntroPosition = PlaybackOp.IntroPosition << CommandShifts.ChannelOp,
+
         #endregion Playback commands
 
         #region Playlist commands
+
         AddItem = PlaylistOp.AddItem << CommandShifts.ChannelOp,
         DeleteItem = PlaylistOp.DeleteItem << CommandShifts.ChannelOp,
         MoveItemTo = PlaylistOp.MoveItemTo << CommandShifts.ChannelOp,
@@ -146,9 +151,11 @@ namespace URY.BAPS.Common.Protocol.V2.Commands
         GetPlaylist = PlaylistOp.GetPlaylist << CommandShifts.ChannelOp,
         ResetPlaylist = PlaylistOp.ResetPlaylist << CommandShifts.ChannelOp,
         CopyItem = PlaylistOp.CopyItem << CommandShifts.ChannelOp,
+
         #endregion Playlist commands
 
         #region Database commands
+
         LibrarySearch = DatabaseOp.LibrarySearch << CommandShifts.Op,
         LibraryOrdering = DatabaseOp.LibraryOrdering << CommandShifts.Op,
         LibraryResult = DatabaseOp.LibraryResult << CommandShifts.Op,
@@ -159,6 +166,7 @@ namespace URY.BAPS.Common.Protocol.V2.Commands
         Listing = DatabaseOp.Listing << CommandShifts.Op,
         AssignListing = DatabaseOp.AssignListing << CommandShifts.Op,
         BapsDbError = DatabaseOp.BapsDbError << CommandShifts.Op,
+
         #endregion Database commands
 
         /**
@@ -176,6 +184,7 @@ namespace URY.BAPS.Common.Protocol.V2.Commands
         //LibraryDirty = 2,
 
         #region Config commands
+
         GetOptions = ConfigOp.GetOptions << CommandShifts.Op,
         GetOptionChoices = ConfigOp.GetOptionChoices << CommandShifts.Op,
         GetConfigSettings = ConfigOp.GetConfigSettings << CommandShifts.Op,
@@ -201,9 +210,11 @@ namespace URY.BAPS.Common.Protocol.V2.Commands
         GetIpRestrictions = ConfigOp.GetIpRestrictions << CommandShifts.Op,
         IpRestriction = ConfigOp.IpRestriction << CommandShifts.Op,
         AlterIpRestriction = ConfigOp.AlterIpRestriction << CommandShifts.Op,
+
         #endregion Config commands
 
         #region System commands
+
         ListFiles = SystemOp.ListFiles << CommandShifts.Op,
         Filename = SystemOp.Filename << CommandShifts.Op,
         SendMessage = SystemOp.SendMessage << CommandShifts.Op,
@@ -220,6 +231,7 @@ namespace URY.BAPS.Common.Protocol.V2.Commands
         ScrollText = SystemOp.ScrollText << CommandShifts.Op,
         TextSize = SystemOp.TextSize << CommandShifts.Op,
         Quit = SystemOp.Quit << CommandShifts.Op,
+
         #endregion System commands
     }
 
@@ -227,7 +239,7 @@ namespace URY.BAPS.Common.Protocol.V2.Commands
     {
         public static CommandGroup Group(this CommandWord cmd)
         {
-            return (CommandGroup) (((ushort)cmd & CommandMasks.Group) >> CommandShifts.Group);
+            return (CommandGroup) (((ushort) cmd & CommandMasks.Group) >> CommandShifts.Group);
         }
 
         /// <summary>
@@ -235,17 +247,17 @@ namespace URY.BAPS.Common.Protocol.V2.Commands
         /// </summary>
         /// <param name="cmd">The command word to query.</param>
         /// <returns>
-        ///     The raw operation code, masked and shifted out of <paramref name="cmd"/>
+        ///     The raw operation code, masked and shifted out of <paramref name="cmd" />
         ///     using the channel op masks and shifts.
         /// </returns>
         private static byte ChannelOp(CommandWord cmd)
         {
-            return (byte)(((ushort)cmd & CommandMasks.ChannelOp) >> CommandShifts.ChannelOp);
+            return (byte) (((ushort) cmd & CommandMasks.ChannelOp) >> CommandShifts.ChannelOp);
         }
 
         private static CommandWord FromChannelOp(byte op)
         {
-            return (CommandWord)((op << CommandShifts.ChannelOp) & CommandMasks.ChannelOp);
+            return (CommandWord) ((op << CommandShifts.ChannelOp) & CommandMasks.ChannelOp);
         }
 
         /// <summary>
@@ -253,12 +265,12 @@ namespace URY.BAPS.Common.Protocol.V2.Commands
         /// </summary>
         /// <param name="cmd">The command word to query.</param>
         /// <returns>
-        ///     The raw operation code, masked and shifted out of <paramref name="cmd"/>
+        ///     The raw operation code, masked and shifted out of <paramref name="cmd" />
         ///     using the normal masks and shifts.
         /// </returns>
         private static byte Op(CommandWord cmd)
         {
-            return (byte)(((ushort)cmd & CommandMasks.Op) >> CommandShifts.Op);
+            return (byte) (((ushort) cmd & CommandMasks.Op) >> CommandShifts.Op);
         }
 
         private static CommandWord FromOp(byte op)
@@ -270,85 +282,75 @@ namespace URY.BAPS.Common.Protocol.V2.Commands
         {
             var op = ChannelOp(cmd);
             if (!Enum.IsDefined(typeof(PlaybackOp), op))
-            {
                 throw new ArgumentOutOfRangeException(nameof(cmd), op, "Not a valid playback operation");
-            }
-            return (PlaybackOp)op;
+            return (PlaybackOp) op;
         }
 
         public static PlaylistOp PlaylistOp(this CommandWord cmd)
         {
             var op = ChannelOp(cmd);
             if (!Enum.IsDefined(typeof(PlaylistOp), op))
-            {
                 throw new ArgumentOutOfRangeException(nameof(cmd), op, "Not a valid playlist operation");
-            }
-            return (PlaylistOp)op;
+            return (PlaylistOp) op;
         }
 
         public static DatabaseOp DatabaseOp(this CommandWord cmd)
         {
             var op = Op(cmd);
             if (!Enum.IsDefined(typeof(DatabaseOp), op))
-            {
                 throw new ArgumentOutOfRangeException(nameof(cmd), op, "Not a valid database operation");
-            }
-            return (DatabaseOp)op;
+            return (DatabaseOp) op;
         }
 
         public static ConfigOp ConfigOp(this CommandWord cmd)
         {
             var op = Op(cmd);
             if (!Enum.IsDefined(typeof(ConfigOp), op))
-            {
                 throw new ArgumentOutOfRangeException(nameof(cmd), op, "Not a valid config operation");
-            }
-            return (ConfigOp)op;
+            return (ConfigOp) op;
         }
 
         public static SystemOp SystemOp(this CommandWord cmd)
         {
             var op = Op(cmd);
             if (!Enum.IsDefined(typeof(SystemOp), op))
-            {
                 throw new ArgumentOutOfRangeException(nameof(cmd), op, "Not a valid system operation");
-            }
-            return (SystemOp)op;
+            return (SystemOp) op;
+        }
+
+        private static CommandWord SetBit(CommandWord cmd, ushort mask, bool flag)
+        {
+            return cmd | (CommandWord) (flag ? mask : 0);
         }
 
         #region Building command word bases from operations
 
         public static CommandWord AsCommandWord(this PlaybackOp op)
         {
-            return CommandWord.Playback | FromChannelOp((byte)op);
+            return CommandWord.Playback | FromChannelOp((byte) op);
         }
 
         public static CommandWord AsCommandWord(this PlaylistOp op)
         {
-            return CommandWord.Playlist | FromChannelOp((byte)op);
+            return CommandWord.Playlist | FromChannelOp((byte) op);
         }
 
         public static CommandWord AsCommandWord(this DatabaseOp op)
         {
-            return CommandWord.Database | FromOp((byte)op);
+            return CommandWord.Database | FromOp((byte) op);
         }
 
         public static CommandWord AsCommandWord(this ConfigOp op)
         {
-            return CommandWord.Config | FromOp((byte)op);
+            return CommandWord.Config | FromOp((byte) op);
         }
 
         public static CommandWord AsCommandWord(this SystemOp op)
         {
-            return CommandWord.System | FromOp((byte)op);
+            return CommandWord.System | FromOp((byte) op);
         }
 
         #endregion Building command word bases from operations
-
-        private static CommandWord SetBit(CommandWord cmd, ushort mask, bool flag)
-        {
-            return cmd | (CommandWord) (flag ? mask : 0);
-        }
 
         #region Channel mode flags
 
@@ -359,7 +361,7 @@ namespace URY.BAPS.Common.Protocol.V2.Commands
 
         public static bool HasChannelModeFlag(this CommandWord cmd)
         {
-            return cmd.HasFlag((CommandWord)CommandMasks.ChannelModeFlag);
+            return cmd.HasFlag((CommandWord) CommandMasks.ChannelModeFlag);
         }
 
         #endregion Channel mode flags
@@ -373,7 +375,7 @@ namespace URY.BAPS.Common.Protocol.V2.Commands
 
         public static bool HasConfigIndexedFlag(this CommandWord cmd)
         {
-            return cmd.HasFlag((CommandWord)CommandMasks.ConfigIndexedFlag);
+            return cmd.HasFlag((CommandWord) CommandMasks.ConfigIndexedFlag);
         }
 
         #endregion Config is-indexed flags
@@ -389,15 +391,16 @@ namespace URY.BAPS.Common.Protocol.V2.Commands
         ///     Tests whether this command word has the (database/config/system) mode flag set.
         /// </summary>
         /// <param name="cmd">The command word to test.</param>
-        /// <returns>Whether <paramref name="cmd"/> has the mode flag.</returns>
+        /// <returns>Whether <paramref name="cmd" /> has the mode flag.</returns>
         public static bool HasModeFlag(this CommandWord cmd)
         {
-            return cmd.HasFlag((CommandWord)CommandMasks.ModeFlag);
+            return cmd.HasFlag((CommandWord) CommandMasks.ModeFlag);
         }
 
         #endregion Normal mode flags
 
         #region Channels
+
         /// <summary>
         ///     Returns the channel component of a BapsNet playback or playlist command word.
         ///     <para>
@@ -406,10 +409,10 @@ namespace URY.BAPS.Common.Protocol.V2.Commands
         ///     </para>
         /// </summary>
         /// <param name="cmd">The command word to mask-off.</param>
-        /// <returns>The channel component of <see cref="cmd"/>.</returns>
+        /// <returns>The channel component of <see cref="cmd" />.</returns>
         public static byte Channel(this CommandWord cmd)
         {
-            return (byte)((ushort)cmd & CommandMasks.ChannelId);
+            return (byte) ((ushort) cmd & CommandMasks.ChannelId);
         }
 
         /// <summary>
@@ -421,14 +424,19 @@ namespace URY.BAPS.Common.Protocol.V2.Commands
         /// </summary>
         /// <param name="cmd">The command word to modify.</param>
         /// <param name="channelId">The channel ID to add.</param>
-        /// <returns>The command word corresponding to <see cref="cmd" /> with <see cref="channelId" /> marked as the channel by bitwise OR.</returns>
+        /// <returns>
+        ///     The command word corresponding to <see cref="cmd" /> with <see cref="channelId" /> marked as the channel by
+        ///     bitwise OR.
+        /// </returns>
         public static CommandWord WithChannel(this CommandWord cmd, byte channelId)
         {
-            return cmd | (CommandWord)channelId;
+            return cmd | (CommandWord) channelId;
         }
+
         #endregion Channels
 
         #region Values
+
         /// <summary>
         ///     Returns the value component of a BapsNet database or system command word.
         ///     <para>
@@ -437,10 +445,10 @@ namespace URY.BAPS.Common.Protocol.V2.Commands
         ///     </para>
         /// </summary>
         /// <param name="cmd">The command word to mask-off.</param>
-        /// <returns>The channel component of <see cref="cmd"/>.</returns>
+        /// <returns>The channel component of <see cref="cmd" />.</returns>
         public static byte Value(this CommandWord cmd)
         {
-            return (byte)((ushort)cmd & CommandMasks.Value);
+            return (byte) ((ushort) cmd & CommandMasks.Value);
         }
 
         /// <summary>
@@ -455,11 +463,13 @@ namespace URY.BAPS.Common.Protocol.V2.Commands
         /// <returns>The command corresponding to <see cref="cmd" /> with <see cref="value" /> marked as the value by bitwise OR.</returns>
         public static CommandWord WithValue(this CommandWord cmd, byte value)
         {
-            return cmd | (CommandWord)value;
+            return cmd | (CommandWord) value;
         }
+
         #endregion Values
 
         #region Config indices
+
         /// <summary>
         ///     Returns the index component of a BapsNet config command word.
         ///     <para>
@@ -468,10 +478,10 @@ namespace URY.BAPS.Common.Protocol.V2.Commands
         ///     </para>
         /// </summary>
         /// <param name="cmd">The command word to mask-off.</param>
-        /// <returns>The index component of <see cref="cmd"/>.</returns>
+        /// <returns>The index component of <see cref="cmd" />.</returns>
         public static byte ConfigIndex(this CommandWord cmd)
         {
-            return (byte)((ushort)cmd & CommandMasks.ConfigIndex);
+            return (byte) ((ushort) cmd & CommandMasks.ConfigIndex);
         }
 
         /// <summary>
@@ -486,8 +496,9 @@ namespace URY.BAPS.Common.Protocol.V2.Commands
         /// <returns>The command corresponding to <see cref="cmd" /> with <see cref="index" /> marked as the index by bitwise OR.</returns>
         public static CommandWord WithConfigIndex(this CommandWord cmd, byte index)
         {
-            return cmd | (CommandWord)index;
+            return cmd | (CommandWord) index;
         }
+
         #endregion Config indices
     }
 }

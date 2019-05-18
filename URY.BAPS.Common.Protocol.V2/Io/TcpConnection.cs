@@ -11,13 +11,14 @@ namespace URY.BAPS.Common.Protocol.V2.Io
     /// </summary>
     public class TcpConnection : IConnection, IDisposable
     {
-        private readonly StreamSink _sink;
         private readonly StreamBapsNetSource _bapsNetSource;
 
         /// <summary>
         ///     The low level socket connection
         /// </summary>
         private readonly TcpClient _clientSocket;
+
+        private readonly StreamSink _sink;
 
         public TcpConnection(string host, int port)
         {
@@ -32,14 +33,6 @@ namespace URY.BAPS.Common.Protocol.V2.Io
         ///     Check if the socket is valid/connected.
         /// </summary>
         public bool IsValid => _clientSocket != null && _clientSocket.Connected;
-
-        public void Dispose()
-        {
-            if (!IsValid) return;
-            _sink.Dispose();
-            _bapsNetSource.Dispose();
-            _clientSocket.Close();
-        }
 
         public CommandWord ReceiveCommand(CancellationToken token = default)
         {
@@ -84,6 +77,14 @@ namespace URY.BAPS.Common.Protocol.V2.Io
         public void Flush()
         {
             _sink.Flush();
+        }
+
+        public void Dispose()
+        {
+            if (!IsValid) return;
+            _sink.Dispose();
+            _bapsNetSource.Dispose();
+            _clientSocket.Close();
         }
     }
 }

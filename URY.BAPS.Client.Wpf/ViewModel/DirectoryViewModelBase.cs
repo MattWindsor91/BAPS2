@@ -1,10 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.CommandWpf;
-using JetBrains.Annotations;
-using URY.BAPS.Client.Common.Model;
-
-namespace URY.BAPS.Client.Wpf.ViewModel
+﻿namespace URY.BAPS.Client.Wpf.ViewModel
 {
     /// <summary>
     ///     Abstract base class for directory view models.
@@ -51,7 +45,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         /// <summary>
         ///     Gets whether a directory refresh can happen
         /// </summary>
-        /// <returns>Whether <see cref="Refresh"/> can fire.</returns>
+        /// <returns>Whether <see cref="Refresh" /> can fire.</returns>
         protected abstract bool CanRefresh();
 
         public abstract void Dispose();

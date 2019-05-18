@@ -27,7 +27,7 @@ namespace URY.BAPS.Client.Common.Utils
             var minutesAndSeconds = span.ToString(FormatWithoutHours);
 
             // We can't use 'span.Hours' here, as it only accounts for hours between 0 and 23.
-            var hours = (uint)Math.Floor(span.TotalHours);
+            var hours = (uint) Math.Floor(span.TotalHours);
             return 0 < hours ? $"{hours}:{minutesAndSeconds}" : minutesAndSeconds;
         }
 

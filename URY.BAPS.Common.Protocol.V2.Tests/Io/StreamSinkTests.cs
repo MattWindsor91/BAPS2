@@ -6,7 +6,7 @@ using Xunit;
 namespace URY.BAPS.Common.Protocol.V2.Tests.Io
 {
     /// <summary>
-    ///     Tests that exercise <see cref="StreamSink"/> in isolation.
+    ///     Tests that exercise <see cref="StreamSink" /> in isolation.
     /// </summary>
     public class StreamSinkTests
     {

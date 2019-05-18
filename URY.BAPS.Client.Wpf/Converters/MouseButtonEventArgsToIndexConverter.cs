@@ -1,9 +1,3 @@
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
-using GalaSoft.MvvmLight.Command;
-
 namespace URY.BAPS.Client.Wpf.Converters
 {
     /// <summary>

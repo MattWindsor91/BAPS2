@@ -27,28 +27,31 @@ namespace URY.BAPS.Client.Common.Tests.ServerConfig
                 var data = new TheoryData<ConfigType, bool>();
                 var combinations =
                     from choice in new[] {ConfigType.Int, ConfigType.Choice}
-                    from boolean in new[] { true, false }
+                    from boolean in new[] {true, false}
                     select (choice, boolean);
                 foreach (var (choice, boolean) in combinations) data.Add(choice, boolean);
                 return data;
             }
         }
 
-        [Theory, MemberData(nameof(IntegralOptionData))]
+        [Theory]
+        [MemberData(nameof(IntegralOptionData))]
         public void TestAddIntegralOptionDescription(ConfigType type, bool isIndexed)
         {
             _configCache.AddOptionDescription(0, type, "Foo", isIndexed);
             Assert.Equal(-1, _configCache.GetValue(0, -1, isIndexed ? 0 : ConfigCache.NoIndex));
         }
 
-        [Theory, MemberData(nameof(IsIndexedData))]
+        [Theory]
+        [MemberData(nameof(IsIndexedData))]
         public void TestAddStringOptionDescription(bool isIndexed)
         {
             _configCache.AddOptionDescription(0, ConfigType.Str, "Foo", isIndexed);
             Assert.Equal("Not set", _configCache.GetValue(0, "Not set", isIndexed ? 0 : ConfigCache.NoIndex));
         }
 
-        [Theory, MemberData(nameof(IsIndexedData))]
+        [Theory]
+        [MemberData(nameof(IsIndexedData))]
         public void TestFindChoiceIndexFor(bool isIndexed)
         {
             _configCache.AddOptionDescription(0, ConfigType.Choice, "Foobar", isIndexed);
@@ -58,43 +61,6 @@ namespace URY.BAPS.Client.Common.Tests.ServerConfig
             Assert.Equal(1, _configCache.FindChoiceIndexFor(0, "No"));
         }
 
-        [Fact]
-        public void TestGetSetNonIndexedChoiceById()
-        {
-            _configCache.AddOptionDescription(0, ConfigType.Choice, "Foobar", false);
-            _configCache.AddOptionChoice(0, 0, "Yes");
-            _configCache.AddOptionChoice(0, 1, "No");
-            Assert.Equal(-1, _configCache.GetValue(0, -1, ConfigCache.NoIndex));
-            _configCache.AddOptionValue(0, _configCache.FindChoiceIndexFor(0, "No"));
-            Assert.Equal(1, _configCache.GetValue(0, -1, ConfigCache.NoIndex));
-        }
-
-        [Fact]
-        public void TestGetSetNonIndexedChoiceByDescription()
-        {
-            _configCache.AddOptionDescription(0, ConfigType.Choice, "Foobar", false);
-            _configCache.AddOptionChoice(0, 0, "Yes");
-            _configCache.AddOptionChoice(0, 1, "No");
-            Assert.Equal("?", _configCache.GetChoice((uint) 0, "?", ConfigCache.NoIndex));
-            _configCache.SetChoice(0, "No");
-            Assert.Equal("No", _configCache.GetChoice((uint) 0, "?", ConfigCache.NoIndex));
-        }
-
-        [Fact]
-        public void TestSetIndexedChoiceIndependence()
-        {
-            _configCache.AddOptionDescription(0, ConfigType.Choice, "Foobar", true);
-            _configCache.AddOptionChoice(0, 0, "Some");
-            _configCache.AddOptionChoice(0, 1, "Most");
-            _configCache.AddOptionChoice(0, 2, "All");
-            _configCache.AddOptionValue(0, _configCache.FindChoiceIndexFor(0, "All"), 0);
-            _configCache.AddOptionValue(0, _configCache.FindChoiceIndexFor(0, "Most"), 1);
-            _configCache.AddOptionValue(0, _configCache.FindChoiceIndexFor(0, "Some"), 2);
-            Assert.Equal(2, _configCache.GetValue(0, -1, 0));
-            Assert.Equal(1, _configCache.GetValue(0, -1, 1));
-            Assert.Equal(0, _configCache.GetValue(0, -1, 2));
-        }
-
         public class MockConfigServerUpdater : IConfigServerUpdater
         {
             private IObservable<ConfigChoiceArgs> _observeConfigChoice;
@@ -102,10 +68,10 @@ namespace URY.BAPS.Client.Common.Tests.ServerConfig
             private IObservable<ConfigResultArgs> _observeConfigResult;
             private IObservable<ConfigSettingArgs> _observeConfigSetting;
             private IObservable<CountArgs> _observeIncomingCount;
-            private IObservable<object> _observeMessages;
-            private IObservable<UnknownCommandArgs> _observeUnknownCommand;
             private IObservable<IpRestrictionArgs> _observeIpRestriction;
+            private IObservable<object> _observeMessages;
             private IObservable<PermissionArgs> _observePermission;
+            private IObservable<UnknownCommandArgs> _observeUnknownCommand;
             private IObservable<UserArgs> _observeUser;
             private IObservable<UserResultArgs> _observeUserResult;
             public Queue<object> Messages { get; } = new Queue<object>();
@@ -144,18 +110,26 @@ namespace URY.BAPS.Client.Common.Tests.ServerConfig
                 _observeUserResult ??= ObserveMessages.OfType<UserResultArgs>();
         }
 
-        #region Events interface
+        [Fact]
+        public void TestGetSetNonIndexedChoiceByDescription()
+        {
+            _configCache.AddOptionDescription(0, ConfigType.Choice, "Foobar", false);
+            _configCache.AddOptionChoice(0, 0, "Yes");
+            _configCache.AddOptionChoice(0, 1, "No");
+            Assert.Equal("?", _configCache.GetChoice((uint) 0, "?", ConfigCache.NoIndex));
+            _configCache.SetChoice(0, "No");
+            Assert.Equal("No", _configCache.GetChoice((uint) 0, "?", ConfigCache.NoIndex));
+        }
 
         [Fact]
-        public void TestReceiverString()
+        public void TestGetSetNonIndexedChoiceById()
         {
-            var receiver = new MockConfigServerUpdater();
-            receiver.Messages.Enqueue(new ConfigOptionArgs(64, ConfigType.Str, "Barbaz"));
-            receiver.Messages.Enqueue(new ConfigSettingArgs(64, ConfigType.Str, "FrankerZ"));
-
-            Assert.Equal("", _configCache.GetValue(64, "", ConfigCache.NoIndex));
-            _configCache.SubscribeToReceiver(receiver);
-            Assert.Equal("FrankerZ", _configCache.GetValue(64, "", ConfigCache.NoIndex));
+            _configCache.AddOptionDescription(0, ConfigType.Choice, "Foobar", false);
+            _configCache.AddOptionChoice(0, 0, "Yes");
+            _configCache.AddOptionChoice(0, 1, "No");
+            Assert.Equal(-1, _configCache.GetValue(0, -1, ConfigCache.NoIndex));
+            _configCache.AddOptionValue(0, _configCache.FindChoiceIndexFor(0, "No"));
+            Assert.Equal(1, _configCache.GetValue(0, -1, ConfigCache.NoIndex));
         }
 
         [Fact]
@@ -173,6 +147,31 @@ namespace URY.BAPS.Client.Common.Tests.ServerConfig
             Assert.Equal(1, _configCache.GetValue(99, -1, ConfigCache.NoIndex));
         }
 
-        #endregion Events interface
+        [Fact]
+        public void TestReceiverString()
+        {
+            var receiver = new MockConfigServerUpdater();
+            receiver.Messages.Enqueue(new ConfigOptionArgs(64, ConfigType.Str, "Barbaz"));
+            receiver.Messages.Enqueue(new ConfigSettingArgs(64, ConfigType.Str, "FrankerZ"));
+
+            Assert.Equal("", _configCache.GetValue(64, "", ConfigCache.NoIndex));
+            _configCache.SubscribeToReceiver(receiver);
+            Assert.Equal("FrankerZ", _configCache.GetValue(64, "", ConfigCache.NoIndex));
+        }
+
+        [Fact]
+        public void TestSetIndexedChoiceIndependence()
+        {
+            _configCache.AddOptionDescription(0, ConfigType.Choice, "Foobar", true);
+            _configCache.AddOptionChoice(0, 0, "Some");
+            _configCache.AddOptionChoice(0, 1, "Most");
+            _configCache.AddOptionChoice(0, 2, "All");
+            _configCache.AddOptionValue(0, _configCache.FindChoiceIndexFor(0, "All"), 0);
+            _configCache.AddOptionValue(0, _configCache.FindChoiceIndexFor(0, "Most"), 1);
+            _configCache.AddOptionValue(0, _configCache.FindChoiceIndexFor(0, "Some"), 2);
+            Assert.Equal(2, _configCache.GetValue(0, -1, 0));
+            Assert.Equal(1, _configCache.GetValue(0, -1, 1));
+            Assert.Equal(0, _configCache.GetValue(0, -1, 2));
+        }
     }
 }

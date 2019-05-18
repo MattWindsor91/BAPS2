@@ -27,7 +27,7 @@ namespace URY.BAPS.Client.Protocol.V2.Core
         private Task? _senderTask;
 
         private TcpConnection? _socket;
-        
+
         public ClientCore([NotNull] Authenticator auth)
         {
             _auth = auth;

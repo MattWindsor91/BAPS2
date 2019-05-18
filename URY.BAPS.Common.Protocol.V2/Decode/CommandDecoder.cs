@@ -8,13 +8,13 @@ namespace URY.BAPS.Common.Protocol.V2.Decode
 {
     /// <summary>
     ///     Decodes BapsNet commands, pulls their non-command arguments from an
-    ///     <see cref="IBapsNetSource"/>, builds event structures,
-    ///     and forwards them to an <see cref="IMessageSink"/>.
+    ///     <see cref="IBapsNetSource" />, builds event structures,
+    ///     and forwards them to an <see cref="IMessageSink" />.
     /// </summary>
     public partial class CommandDecoder : ICommandVisitor
     {
-        private readonly IMessageSink _receiver;
         private readonly IBapsNetSource _bapsNetSource;
+        private readonly IMessageSink _receiver;
         private readonly CancellationToken _token;
 
         public CommandDecoder(IMessageSink r, IBapsNetSource bapsNetSource, CancellationToken token)
@@ -28,7 +28,7 @@ namespace URY.BAPS.Common.Protocol.V2.Decode
         {
             _receiver.OnMessageReceived(message);
         }
-        
+
         #region Shortcuts for receiving from the sink
 
         private string ReceiveString()
@@ -54,7 +54,7 @@ namespace URY.BAPS.Common.Protocol.V2.Decode
         {
             Dispatch(new UnknownCommandArgs($"possibly a malformed {group.ToString().ToUpper()}"));
         }
-        
+
         private void DecodeCount(CountType type, uint extra = 0)
         {
             var count = ReceiveUint();
@@ -66,7 +66,7 @@ namespace URY.BAPS.Common.Protocol.V2.Decode
             var description = ReceiveString();
             Dispatch(new ErrorEventArgs(type, errorCode, description));
         }
-        
+
         private TrackType DecodeTrackType()
         {
             return (TrackType) ReceiveUint();

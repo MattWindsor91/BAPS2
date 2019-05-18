@@ -13,13 +13,9 @@ namespace URY.BAPS.Common.Protocol.V2.Decode
                 case DatabaseOp.LibraryResult:
                 {
                     if (command.ModeFlag)
-                    {
                         DecodeLibraryResult(command.Value);
-                    }
                     else
-                    {
                         DecodeCount(CountType.LibraryItem);
-                    }
                 }
                     break;
                 case DatabaseOp.LibraryError:
@@ -29,24 +25,16 @@ namespace URY.BAPS.Common.Protocol.V2.Decode
                     break;
                 case DatabaseOp.Show:
                     if (command.ModeFlag)
-                    {
                         DecodeShow();
-                    }
                     else
-                    {
                         DecodeCount(CountType.Show);
-                    }
 
                     break;
                 case DatabaseOp.Listing:
                     if (command.ModeFlag)
-                    {
                         DecodeListing();
-                    }
                     else
-                    {
                         DecodeCount(CountType.Listing);
-                    }
 
                     break;
                 case DatabaseOp.BapsDbError:

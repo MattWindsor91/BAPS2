@@ -162,7 +162,7 @@ namespace URY.BAPS.Server.Reference.Model
 
         public void Add(ITrack track)
         {
-            var item = new PlaylistItem(track, (uint)Length);
+            var item = new PlaylistItem(track, (uint) Length);
             _entries.Add(item);
             NotifyAdd(item);
         }

@@ -1,9 +1,4 @@
-﻿using System;
-using GalaSoft.MvvmLight;
-using JetBrains.Annotations;
-using URY.BAPS.Client.Common.Model;
-
-namespace URY.BAPS.Client.Wpf.ViewModel
+﻿namespace URY.BAPS.Client.Wpf.ViewModel
 {
     /// <summary>
     ///     A view model that wraps a <see cref="TrackBase" />, adding tracking for

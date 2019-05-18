@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using GalaSoft.MvvmLight.CommandWpf;
-using URY.BAPS.Client.Common.Model;
-
-namespace URY.BAPS.Client.Wpf.ViewModel
+﻿namespace URY.BAPS.Client.Wpf.ViewModel
 {
     /// <summary>
     ///     Interface for view models representing local audio directories.

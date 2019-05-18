@@ -2,7 +2,7 @@
 {
     /// <summary>
     ///     Aggregate interface that represents a bidirectional BapsNet connection:
-    ///     it subsumes both <see cref="IBapsNetSource"/> and <see cref="ISink"/>.
+    ///     it subsumes both <see cref="IBapsNetSource" /> and <see cref="ISink" />.
     /// </summary>
     public interface IConnection : IBapsNetSource, ISink
     {

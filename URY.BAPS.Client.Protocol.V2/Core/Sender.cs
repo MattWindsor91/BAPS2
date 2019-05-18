@@ -12,7 +12,8 @@ namespace URY.BAPS.Client.Protocol.V2.Core
     /// </summary>
     public class Sender
     {
-        [ItemNotNull] [NotNull] private readonly BlockingCollection<MessageBuilder> _queue = new BlockingCollection<MessageBuilder>();
+        [ItemNotNull] [NotNull]
+        private readonly BlockingCollection<MessageBuilder> _queue = new BlockingCollection<MessageBuilder>();
 
         [NotNull] private readonly ISink _sink;
         private readonly CancellationToken _token;
@@ -53,6 +54,7 @@ namespace URY.BAPS.Client.Protocol.V2.Core
                 var msg = _queue.Take(_token);
                 msg.Send(_sink);
             }
+
             _token.ThrowIfCancellationRequested();
         }
     }

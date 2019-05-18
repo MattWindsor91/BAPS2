@@ -43,7 +43,7 @@ namespace URY.BAPS.Common.Protocol.V2.Decode
             }
         }
 
-        
+
         private void DecodeLoad(ushort channelId)
         {
             var index = ReceiveUint();
@@ -61,7 +61,7 @@ namespace URY.BAPS.Common.Protocol.V2.Decode
             Dispatch(new MarkerChangeArgs(channelId, MarkerType.Position, 0U));
             Dispatch(new TrackLoadArgs(channelId, index, track));
         }
-        
+
         private void DecodeMarkerChange(byte channelId, MarkerType markerType)
         {
             var position = ReceiveUint();

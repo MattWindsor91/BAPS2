@@ -1,15 +1,11 @@
-using System.Collections.Generic;
-using System.ServiceProcess;
-using System.Text;
-
 namespace BAPSServerService
 {
-    static class Program
+    internal static class Program
     {
         /// <summary>
-        /// The main entry point for the application.
+        ///     The main entry point for the application.
         /// </summary>
-        static void Main()
+        private static void Main()
         {
             ServiceBase[] ServicesToRun;
 
@@ -19,7 +15,7 @@ namespace BAPSServerService
             //
             //   ServicesToRun = new ServiceBase[] {new Service1(), new MySecondUserService()};
             //
-            ServicesToRun = new ServiceBase[] { new BAPSServerService() };
+            ServicesToRun = new ServiceBase[] {new BAPSServerService()};
             ServiceBase.Run(ServicesToRun);
         }
     }

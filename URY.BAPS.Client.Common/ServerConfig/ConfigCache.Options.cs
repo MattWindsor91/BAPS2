@@ -191,8 +191,11 @@ namespace URY.BAPS.Client.Common.ServerConfig
             /// <summary>
             ///     Tries to get the description of the choice at the given index.
             /// </summary>
-            /// <param name="index">The index to query; use <see cref="NoIndex"/> if this option isn't indexed.</param>
-            /// <returns>The description of the choice at <paramref name="index"/>, or null if said index doesn't have a valid choice set.</returns>
+            /// <param name="index">The index to query; use <see cref="NoIndex" /> if this option isn't indexed.</param>
+            /// <returns>
+            ///     The description of the choice at <paramref name="index" />, or null if said index doesn't have a valid choice
+            ///     set.
+            /// </returns>
             public string? ChoiceAt(int index)
             {
                 return ChoiceDescriptionFor(ValueAt(index, -1));

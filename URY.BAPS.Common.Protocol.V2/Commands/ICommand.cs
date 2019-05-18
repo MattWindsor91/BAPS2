@@ -6,14 +6,14 @@
     public interface ICommand
     {
         /// <summary>
+        ///     The packed representation of this command.
+        /// </summary>
+        CommandWord Packed { get; }
+
+        /// <summary>
         ///     Calls the appropriate visit method on a visitor for this command.
         /// </summary>
         /// <param name="visitor">The visitor currently visiting this command.</param>
         void Accept(ICommandVisitor? visitor);
-
-        /// <summary>
-        ///     The packed representation of this command.
-        /// </summary>
-        CommandWord Packed { get; }
     }
 }

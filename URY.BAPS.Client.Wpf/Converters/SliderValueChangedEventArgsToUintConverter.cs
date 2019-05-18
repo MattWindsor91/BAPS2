@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using GalaSoft.MvvmLight.Command;
-
-namespace URY.BAPS.Client.Wpf.Converters
+﻿namespace URY.BAPS.Client.Wpf.Converters
 {
-    class SliderValueChangedEventArgsToUintConverter : IEventArgsConverter
+    internal class SliderValueChangedEventArgsToUintConverter : IEventArgsConverter
     {
         public object Convert(object value, object parameter)
         {

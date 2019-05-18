@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Windows;
-using JetBrains.Annotations;
-using URY.BAPS.Client.Common.Controllers;
-using URY.BAPS.Client.Common.Events;
-using URY.BAPS.Client.Common.Model;
+﻿using URY.BAPS.Client.Common.Controllers;
 
 namespace URY.BAPS.Client.Wpf.ViewModel
 {

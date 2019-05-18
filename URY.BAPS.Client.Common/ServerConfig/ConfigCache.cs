@@ -38,12 +38,12 @@ namespace URY.BAPS.Client.Common.ServerConfig
         private IOption MakeOption(uint optionId, ConfigType type, string description, bool isIndexed)
         {
             return type switch
-            {
-                ConfigType.Choice => (IOption)new ChoiceOption(this, optionId, description, isIndexed),
+                {
+                ConfigType.Choice => (IOption) new ChoiceOption(this, optionId, description, isIndexed),
                 ConfigType.Int => new IntOption(this, optionId, description, isIndexed),
                 ConfigType.Str => new StringOption(this, optionId, description, isIndexed),
-                _ => throw new InvalidEnumArgumentException(nameof(type), (int)type, typeof(ConfigType))
-            };
+                _ => throw new InvalidEnumArgumentException(nameof(type), (int) type, typeof(ConfigType))
+                };
         }
 
         public int ChoiceIndexFor(uint optionId, [ValueProvider("ChoiceKeys")] string choiceKey)

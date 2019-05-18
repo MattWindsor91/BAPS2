@@ -8,10 +8,9 @@ namespace URY.BAPS.Common.Protocol.V2.Io
 {
     /// <summary>
     ///     Takes requests to send BapsNet primitives, and applies them to a
-    ///     <see cref="Stream"/> of bytes.
-    ///
+    ///     <see cref="Stream" /> of bytes.
     ///     <para>
-    ///         Disposing the <see cref="StreamSink"/> does NOT dispose the underlying stream.
+    ///         Disposing the <see cref="StreamSink" /> does NOT dispose the underlying stream.
     ///     </para>
     /// </summary>
     public class StreamSink : ISink, IDisposable
@@ -28,26 +27,31 @@ namespace URY.BAPS.Common.Protocol.V2.Io
             _writer = new BinaryWriter(stream, Encoding.UTF8, true);
         }
 
-        /// <inheritdoc cref="ISink"/>
-        public void SendCommand(CommandWord cmd)
+        public void Dispose()
         {
-            SendNetworkOrder(BitConverter.GetBytes((ushort)cmd));
+            _writer.Dispose();
         }
 
-        /// <inheritdoc cref="ISink"/>
+        /// <inheritdoc cref="ISink" />
+        public void SendCommand(CommandWord cmd)
+        {
+            SendNetworkOrder(BitConverter.GetBytes((ushort) cmd));
+        }
+
+        /// <inheritdoc cref="ISink" />
         public void SendString(string s)
         {
-            SendUint((uint)Encoding.UTF8.GetByteCount(s));
+            SendUint((uint) Encoding.UTF8.GetByteCount(s));
             _writer.Write(s.ToCharArray());
         }
 
-        /// <inheritdoc cref="ISink"/>
+        /// <inheritdoc cref="ISink" />
         public void SendFloat(float f)
         {
             SendNetworkOrder(BitConverter.GetBytes(f));
         }
 
-        /// <inheritdoc cref="ISink"/>
+        /// <inheritdoc cref="ISink" />
         public void SendUint(uint i)
         {
             SendNetworkOrder(BitConverter.GetBytes(i));
@@ -63,7 +67,7 @@ namespace URY.BAPS.Common.Protocol.V2.Io
         ///     network (big-endian) order.
         ///     <para>
         ///         If the host architecture is little-endian, the contents
-        ///         of <paramref name="bytes"/> will be reversed in-place.
+        ///         of <paramref name="bytes" /> will be reversed in-place.
         ///     </para>
         /// </summary>
         /// <param name="bytes">The data to send (in its entirety).</param>
@@ -71,11 +75,6 @@ namespace URY.BAPS.Common.Protocol.V2.Io
         {
             BitManipulation.ShuffleForNetworkOrder(bytes, bytes.Length);
             _writer.Write(bytes);
-        }
-
-        public void Dispose()
-        {
-            _writer.Dispose();
         }
     }
 }

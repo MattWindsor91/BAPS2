@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -15,7 +14,7 @@ namespace URY.BAPS.Server.Reference.Config
         {
             _loggerFactory = loggerFactory;
         }
-        
+
         public ServerConfig FromConfiguration(IConfigurationRoot configuration)
         {
             var listenSection = configuration.GetSection("listen");
@@ -23,7 +22,7 @@ namespace URY.BAPS.Server.Reference.Config
             var listenConfig = ListenFromConfiguration(listenSection);
 
             var logger = _loggerFactory.CreateLogger<ServerConfig>();
-            
+
             return new ServerConfig(listenConfig, logger);
         }
 
@@ -37,7 +36,7 @@ namespace URY.BAPS.Server.Reference.Config
         {
             var logger = _loggerFactory.CreateLogger<ListenConfig>();
             var listenConfig = new ListenConfig(logger);
-            
+
             listenSection.Bind(listenConfig);
             return listenConfig;
         }

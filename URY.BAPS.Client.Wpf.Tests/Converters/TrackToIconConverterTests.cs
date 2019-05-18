@@ -1,9 +1,4 @@
-using System.Globalization;
-using FontAwesome.WPF;
-using JetBrains.Annotations;
-using URY.BAPS.Client.Common.Model;
 using URY.BAPS.Client.Wpf.Converters;
-using Xunit;
 
 namespace URY.BAPS.Client.Wpf.Tests.Converters
 {

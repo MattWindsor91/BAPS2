@@ -16,6 +16,6 @@
         Item = 3,
         GetPlaylist = 4,
         ResetPlaylist = 5,
-        CopyItem = 6,
+        CopyItem = 6
     }
 }

@@ -20,11 +20,11 @@ namespace URY.BAPS.Client.Protocol.V2.Core
     public class Authenticator
     {
         private readonly Func<Response> _loginCallback;
+        private TcpConnection? _conn;
 
         private int _lastPort = -1;
         private string? _lastServer;
         private string? _seed;
-        private TcpConnection? _conn;
 
         /// <summary>
         ///     Constructs a <see cref="Authenticator" />.
@@ -79,7 +79,8 @@ namespace URY.BAPS.Client.Protocol.V2.Core
             MakeNewConnection(response.Server, response.Port);
         }
 
-        private (CommandWord command, string? payload) ReceiveSystemStringCommand(SystemOp expectedOp, IBapsNetSource src)
+        private (CommandWord command, string? payload) ReceiveSystemStringCommand(SystemOp expectedOp,
+            IBapsNetSource src)
         {
             var cmd = src.ReceiveCommand();
             _ = src.ReceiveUint(); // Discard length
@@ -111,7 +112,7 @@ namespace URY.BAPS.Client.Protocol.V2.Core
                 structure
              **/
             _ = _conn.ReceiveString();
-            var binaryModeCommand = new SystemCommand(SystemOp.SetBinaryMode, 0, false);
+            var binaryModeCommand = new SystemCommand(SystemOp.SetBinaryMode);
             var binaryModeMessage = new MessageBuilder(binaryModeCommand);
             binaryModeMessage.Send(_conn);
 

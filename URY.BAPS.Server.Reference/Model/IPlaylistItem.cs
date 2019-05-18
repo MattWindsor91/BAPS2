@@ -19,10 +19,10 @@ namespace URY.BAPS.Server.Reference.Model
         /// <param name="index">The index to check.</param>
         /// <returns>
         ///     True if, and only if, this playlist item is on a playlist
-        ///     and its index is <paramref name="index"/>.
+        ///     and its index is <paramref name="index" />.
         /// </returns>
         bool HasIndex(uint index);
-        
+
         void MarkLoaded();
         void MarkUnloaded();
     }

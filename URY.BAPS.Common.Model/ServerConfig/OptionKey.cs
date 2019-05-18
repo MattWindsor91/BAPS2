@@ -54,19 +54,19 @@ namespace URY.BAPS.Common.Model.ServerConfig
         Invalid = uint.MaxValue
     }
 
-	/// <summary>
-	///     Extension methods for <see cref="OptionKey" />s.
-	/// </summary>
-	public static class OptionKeyExtensions
+    /// <summary>
+    ///     Extension methods for <see cref="OptionKey" />s.
+    /// </summary>
+    public static class OptionKeyExtensions
     {
-	    /// <summary>
-	    ///     Converts a <see cref="ChannelFlag" /> to an <see cref="OptionKey" />.
-	    /// </summary>
-	    /// <param name="flag">The channel flag to convert.</param>
-	    /// <returns>The corresponding option key.</returns>
-	    /// <exception cref="InvalidEnumArgumentException"></exception>
-	    /// <exception cref="ArgumentOutOfRangeException"></exception>
-	    public static OptionKey ToOptionKey(this ChannelFlag flag)
+        /// <summary>
+        ///     Converts a <see cref="ChannelFlag" /> to an <see cref="OptionKey" />.
+        /// </summary>
+        /// <param name="flag">The channel flag to convert.</param>
+        /// <returns>The corresponding option key.</returns>
+        /// <exception cref="InvalidEnumArgumentException"></exception>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public static OptionKey ToOptionKey(this ChannelFlag flag)
         {
             if (!Enum.IsDefined(typeof(ChannelFlag), flag))
                 throw new InvalidEnumArgumentException(nameof(flag), (int) flag, typeof(ChannelFlag));
@@ -77,18 +77,18 @@ namespace URY.BAPS.Common.Model.ServerConfig
                 };
         }
 
-	    /// <summary>
-	    ///     Converts a <see cref="ChannelFlag" /> to an <see cref="OptionKey" />.
-	    /// </summary>
-	    /// <param name="key">The option key to convert.</param>
-	    /// <returns>The corresponding channel flag.</returns>
-	    /// <exception cref="InvalidEnumArgumentException">
-	    ///     <paramref name="key" /> isn't a valid <see cref="OptionKey" />.
-	    /// </exception>
-	    /// <exception cref="ArgumentOutOfRangeException">
-	    ///     The option key doesn't correspond to a valid channel flag.
-	    /// </exception>
-	    public static ChannelFlag ToChannelFlag(this OptionKey key)
+        /// <summary>
+        ///     Converts a <see cref="ChannelFlag" /> to an <see cref="OptionKey" />.
+        /// </summary>
+        /// <param name="key">The option key to convert.</param>
+        /// <returns>The corresponding channel flag.</returns>
+        /// <exception cref="InvalidEnumArgumentException">
+        ///     <paramref name="key" /> isn't a valid <see cref="OptionKey" />.
+        /// </exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        ///     The option key doesn't correspond to a valid channel flag.
+        /// </exception>
+        public static ChannelFlag ToChannelFlag(this OptionKey key)
         {
             if (!Enum.IsDefined(typeof(OptionKey), key))
                 throw new InvalidEnumArgumentException(nameof(key), (int) key, typeof(OptionKey));

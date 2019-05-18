@@ -5,7 +5,7 @@ using Xunit;
 namespace URY.BAPS.Server.Reference.Tests
 {
     /// <summary>
-    ///     Tests for <see cref="Playlist"/>.
+    ///     Tests for <see cref="Playlist" />.
     /// </summary>
     public class PlaylistTests
     {
@@ -18,25 +18,18 @@ namespace URY.BAPS.Server.Reference.Tests
         {
             _playlist.Add(new LibraryTrack("Beverly Hills", 90201));
         }
-        
-        /// <summary>
-        ///     Tests that the length of a new playlist is zero.
-        /// </summary>
-        [Fact]
-        public void TestLength_NewEmptyPlaylist()
-        {
-            Assert.Equal(0, _playlist.Length);
-        }
 
         /// <summary>
-        ///     Tests that the length of a playlist goes up after
-        ///     adding a single item to an empty list.
+        ///     Tests that the first item added to an empty playlist has
+        ///     the index 0.
         /// </summary>
         [Fact]
-        public void TestLength_AfterAddToEmpty()
+        public void TestAddHasIndex_AddToEmpty()
         {
             AddOneItem();
-            Assert.Equal(1, _playlist.Length);
+            var track = _playlist.Get(0);
+            var item = Assert.IsAssignableFrom<IPlaylistItem>(track);
+            Assert.True(item.HasIndex(0));
         }
 
         /// <summary>
@@ -52,16 +45,23 @@ namespace URY.BAPS.Server.Reference.Tests
         }
 
         /// <summary>
-        ///     Tests that the first item added to an empty playlist has
-        ///     the index 0.
+        ///     Tests that the length of a playlist goes up after
+        ///     adding a single item to an empty list.
         /// </summary>
         [Fact]
-        public void TestAddHasIndex_AddToEmpty()
+        public void TestLength_AfterAddToEmpty()
         {
             AddOneItem();
-            var track = _playlist.Get(0);
-            var item = Assert.IsAssignableFrom<IPlaylistItem>(track);
-            Assert.True(item.HasIndex(0));
+            Assert.Equal(1, _playlist.Length);
+        }
+
+        /// <summary>
+        ///     Tests that the length of a new playlist is zero.
+        /// </summary>
+        [Fact]
+        public void TestLength_NewEmptyPlaylist()
+        {
+            Assert.Equal(0, _playlist.Length);
         }
     }
 }

@@ -12,28 +12,28 @@ namespace URY.BAPS.Common.Protocol.V2.Io
         ///     Sends a command down this sink.
         /// </summary>
         /// <param name="cmd">The command to send.</param>
-        /// <seealso cref="Flush"/>
+        /// <seealso cref="Flush" />
         void SendCommand(CommandWord cmd);
 
         /// <summary>
         ///     Sends a string down this sink.
         /// </summary>
         /// <param name="s">The string to send.</param>
-        /// <seealso cref="Flush"/>
+        /// <seealso cref="Flush" />
         void SendString(string s);
 
         /// <summary>
         ///     Sends a float down this sink.
         /// </summary>
         /// <param name="f">The float to send.</param>
-        /// <seealso cref="Flush"/>
+        /// <seealso cref="Flush" />
         void SendFloat(float f);
 
         /// <summary>
         ///     Sends a 32-bit unsigned integer down this sink.
         /// </summary>
         /// <param name="i">The integer to send.</param>
-        /// <seealso cref="Flush"/>
+        /// <seealso cref="Flush" />
         void SendUint(uint i);
 
         /// <summary>

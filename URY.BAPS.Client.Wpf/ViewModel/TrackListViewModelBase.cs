@@ -1,11 +1,3 @@
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows;
-using GalaSoft.MvvmLight.CommandWpf;
-using GongSolutions.Wpf.DragDrop;
-using JetBrains.Annotations;
-using URY.BAPS.Client.Common.Model;
-
 namespace URY.BAPS.Client.Wpf.ViewModel
 {
     /// <summary>

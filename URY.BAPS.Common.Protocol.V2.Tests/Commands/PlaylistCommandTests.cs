@@ -4,7 +4,7 @@ using Xunit;
 namespace URY.BAPS.Common.Protocol.V2.Tests.Commands
 {
     /// <summary>
-    ///     Tests for <see cref="PlaylistCommand"/>.
+    ///     Tests for <see cref="PlaylistCommand" />.
     /// </summary>
     public class PlaylistCommandTests
     {

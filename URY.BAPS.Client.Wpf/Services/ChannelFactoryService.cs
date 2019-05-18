@@ -1,20 +1,17 @@
-using System;
-using JetBrains.Annotations;
-using URY.BAPS.Client.Common.Controllers;
 using URY.BAPS.Client.Common.ServerConfig;
 using URY.BAPS.Client.Wpf.ViewModel;
 
 namespace URY.BAPS.Client.Wpf.Services
 {
     /// <summary>
-    ///     A service that builds <see cref="IChannelViewModel"/>s and their dependencies.
+    ///     A service that builds <see cref="IChannelViewModel" />s and their dependencies.
     /// </summary>
     [UsedImplicitly]
     public class ChannelFactoryService
     {
-        [NotNull] private readonly ChannelControllerSet _controllerSet;
         [NotNull] private readonly AudioWallService _audioWallService;
         [NotNull] private readonly ConfigCache _config;
+        [NotNull] private readonly ChannelControllerSet _controllerSet;
 
         /// <summary>
         ///     Constructs a channel factory.
@@ -37,12 +34,12 @@ namespace URY.BAPS.Client.Wpf.Services
             _audioWallService = audioWallService ?? throw new ArgumentNullException(nameof(audioWallService));
             _config = config ?? throw new ArgumentNullException(nameof(config));
         }
-        
+
         /// <summary>
         ///     Creates a channel view model.
         /// </summary>
         /// <param name="id">The ID of the channel whose view model is being created.</param>
-        /// <returns>A <see cref="IChannelViewModel"/> over channel <see cref="id"/>.</returns>
+        /// <returns>A <see cref="IChannelViewModel" /> over channel <see cref="id" />.</returns>
         [Pure]
         public IChannelViewModel Make(byte id)
         {

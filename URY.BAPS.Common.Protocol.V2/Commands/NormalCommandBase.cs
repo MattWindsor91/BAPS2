@@ -7,12 +7,12 @@
     /// <typeparam name="TOp">The enumeration of allowed operations.</typeparam>
     public abstract class NormalCommandBase<TOp> : CommandBase<TOp>
     {
-        public byte Value { get; }
-
         protected NormalCommandBase(TOp op, byte value, bool modeFlag) : base(op, modeFlag)
         {
             Value = value;
         }
+
+        public byte Value { get; }
 
         public override CommandWord Packed => OpAsCommandWord(Op).WithModeFlag(ModeFlag).WithValue(Value);
     }

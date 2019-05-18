@@ -9,11 +9,10 @@ namespace URY.BAPS.Common.Protocol.V2.Encode
 {
     /// <summary>
     ///     A BapsNet packed message builder.
-    ///
     ///     <para>
-    ///     This class is useful for building up the line representation of a
-    ///     BapsNet message before sending it.  As BapsNet messages aren't
-    ///     self-describing, this class isn't useful for decoding messages.
+    ///         This class is useful for building up the line representation of a
+    ///         BapsNet message before sending it.  As BapsNet messages aren't
+    ///         self-describing, this class isn't useful for decoding messages.
     ///     </para>
     /// </summary>
     public class MessageBuilder

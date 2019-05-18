@@ -1,10 +1,4 @@
-﻿using System;
-using GalaSoft.MvvmLight.CommandWpf;
-using JetBrains.Annotations;
-using URY.BAPS.Client.Common;
-using URY.BAPS.Client.Common.Model;
-
-namespace URY.BAPS.Client.Wpf.ViewModel
+﻿namespace URY.BAPS.Client.Wpf.ViewModel
 {
     /// <summary>
     ///     Abstract base class providing the parts of <see cref="IChannelViewModel" />

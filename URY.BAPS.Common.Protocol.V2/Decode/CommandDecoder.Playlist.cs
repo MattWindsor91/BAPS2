@@ -12,14 +12,10 @@ namespace URY.BAPS.Common.Protocol.V2.Decode
             {
                 case PlaylistOp.Item:
                     if (command.ModeFlag)
-                    {
                         DecodeItem(command.ChannelId);
-                    }
                     else
-                    {
                         // Deliberately ignore?
                         _ = ReceiveUint();
-                    }
 
                     break;
                 case PlaylistOp.MoveItemTo:

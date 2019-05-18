@@ -1,11 +1,4 @@
-﻿using System;
-using System.Windows;
-using GalaSoft.MvvmLight;
-using JetBrains.Annotations;
-using URY.BAPS.Client.Wpf.ViewModel;
-using URY.BAPS.Client.Wpf.Walls;
-
-namespace URY.BAPS.Client.Wpf.Services
+﻿namespace URY.BAPS.Client.Wpf.Services
 {
     public abstract class WallServiceBase<TWall, TViewModel> where TWall : Window
         where TViewModel : class

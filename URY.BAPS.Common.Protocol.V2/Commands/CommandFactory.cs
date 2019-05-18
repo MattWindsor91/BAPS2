@@ -3,7 +3,7 @@
 namespace URY.BAPS.Common.Protocol.V2.Commands
 {
     /// <summary>
-    ///     Builds unpacked <see cref="ICommand"/>s from <see cref="CommandWord"/>s.
+    ///     Builds unpacked <see cref="ICommand" />s from <see cref="CommandWord" />s.
     /// </summary>
     public static class CommandFactory
     {
@@ -18,7 +18,7 @@ namespace URY.BAPS.Common.Protocol.V2.Commands
                 ? UnpackIndexableConfig(op, modeFlag, word)
                 : new ValueConfigCommand(op, word.ConfigIndex(), modeFlag);
         }
-        
+
         private static ICommand UnpackIndexableConfig(ConfigOp op, bool modeFlag, CommandWord word)
         {
             var indexedFlag = word.HasConfigIndexedFlag();
@@ -48,21 +48,21 @@ namespace URY.BAPS.Common.Protocol.V2.Commands
         }
 
         /// <summary>
-        ///     Unpacks a command word into an <see cref="ICommand"/>.
+        ///     Unpacks a command word into an <see cref="ICommand" />.
         /// </summary>
         /// <param name="word">The word to unpack.</param>
-        /// <returns>An <see cref="ICommand"/> whose contents match those of the packed word <paramref name="word"/>.</returns>
+        /// <returns>An <see cref="ICommand" /> whose contents match those of the packed word <paramref name="word" />.</returns>
         public static ICommand Unpack(this CommandWord word)
         {
             return word.Group() switch
-            {
-                 CommandGroup.Config => UnpackConfig(word),
-                 CommandGroup.Database => UnpackDatabase(word),
-                 CommandGroup.Playback => UnpackPlayback(word),
-                 CommandGroup.Playlist => UnpackPlaylist(word),
-                 CommandGroup.System => UnpackSystem(word),
-                 _ => throw new ArgumentOutOfRangeException(nameof(word), word, "Invalid command word group")
-            };
+                {
+                CommandGroup.Config => UnpackConfig(word),
+                CommandGroup.Database => UnpackDatabase(word),
+                CommandGroup.Playback => UnpackPlayback(word),
+                CommandGroup.Playlist => UnpackPlaylist(word),
+                CommandGroup.System => UnpackSystem(word),
+                _ => throw new ArgumentOutOfRangeException(nameof(word), word, "Invalid command word group")
+                };
         }
     }
 }

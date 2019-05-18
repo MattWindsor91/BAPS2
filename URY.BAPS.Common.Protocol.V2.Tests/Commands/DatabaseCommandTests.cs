@@ -5,14 +5,15 @@ using Xunit;
 namespace URY.BAPS.Common.Protocol.V2.Tests.Commands
 {
     /// <summary>
-    ///     Tests for <see cref="DatabaseCommand"/>.
+    ///     Tests for <see cref="DatabaseCommand" />.
     /// </summary>
     public class DatabaseCommandTests
     {
         /// <summary>
         ///     Tests that a playback command with a flag packs correctly.
         /// </summary>
-        [Fact] public void TestPacked_Flag()
+        [Fact]
+        public void TestPacked_Flag()
         {
             var expected = DatabaseOp.GetShows.AsCommandWord().WithModeFlag(true);
 

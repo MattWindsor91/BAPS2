@@ -6,17 +6,17 @@ using Xunit;
 namespace URY.BAPS.Common.Protocol.V2.Tests.Commands
 {
     /// <summary>
-    ///     Tests for the command unpacking logic in <see cref="CommandFactory"/>.
+    ///     Tests for the command unpacking logic in <see cref="CommandFactory" />.
     /// </summary>
     public class CommandFactoryTests
     {
         private const CommandWord NonIndexedConfigTest = CommandWord.Config | CommandWord.SetConfigValue;
 
         private static readonly CommandWord IndexedConfigTest =
-                (CommandWord.Config | CommandWord.SetConfigValue).WithConfigIndexedFlag(true).WithConfigIndex(5);
+            (CommandWord.Config | CommandWord.SetConfigValue).WithConfigIndexedFlag(true).WithConfigIndex(5);
 
         private const CommandWord DatabaseTest =
-            (CommandWord.Database | CommandWord.GetShows);
+            CommandWord.Database | CommandWord.GetShows;
 
         private static readonly CommandWord FlaggedDatabaseTest =
             (CommandWord.Database | CommandWord.GetShows).WithModeFlag(true);
@@ -43,14 +43,28 @@ namespace URY.BAPS.Common.Protocol.V2.Tests.Commands
             };
 
         /// <summary>
-        ///     Tests that a representative non-indexed config word unpacks properly.
+        ///     Tests that unpacking, then packing, a command word preserves the original word.
+        /// </summary>
+        /// <param name="cmd">The packed word to test.</param>
+        [Theory]
+        [MemberData(nameof(CommandWordRoundTripData))]
+        public void TestUnpack_RoundTrip(CommandWord cmd)
+        {
+            var unpacked = cmd.Unpack();
+            var actualCmd = unpacked.Packed;
+            Assert.Equal(cmd, actualCmd);
+        }
+
+        /// <summary>
+        ///     Tests that a representative database word unpacks properly.
         /// </summary>
         [Fact]
-        public void TestUnpack_NonIndexedConfig()
+        public void TestUnpack_Database_Flagged()
         {
-            var raw = NonIndexedConfigTest.Unpack();
-            var unpacked = Assert.IsAssignableFrom<NonIndexedConfigCommand>(raw);
-            Assert.Equal(ConfigOp.SetConfigValue, unpacked.Op);
+            var raw = FlaggedDatabaseTest.Unpack();
+            var unpacked = Assert.IsAssignableFrom<DatabaseCommand>(raw);
+            Assert.Equal(DatabaseOp.GetShows, unpacked.Op);
+            Assert.True(unpacked.ModeFlag);
         }
 
         /// <summary>
@@ -66,15 +80,14 @@ namespace URY.BAPS.Common.Protocol.V2.Tests.Commands
         }
 
         /// <summary>
-        ///     Tests that a representative database word unpacks properly.
+        ///     Tests that a representative non-indexed config word unpacks properly.
         /// </summary>
         [Fact]
-        public void TestUnpack_Database_Flagged()
+        public void TestUnpack_NonIndexedConfig()
         {
-            var raw = FlaggedDatabaseTest.Unpack();
-            var unpacked = Assert.IsAssignableFrom<DatabaseCommand>(raw);
-            Assert.Equal(DatabaseOp.GetShows, unpacked.Op);
-            Assert.True(unpacked.ModeFlag);
+            var raw = NonIndexedConfigTest.Unpack();
+            var unpacked = Assert.IsAssignableFrom<NonIndexedConfigCommand>(raw);
+            Assert.Equal(ConfigOp.SetConfigValue, unpacked.Op);
         }
 
         /// <summary>
@@ -113,18 +126,6 @@ namespace URY.BAPS.Common.Protocol.V2.Tests.Commands
             var unpacked = Assert.IsAssignableFrom<SystemCommand>(raw);
             Assert.Equal(SystemOp.Quit, unpacked.Op);
             Assert.False(unpacked.ModeFlag);
-        }
-
-        /// <summary>
-        ///     Tests that unpacking, then packing, a command word preserves the original word.
-        /// </summary>
-        /// <param name="cmd">The packed word to test.</param>
-        [Theory, MemberData(nameof(CommandWordRoundTripData))]
-        public void TestUnpack_RoundTrip(CommandWord cmd)
-        {
-            var unpacked = cmd.Unpack();
-            var actualCmd = unpacked.Packed;
-            Assert.Equal(cmd, actualCmd);
         }
     }
 }

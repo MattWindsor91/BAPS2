@@ -12,21 +12,21 @@
     <UserControl.Resources>
         <converters:MillisecondsToPositionStringConverter x:Key="MsecToPositionStringConverter" />
         <LinearGradientBrush x:Key="PlayBrush" StartPoint="0 0" EndPoint="0 1">
-            <GradientStop Color="#10893E" Offset="0"  />
-            <GradientStop Color="white" Offset="0.05"/>
-            <GradientStop Color="#00CC6A" Offset="0.85"/>
-            <GradientStop Color="#10893E" Offset="1"/>
+            <GradientStop Color="#10893E" Offset="0" />
+            <GradientStop Color="white" Offset="0.05" />
+            <GradientStop Color="#00CC6A" Offset="0.85" />
+            <GradientStop Color="#10893E" Offset="1" />
         </LinearGradientBrush>
         <LinearGradientBrush x:Key="PauseBrush" StartPoint="0 0" EndPoint="0 1">
-            <GradientStop Color="#CA5010" Offset="0"  />
-            <GradientStop Color="white" Offset="0.05"/>
-            <GradientStop Color="#FF8C00" Offset="0.85"/>
+            <GradientStop Color="#CA5010" Offset="0" />
+            <GradientStop Color="white" Offset="0.05" />
+            <GradientStop Color="#FF8C00" Offset="0.85" />
             <GradientStop Color="#CA5010" Offset="1" />
         </LinearGradientBrush>
         <LinearGradientBrush x:Key="StopBrush" StartPoint="0 0" EndPoint="0 1">
-            <GradientStop Color="#D13438" Offset="0"  />
-            <GradientStop Color="white" Offset="0.05"/>
-            <GradientStop Color="#E81123" Offset="0.85"/>
+            <GradientStop Color="#D13438" Offset="0" />
+            <GradientStop Color="white" Offset="0.05" />
+            <GradientStop Color="#E81123" Offset="0.85" />
             <GradientStop Color="#D13438" Offset="1" />
         </LinearGradientBrush>
     </UserControl.Resources>
@@ -65,7 +65,7 @@
             ToolTip="Stop"
             Command="{Binding StopCommand}" />
         <!-- Track name -->
-        <controls:TrackLegend Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" DataContext="{Binding LoadedTrack}"/>
+        <controls:TrackLegend Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" DataContext="{Binding LoadedTrack}" />
         <!-- Track bar -->
         <controls:TrackBar Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" DataContext="{Binding}" />
         <!-- Position displays -->

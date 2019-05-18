@@ -17,7 +17,8 @@ namespace URY.BAPS.Common.Model.Tests.ServerConfig
         ///     Tests that converting a channel flag to an option key and back is the identity.
         /// </summary>
         /// <param name="flag">The flag to test.</param>
-        [Theory, MemberData(nameof(FlagData))]
+        [Theory]
+        [MemberData(nameof(FlagData))]
         public void TestChannelFlag_ToOptionKey_RoundTrip(ChannelFlag flag)
         {
             Assert.Equal(flag, flag.ToOptionKey().ToChannelFlag());

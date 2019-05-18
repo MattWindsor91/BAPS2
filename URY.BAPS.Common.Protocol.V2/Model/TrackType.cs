@@ -30,7 +30,7 @@ namespace URY.BAPS.Common.Protocol.V2.Model
         /// </summary>
         Text = 3
     }
-    
+
     public static class TrackTypeExtensions
     {
         /// <summary>
@@ -64,5 +64,4 @@ namespace URY.BAPS.Common.Protocol.V2.Model
             return tt == TrackType.Text;
         }
     }
-
 }

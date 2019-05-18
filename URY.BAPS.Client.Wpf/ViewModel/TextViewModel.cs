@@ -1,11 +1,4 @@
-﻿using System;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Threading;
-using JetBrains.Annotations;
-using URY.BAPS.Client.Common;
-using URY.BAPS.Client.Common.Controllers;
-using URY.BAPS.Client.Common.Events;
-using URY.BAPS.Client.Common.Updaters;
+﻿using URY.BAPS.Client.Common.Updaters;
 
 namespace URY.BAPS.Client.Wpf.ViewModel
 {
@@ -13,19 +6,23 @@ namespace URY.BAPS.Client.Wpf.ViewModel
     ///     A view model that represents the text panel, and its various
     ///     configurable aspects.
     /// </summary>
-    class TextViewModel : ViewModelBase, ITextViewModel
+    internal class TextViewModel : ViewModelBase, ITextViewModel
     {
         [NotNull] private readonly SystemController _controller;
 
+        private double _fontSize;
+
+        private string _text;
+
         /// <summary>
-        ///     Constructs a <see cref="TextViewModel"/>.
+        ///     Constructs a <see cref="TextViewModel" />.
         /// </summary>
         /// <param name="controller">
-        ///     The <see cref="SystemController"/> used to translate text-panel
+        ///     The <see cref="SystemController" /> used to translate text-panel
         ///     actions into server requests.
         /// </param>
         /// <param name="updater">
-        ///     The <see cref="ISystemServerUpdater"/> to which this view model
+        ///     The <see cref="ISystemServerUpdater" /> to which this view model
         ///     subscribes for text-property updates.
         /// </param>
         public TextViewModel([CanBeNull] SystemController controller, [CanBeNull] IClientCore updater)
@@ -34,10 +31,6 @@ namespace URY.BAPS.Client.Wpf.ViewModel
 
             SubscribeToServerUpdates(updater);
         }
-
-        private string _text;
-
-        private double _fontSize;
 
         /// <summary>
         ///     The font size.

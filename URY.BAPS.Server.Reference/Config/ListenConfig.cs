@@ -1,4 +1,3 @@
-using System.Threading;
 using Microsoft.Extensions.Logging;
 
 namespace URY.BAPS.Server.Reference.Config
@@ -7,11 +6,16 @@ namespace URY.BAPS.Server.Reference.Config
     {
         private readonly ILogger<ListenConfig> _logger;
 
+        public ListenConfig(ILogger<ListenConfig> logger)
+        {
+            _logger = logger;
+        }
+
         /// <summary>
         ///     The TCP/IP host on which this server is listening.
         /// </summary>
         public string Host { get; set; } = "localhost";
-        
+
         /// <summary>
         ///     The TCP/IP port on which this server is listening.
         /// </summary>
@@ -19,14 +23,10 @@ namespace URY.BAPS.Server.Reference.Config
 
         public Protocol Protocol { get; set; } = Protocol.BapsNetV2;
 
-        public ListenConfig(ILogger<ListenConfig> logger)
-        {
-            _logger = logger;
-        }
-
         public void DumpToLogger()
         {
-            _logger.LogInformation("Listening on host {Host}, port {Port}, on BAPS protocol {Protocol}.", Host, Port, Protocol);
+            _logger.LogInformation("Listening on host {Host}, port {Port}, on BAPS protocol {Protocol}.", Host, Port,
+                Protocol);
         }
     }
 }

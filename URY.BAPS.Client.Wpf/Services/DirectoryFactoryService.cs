@@ -1,12 +1,9 @@
-using System;
-using JetBrains.Annotations;
-using URY.BAPS.Client.Common.Controllers;
 using URY.BAPS.Client.Wpf.ViewModel;
 
 namespace URY.BAPS.Client.Wpf.Services
 {
     /// <summary>
-    ///     A service that builds <see cref="DirectoryViewModel"/>s and their dependencies.
+    ///     A service that builds <see cref="DirectoryViewModel" />s and their dependencies.
     /// </summary>
     [UsedImplicitly]
     public class DirectoryFactoryService
@@ -24,12 +21,12 @@ namespace URY.BAPS.Client.Wpf.Services
         {
             _controllerSet = controllerSet ?? throw new ArgumentNullException(nameof(controllerSet));
         }
-        
+
         /// <summary>
         ///     Creates a directory view model.
         /// </summary>
         /// <param name="id">The ID of the channel whose view model is being created.</param>
-        /// <returns>A <see cref="IChannelViewModel"/> over channel <see cref="id"/>.</returns>
+        /// <returns>A <see cref="IChannelViewModel" /> over channel <see cref="id" />.</returns>
         [Pure]
         public IDirectoryViewModel Make(byte id)
         {

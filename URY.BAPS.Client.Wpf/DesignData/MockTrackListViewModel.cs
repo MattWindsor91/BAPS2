@@ -1,4 +1,3 @@
-using URY.BAPS.Client.Common.Model;
 using URY.BAPS.Client.Wpf.ViewModel;
 
 namespace URY.BAPS.Client.Wpf.DesignData
@@ -66,7 +65,7 @@ namespace URY.BAPS.Client.Wpf.DesignData
         }
 
         protected override void DropText(string text)
-        {            
+        {
         }
 
         public override void Dispose()

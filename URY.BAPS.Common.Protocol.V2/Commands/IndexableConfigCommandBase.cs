@@ -13,22 +13,22 @@
         {
             return op.AsCommandWord();
         }
-        
+
         #region Convenience methods for working with indices
-        
+
         /// <summary>
         ///     Whether this command carries an index.
         /// </summary>
         public abstract bool HasIndex { get; }
-        
+
         /// <summary>
         ///     The index of this indexable config command.
         ///     <para>
-        ///         This value is undefined if <see cref="HasIndex"/> is <c>false</c>.
+        ///         This value is undefined if <see cref="HasIndex" /> is <c>false</c>.
         ///     </para>
         /// </summary>
         public abstract byte Index { get; }
-        
+
         #endregion Convenience methods for working with indices
     }
 }

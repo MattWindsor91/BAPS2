@@ -55,7 +55,7 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
             var cmd = PlaybackCommand(state.AsPlaybackOp());
             Send(new MessageBuilder(cmd));
         }
-        
+
         /// <summary>
         ///     Asks the BAPS server to move one of this channel's markers.
         /// </summary>
@@ -65,19 +65,6 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
         {
             var cmd = PlaybackCommand(type.AsPlaybackOp());
             Send(new MessageBuilder(cmd).Add(newValue));
-        }
-
-        public void Select(uint index)
-        {
-            var cmd = PlaybackCommand(PlaybackOp.Load);
-            Send(new MessageBuilder(cmd).Add(index));
-        }
-
-        public void SetFlag(ChannelFlag flag, bool value)
-        {
-            var optionKey = flag.ToOptionKey();
-            var choiceDesc = ChoiceKeys.BooleanToChoice(value);
-            _config.SetChoice(optionKey, choiceDesc, _channelId);
         }
 
         public void SetRepeatMode(RepeatMode newMode)
@@ -112,7 +99,7 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
         }
 
         /// <summary>
-        ///     Asks the BAPS server to add a text item. 
+        ///     Asks the BAPS server to add a text item.
         /// </summary>
         /// <param name="text">The body of the text item.</param>
         /// <param name="summary">The optional short title of the text item.</param>
@@ -121,42 +108,19 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
             summary ??= text.Summary();
             Send(MakeAddTextItem(_channelId, summary, text));
         }
-       
-        #region Command factories
-        
-        /// <summary>
-        ///     Makes the command part of an add-item message.
-        /// </summary>
-        /// <param name="channelId">The ID of the channel to which we are adding.</param>
-        /// <returns>A command for adding an item to <paramref name="channelId"/>.</returns>
-        private static ICommand MakeAddItemCommand(byte channelId)
+
+        public void Select(uint index)
         {
-            return new PlaylistCommand(PlaylistOp.AddItem, channelId, false);
+            var cmd = PlaybackCommand(PlaybackOp.Load);
+            Send(new MessageBuilder(cmd).Add(index));
         }
 
-        /// <summary>
-        ///     Creates a playback command over this controller's channel.
-        /// </summary>
-        /// <param name="op">The playback op code for this command.</param>
-        /// <param name="modeFlag">Optional mode flag (off by default).</param>
-        /// <returns>A <see cref="PlaybackCommand"/> with this controller's channel and the given op and mode flag.</returns>
-        private PlaybackCommand PlaybackCommand(PlaybackOp op, bool modeFlag = false)
+        public void SetFlag(ChannelFlag flag, bool value)
         {
-            return new PlaybackCommand(op, _channelId, modeFlag);
+            var optionKey = flag.ToOptionKey();
+            var choiceDesc = ChoiceKeys.BooleanToChoice(value);
+            _config.SetChoice(optionKey, choiceDesc, _channelId);
         }
-
-        /// <summary>
-        ///     Creates a playlist command over this controller's channel.
-        /// </summary>
-        /// <param name="op">The playlist op code for this command.</param>
-        /// <param name="modeFlag">Optional mode flag (off by default).</param>
-        /// <returns>A <see cref="PlaylistCommand"/> with this controller's channel and the given op and mode flag.</returns>
-        private PlaylistCommand PlaylistCommand(PlaylistOp op, bool modeFlag = false)
-        {
-            return new PlaylistCommand(op, _channelId, modeFlag);
-        }
-
-        #endregion Command factories
 
         /// <summary>
         ///     Makes the common starting base of an add-item message.
@@ -166,7 +130,7 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
         /// <returns>A message, to which we can add type-specific arguments.</returns>
         private static MessageBuilder MakeAddItemBase(byte channelId, TrackType trackType)
         {
-            return new MessageBuilder(MakeAddItemCommand(channelId)).Add((uint)trackType);
+            return new MessageBuilder(MakeAddItemCommand(channelId)).Add((uint) trackType);
         }
 
         private static MessageBuilder MakeAddFileItem(byte channelId, uint directoryNumber, string filename)
@@ -182,6 +146,42 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
         private static MessageBuilder MakeAddTextItem(byte channelId, string briefDescription, string details)
         {
             return MakeAddItemBase(channelId, TrackType.Text).Add(briefDescription).Add(details);
-        }       
+        }
+
+        #region Command factories
+
+        /// <summary>
+        ///     Makes the command part of an add-item message.
+        /// </summary>
+        /// <param name="channelId">The ID of the channel to which we are adding.</param>
+        /// <returns>A command for adding an item to <paramref name="channelId" />.</returns>
+        private static ICommand MakeAddItemCommand(byte channelId)
+        {
+            return new PlaylistCommand(PlaylistOp.AddItem, channelId);
+        }
+
+        /// <summary>
+        ///     Creates a playback command over this controller's channel.
+        /// </summary>
+        /// <param name="op">The playback op code for this command.</param>
+        /// <param name="modeFlag">Optional mode flag (off by default).</param>
+        /// <returns>A <see cref="PlaybackCommand" /> with this controller's channel and the given op and mode flag.</returns>
+        private PlaybackCommand PlaybackCommand(PlaybackOp op, bool modeFlag = false)
+        {
+            return new PlaybackCommand(op, _channelId, modeFlag);
+        }
+
+        /// <summary>
+        ///     Creates a playlist command over this controller's channel.
+        /// </summary>
+        /// <param name="op">The playlist op code for this command.</param>
+        /// <param name="modeFlag">Optional mode flag (off by default).</param>
+        /// <returns>A <see cref="PlaylistCommand" /> with this controller's channel and the given op and mode flag.</returns>
+        private PlaylistCommand PlaylistCommand(PlaylistOp op, bool modeFlag = false)
+        {
+            return new PlaylistCommand(op, _channelId, modeFlag);
+        }
+
+        #endregion Command factories
     }
 }

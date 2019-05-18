@@ -1,7 +1,4 @@
-﻿using System;
-using Microsoft.Win32;
-
-namespace URY.BAPS.Client.Windows
+﻿namespace URY.BAPS.Client.Windows
 {
     /// <inheritdoc />
     /// <summary>

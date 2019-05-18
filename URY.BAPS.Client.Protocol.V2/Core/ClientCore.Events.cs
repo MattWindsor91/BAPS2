@@ -6,7 +6,7 @@ namespace URY.BAPS.Client.Protocol.V2.Core
     {
         private readonly DetachableServerUpdater _updater = new DetachableServerUpdater();
         public IServerUpdater Updater => _updater;
-        
+
         /// <summary>
         ///     Subscribes the server updater on the client core to
         ///     that on the receiver.

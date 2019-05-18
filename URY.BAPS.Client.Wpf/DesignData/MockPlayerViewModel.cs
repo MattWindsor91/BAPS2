@@ -1,4 +1,3 @@
-using URY.BAPS.Client.Common.Model;
 using URY.BAPS.Client.Wpf.ViewModel;
 
 namespace URY.BAPS.Client.Wpf.DesignData
