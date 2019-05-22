@@ -10,17 +10,17 @@ namespace URY.BAPS.Common.Protocol.V2.Io
     ///     Takes requests to send BapsNet primitives, and applies them to a
     ///     <see cref="Stream" /> of bytes.
     ///     <para>
-    ///         Disposing the <see cref="StreamSink" /> does NOT dispose the underlying stream.
+    ///         Disposing the <see cref="StreamPrimitiveSink" /> does NOT dispose the underlying stream.
     ///     </para>
     /// </summary>
-    public class StreamSink : ISink, IDisposable
+    public class StreamPrimitiveSink : IPrimitiveSink, IDisposable
     {
         /// <summary>
         ///     A writer used to send bytes to a stream.
         /// </summary>
         [NotNull] private readonly BinaryWriter _writer;
 
-        public StreamSink(Stream? stream)
+        public StreamPrimitiveSink(Stream? stream)
         {
             if (stream is null) throw new ArgumentNullException(nameof(stream));
             if (!stream.CanWrite) throw new ArgumentException("Stream must be readable", nameof(stream));
@@ -32,26 +32,26 @@ namespace URY.BAPS.Common.Protocol.V2.Io
             _writer.Dispose();
         }
 
-        /// <inheritdoc cref="ISink" />
+        /// <inheritdoc cref="IPrimitiveSink" />
         public void SendCommand(CommandWord cmd)
         {
             SendNetworkOrder(BitConverter.GetBytes((ushort) cmd));
         }
 
-        /// <inheritdoc cref="ISink" />
+        /// <inheritdoc cref="IPrimitiveSink" />
         public void SendString(string s)
         {
             SendUint((uint) Encoding.UTF8.GetByteCount(s));
             _writer.Write(s.ToCharArray());
         }
 
-        /// <inheritdoc cref="ISink" />
+        /// <inheritdoc cref="IPrimitiveSink" />
         public void SendFloat(float f)
         {
             SendNetworkOrder(BitConverter.GetBytes(f));
         }
 
-        /// <inheritdoc cref="ISink" />
+        /// <inheritdoc cref="IPrimitiveSink" />
         public void SendUint(uint i)
         {
             SendNetworkOrder(BitConverter.GetBytes(i));

@@ -6,12 +6,12 @@ using Xunit;
 namespace URY.BAPS.Common.Protocol.V2.Tests.Io
 {
     /// <summary>
-    ///     Tests that exercise <see cref="StreamBapsNetSource" /> in isolation.
+    ///     Tests that exercise <see cref="StreamPrimitiveSource" /> in isolation.
     /// </summary>
     public class StreamSourceTests
     {
         /// <summary>
-        ///     Tests that constructing a <see cref="StreamBapsNetSource" /> with a closed stream fails.
+        ///     Tests that constructing a <see cref="StreamPrimitiveSource" /> with a closed stream fails.
         /// </summary>
         [Fact]
         public void TestConstruct_ClosedStream()
@@ -19,16 +19,16 @@ namespace URY.BAPS.Common.Protocol.V2.Tests.Io
             var stream = new MemoryStream();
             stream.Close();
 
-            Assert.Throws<ArgumentException>("stream", () => new StreamBapsNetSource(stream));
+            Assert.Throws<ArgumentException>("stream", () => new StreamPrimitiveSource(stream));
         }
 
         /// <summary>
-        ///     Tests that constructing a <see cref="StreamBapsNetSource" /> with a null stream fails.
+        ///     Tests that constructing a <see cref="StreamPrimitiveSource" /> with a null stream fails.
         /// </summary>
         [Fact]
         public void TestConstruct_NullStream()
         {
-            Assert.Throws<ArgumentNullException>("stream", () => new StreamBapsNetSource(null));
+            Assert.Throws<ArgumentNullException>("stream", () => new StreamPrimitiveSource(null));
         }
     }
 }

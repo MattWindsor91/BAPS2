@@ -11,14 +11,14 @@ namespace URY.BAPS.Common.Protocol.V2.Io
     ///     Takes requests to receive BapsNet primitives, and applies them to a
     ///     <see cref="BufferedStream" /> of bytes.
     ///     <para>
-    ///         Disposing the <see cref="StreamSink" /> does NOT dispose the underlying stream.
+    ///         Disposing the <see cref="StreamPrimitiveSink" /> does NOT dispose the underlying stream.
     ///     </para>
     /// </summary>
-    public class StreamBapsNetSource : IBapsNetSource, IDisposable
+    public class StreamPrimitiveSource : IPrimitiveSource, IDisposable
     {
         [NotNull] private readonly BinaryReader _reader;
 
-        public StreamBapsNetSource(Stream? stream)
+        public StreamPrimitiveSource(Stream? stream)
         {
             if (stream is null) throw new ArgumentNullException(nameof(stream));
             if (!stream.CanRead) throw new ArgumentException("Stream must be readable", nameof(stream));

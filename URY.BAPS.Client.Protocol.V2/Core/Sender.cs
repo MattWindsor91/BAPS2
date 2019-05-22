@@ -15,24 +15,24 @@ namespace URY.BAPS.Client.Protocol.V2.Core
         [ItemNotNull] [NotNull]
         private readonly BlockingCollection<MessageBuilder> _queue = new BlockingCollection<MessageBuilder>();
 
-        [NotNull] private readonly ISink _sink;
+        [NotNull] private readonly IPrimitiveSink _primitiveSink;
         private readonly CancellationToken _token;
 
         /// <summary>
         ///     Constructs a new <see cref="Sender" />.
         /// </summary>
-        /// <param name="sink">
-        ///     The <see cref="ISink" /> that the <see cref="Sender" /> will
+        /// <param name="primitiveSink">
+        ///     The <see cref="IPrimitiveSink" /> that the <see cref="Sender" /> will
         ///     send packed BapsNet messages on.
         /// </param>
         /// <param name="token">
         ///     The cancellation token that the <see cref="Sender" /> will check
         ///     to see if it should shut down.
         /// </param>
-        public Sender(ISink? sink, CancellationToken token)
+        public Sender(IPrimitiveSink? primitiveSink, CancellationToken token)
         {
             _token = token;
-            _sink = sink ?? throw new ArgumentNullException(nameof(sink));
+            _primitiveSink = primitiveSink ?? throw new ArgumentNullException(nameof(primitiveSink));
         }
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace URY.BAPS.Client.Protocol.V2.Core
             while (!_token.IsCancellationRequested)
             {
                 var msg = _queue.Take(_token);
-                msg.Send(_sink);
+                msg.Send(_primitiveSink);
             }
 
             _token.ThrowIfCancellationRequested();

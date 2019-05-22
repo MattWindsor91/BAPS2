@@ -4,7 +4,7 @@ using URY.BAPS.Common.Protocol.V2.Commands;
 
 namespace URY.BAPS.Common.Protocol.V2.Decode
 {
-    public partial class CommandDecoder
+    public partial class CommandDecoderBase
     {
         public void Visit(SystemCommand command)
         {
@@ -65,20 +65,9 @@ namespace URY.BAPS.Common.Protocol.V2.Decode
             Dispatch(new DirectoryPrepareEventArgs(directoryIndex, niceDirectoryName));
         }
 
-        private void DecodeServerVersion()
-        {
-            var version = ReceiveString();
-            var date = ReceiveString();
-            var time = ReceiveString();
-            var author = ReceiveString();
-            var sv = new ServerVersion(version, date, time, author);
-            Dispatch(new ServerVersionArgs(sv));
-        }
+        protected abstract void DecodeServerVersion();
 
-        private void DecodeFeedback()
-        {
-            _ = ReceiveUint();
-        }
+        protected abstract void DecodeFeedback();
 
         private void DecodeSendMessage()
         {

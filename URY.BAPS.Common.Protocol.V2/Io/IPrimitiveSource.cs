@@ -7,7 +7,7 @@ namespace URY.BAPS.Common.Protocol.V2.Io
     ///     Low-level interface for objects that can produce items of the
     ///     primitive BapsNet types: commands, strings, floats, and uints.
     /// </summary>
-    public interface IBapsNetSource
+    public interface IPrimitiveSource
     {
         /// <summary>
         ///     Performs a blocking (synchronous) read of a command word.
@@ -17,7 +17,7 @@ namespace URY.BAPS.Common.Protocol.V2.Io
         CommandWord ReceiveCommand(CancellationToken token = default);
 
         /// <summary>
-        ///     Performs a blocking (synchronous) read of a string
+        ///     Performs a blocking (synchronous) read of a string.
         /// </summary>
         /// <param name="token">An optional cancellation token that can be used to abort the receive.</param>
         /// <returns>The resulting <see cref="string" />.</returns>

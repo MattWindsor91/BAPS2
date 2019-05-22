@@ -13,7 +13,7 @@ namespace URY.BAPS.Common.Protocol.V2.Encode
         /// </summary>
         int Length { get; }
 
-        void Send(ISink sock);
+        void Send(IPrimitiveSink sock);
     }
 
     /// <summary>
@@ -25,7 +25,7 @@ namespace URY.BAPS.Common.Protocol.V2.Encode
 
         public int Length => Encoding.UTF8.GetByteCount(Value) + sizeof(uint);
 
-        public void Send(ISink sock)
+        public void Send(IPrimitiveSink sock)
         {
             sock.SendString(Value);
         }
@@ -40,7 +40,7 @@ namespace URY.BAPS.Common.Protocol.V2.Encode
 
         public int Length => sizeof(uint);
 
-        public void Send(ISink sock)
+        public void Send(IPrimitiveSink sock)
         {
             sock.SendUint(Value);
         }
@@ -55,7 +55,7 @@ namespace URY.BAPS.Common.Protocol.V2.Encode
 
         public int Length => sizeof(float);
 
-        public void Send(ISink sock)
+        public void Send(IPrimitiveSink sock)
         {
             sock.SendFloat(Value);
         }

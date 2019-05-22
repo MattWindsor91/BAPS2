@@ -4,38 +4,32 @@ using URY.BAPS.Common.Protocol.V2.Ops;
 
 namespace URY.BAPS.Common.Protocol.V2.Decode
 {
-    public partial class CommandDecoder
+    public partial class CommandDecoderBase
     {
         public void Visit(DatabaseCommand command)
         {
             switch (command.Op)
             {
-                case DatabaseOp.LibraryResult:
-                {
-                    if (command.ModeFlag)
-                        DecodeLibraryResult(command.Value);
-                    else
-                        DecodeCount(CountType.LibraryItem);
-                }
+                case DatabaseOp.LibraryResult when command.ModeFlag:
+                    DecodeLibraryResult(command.Value);
+                    break;
+                case DatabaseOp.LibraryResult when !command.ModeFlag:
+                    DecodeCount(CountType.LibraryItem);
                     break;
                 case DatabaseOp.LibraryError:
-                {
                     DecodeError(ErrorType.Library, command.Value);
-                }
                     break;
-                case DatabaseOp.Show:
-                    if (command.ModeFlag)
-                        DecodeShow();
-                    else
-                        DecodeCount(CountType.Show);
-
+                case DatabaseOp.Show when command.ModeFlag:
+                    DecodeShow();
                     break;
-                case DatabaseOp.Listing:
-                    if (command.ModeFlag)
-                        DecodeListing();
-                    else
-                        DecodeCount(CountType.Listing);
-
+                case DatabaseOp.Show when !command.ModeFlag: 
+                    DecodeCount(CountType.Show);
+                    break;
+                case DatabaseOp.Listing when command.ModeFlag:
+                    DecodeListing();
+                    break;
+                case DatabaseOp.Listing when !command.ModeFlag:
+                    DecodeCount(CountType.Listing);
                     break;
                 case DatabaseOp.BapsDbError:
                     DecodeError(ErrorType.BapsDb, command.Value);

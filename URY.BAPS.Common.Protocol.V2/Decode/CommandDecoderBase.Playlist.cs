@@ -1,37 +1,28 @@
 using URY.BAPS.Common.Model.MessageEvents;
 using URY.BAPS.Common.Protocol.V2.Commands;
-using URY.BAPS.Common.Protocol.V2.Model;
 
 namespace URY.BAPS.Common.Protocol.V2.Decode
 {
-    public partial class CommandDecoder
+    public partial class CommandDecoderBase
     {
         public void Visit(PlaylistCommand command)
         {
             switch (command.Op)
             {
-                case PlaylistOp.Item:
-                    if (command.ModeFlag)
-                        DecodeItem(command.ChannelId);
-                    else
-                        // Deliberately ignore?
-                        _ = ReceiveUint();
-
+                case PlaylistOp.Item when command.ModeFlag:
+                    DecodeItem(command.ChannelId);
+                    break;
+                case PlaylistOp.Item when !command.ModeFlag:
+                    DecodeCount(CountType.PlaylistItem, command.ChannelId);
                     break;
                 case PlaylistOp.MoveItemTo:
-                {
                     DecodeMoveItemTo(command.ChannelId);
-                }
                     break;
                 case PlaylistOp.DeleteItem:
-                {
                     DecodeDeleteItem(command.ChannelId);
-                }
                     break;
                 case PlaylistOp.ResetPlaylist:
-                {
                     DecodeResetPlaylist(command.ChannelId);
-                }
                     break;
                 default:
                     ReportMalformedCommand(CommandGroup.Playlist);
@@ -39,14 +30,7 @@ namespace URY.BAPS.Common.Protocol.V2.Decode
             }
         }
 
-        private void DecodeItem(byte channelId)
-        {
-            var index = ReceiveUint();
-            var type = DecodeTrackType();
-            var description = ReceiveString();
-            var entry = TrackFactory.Create(type, description);
-            Dispatch(new TrackAddArgs(channelId, index, entry));
-        }
+        protected abstract void DecodeItem(byte channelId);
 
         private void DecodeResetPlaylist(byte channelId)
         {

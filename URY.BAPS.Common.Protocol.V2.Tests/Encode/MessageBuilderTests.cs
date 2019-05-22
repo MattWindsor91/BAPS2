@@ -10,12 +10,12 @@ namespace URY.BAPS.Common.Protocol.V2.Tests.Encode
     /// <summary>
     ///     Tests that <see cref="MessageBuilder" />'s construction and sending methods behave properly.
     /// </summary>
-    public class MessageTests
+    public class MessageBuilderTests
     {
         private static void AssertMessage(MessageBuilder messageBuilder, ICommand expectedCommand, uint expectedLength,
             params Action<object>[] elementInspectors)
         {
-            var sink = new DebugSink();
+            var sink = new DebugPrimitiveSink();
             messageBuilder.Send(sink);
 
             var finalElementInspectors = new Action<object>[elementInspectors.Length + 2];

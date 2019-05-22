@@ -1,71 +1,56 @@
+using System;
 using System.Text;
 using JetBrains.Annotations;
 using URY.BAPS.Common.Model.Track;
 using URY.BAPS.Common.Protocol.V2.Model;
+using URY.BAPS.Common.Protocol.V2.Tests.Utils;
 using Xunit;
 
 namespace URY.BAPS.Common.Protocol.V2.Tests.Model
 {
     public class TrackFactoryTests
     {
-        [Pure]
-        private string SummariseTrack(ITrack track)
-        {
-            return new StringBuilder()
-                .Append(track.IsError ? 'E' : 'e')
-                .Append(track.IsLoading ? 'L' : 'l')
-                .Append(track.IsAudioItem ? 'A' : 'a')
-                .Append(track.IsFromLibrary ? 'I' : 'i')
-                .Append(track.IsTextItem ? 'T' : 't')
-                .Append('|')
-                .Append(track.Description)
-                .Append('|')
-                .Append(track.Duration)
-                .Append('|')
-                .Append(track.Text)
-                .ToString();
-        }
 
         [Fact]
         public void TestTrackFactory_AudioFile()
         {
             var track = TrackFactory.Create(TrackType.File, "Genesis", 2753, "ABACAB");
-            Assert.Equal("elAit|Genesis|2753|", SummariseTrack(track));
+            Assert.Equal("e|l|A|i|t|Genesis|2753|", track.Summarise());
         }
 
         [Fact]
         public void TestTrackFactory_AudioLibrary()
         {
             var track = TrackFactory.Create(TrackType.Library, "Genesis", 2753, "ABACAB");
-            Assert.Equal("elAIt|Genesis|2753|", SummariseTrack(track));
+            Assert.Equal("e|l|A|I|t|Genesis|2753|", track.Summarise());
         }
 
         [Fact]
         public void TestTrackFactory_LoadFailed()
         {
             var track = TrackFactory.Create(TrackType.Void, SpecialTrackDescriptions.LoadFailed);
-            Assert.Equal("Elait|Load failed|0|", SummariseTrack(track));
+            Assert.Equal("E|l|a|i|t|Load failed|0|", track.Summarise());
         }
 
         [Fact]
         public void TestTrackFactory_Loading()
         {
             var track = TrackFactory.Create(TrackType.Void, SpecialTrackDescriptions.Loading);
-            Assert.Equal("eLait|Loading|0|", SummariseTrack(track));
+            Assert.Equal("e|L|a|i|t|Loading|0|", track.Summarise());
         }
 
         [Fact]
         public void TestTrackFactory_Null()
         {
             var track = TrackFactory.Create(TrackType.Void, SpecialTrackDescriptions.None);
-            Assert.Equal("elait|--NONE--|0|", SummariseTrack(track));
+            Assert.Equal("e|l|a|i|t|--NONE--|0|", track.Summarise());
         }
 
         [Fact]
         public void TestTrackFactory_Text()
         {
             var track = TrackFactory.Create(TrackType.Text, "Genesis", 32767, "ABACAB");
-            Assert.Equal("elaiT|Genesis|0|ABACAB", SummariseTrack(track));
+            Assert.Equal("e|l|a|i|T|Genesis|0|ABACAB", track.Summarise());
         }
     }
 }

@@ -5,7 +5,7 @@ using URY.BAPS.Common.Protocol.V2.Commands;
 
 namespace URY.BAPS.Common.Protocol.V2.Decode
 {
-    public partial class CommandDecoder
+    public partial class CommandDecoderBase
     {
         private static int IndexAsInt(IndexableConfigCommandBase c)
         {

@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using Autofac;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using URY.BAPS.Server.Reference.Config;
@@ -8,14 +9,24 @@ namespace URY.BAPS.Server.Reference
     internal class Program
     {
         private readonly string[] _args;
+        private IContainer _container;
 
-        public Program(string[] args)
+        private static IContainer BuildContainer()
+        {
+            var cb = new ContainerBuilder();
+            return cb.Build();
+        }
+        
+        private Program(string[] args)
         {
             _args = args;
+            _container = BuildContainer();
         }
 
-        public void Run()
+        private void Run()
         {
+            using var scope = _container.BeginLifetimeScope();
+            
             var configuration = MakeConfiguration();
             var loggerFactory = MakeLoggerFactory(configuration);
             var configFactory = new ConfigFactory(loggerFactory);

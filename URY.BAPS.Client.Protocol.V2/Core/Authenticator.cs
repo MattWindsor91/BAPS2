@@ -80,7 +80,7 @@ namespace URY.BAPS.Client.Protocol.V2.Core
         }
 
         private (CommandWord command, string? payload) ReceiveSystemStringCommand(SystemOp expectedOp,
-            IBapsNetSource src)
+            IPrimitiveSource src)
         {
             var cmd = src.ReceiveCommand();
             _ = src.ReceiveUint(); // Discard length

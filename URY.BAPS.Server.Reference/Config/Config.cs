@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace URY.BAPS.Server.Reference.Config
 {
@@ -13,25 +14,38 @@ namespace URY.BAPS.Server.Reference.Config
         void DumpToLogger();
     }
 
+    public abstract class ConfigBase<T> : IConfig
+    {
+        protected ConfigBase(ILogger<T>? logger)
+        {
+            Logger = logger ?? NullLogger<T>.Instance;
+        }
+
+        protected ILogger<T> Logger { get; }
+
+        public abstract void DumpToLogger();
+    }
+
     /// <summary>
     ///     Root of the BAPS server config tree.
     /// </summary>
-    public class ServerConfig : IConfig
+    public class ServerConfig : ConfigBase<ServerConfig>
     {
-        private readonly ILogger<ServerConfig> _logger;
 
-        public ServerConfig(ListenConfig listen, ILogger<ServerConfig> logger)
+        public ServerConfig(ListenConfig listen, ChannelSetConfig channelSet, ILogger<ServerConfig>? logger) : base(logger)
         {
             Listen = listen;
-            _logger = logger;
+            ChannelSet = channelSet;
         }
 
         public ListenConfig Listen { get; }
+        public ChannelSetConfig ChannelSet { get; }
 
-        public void DumpToLogger()
+        public override void DumpToLogger()
         {
-            _logger.LogInformation("Here comes the BAPS server configuration.");
+            Logger.LogInformation("Here comes the BAPS server configuration.");
             Listen.DumpToLogger();
+            ChannelSet.DumpToLogger();
         }
     }
 }

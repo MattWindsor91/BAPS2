@@ -11,22 +11,22 @@ namespace URY.BAPS.Common.Protocol.V2.Io
     /// </summary>
     public class TcpConnection : IConnection, IDisposable
     {
-        private readonly StreamBapsNetSource _bapsNetSource;
+        private readonly StreamPrimitiveSource _primitiveSource;
 
         /// <summary>
         ///     The low level socket connection
         /// </summary>
         private readonly TcpClient _clientSocket;
 
-        private readonly StreamSink _sink;
+        private readonly StreamPrimitiveSink _primitiveSink;
 
         public TcpConnection(string host, int port)
         {
             _clientSocket = new TcpClient(host, port) {LingerState = new LingerOption(false, 0), NoDelay = true};
             var stream = _clientSocket.GetStream();
 
-            _sink = new StreamSink(stream);
-            _bapsNetSource = new StreamBapsNetSource(stream);
+            _primitiveSink = new StreamPrimitiveSink(stream);
+            _primitiveSource = new StreamPrimitiveSource(stream);
         }
 
         /// <summary>
@@ -36,54 +36,54 @@ namespace URY.BAPS.Common.Protocol.V2.Io
 
         public CommandWord ReceiveCommand(CancellationToken token = default)
         {
-            return _bapsNetSource.ReceiveCommand(token);
+            return _primitiveSource.ReceiveCommand(token);
         }
 
         public string ReceiveString(CancellationToken token = default)
         {
-            return _bapsNetSource.ReceiveString(token);
+            return _primitiveSource.ReceiveString(token);
         }
 
         public float ReceiveFloat(CancellationToken token = default)
         {
-            return _bapsNetSource.ReceiveFloat(token);
+            return _primitiveSource.ReceiveFloat(token);
         }
 
         public uint ReceiveUint(CancellationToken token = default)
         {
-            return _bapsNetSource.ReceiveUint(token);
+            return _primitiveSource.ReceiveUint(token);
         }
 
         public void SendCommand(CommandWord cmd)
         {
-            _sink.SendCommand(cmd);
+            _primitiveSink.SendCommand(cmd);
         }
 
         public void SendString(string s)
         {
-            _sink.SendString(s);
+            _primitiveSink.SendString(s);
         }
 
         public void SendFloat(float f)
         {
-            _sink.SendFloat(f);
+            _primitiveSink.SendFloat(f);
         }
 
         public void SendUint(uint i)
         {
-            _sink.SendUint(i);
+            _primitiveSink.SendUint(i);
         }
 
         public void Flush()
         {
-            _sink.Flush();
+            _primitiveSink.Flush();
         }
 
         public void Dispose()
         {
             if (!IsValid) return;
-            _sink.Dispose();
-            _bapsNetSource.Dispose();
+            _primitiveSink.Dispose();
+            _primitiveSource.Dispose();
             _clientSocket.Close();
         }
     }

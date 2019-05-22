@@ -7,7 +7,7 @@ namespace URY.BAPS.Common.Protocol.V2.Io
     /// <summary>
     ///     A BapsNet sink that dumps each primitive item in a BapsNet command into an array.
     /// </summary>
-    public class DebugSink : ISink
+    public class DebugPrimitiveSink : IPrimitiveSink
     {
         private readonly Queue<object> _itemQueue = new Queue<object>();
 

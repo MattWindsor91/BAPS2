@@ -6,7 +6,7 @@ namespace URY.BAPS.Common.Protocol.V2.Io
     ///     Low-level interface for objects that can consume items of the
     ///     primitive BapsNet types: commands, strings, floats, and uints.
     /// </summary>
-    public interface ISink
+    public interface IPrimitiveSink
     {
         /// <summary>
         ///     Sends a command down this sink.

@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using URY.BAPS.Common.Protocol.V2.Commands;
+using URY.BAPS.Common.Protocol.V2.Decode;
 using URY.BAPS.Common.Protocol.V2.Encode;
 using URY.BAPS.Common.Protocol.V2.Io;
 
@@ -80,7 +81,9 @@ namespace URY.BAPS.Client.Protocol.V2.Core
 
         private void CreateAndLaunchReceiver(TaskFactory tf)
         {
-            _receiver = new Receiver(_socket, _dead.Token);
+            // TODO(@MattWindsor91): inject these dependencies.
+            var decoder = new ClientCommandDecoder(_socket, _dead.Token);
+            _receiver = new Receiver(_socket, decoder, _dead.Token);
             SubscribeToReceiver();
             _receiverTask = tf.StartNew(_receiver.Run);
         }

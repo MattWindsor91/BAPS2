@@ -19,6 +19,7 @@
     /// </summary>
     public enum CountType
     {
+        PlaylistItem,
         LibraryItem,
         Show,
         Listing,

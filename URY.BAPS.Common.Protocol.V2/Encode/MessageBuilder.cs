@@ -66,34 +66,34 @@ namespace URY.BAPS.Common.Protocol.V2.Encode
         /// <summary>
         ///     Sends this message to a sink, flushing at the end.
         /// </summary>
-        /// <param name="sink">The (non-null) sink to send onto.</param>
-        public void Send(ISink sink)
+        /// <param name="primitiveSink">The (non-null) sink to send onto.</param>
+        public void Send(IPrimitiveSink primitiveSink)
         {
-            SendCommand(sink);
-            SendLength(sink);
-            SendArguments(sink);
-            sink.Flush();
+            SendCommand(primitiveSink);
+            SendLength(primitiveSink);
+            SendArguments(primitiveSink);
+            primitiveSink.Flush();
         }
 
         /// <summary>
         ///     Sends this message's command to the given sink.
         /// </summary>
-        /// <param name="sink">The (non-null) sink to send onto.</param>
-        private void SendCommand(ISink sink)
+        /// <param name="primitiveSink">The (non-null) sink to send onto.</param>
+        private void SendCommand(IPrimitiveSink primitiveSink)
         {
-            sink.SendCommand(_cmd.Packed);
+            primitiveSink.SendCommand(_cmd.Packed);
         }
 
         /// <summary>
         ///     Sends each argument in this message to the given sink.
         /// </summary>
-        /// <param name="sink">The (non-null) sink to send onto.</param>
-        private void SendArguments(ISink sink)
+        /// <param name="primitiveSink">The (non-null) sink to send onto.</param>
+        private void SendArguments(IPrimitiveSink primitiveSink)
         {
-            foreach (var arg in _arguments) arg.Send(sink);
+            foreach (var arg in _arguments) arg.Send(primitiveSink);
         }
 
-        private void SendLength(ISink sock)
+        private void SendLength(IPrimitiveSink sock)
         {
             var length = (from arg in _arguments select arg.Length).Sum();
             Debug.Assert(0 <= length, "negative length");
