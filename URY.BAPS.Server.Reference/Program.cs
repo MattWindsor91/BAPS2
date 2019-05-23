@@ -1,40 +1,43 @@
 ﻿using System.IO;
 using Autofac;
+using Autofac.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using URY.BAPS.Server.Reference.Config;
 
 namespace URY.BAPS.Server.Reference
 {
+    /// <summary>
+    ///     Main entry point.
+    ///     <para>
+    ///         The purpose of <see cref="Program"/> is to instantiate the server config, then
+    ///         build and run a <see cref="Server"/> using it.
+    ///     </para>
+    /// </summary>
     internal class Program
     {
         private readonly string[] _args;
-        private IContainer _container;
-
-        private static IContainer BuildContainer()
-        {
-            var cb = new ContainerBuilder();
-            return cb.Build();
-        }
-        
+       
         private Program(string[] args)
         {
             _args = args;
-            _container = BuildContainer();
         }
 
         private void Run()
         {
-            using var scope = _container.BeginLifetimeScope();
-            
+            var config = GetServerConfig();
+            var server = new Server(config);
+            server.Run();
+        }
+
+        private ServerConfig GetServerConfig()
+        {
             var configuration = MakeConfiguration();
             var loggerFactory = MakeLoggerFactory(configuration);
             var configFactory = new ConfigFactory(loggerFactory);
             var config = configFactory.FromConfiguration(configuration);
-
-            config.DumpToLogger();
+            return config;
         }
-
 
         private IConfigurationRoot MakeConfiguration()
         {
