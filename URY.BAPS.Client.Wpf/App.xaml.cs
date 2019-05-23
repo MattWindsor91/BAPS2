@@ -1,4 +1,10 @@
-﻿using URY.BAPS.Client.Common.ServerConfig;
+﻿using System.Diagnostics;
+using System.Windows;
+using GalaSoft.MvvmLight.Ioc;
+using GalaSoft.MvvmLight.Threading;
+using JetBrains.Annotations;
+using URY.BAPS.Client.Common.ServerConfig;
+using URY.BAPS.Client.Protocol.V2.Core;
 using URY.BAPS.Client.Windows;
 using URY.BAPS.Client.Wpf.Dialogs;
 using URY.BAPS.Client.Wpf.ViewModel;
@@ -32,7 +38,7 @@ namespace URY.BAPS.Client.Wpf
 
             _core = ViewModelLocator.ClientCore;
             Debug.Assert(_core != null, nameof(_core) + " != null");
-            ConfigCache.SubscribeToReceiver(_core);
+            ConfigCache.SubscribeToReceiver(_core.Updater);
 
             var launchedProperly = _core.Launch();
             if (!launchedProperly) Shutdown();

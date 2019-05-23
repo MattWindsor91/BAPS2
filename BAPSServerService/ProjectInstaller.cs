@@ -1,3 +1,8 @@
+using System;
+using System.ComponentModel;
+using System.Configuration.Install;
+using System.Runtime.InteropServices;
+
 namespace BAPSServerService
 {
     [RunInstaller(true)]

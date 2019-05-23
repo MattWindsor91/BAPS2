@@ -1,4 +1,10 @@
-﻿namespace URY.BAPS.Client.Wpf.ViewModel
+﻿using System.Collections.ObjectModel;
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.CommandWpf;
+using JetBrains.Annotations;
+using URY.BAPS.Common.Model.Track;
+
+namespace URY.BAPS.Client.Wpf.ViewModel
 {
     /// <summary>
     ///     Abstract base class for directory view models.

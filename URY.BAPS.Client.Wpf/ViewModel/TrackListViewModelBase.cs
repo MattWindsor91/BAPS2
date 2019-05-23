@@ -1,3 +1,10 @@
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Windows;
+using GalaSoft.MvvmLight.CommandWpf;
+using GongSolutions.Wpf.DragDrop;
+using URY.BAPS.Common.Model.Track;
+
 namespace URY.BAPS.Client.Wpf.ViewModel
 {
     /// <summary>
@@ -6,9 +13,9 @@ namespace URY.BAPS.Client.Wpf.ViewModel
     /// </summary>
     public abstract class TrackListViewModelBase : ChannelComponentViewModelBase, ITrackListViewModel
     {
-        [CanBeNull] private RelayCommand _deleteItemCommand;
-        [CanBeNull] private RelayCommand<int> _loadTrackCommand;
-        [CanBeNull] private RelayCommand _resetPlaylistCommand;
+        private RelayCommand? _deleteItemCommand;
+        private RelayCommand<int>? _loadTrackCommand;
+        private RelayCommand? _resetPlaylistCommand;
 
         protected TrackListViewModelBase(ushort channelId) : base(channelId)
         {
@@ -17,15 +24,11 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         public abstract int SelectedIndex { get; set; }
 
         public RelayCommand ResetPlaylistCommand => _resetPlaylistCommand
-                                                    ?? (_resetPlaylistCommand =
-                                                        new RelayCommand(ResetPlaylist, CanResetPlaylist));
+                                                    ??= new RelayCommand(ResetPlaylist, CanResetPlaylist);
 
-        public RelayCommand DeleteItemCommand => _deleteItemCommand
-                                                 ?? (_deleteItemCommand = new RelayCommand(DeleteItem, CanDeleteItem));
+        public RelayCommand DeleteItemCommand => _deleteItemCommand ??= new RelayCommand(DeleteItem, CanDeleteItem);
 
-        public RelayCommand<int> LoadTrackCommand => _loadTrackCommand
-                                                     ?? (_loadTrackCommand =
-                                                         new RelayCommand<int>(LoadTrack, CanLoadTrack));
+        public RelayCommand<int> LoadTrackCommand => _loadTrackCommand ??= new RelayCommand<int>(LoadTrack, CanLoadTrack);
 
         public ObservableCollection<TrackViewModel> Tracks { get; } = new ObservableCollection<TrackViewModel>();
 

@@ -1,4 +1,5 @@
-﻿using URY.BAPS.Client.Wpf.ViewModel;
+﻿using JetBrains.Annotations;
+using URY.BAPS.Client.Wpf.ViewModel;
 
 namespace URY.BAPS.Client.Wpf.DesignData
 {

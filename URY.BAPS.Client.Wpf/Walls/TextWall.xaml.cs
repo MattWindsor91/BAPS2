@@ -1,4 +1,6 @@
-﻿namespace URY.BAPS.Client.Wpf.Walls
+﻿using System.Windows;
+
+namespace URY.BAPS.Client.Wpf.Walls
 {
     /// <summary>
     ///     Interaction logic for TextWall.xaml

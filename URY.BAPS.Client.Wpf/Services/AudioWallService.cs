@@ -1,4 +1,5 @@
-﻿using URY.BAPS.Client.Wpf.ViewModel;
+﻿using JetBrains.Annotations;
+using URY.BAPS.Client.Wpf.ViewModel;
 using URY.BAPS.Client.Wpf.Walls;
 
 namespace URY.BAPS.Client.Wpf.Services

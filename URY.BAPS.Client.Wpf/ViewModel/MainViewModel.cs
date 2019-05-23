@@ -8,6 +8,7 @@ using GalaSoft.MvvmLight.Threading;
 using JetBrains.Annotations;
 using URY.BAPS.Client.Common.ServerConfig;
 using URY.BAPS.Client.Wpf.Services;
+using URY.BAPS.Common.Model.ServerConfig;
 
 namespace URY.BAPS.Client.Wpf.ViewModel
 {

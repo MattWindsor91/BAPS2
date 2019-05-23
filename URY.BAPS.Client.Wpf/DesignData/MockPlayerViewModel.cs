@@ -1,4 +1,6 @@
 using URY.BAPS.Client.Wpf.ViewModel;
+using URY.BAPS.Common.Model.Playback;
+using URY.BAPS.Common.Model.Track;
 
 namespace URY.BAPS.Client.Wpf.DesignData
 {

@@ -29,7 +29,7 @@ namespace URY.BAPS.Common.Protocol.V2.Decode
         /// </summary>
         public event EventHandler<MessageArgsBase> OnMessage;
 
-        private IObservable<MessageArgsBase> _observeMessage;
+        private IObservable<MessageArgsBase>? _observeMessage;
         
         /// <summary>
         ///     An observable wrapping <see cref="OnMessage"/>.

@@ -1,3 +1,7 @@
+using System;
+using GalaSoft.MvvmLight.CommandWpf;
+using URY.BAPS.Common.Model.Track;
+
 namespace URY.BAPS.Client.Wpf.ViewModel
 {
     public interface IPlayerViewModel : IDisposable

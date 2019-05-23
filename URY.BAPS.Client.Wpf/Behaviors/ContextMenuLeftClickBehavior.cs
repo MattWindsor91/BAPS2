@@ -1,3 +1,7 @@
+using System.Windows;
+using System.Windows.Controls.Primitives;
+using System.Windows.Data;
+
 namespace URY.BAPS.Client.Wpf.Behaviors
 {
     /// <summary>

@@ -1,5 +1,8 @@
 // http://www.codeproject.com/csharp/csharpwindowsserviceinst.asp
 
+using System;
+using System.Runtime.InteropServices;
+
 namespace BAPSServerService
 {
     public class modAPI

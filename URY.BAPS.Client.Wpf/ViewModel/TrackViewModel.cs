@@ -1,4 +1,9 @@
-﻿namespace URY.BAPS.Client.Wpf.ViewModel
+﻿using System;
+using GalaSoft.MvvmLight;
+using JetBrains.Annotations;
+using URY.BAPS.Common.Model.Track;
+
+namespace URY.BAPS.Client.Wpf.ViewModel
 {
     /// <summary>
     ///     A view model that wraps a <see cref="TrackBase" />, adding tracking for
@@ -6,11 +11,11 @@
     /// </summary>
     public class TrackViewModel : ViewModelBase, ITrack
     {
-        [NotNull] private readonly TrackBase _underlyingTrack;
+        [NotNull] private readonly ITrack _underlyingTrack;
 
         private bool _isLoaded;
 
-        public TrackViewModel([CanBeNull] TrackBase underlyingTrack)
+        public TrackViewModel(ITrack? underlyingTrack)
         {
             _underlyingTrack = underlyingTrack ?? throw new ArgumentNullException(nameof(underlyingTrack));
         }

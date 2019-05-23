@@ -1,4 +1,8 @@
-﻿namespace URY.BAPS.Client.Wpf.ViewModel
+﻿using System;
+using GalaSoft.MvvmLight.CommandWpf;
+using URY.BAPS.Common.Model.Playback;
+
+namespace URY.BAPS.Client.Wpf.ViewModel
 {
     public interface IChannelViewModel : IDisposable
     {

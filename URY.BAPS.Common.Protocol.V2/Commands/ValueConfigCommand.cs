@@ -21,9 +21,9 @@ namespace URY.BAPS.Common.Protocol.V2.Commands
             return op.AsCommandWord();
         }
 
-        public override void Accept(ICommandVisitor visitor)
+        public override void Accept(ICommandVisitor? visitor)
         {
-            visitor.Visit(this);
+            visitor?.Visit(this);
         }
     }
 }

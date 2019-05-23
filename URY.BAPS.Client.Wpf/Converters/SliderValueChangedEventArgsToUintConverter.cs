@@ -1,4 +1,7 @@
-﻿namespace URY.BAPS.Client.Wpf.Converters
+﻿using System.Windows;
+using GalaSoft.MvvmLight.Command;
+
+namespace URY.BAPS.Client.Wpf.Converters
 {
     internal class SliderValueChangedEventArgsToUintConverter : IEventArgsConverter
     {

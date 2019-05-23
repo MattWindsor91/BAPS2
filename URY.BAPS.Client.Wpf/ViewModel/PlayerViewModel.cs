@@ -1,4 +1,14 @@
-﻿using URY.BAPS.Client.Common.Controllers;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Windows;
+using JetBrains.Annotations;
+using URY.BAPS.Client.Common.Controllers;
+using URY.BAPS.Common.Model.MessageEvents;
+using URY.BAPS.Common.Model.Playback;
+using URY.BAPS.Common.Model.Track;
+using ArgumentNullException = System.ArgumentNullException;
+using IDisposable = System.IDisposable;
 
 namespace URY.BAPS.Client.Wpf.ViewModel
 {

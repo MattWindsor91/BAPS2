@@ -1,4 +1,7 @@
-﻿using URY.BAPS.Client.Common.Utils;
+﻿using System;
+using System.Globalization;
+using System.Windows.Data;
+using URY.BAPS.Client.Common.Utils;
 
 namespace URY.BAPS.Client.Wpf.Converters
 {

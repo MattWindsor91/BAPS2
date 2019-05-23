@@ -1,4 +1,6 @@
-﻿using URY.BAPS.Client.Wpf.ViewModel;
+﻿using JetBrains.Annotations;
+using URY.BAPS.Client.Wpf.ViewModel;
+using URY.BAPS.Common.Model.Playback;
 
 namespace URY.BAPS.Client.Wpf.DesignData
 {

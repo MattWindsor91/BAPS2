@@ -1,4 +1,12 @@
-﻿using URY.BAPS.Client.Common.Updaters;
+﻿using System;
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Threading;
+using JetBrains.Annotations;
+using URY.BAPS.Client.Common.Updaters;
+using URY.BAPS.Client.Protocol.V2.Controllers;
+using URY.BAPS.Client.Protocol.V2.Core;
+using URY.BAPS.Common.Model.MessageEvents;
+using ArgumentNullException = System.ArgumentNullException;
 
 namespace URY.BAPS.Client.Wpf.ViewModel
 {
@@ -12,7 +20,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
 
         private double _fontSize;
 
-        private string _text;
+        private string _text = "";
 
         /// <summary>
         ///     Constructs a <see cref="TextViewModel" />.
@@ -25,11 +33,11 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         ///     The <see cref="ISystemServerUpdater" /> to which this view model
         ///     subscribes for text-property updates.
         /// </param>
-        public TextViewModel([CanBeNull] SystemController controller, [CanBeNull] IClientCore updater)
+        public TextViewModel(SystemController? controller, IClientCore? updater)
         {
             _controller = controller ?? throw new ArgumentNullException(nameof(controller));
 
-            SubscribeToServerUpdates(updater);
+            SubscribeToServerUpdates(updater?.Updater);
         }
 
         /// <summary>
@@ -65,10 +73,10 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             }
         }
 
-        private void SubscribeToServerUpdates(IServerUpdater updater)
+        private void SubscribeToServerUpdates(IServerUpdater? updater)
         {
-            updater.ObserveTrackLoad.Subscribe(OnTrackLoad);
-            updater.ObserveTextSetting.Subscribe(OnTextSetting);
+            updater?.ObserveTrackLoad?.Subscribe(OnTrackLoad);
+            updater?.ObserveTextSetting?.Subscribe(OnTextSetting);
         }
 
         private void AdjustFontSize(TextSettingDirection direction)

@@ -1,3 +1,5 @@
+using System.ServiceProcess;
+
 namespace BAPSServerService
 {
     internal static class Program

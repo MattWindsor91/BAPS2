@@ -1,3 +1,5 @@
+using System.ServiceProcess;
+
 namespace BAPSServerService
 {
     public partial class BAPSServerService : ServiceBase

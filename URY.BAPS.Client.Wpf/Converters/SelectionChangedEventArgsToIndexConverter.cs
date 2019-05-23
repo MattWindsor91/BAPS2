@@ -1,3 +1,7 @@
+using System;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using GalaSoft.MvvmLight.Command;
 using URY.BAPS.Client.Wpf.Properties;
 
 namespace URY.BAPS.Client.Wpf.Converters

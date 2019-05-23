@@ -1,4 +1,8 @@
-﻿namespace URY.BAPS.Client.Wpf.Services
+﻿using System;
+using System.Windows;
+using JetBrains.Annotations;
+
+namespace URY.BAPS.Client.Wpf.Services
 {
     public abstract class WallServiceBase<TWall, TViewModel> where TWall : Window
         where TViewModel : class

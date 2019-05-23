@@ -81,6 +81,8 @@ namespace URY.BAPS.Client.Protocol.V2.Core
 
         private void CreateAndLaunchReceiver(TaskFactory tf)
         {
+            if (_socket == null) throw new NullReferenceException("Tried to launch receiver with a null socket.");
+
             // TODO(@MattWindsor91): inject these dependencies.
             var decoder = new ClientCommandDecoder(_socket, _dead.Token);
             _receiver = new Receiver(_socket, decoder, _dead.Token);

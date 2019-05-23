@@ -1,4 +1,8 @@
-﻿namespace URY.BAPS.Client.Wpf.Controls
+﻿using System.Windows;
+using System.Windows.Controls;
+using FontAwesome.WPF;
+
+namespace URY.BAPS.Client.Wpf.Controls
 {
     /// <summary>
     ///     A control used for the headers of BAPS channels and directories.

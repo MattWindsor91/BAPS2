@@ -1,4 +1,9 @@
-﻿namespace URY.BAPS.Client.Wpf.ViewModel
+﻿using System;
+using GalaSoft.MvvmLight.CommandWpf;
+using JetBrains.Annotations;
+using URY.BAPS.Common.Model.Playback;
+
+namespace URY.BAPS.Client.Wpf.ViewModel
 {
     /// <summary>
     ///     Abstract base class providing the parts of <see cref="IChannelViewModel" />
@@ -6,23 +11,21 @@
     /// </summary>
     public abstract class ChannelViewModelBase : ChannelComponentViewModelBase, IChannelViewModel
     {
-        [CanBeNull] private RelayCommand _openAudioWallCommand;
-        [CanBeNull] private RelayCommand<RepeatMode> _setRepeatModeCommand;
-        [CanBeNull] private RelayCommand _toggleAutoAdvanceCommand;
-        [CanBeNull] private RelayCommand _togglePlayOnLoadCommand;
+        private RelayCommand? _openAudioWallCommand;
+        private RelayCommand<RepeatMode>? _setRepeatModeCommand;
+        private RelayCommand? _toggleAutoAdvanceCommand;
+        private RelayCommand? _togglePlayOnLoadCommand;
 
         protected ChannelViewModelBase(ushort channelId,
-            [CanBeNull] IPlayerViewModel player,
-            [CanBeNull] ITrackListViewModel trackList) : base(channelId)
+            IPlayerViewModel? player,
+            ITrackListViewModel? trackList) : base(channelId)
         {
             Player = player ?? throw new ArgumentNullException(nameof(player));
             TrackList = trackList ?? throw new ArgumentNullException(nameof(trackList));
         }
 
         [NotNull]
-        public RelayCommand OpenAudioWallCommand => _openAudioWallCommand
-                                                    ?? (_openAudioWallCommand =
-                                                        new RelayCommand(OpenAudioWall, CanOpenAudioWall));
+        public RelayCommand OpenAudioWallCommand => _openAudioWallCommand ??= new RelayCommand(OpenAudioWall, CanOpenAudioWall);
 
         /// <summary>
         ///     Gets whether the repeat mode is 'none'.
@@ -57,28 +60,24 @@
         public abstract string Name { get; set; }
 
         [NotNull]
-        public RelayCommand ToggleAutoAdvanceCommand => _toggleAutoAdvanceCommand
-                                                        ?? (_toggleAutoAdvanceCommand = new RelayCommand(
-                                                            () => SetConfigFlag(ChannelFlag.AutoAdvance,
-                                                                !IsAutoAdvance),
-                                                            () => CanToggleConfig(ChannelFlag.AutoAdvance)
-                                                        ));
+        public RelayCommand ToggleAutoAdvanceCommand => _toggleAutoAdvanceCommand ??= new RelayCommand(
+            () => SetConfigFlag(ChannelFlag.AutoAdvance,
+                !IsAutoAdvance),
+            () => CanToggleConfig(ChannelFlag.AutoAdvance)
+        );
 
         [NotNull]
-        public RelayCommand TogglePlayOnLoadCommand => _togglePlayOnLoadCommand
-                                                       ?? (_togglePlayOnLoadCommand = new RelayCommand(
-                                                           () => SetConfigFlag(ChannelFlag.PlayOnLoad,
-                                                               !IsPlayOnLoad),
-                                                           () => CanToggleConfig(ChannelFlag.PlayOnLoad)
-                                                       ));
+        public RelayCommand TogglePlayOnLoadCommand => _togglePlayOnLoadCommand ??= new RelayCommand(
+            () => SetConfigFlag(ChannelFlag.PlayOnLoad,
+                !IsPlayOnLoad),
+            () => CanToggleConfig(ChannelFlag.PlayOnLoad)
+        );
 
         [NotNull]
-        public RelayCommand<RepeatMode> SetRepeatModeCommand => _setRepeatModeCommand
-                                                                ?? (_setRepeatModeCommand =
-                                                                    new RelayCommand<RepeatMode>(
-                                                                        SetRepeatMode,
-                                                                        CanSetRepeatMode
-                                                                    ));
+        public RelayCommand<RepeatMode> SetRepeatModeCommand => _setRepeatModeCommand ??= new RelayCommand<RepeatMode>(
+            SetRepeatMode,
+            CanSetRepeatMode
+        );
 
         public abstract bool IsPlayOnLoad { get; set; }
         public abstract bool IsAutoAdvance { get; set; }
