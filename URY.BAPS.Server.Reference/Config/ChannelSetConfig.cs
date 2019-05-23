@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 
 namespace URY.BAPS.Server.Reference.Config
@@ -12,7 +13,7 @@ namespace URY.BAPS.Server.Reference.Config
         /// <summary>
         ///     The number of channels.
         /// </summary>
-        public int Count { get; set; } = 3;
+        public int Count { get; [UsedImplicitly] set; } = 3;
 
         public ImmutableArray<ChannelConfig> Channels { get; set; } =
             ImmutableArray<ChannelConfig>.Empty;
@@ -21,6 +22,7 @@ namespace URY.BAPS.Server.Reference.Config
         {
             Logger.LogInformation("Controlling {Channels} channel(s).",
                 Count);
+            foreach (var channel in Channels) channel.DumpToLogger();
         }
     }
 }

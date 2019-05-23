@@ -41,7 +41,7 @@ namespace URY.BAPS.Server.Reference.Tests
         {
             AddOneItem();
             _playlist.Remove(0);
-            Assert.Equal(0, _playlist.Length);
+            Assert.Equal(0, _playlist.Count);
         }
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace URY.BAPS.Server.Reference.Tests
         public void TestLength_AfterAddToEmpty()
         {
             AddOneItem();
-            Assert.Equal(1, _playlist.Length);
+            Assert.Equal(1, _playlist.Count);
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace URY.BAPS.Server.Reference.Tests
         [Fact]
         public void TestLength_NewEmptyPlaylist()
         {
-            Assert.Equal(0, _playlist.Length);
+            Assert.Equal(0, _playlist.Count);
         }
     }
 }

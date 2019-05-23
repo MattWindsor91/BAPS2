@@ -14,7 +14,7 @@ namespace URY.BAPS.Server.Reference.Model
         /// <summary>
         ///     The channel number associated with this playlist.
         /// </summary>
-        private readonly ushort _channelId;
+        private readonly byte _channelId;
 
         /// <summary>
         ///     The current array of tracks.
@@ -26,12 +26,12 @@ namespace URY.BAPS.Server.Reference.Model
         /// </summary>
         private IPlaylistItem _loadedTextItem = new NullPlaylistItem();
 
-        public Playlist(ushort channelId)
+        public Playlist(byte channelId)
         {
             _channelId = channelId;
         }
 
-        public int Length => _entries.Count;
+        public int Count => _entries.Count;
 
         /// <summary>
         ///     Finds the next audio entry in the list, given a start index.
@@ -153,7 +153,7 @@ namespace URY.BAPS.Server.Reference.Model
 
         private bool IsInRange(int index)
         {
-            return 0 <= index && index < Length;
+            return 0 <= index && index < Count;
         }
 
         #endregion Pre-flight checks
@@ -162,7 +162,7 @@ namespace URY.BAPS.Server.Reference.Model
 
         public void Add(ITrack track)
         {
-            var item = new PlaylistItem(track, (uint) Length);
+            var item = new PlaylistItem(track, (uint) Count);
             _entries.Add(item);
             NotifyAdd(item);
         }

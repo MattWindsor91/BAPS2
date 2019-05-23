@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 
 namespace URY.BAPS.Server.Reference.Config
@@ -12,7 +13,7 @@ namespace URY.BAPS.Server.Reference.Config
         
         public byte Id { get; }
         
-        public string Name { get; set; }
+        public string Name { get; [UsedImplicitly] set; }
 
         public override void DumpToLogger()
         {
