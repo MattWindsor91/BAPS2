@@ -20,7 +20,7 @@ namespace URY.BAPS.Client.Wpf.Services
         ///     The directory set from which we get controllers for each directory (to talk to the BAPS server).
         /// </param>
         public DirectoryFactoryService(
-            [CanBeNull] DirectoryControllerSet controllerSet)
+            DirectoryControllerSet? controllerSet)
         {
             _controllerSet = controllerSet ?? throw new ArgumentNullException(nameof(controllerSet));
         }

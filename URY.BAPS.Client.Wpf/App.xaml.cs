@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Windows;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Threading;
@@ -16,8 +17,8 @@ namespace URY.BAPS.Client.Wpf
     /// </summary>
     public partial class App
     {
-        [CanBeNull] private IClientCore _core;
-        [CanBeNull] private MainWindow _main;
+        private IClientCore? _core;
+        private MainWindow? _main;
 
         static App()
         {
@@ -28,7 +29,7 @@ namespace URY.BAPS.Client.Wpf
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            SimpleIoc.Default.Register<ConfigManager>();
+            SimpleIoc.Default.Register<RegistryConfigManager>();
             SimpleIoc.Default.Register(MakeAuthenticator);
             SimpleIoc.Default.Register<IClientCore, ClientCore>();
             SimpleIoc.Default.Register<InitialUpdatePerformer>();
@@ -71,13 +72,15 @@ namespace URY.BAPS.Client.Wpf
             if (login.ShowDialog() == false)
                 return new Authenticator.Response {IsGivingUp = true};
 
+            var vm = login.ViewModel ?? throw new NullReferenceException("View model was null.");
+
             return new Authenticator.Response
             {
                 IsGivingUp = false,
-                Username = login.ViewModel.Username,
+                Username = vm.Username,
                 Password = login.PasswordTxt.Password,
-                Server = login.ViewModel.Server,
-                Port = login.ViewModel.Port
+                Server = vm.Server,
+                Port = vm.Port
             };
         }
 

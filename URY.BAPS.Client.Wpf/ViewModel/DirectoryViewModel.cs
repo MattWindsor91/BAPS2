@@ -12,19 +12,19 @@ namespace URY.BAPS.Client.Wpf.ViewModel
     /// <summary>
     ///     The view model for a directory.
     /// </summary>
-    public class DirectoryViewModel : DirectoryViewModelBase, IDisposable
+    public class DirectoryViewModel : DirectoryViewModelBase
     {
-        [CanBeNull] private readonly DirectoryController _controller;
+        private readonly DirectoryController? _controller;
 
         [NotNull] private readonly IList<IDisposable> _subscriptions = new List<IDisposable>();
-        private string _name;
+        private string _name = "";
 
         /// <summary>
         ///     Constructs a directory view model.
         /// </summary>
         /// <param name="directoryId">The server-assigned ID for this directory.</param>
         /// <param name="controller">The controller used to send refresh messages.</param>
-        public DirectoryViewModel(ushort directoryId, [CanBeNull] DirectoryController controller) : base(directoryId)
+        public DirectoryViewModel(ushort directoryId, DirectoryController? controller) : base(directoryId)
         {
             _controller = controller;
             SubscribeToServerUpdates();

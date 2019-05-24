@@ -17,17 +17,17 @@ namespace URY.BAPS.Client.Wpf.ViewModel
     /// </summary>
     public class ChannelViewModel : ChannelViewModelBase
     {
-        [CanBeNull] private readonly AudioWallService _audioWallService;
+        private readonly AudioWallService? _audioWallService;
 
         private readonly IList<IDisposable> _subscriptions = new List<IDisposable>();
-        private string _name;
+        private string _name = "";
 
         public ChannelViewModel(ushort channelId,
-            [CanBeNull] ConfigCache config,
-            [CanBeNull] IPlayerViewModel player,
-            [CanBeNull] ITrackListViewModel trackList,
-            [CanBeNull] ChannelController controller,
-            [CanBeNull] AudioWallService audioWallService) : base(channelId, player, trackList)
+            ConfigCache? config,
+            IPlayerViewModel? player,
+            ITrackListViewModel? trackList,
+            ChannelController? controller,
+            AudioWallService? audioWallService) : base(channelId, player, trackList)
         {
             Controller = controller;
             _audioWallService = audioWallService;
@@ -56,7 +56,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             }
         }
 
-        [CanBeNull] public ChannelController Controller { get; }
+        public ChannelController? Controller { get; }
 
         public override void Dispose()
         {
@@ -85,6 +85,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         /// </summary>
         private void RegisterForConfigUpdates()
         {
+            if (_config is null) return;
             _config.ChoiceChanged += HandleConfigChoiceChanged;
             _config.StringChanged += HandleConfigStringChanged;
         }
@@ -102,6 +103,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         /// </summary>
         private void UnsubscribeFromConfigUpdates()
         {
+            if (_config is null) return;
             _config.ChoiceChanged -= HandleConfigChoiceChanged;
             _config.StringChanged -= HandleConfigStringChanged;
         }
@@ -247,7 +249,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
 
 
         private RepeatMode _repeatMode;
-        private readonly ConfigCache _config;
+        private readonly ConfigCache? _config;
 
         #endregion Channel flags
     }

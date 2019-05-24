@@ -26,19 +26,19 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         [NotNull] private readonly ConfigCache _config;
         [NotNull] private readonly DirectoryFactoryService _directoryFactory;
 
-        [CanBeNull] private RelayCommand<ushort> _forwardPauseCommand;
+        private RelayCommand<ushort>? _forwardPauseCommand;
 
-        [CanBeNull] private RelayCommand<ushort> _forwardPlayCommand;
+        private RelayCommand<ushort>? _forwardPlayCommand;
 
-        [CanBeNull] private RelayCommand<ushort> _forwardStopCommand;
+        private RelayCommand<ushort>? _forwardStopCommand;
 
         [NotNull] public ITextViewModel Text { get; }
 
         public MainViewModel(
-            [CanBeNull] ChannelFactoryService channelFactory,
-            [CanBeNull] DirectoryFactoryService directoryFactory,
-            [CanBeNull] ConfigCache config,
-            [CanBeNull] ITextViewModel text)
+            ChannelFactoryService? channelFactory,
+            DirectoryFactoryService? directoryFactory,
+            ConfigCache? config,
+            ITextViewModel? text)
         {
             _channelFactory = channelFactory ?? throw new ArgumentNullException(nameof(channelFactory));
             _directoryFactory = directoryFactory ?? throw new ArgumentNullException(nameof(directoryFactory));
@@ -63,12 +63,11 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         /// </summary>
         [NotNull]
         public RelayCommand<ushort> ForwardPlayCommand =>
-            _forwardPlayCommand
-            ?? (_forwardPlayCommand = new RelayCommand<ushort>(
+            _forwardPlayCommand ??= new RelayCommand<ushort>(
                 channelId => { ChannelAt(channelId)?.Player?.PlayCommand?.Execute(null); },
                 channelId =>
                     ChannelAt(channelId)?.Player?.PlayCommand?.CanExecute(null) ?? false
-            ));
+            );
 
         /// <summary>
         ///     A command that, when executed, sends a pause command to the channel
@@ -76,12 +75,11 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         /// </summary>
         [NotNull]
         public RelayCommand<ushort> ForwardPauseCommand =>
-            _forwardPauseCommand
-            ?? (_forwardPauseCommand = new RelayCommand<ushort>(
+            _forwardPauseCommand ??= new RelayCommand<ushort>(
                 channelId => { ChannelAt(channelId)?.Player?.PauseCommand?.Execute(null); },
                 channelId =>
                     ChannelAt(channelId)?.Player?.PauseCommand?.CanExecute(null) ?? false
-            ));
+            );
 
         /// <summary>
         ///     A command that, when executed, sends a stop command to the channel
@@ -89,20 +87,18 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         /// </summary>
         [NotNull]
         public RelayCommand<ushort> ForwardStopCommand =>
-            _forwardStopCommand
-            ?? (_forwardStopCommand = new RelayCommand<ushort>(
+            _forwardStopCommand ??= new RelayCommand<ushort>(
                 channelId => { ChannelAt(channelId)?.Player?.StopCommand?.Execute(null); },
                 channelId =>
                     ChannelAt(channelId)?.Player?.StopCommand?.CanExecute(null) ?? false
-            ));
+            );
 
         /// <summary>
         ///     Shorthand for getting the channel at the given channel ID.
         /// </summary>
         /// <param name="channelId">The ID of the channel to get.</param>
         /// <returns>The channel at <paramref name="channelId" />, or null if one doesn't exist.</returns>
-        [CanBeNull]
-        private IChannelViewModel ChannelAt(ushort channelId)
+        private IChannelViewModel? ChannelAt(ushort channelId)
         {
             return Channels.ElementAtOrDefault(channelId);
         }

@@ -32,7 +32,7 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
         /// <param name="core">
         ///     The client core.
         /// </param>
-        protected ControllerSetBase([CanBeNull] IClientCore core)
+        protected ControllerSetBase(IClientCore? core)
         {
             Core = core ?? throw new ArgumentNullException(nameof(core));
         }

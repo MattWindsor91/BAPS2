@@ -4,10 +4,14 @@
     <AssemblyTitle>URY.BAPS.Client.Windows</AssemblyTitle>
     <Product>URY.BAPS.Client.Windows</Product>
     <Copyright>Copyright © 2019 University Radio York</Copyright>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.*" />
     <PackageReference Include="Microsoft.CSharp" Version="4.*" />
     <PackageReference Include="System.Net.Http" Version="4.*" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\URY.BAPS.Client.Common\URY.BAPS.Client.Common.csproj" />
   </ItemGroup>
 </Project>

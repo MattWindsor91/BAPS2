@@ -12,9 +12,9 @@ namespace URY.BAPS.Client.Wpf.ViewModel
     {
         private int _selectedIndex = -1;
 
-        public TrackListViewModel(ushort channelId, [CanBeNull] ChannelController controller) : base(channelId)
+        public TrackListViewModel(ushort channelId, ChannelController? controller) : base(channelId)
         {
-            Controller = controller;
+            Controller = controller ?? throw new ArgumentNullException(nameof(controller));
 
             SubscribeToServerUpdates();
         }

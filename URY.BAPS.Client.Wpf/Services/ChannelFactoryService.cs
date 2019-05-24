@@ -29,9 +29,9 @@ namespace URY.BAPS.Client.Wpf.Services
         ///     The config cache used to check for channel configuration and related updates.
         /// </param>
         public ChannelFactoryService(
-            [CanBeNull] ChannelControllerSet controllerSet,
-            [CanBeNull] AudioWallService audioWallService,
-            [CanBeNull] ConfigCache config)
+            ChannelControllerSet? controllerSet,
+            AudioWallService? audioWallService,
+            ConfigCache? config)
         {
             _controllerSet = controllerSet ?? throw new ArgumentNullException(nameof(controllerSet));
             _audioWallService = audioWallService ?? throw new ArgumentNullException(nameof(audioWallService));

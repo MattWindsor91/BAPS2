@@ -11,14 +11,12 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         [NotNull] private string _server;
         [NotNull] private string _username;
 
-        public LoginViewModel(ConfigManager configManager)
+        public LoginViewModel(RegistryConfigManager registryConfigManager)
         {
-            _server = configManager.GetValue("ServerAddress", "localhost");
-
-            int.TryParse(configManager.GetValue("ServerPort", "1350"), out var temp);
-            _port = temp;
-
-            _username = configManager.GetValue("DefaultUsername", "");
+            var config = registryConfigManager.MakeConfig();
+            _server = config.ServerAddress;
+            _port = config.ServerPort;
+            _username = config.DefaultUsername;
         }
 
         [NotNull]

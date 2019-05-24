@@ -11,7 +11,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
     /// </summary>
     public abstract class DirectoryViewModelBase : ViewModelBase, IDirectoryViewModel
     {
-        private RelayCommand _refreshCommand;
+        private RelayCommand? _refreshCommand;
 
         protected DirectoryViewModelBase(ushort directoryId)
         {
@@ -32,11 +32,10 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         ///     A command that, when activated, sends a refresh request to the server.
         /// </summary>
         [NotNull]
-        public RelayCommand RefreshCommand => _refreshCommand
-                                              ?? (_refreshCommand = new RelayCommand(
-                                                  Refresh,
-                                                  CanRefresh
-                                              ));
+        public RelayCommand RefreshCommand => _refreshCommand ??= new RelayCommand(
+            Refresh,
+            CanRefresh
+        );
 
         /// <summary>
         ///     The collection of files the server reports as being in this directory.

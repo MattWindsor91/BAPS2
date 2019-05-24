@@ -35,7 +35,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         private uint _startTime;
         private PlaybackState _state;
 
-        public PlayerViewModel(ushort channelId, [CanBeNull] IPlaybackController controller) : base(channelId)
+        public PlayerViewModel(ushort channelId, IPlaybackController? controller) : base(channelId)
         {
             Controller = controller;
 
@@ -145,7 +145,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
 
         private bool HasController => Controller != null;
 
-        [CanBeNull] private IPlaybackController Controller { get; }
+        private IPlaybackController? Controller { get; }
 
         public override void Dispose()
         {

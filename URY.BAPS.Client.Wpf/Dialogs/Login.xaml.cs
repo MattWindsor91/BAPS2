@@ -16,7 +16,7 @@ namespace URY.BAPS.Client.Wpf.Dialogs
         /// <summary>
         ///     Exposes the login view model.
         /// </summary>
-        public LoginViewModel ViewModel => DataContext as LoginViewModel;
+        public LoginViewModel? ViewModel => DataContext as LoginViewModel;
 
         private void LoginBtn_Click(object sender, RoutedEventArgs e)
         {

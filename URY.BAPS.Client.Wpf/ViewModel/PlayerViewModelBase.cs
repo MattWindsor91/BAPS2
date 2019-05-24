@@ -11,12 +11,12 @@ namespace URY.BAPS.Client.Wpf.ViewModel
     /// </summary>
     public abstract class PlayerViewModelBase : ChannelComponentViewModelBase, IPlayerViewModel
     {
-        [CanBeNull] private RelayCommand _pauseCommand;
-        [CanBeNull] private RelayCommand _playCommand;
-        [CanBeNull] private RelayCommand<uint> _setCueCommand;
-        [CanBeNull] private RelayCommand<uint> _setIntroCommand;
-        [CanBeNull] private RelayCommand<uint> _setPositionCommand;
-        [CanBeNull] private RelayCommand _stopCommand;
+        private RelayCommand? _pauseCommand;
+        private RelayCommand? _playCommand;
+        private RelayCommand<uint>? _setCueCommand;
+        private RelayCommand<uint>? _setIntroCommand;
+        private RelayCommand<uint>? _setPositionCommand;
+        private RelayCommand? _stopCommand;
 
         protected PlayerViewModelBase(ushort channelId) : base(channelId)
         {
@@ -31,16 +31,14 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         public double IntroPositionScale => (double) IntroPosition / Duration;
 
         [NotNull]
-        public virtual RelayCommand<uint> SetCueCommand => _setCueCommand
-                                                           ?? (_setCueCommand = new RelayCommand<uint>(
-                                                               RequestSetCue,
-                                                               CanRequestSetCue));
+        public virtual RelayCommand<uint> SetCueCommand => _setCueCommand ??= new RelayCommand<uint>(
+            RequestSetCue,
+            CanRequestSetCue);
 
         [NotNull]
-        public virtual RelayCommand<uint> SetIntroCommand => _setIntroCommand
-                                                             ?? (_setIntroCommand = new RelayCommand<uint>(
-                                                                 RequestSetIntro,
-                                                                 CanRequestSetIntro));
+        public virtual RelayCommand<uint> SetIntroCommand => _setIntroCommand ??= new RelayCommand<uint>(
+            RequestSetIntro,
+            CanRequestSetIntro);
 
         public abstract uint StartTime { get; set; }
         public abstract ITrack LoadedTrack { get; set; }
@@ -64,28 +62,24 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         public abstract uint IntroPosition { get; set; }
 
         [NotNull]
-        public virtual RelayCommand PlayCommand => _playCommand
-                                                   ?? (_playCommand = new RelayCommand(
-                                                       RequestPlay,
-                                                       CanRequestPlay));
+        public virtual RelayCommand PlayCommand => _playCommand ??= new RelayCommand(
+            RequestPlay,
+            CanRequestPlay);
 
         [NotNull]
-        public virtual RelayCommand PauseCommand => _pauseCommand
-                                                    ?? (_pauseCommand = new RelayCommand(
-                                                        RequestPause,
-                                                        CanRequestPause));
+        public virtual RelayCommand PauseCommand => _pauseCommand ??= new RelayCommand(
+            RequestPause,
+            CanRequestPause);
 
         [NotNull]
-        public virtual RelayCommand StopCommand => _stopCommand
-                                                   ?? (_stopCommand = new RelayCommand(
-                                                       RequestStop,
-                                                       CanRequestStop));
+        public virtual RelayCommand StopCommand => _stopCommand ??= new RelayCommand(
+            RequestStop,
+            CanRequestStop);
 
         [NotNull]
-        public virtual RelayCommand<uint> SetPositionCommand => _setPositionCommand
-                                                                ?? (_setPositionCommand = new RelayCommand<uint>(
-                                                                    RequestSetPosition,
-                                                                    CanRequestSetPosition));
+        public virtual RelayCommand<uint> SetPositionCommand => _setPositionCommand ??= new RelayCommand<uint>(
+            RequestSetPosition,
+            CanRequestSetPosition);
 
         public abstract void Dispose();
 

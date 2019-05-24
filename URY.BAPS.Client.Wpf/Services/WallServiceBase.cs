@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows;
-using JetBrains.Annotations;
 
 namespace URY.BAPS.Client.Wpf.Services
 {
@@ -10,19 +9,18 @@ namespace URY.BAPS.Client.Wpf.Services
         /// <summary>
         ///     The view model being displayed in the current wall, if any.
         /// </summary>
-        [CanBeNull] private TViewModel _modelOfCurrentWall;
+        private TViewModel? _modelOfCurrentWall;
 
         /// <summary>
         ///     The open wall dialog, if any.
         /// </summary>
-        [CanBeNull] private TWall _wall;
+        private TWall? _wall;
 
         /// <summary>
         ///     Constructs a wall for the given view model.
         /// </summary>
         /// <param name="model">The view model to display in the wall.</param>
         /// <returns>The constructed wall.</returns>
-        [CanBeNull]
         protected abstract TWall MakeWall(TViewModel model);
 
         /// <summary>
@@ -45,7 +43,7 @@ namespace URY.BAPS.Client.Wpf.Services
 
         private void HandleWallClosing(object sender, EventArgs e)
         {
-            if (_wall is TWall w) w.Closed -= HandleWallClosing;
+            if (_wall is { } w) w.Closed -= HandleWallClosing;
             _wall = null;
             _modelOfCurrentWall = null;
         }

@@ -19,8 +19,8 @@ namespace URY.BAPS.Client.Wpf.DesignData
         /// <param name="player">A player view model to use for the playback-specific parts of the model.</param>
         /// <param name="trackList">A track-list view model to use for the track-list-specific parts of the model</param>
         public MockChannelViewModel(ushort channelId,
-            [CanBeNull] IPlayerViewModel player,
-            [CanBeNull] ITrackListViewModel trackList) : base(channelId, player, trackList)
+            IPlayerViewModel? player,
+            ITrackListViewModel? trackList) : base(channelId, player, trackList)
         {
             Name = "Mock Channel";
         }
