@@ -63,6 +63,11 @@ namespace URY.BAPS.Common.Protocol.V2.Io
         private byte[] ReceiveNetworkOrder(int count, CancellationToken token)
         {
             var buf = _reader.ReadBytes(count);
+            if (buf.Length != count)
+            {
+                // Stream has ended, which generally means we're about to be cancelled.
+                token.WaitHandle.WaitOne();
+            }
             token.ThrowIfCancellationRequested();
             BitManipulation.ShuffleForNetworkOrder(buf, count);
             return buf;
