@@ -6,16 +6,20 @@ namespace URY.BAPS.Client.Windows
 {
     /// <inheritdoc />
     /// <summary>
-    ///     A local config manager that uses the Win32 registry.
+    ///     A client config manager that uses the Win32 registry.
     ///     <para>
     ///         This is mostly a port of the analogous C++ class in the original version of BAPS2.
     ///     </para>
     /// </summary>
-    public class RegistryConfigManager : IDisposable
+    public class RegistryConfigManager : IDisposable, IClientConfigManager
     {
         private RegistryKey _bapsClient;
         private RegistryKey _software;
         private RegistryKey _ury;
+
+        private const string ServerAddressKey = "ServerAddress";
+        private const string ServerPortKey = "ServerPort";
+        private const string DefaultUsernameKey = "DefaultUsername";
 
         /// <summary>
         ///     The <c>HKEY_CURRENT_USER\software</c> registry key.
@@ -41,27 +45,6 @@ namespace URY.BAPS.Client.Windows
             _software?.Close();
         }
 
-        private T GetValue<T>(string name, T defaultValue)
-        {
-            return (T) BapsClient.GetValue(name, defaultValue);
-        }
-
-        private int GetIntFromStringValue(string name, int defaultValue)
-        {
-            var value = defaultValue;
-            if (BapsClient.GetValue(name) is string s) int.TryParse(s, out value);
-            return value;
-        }
-
-        public ClientConfig MakeConfig()
-        {
-            var config = new ClientConfig();
-            config.ServerAddress = GetValue("ServerAddress", config.ServerAddress);
-            config.ServerPort = GetIntFromStringValue("ServerPort", config.ServerPort);
-            config.DefaultUsername = GetValue("DefaultUsername", config.DefaultUsername);
-            return config;
-        }
-
         private static RegistryKey GetOrCreateSubKey(RegistryKey parent, string name)
         {
             var subKey = parent.OpenSubKey(name, true);
@@ -69,6 +52,62 @@ namespace URY.BAPS.Client.Windows
             subKey = parent.CreateSubKey(name, true);
             if (subKey != null) return subKey;
             throw new Exception($"Create of key {name} failed");
+        }
+
+        public ClientConfig LoadConfig()
+        {
+            var config = new ClientConfig();
+
+            config.ServerAddress = GetString(ServerAddressKey, config.ServerAddress);
+
+            config.ServerPort = GetIntFromString(ServerPortKey, config.ServerPort);
+            config.DefaultUsername = GetString(DefaultUsernameKey, config.DefaultUsername);
+            return config;
+        }
+
+        /// <summary>
+        ///     Retrieves a string from the registry.
+        /// </summary>
+        /// <param name="key">The registry key to get.</param>
+        /// <param name="defaultValue">The default value to use if the string doesn't exist.</param>
+        /// <returns>
+        ///     Either the string stored at registry
+        ///     key <paramref name="key"/>, or <paramref name="defaultValue"/>.
+        /// </returns>
+        private string GetString(string key, string defaultValue)
+        {
+            return (string) BapsClient.GetValue(key, defaultValue);
+        }
+
+        /// <summary>
+        ///     Retrieves a string from the registry, then parses it as an int.
+        ///     <para>
+        ///         BAPS2 stores the server port this way.
+        ///     </para>
+        /// </summary>
+        /// <param name="key">The registry key to get.</param>
+        /// <param name="defaultValue">The default value to use if the string doesn't exist.</param>
+        /// <returns>
+        ///     Either the integer parsed from the string stored at registry
+        ///     key <paramref name="key"/>, or <paramref name="defaultValue"/>.
+        /// </returns>
+        private int GetIntFromString(string key, int defaultValue)
+        {
+            var value = defaultValue;
+            if (BapsClient.GetValue(key) is string s) int.TryParse(s, out value);
+            return value;
+        }
+
+        public void SaveConfig(ClientConfig config)
+        {
+            SetString(ServerAddressKey, config.ServerAddress);
+            SetString(ServerPortKey, config.ServerPort.ToString());
+            SetString(DefaultUsernameKey, config.DefaultUsername);
+        }
+
+        private void SetString(string key, string value)
+        {
+            BapsClient.SetValue(key, value, RegistryValueKind.String);
         }
     }
 }

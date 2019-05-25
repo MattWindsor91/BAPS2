@@ -5,8 +5,8 @@
     <NullableContextOptions>enable</NullableContextOptions>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" Version="2018.3.0" />
-    <PackageReference Include="System.Reactive" Version="4.1.2" />
+    <PackageReference Include="JetBrains.Annotations" Version="2019.1.1" />
+    <PackageReference Include="System.Reactive" Version="4.1.5" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\URY.BAPS.Common.Model\URY.BAPS.Common.Model.csproj" />

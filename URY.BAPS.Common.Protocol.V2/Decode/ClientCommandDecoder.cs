@@ -16,7 +16,7 @@ namespace URY.BAPS.Common.Protocol.V2.Decode
     /// </summary>
     public class ClientCommandDecoder : CommandDecoderBase
     {
-        public ClientCommandDecoder(IPrimitiveSource primitiveSource, CancellationToken token) : base(primitiveSource, token)
+        public ClientCommandDecoder(IPrimitiveSource primitiveSource, CancellationToken token = default) : base(primitiveSource, token)
         {
         }
 

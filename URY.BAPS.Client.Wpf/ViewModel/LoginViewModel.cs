@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using JetBrains.Annotations;
+using URY.BAPS.Client.Common.ClientConfig;
 using URY.BAPS.Client.Windows;
 
 namespace URY.BAPS.Client.Wpf.ViewModel
@@ -11,9 +12,9 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         [NotNull] private string _server;
         [NotNull] private string _username;
 
-        public LoginViewModel(RegistryConfigManager registryConfigManager)
+        public LoginViewModel(IClientConfigManager configManager)
         {
-            var config = registryConfigManager.MakeConfig();
+            var config = configManager.LoadConfig();
             _server = config.ServerAddress;
             _port = config.ServerPort;
             _username = config.DefaultUsername;
