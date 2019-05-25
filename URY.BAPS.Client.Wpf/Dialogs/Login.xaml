@@ -7,8 +7,7 @@
         Title="Login" Height="240" Width="320"
         ResizeMode="CanResizeWithGrip"
         ShowInTaskbar="False"
-        WindowStartupLocation="CenterOwner"
-        DataContext="{Binding Login, Source={StaticResource Locator}}">
+        WindowStartupLocation="CenterOwner">
     <Window.Resources>
         <ResourceDictionary>
             <Style x:Key="FieldLabel" TargetType="{x:Type Label}">

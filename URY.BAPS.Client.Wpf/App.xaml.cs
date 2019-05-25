@@ -60,9 +60,9 @@ namespace URY.BAPS.Client.Wpf
 
             var container = SetupDependencyContainer(configManager);
             _diScope = container.BeginLifetimeScope();
-            Resources["Locator"] = _diScope.Resolve<ViewModelLocator>();
 
-            _main = new MainWindow();
+            var vm = _diScope.Resolve<MainViewModel>();
+            _main = new MainWindow { DataContext = vm };
             _main.Show();
 
             var core = _diScope.Resolve<IClientCore>();
@@ -97,7 +97,6 @@ namespace URY.BAPS.Client.Wpf
             builder.RegisterInstance(configManager).As<IClientConfigManager>();
             builder.RegisterType<ClientCore>().As<IClientCore>().InstancePerLifetimeScope();
             builder.RegisterType<ConfigCache>().AsSelf().InstancePerLifetimeScope();
-            builder.RegisterType<ViewModelLocator>().AsSelf().InstancePerLifetimeScope();
             builder.RegisterType<InitialUpdatePerformer>().AsSelf().InstancePerLifetimeScope();
             builder.Register(_ => MakeAuthenticator()).AsSelf();
         }
@@ -140,14 +139,15 @@ namespace URY.BAPS.Client.Wpf
 
         private Authenticator.Response LoginCallback()
         {
+            var vm = _diScope.Resolve<LoginViewModel>();
+
             var login = new Login
             {
-                Owner = _main
+                Owner = _main,
+                DataContext = vm
             };
             if (login.ShowDialog() == false)
                 return new Authenticator.Response {IsGivingUp = true};
-
-            var vm = login.ViewModel ?? throw new NullReferenceException("View model was null.");
 
             return new Authenticator.Response
             {

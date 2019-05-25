@@ -7,8 +7,7 @@
         xmlns:controls="clr-namespace:URY.BAPS.Client.Wpf.Controls"
         xmlns:fa="http://schemas.fontawesome.io/icons/"
         mc:Ignorable="d"
-        Title="BAPS Presenter" Height="768" Width="1024"
-        DataContext="{Binding Main, Source={StaticResource Locator}}">
+        Title="BAPS Presenter" Height="768" Width="1024">
     <Window.Resources>
         <!-- We need these seemingly redundant resources to encode the channel
              IDs used in the input bindings below as `ushort`s, not strings.
