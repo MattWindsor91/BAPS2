@@ -1,16 +1,14 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Windows;
-using GalaSoft.MvvmLight.Ioc;
+using Autofac;
 using GalaSoft.MvvmLight.Threading;
-using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.Ini;
 using URY.BAPS.Client.Common.ClientConfig;
 using URY.BAPS.Client.Common.ServerConfig;
+using URY.BAPS.Client.Protocol.V2.Controllers;
 using URY.BAPS.Client.Protocol.V2.Core;
-using URY.BAPS.Client.Windows;
 using URY.BAPS.Client.Wpf.Dialogs;
+using URY.BAPS.Client.Wpf.Services;
 using URY.BAPS.Client.Wpf.ViewModel;
 
 namespace URY.BAPS.Client.Wpf
@@ -20,15 +18,12 @@ namespace URY.BAPS.Client.Wpf
     /// </summary>
     public partial class App
     {
-        private IClientCore? _core;
         private MainWindow? _main;
 
         static App()
         {
             DispatcherHelper.Initialize();
         }
-
-        private static ConfigCache ConfigCache => SimpleIoc.Default.GetInstance<ConfigCache>();
 
         private IClientConfigManager MakeClientConfigManager()
         {
@@ -50,43 +45,83 @@ namespace URY.BAPS.Client.Wpf
             }
         }
 
+        private ILifetimeScope? _diScope;
+
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             var configManager = MakeClientConfigManager();
 
-            if (TryGetConfig(configManager) is {} config)
-            {
-                RegisterDependencies(configManager);
-            }
-            else
+            var config = TryGetConfig(configManager);
+            if (config is null)
             {
                 Shutdown();
                 return;
             }
+
+            var container = SetupDependencyContainer(configManager);
+            _diScope = container.BeginLifetimeScope();
+            Resources["Locator"] = _diScope.Resolve<ViewModelLocator>();
 
             _main = new MainWindow();
             _main.Show();
 
-            _core = ViewModelLocator.ClientCore;
-            ConfigCache.SubscribeToReceiver(_core.Updater);
+            var core = _diScope.Resolve<IClientCore>();
+            var cache = _diScope.Resolve<ConfigCache>();
+            cache.SubscribeToReceiver(core.Updater);
 
-            var launchedProperly = _core.Launch();
-            if (!launchedProperly)
+            var auth = _diScope.Resolve<Authenticator>();
+            var socket = auth.Run();
+            if (socket is null)
             {
                 Shutdown();
                 return;
             }
 
-            var init = SimpleIoc.Default.GetInstance<InitialUpdatePerformer>();
+            core.Launch(socket);
+            var init = _diScope.Resolve<InitialUpdatePerformer>();
             init.Run();
         }
 
-        private void RegisterDependencies(IClientConfigManager configManager)
+        private IContainer SetupDependencyContainer(IClientConfigManager configManager)
         {
-            SimpleIoc.Default.Register(() => configManager);
-            SimpleIoc.Default.Register(MakeAuthenticator);
-            SimpleIoc.Default.Register<IClientCore, ClientCore>();
-            SimpleIoc.Default.Register<InitialUpdatePerformer>();
+            var builder = new ContainerBuilder();
+            RegisterCoreClasses(builder, configManager);
+            RegisterControllers(builder);
+            RegisterServices(builder);
+            RegisterViewModels(builder);
+            return builder.Build();
+        }
+
+        private void RegisterCoreClasses(ContainerBuilder builder, IClientConfigManager configManager)
+        {
+            builder.RegisterInstance(configManager).As<IClientConfigManager>();
+            builder.RegisterType<ClientCore>().As<IClientCore>().InstancePerLifetimeScope();
+            builder.RegisterType<ConfigCache>().AsSelf().InstancePerLifetimeScope();
+            builder.RegisterType<ViewModelLocator>().AsSelf().InstancePerLifetimeScope();
+            builder.RegisterType<InitialUpdatePerformer>().AsSelf().InstancePerLifetimeScope();
+            builder.Register(_ => MakeAuthenticator()).AsSelf();
+        }
+
+        private static void RegisterControllers(ContainerBuilder builder)
+        {
+            builder.RegisterType<ConfigController>().AsSelf().InstancePerLifetimeScope();
+            builder.RegisterType<SystemController>().AsSelf().InstancePerLifetimeScope();
+            builder.RegisterType<ChannelControllerSet>().AsSelf().InstancePerLifetimeScope();
+            builder.RegisterType<DirectoryControllerSet>().AsSelf().InstancePerLifetimeScope();
+        }
+
+        private static void RegisterServices(ContainerBuilder builder)
+        {
+            builder.RegisterType<AudioWallService>().AsSelf().InstancePerLifetimeScope();
+            builder.RegisterType<ChannelFactoryService>().AsSelf().InstancePerLifetimeScope();
+            builder.RegisterType<DirectoryFactoryService>().AsSelf().InstancePerLifetimeScope();
+        }
+
+        private void RegisterViewModels(ContainerBuilder builder)
+        {
+            builder.RegisterType<TextViewModel>().As<ITextViewModel>();
+            builder.RegisterType<MainViewModel>();
+            builder.RegisterType<LoginViewModel>();
         }
 
         private Authenticator MakeAuthenticator()
@@ -126,7 +161,7 @@ namespace URY.BAPS.Client.Wpf
 
         private void Application_Exit(object sender, ExitEventArgs e)
         {
-            _core?.Dispose();
+            _diScope?.Dispose();
         }
     }
 }

@@ -17,7 +17,6 @@ namespace URY.BAPS.Client.Protocol.V2.Core
     public partial class ClientCore : IClientCore
     {
         private const int CancelGracePeriodMilliseconds = 500;
-        private readonly Authenticator _auth;
 
         private readonly CancellationTokenSource _dead = new CancellationTokenSource();
 
@@ -29,11 +28,6 @@ namespace URY.BAPS.Client.Protocol.V2.Core
 
         private TcpConnection? _socket;
 
-        public ClientCore([NotNull] Authenticator auth)
-        {
-            _auth = auth;
-        }
-
         /// <inheritdoc />
         /// <summary>
         ///     Sends a message to the BapsNet server.
@@ -44,35 +38,12 @@ namespace URY.BAPS.Client.Protocol.V2.Core
             if (messageBuilder != null) _sender?.Enqueue(messageBuilder);
         }
 
-        /// <summary>
-        ///     Event raised just before authentication.
-        ///     Subscribe to this to install any event handlers needed for the authenticator.
-        /// </summary>
-        public event EventHandler<Authenticator> AboutToAuthenticate;
-
-        /// <summary>
-        ///     Tries to authenticate and launch a BAPS client.
-        /// </summary>
-        /// <returns>Whether the client successfully launched.</returns>
-        public bool Launch()
+        public void Launch(TcpConnection bapsConnection)
         {
-            OnAboutToAuthenticate();
+            if (_socket != null)
+                throw new InvalidOperationException("This client core is already running.");
+            _socket = bapsConnection;
 
-            var authenticated = Authenticate();
-            if (!authenticated) return false;
-
-            LaunchTasks();
-
-            return true;
-        }
-
-        private void OnAboutToAuthenticate()
-        {
-            AboutToAuthenticate?.Invoke(this, _auth);
-        }
-
-        private void LaunchTasks()
-        {
             var tf = new TaskFactory(_dead.Token, TaskCreationOptions.LongRunning, TaskContinuationOptions.None,
                 TaskScheduler.Current);
             CreateAndLaunchReceiver(tf);
@@ -94,13 +65,6 @@ namespace URY.BAPS.Client.Protocol.V2.Core
         {
             _sender = new Sender(_socket, _dead.Token);
             _senderTask = tf.StartNew(_sender.Run);
-        }
-
-        private bool Authenticate()
-        {
-            Debug.Assert(_auth != null, "Tried to authenticate with null authenticator");
-            _socket = _auth.Run();
-            return _socket != null;
         }
 
         /// <summary>

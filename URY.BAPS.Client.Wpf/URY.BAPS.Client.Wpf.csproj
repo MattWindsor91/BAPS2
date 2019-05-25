@@ -20,6 +20,7 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="autofac" Version="4.9.2" />
     <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Ini" Version="2.2.0" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />

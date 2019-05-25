@@ -1,66 +1,30 @@
-using CommonServiceLocator;
-using GalaSoft.MvvmLight.Ioc;
+using System;
 using JetBrains.Annotations;
-using URY.BAPS.Client.Common;
-using URY.BAPS.Client.Common.Controllers;
-using URY.BAPS.Client.Common.ServerConfig;
-using URY.BAPS.Client.Protocol.V2.Controllers;
-using URY.BAPS.Client.Protocol.V2.Core;
-using URY.BAPS.Client.Wpf.Services;
+
 
 namespace URY.BAPS.Client.Wpf.ViewModel
 {
     /// <summary>
-    ///     This class contains static references to all the view models in the
-    ///     application and provides an entry point for the bindings.
+    ///     This class contains references to the various 'main' view models
+    ///     used in the presenter, allowing them to be resolved from within
+    ///     their corresponding view XAML files.
     /// </summary>
     public class ViewModelLocator
     {
+        private readonly Lazy<LoginViewModel> _login;
+        private readonly Lazy<MainViewModel> _main;
+
         /// <summary>
         ///     Initializes a new instance of the ViewModelLocator class.
         /// </summary>
-        public ViewModelLocator()
+        public ViewModelLocator(Lazy<LoginViewModel> login, Lazy<MainViewModel> main)
         {
-            ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
-
-            RegisterServices();
-            SimpleIoc.Default.Register<ITextViewModel, TextViewModel>();
-            SimpleIoc.Default.Register<MainViewModel>();
-            SimpleIoc.Default.Register<LoginViewModel>();
+            _login = login;
+            _main = main;
         }
 
-        [ProvidesContext]
-        public static IClientCore ClientCore =>
-            ServiceLocator.Current.GetInstance<IClientCore>();
+     [ProvidesContext] public LoginViewModel Login => _login.Value;
 
-        [ProvidesContext] public static LoginViewModel Login => ServiceLocator.Current.GetInstance<LoginViewModel>();
-
-        [ProvidesContext] public static MainViewModel Main => ServiceLocator.Current.GetInstance<MainViewModel>();
-
-        [ProvidesContext]
-        public static ConfigController ConfigController => ServiceLocator.Current.GetInstance<ConfigController>();
-
-        [ProvidesContext]
-        public static SystemController SystemController => ServiceLocator.Current.GetInstance<SystemController>();
-
-        [ProvidesContext]
-        public static ChannelControllerSet ChannelControllerSet =>
-            ServiceLocator.Current.GetInstance<ChannelControllerSet>();
-
-        [ProvidesContext]
-        public static DirectoryControllerSet DirectoryControllerSet =>
-            ServiceLocator.Current.GetInstance<DirectoryControllerSet>();
-
-        private static void RegisterServices()
-        {
-            SimpleIoc.Default.Register<ConfigCache>();
-            SimpleIoc.Default.Register<ConfigController>();
-            SimpleIoc.Default.Register<SystemController>();
-            SimpleIoc.Default.Register<ChannelControllerSet>();
-            SimpleIoc.Default.Register<DirectoryControllerSet>();
-            SimpleIoc.Default.Register<AudioWallService>();
-            SimpleIoc.Default.Register<ChannelFactoryService>();
-            SimpleIoc.Default.Register<DirectoryFactoryService>();
-        }
+     [ProvidesContext] public MainViewModel Main => _main.Value;
     }
 }

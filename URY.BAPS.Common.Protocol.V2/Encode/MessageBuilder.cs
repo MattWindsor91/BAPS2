@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using JetBrains.Annotations;
@@ -104,6 +105,11 @@ namespace URY.BAPS.Common.Protocol.V2.Encode
         {
             _arguments.Enqueue(arg);
             return this;
+        }
+
+        public override string ToString()
+        {
+            return $"{_cmd}[{string.Join(", ", _arguments)}]";
         }
     }
 }

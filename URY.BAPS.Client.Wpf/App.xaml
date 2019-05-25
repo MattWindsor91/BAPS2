@@ -12,7 +12,6 @@
         <ResourceDictionary>
             <BitmapImage x:Key="Logo" UriSource="pack://application:,,,/Resources/splashIcon.png" />
 
-            <viewModel:ViewModelLocator x:Key="Locator" d:IsDataSource="True" />
             <converters:TrackToIconConverter x:Key="EntryTypeToIconConverter" />
 
             <!-- Colours used throughout BAPS -->

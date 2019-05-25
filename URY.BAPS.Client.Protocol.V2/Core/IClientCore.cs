@@ -1,6 +1,7 @@
 using System;
 using URY.BAPS.Client.Common.Updaters;
 using URY.BAPS.Common.Protocol.V2.Encode;
+using URY.BAPS.Common.Protocol.V2.Io;
 
 namespace URY.BAPS.Client.Protocol.V2.Core
 {
@@ -22,15 +23,12 @@ namespace URY.BAPS.Client.Protocol.V2.Core
         void Send(MessageBuilder? messageBuilder);
 
         /// <summary>
-        ///     Event raised just before authentication.
-        ///     Subscribe to this to install any event handlers needed for the authenticator.
+        ///     Attaches an authenticated BapsNet connection to this client
+        ///     core.
         /// </summary>
-        event EventHandler<Authenticator> AboutToAuthenticate;
-
-        /// <summary>
-        ///     Tries to authenticate and launch a BAPS client.
-        /// </summary>
-        /// <returns>Whether the client successfully launched.</returns>
-        bool Launch();
+        /// <param name="bapsConnection">
+        ///     The connection to attach.
+        /// </param>
+        void Launch(TcpConnection bapsConnection);
     }
 }
