@@ -3,13 +3,17 @@ using System.Windows;
 using Autofac;
 using GalaSoft.MvvmLight.Threading;
 using Microsoft.Extensions.Configuration;
+using URY.BAPS.Client.Common.Auth;
 using URY.BAPS.Client.Common.ClientConfig;
 using URY.BAPS.Client.Common.ServerConfig;
+using URY.BAPS.Client.Protocol.V2.Auth;
 using URY.BAPS.Client.Protocol.V2.Controllers;
 using URY.BAPS.Client.Protocol.V2.Core;
+using URY.BAPS.Client.Wpf.Auth;
 using URY.BAPS.Client.Wpf.Dialogs;
 using URY.BAPS.Client.Wpf.Services;
 using URY.BAPS.Client.Wpf.ViewModel;
+using URY.BAPS.Common.Protocol.V2.Io;
 
 namespace URY.BAPS.Client.Wpf
 {
@@ -65,11 +69,16 @@ namespace URY.BAPS.Client.Wpf
             _main = new MainWindow { DataContext = vm };
             _main.Show();
 
+            SetupServerConnection();
+        }
+
+        private void SetupServerConnection()
+        {
             var core = _diScope.Resolve<IClientCore>();
             var cache = _diScope.Resolve<ConfigCache>();
             cache.SubscribeToReceiver(core.Updater);
 
-            var auth = _diScope.Resolve<Authenticator>();
+            var auth = _diScope.Resolve<Authenticator<TcpConnection>>();
             var socket = auth.Run();
             if (socket is null)
             {
@@ -89,6 +98,7 @@ namespace URY.BAPS.Client.Wpf
             RegisterControllers(builder);
             RegisterServices(builder);
             RegisterViewModels(builder);
+            RegisterRest(builder);
             return builder.Build();
         }
 
@@ -98,7 +108,6 @@ namespace URY.BAPS.Client.Wpf
             builder.RegisterType<ClientCore>().As<IClientCore>().InstancePerLifetimeScope();
             builder.RegisterType<ConfigCache>().AsSelf().InstancePerLifetimeScope();
             builder.RegisterType<InitialUpdatePerformer>().AsSelf().InstancePerLifetimeScope();
-            builder.Register(_ => MakeAuthenticator()).AsSelf();
         }
 
         private static void RegisterControllers(ContainerBuilder builder)
@@ -123,41 +132,17 @@ namespace URY.BAPS.Client.Wpf
             builder.RegisterType<LoginViewModel>();
         }
 
-        private Authenticator MakeAuthenticator()
+        private void RegisterRest(ContainerBuilder builder)
         {
-            var auth = new Authenticator(LoginCallback);
-            auth.ServerError += (s, errorMessage) =>
-            {
-                MessageBox.Show(errorMessage, "Server error", MessageBoxButton.OK, MessageBoxImage.Error);
-            };
-            auth.UserError += (s, errorMessage) =>
-            {
-                MessageBox.Show(errorMessage, "Login error", MessageBoxButton.OK, MessageBoxImage.Error);
-            };
-            return auth;
+            builder.Register(c => new MainWindow { DataContext = c.Resolve<MainViewModel>()}).AsSelf().InstancePerLifetimeScope();
+            builder.RegisterType<DialogLoginPrompter>().As<ILoginPrompter>().InstancePerLifetimeScope();
+            builder.RegisterType<MessageBoxLoginErrorHandler>().As<ILoginErrorHandler>().InstancePerLifetimeScope();
+
+            builder.RegisterType<BapsAuthedConnectionBuilder>().As<IAuthedConnectionBuilder<TcpConnection>>()
+                .InstancePerLifetimeScope();
+            builder.RegisterType<Authenticator<TcpConnection>>().AsSelf().InstancePerLifetimeScope();
         }
 
-        private Authenticator.Response LoginCallback()
-        {
-            var vm = _diScope.Resolve<LoginViewModel>();
-
-            var login = new Login
-            {
-                Owner = _main,
-                DataContext = vm
-            };
-            if (login.ShowDialog() == false)
-                return new Authenticator.Response {IsGivingUp = true};
-
-            return new Authenticator.Response
-            {
-                IsGivingUp = false,
-                Username = vm.Username,
-                Password = login.PasswordTxt.Password,
-                Server = vm.Server,
-                Port = vm.Port
-            };
-        }
 
         private void Application_Exit(object sender, ExitEventArgs e)
         {
