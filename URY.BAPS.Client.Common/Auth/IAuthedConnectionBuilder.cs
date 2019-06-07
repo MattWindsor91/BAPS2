@@ -3,7 +3,7 @@ using URY.BAPS.Client.Common.Auth.Prompt;
 
 namespace URY.BAPS.Client.Common.Auth
 {
-    public interface IAuthedConnectionBuilder<TConn> where TConn : class
+    public interface IAuthedConnectionBuilder<out TConn> where TConn : class
     {
         TConn? Connection { get; }
 

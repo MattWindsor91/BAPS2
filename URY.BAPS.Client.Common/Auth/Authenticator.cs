@@ -16,7 +16,6 @@ namespace URY.BAPS.Client.Common.Auth
         private readonly ILoginErrorHandler _errorHandler;
         private readonly IAuthedConnectionBuilder<TConn> _builder;
 
-
         /// <summary>
         ///     Constructs a <see cref="Authenticator{TConn}" />.
         /// </summary>

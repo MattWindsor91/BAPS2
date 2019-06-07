@@ -25,7 +25,4 @@
   <ItemGroup>
     <None Remove="BapsNet\**" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Auth\" />
-  </ItemGroup>
 </Project>
