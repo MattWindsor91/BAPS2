@@ -1,4 +1,4 @@
-﻿using URY.BAPS.Client.Common.Auth;
+﻿using URY.BAPS.Client.Common.Auth.Prompt;
 using URY.BAPS.Client.Wpf.Dialogs;
 using URY.BAPS.Client.Wpf.ViewModel;
 

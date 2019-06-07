@@ -2,6 +2,8 @@
 using System.Net.Sockets;
 using JetBrains.Annotations;
 using URY.BAPS.Client.Common.Auth;
+using URY.BAPS.Client.Common.Auth.LoginResult;
+using URY.BAPS.Client.Common.Auth.Prompt;
 using URY.BAPS.Common.Protocol.V2.Commands;
 using URY.BAPS.Common.Protocol.V2.Encode;
 using URY.BAPS.Common.Protocol.V2.Io;
@@ -82,7 +84,7 @@ namespace URY.BAPS.Client.Protocol.V2.Auth
             SetBinaryMode();
 
             var (wasSeed, _, seed) = _connection.ReceiveSystemStringCommand(SystemOp.Seed);
-            if (!wasSeed) return new InvalidProcedureLoginResult("seed");
+            if (!wasSeed) return new InvalidProtocolLoginResult("seed");
             _seed = seed;
             return _success;
         }

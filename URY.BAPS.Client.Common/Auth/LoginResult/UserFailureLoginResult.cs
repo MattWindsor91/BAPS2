@@ -1,4 +1,4 @@
-﻿namespace URY.BAPS.Client.Common.Auth
+﻿namespace URY.BAPS.Client.Common.Auth.LoginResult
 {
     /// <summary>
     ///     Represents a login failure due to a user problem.

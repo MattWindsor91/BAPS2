@@ -1,6 +1,6 @@
 ﻿using JetBrains.Annotations;
 
-namespace URY.BAPS.Client.Common.Auth
+namespace URY.BAPS.Client.Common.Auth.Prompt
 {
     public interface ILoginPromptResponse
     {

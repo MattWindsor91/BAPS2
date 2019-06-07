@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace URY.BAPS.Client.Common.ClientConfig
+﻿namespace URY.BAPS.Client.Common.ClientConfig
 {
     /// <summary>
     ///     Data structure containing configuration for a BAPS client.

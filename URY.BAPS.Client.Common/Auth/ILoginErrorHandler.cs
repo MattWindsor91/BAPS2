@@ -1,4 +1,6 @@
-﻿namespace URY.BAPS.Client.Common.Auth
+﻿using URY.BAPS.Client.Common.Auth.LoginResult;
+
+namespace URY.BAPS.Client.Common.Auth
 {
     /// <summary>
     ///     Interface for authenticator components that handle login

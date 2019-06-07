@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using URY.BAPS.Client.Common.Auth;
+using URY.BAPS.Client.Common.Auth.LoginResult;
 
 namespace URY.BAPS.Client.Wpf.Auth
 {
@@ -13,7 +14,7 @@ namespace URY.BAPS.Client.Wpf.Auth
         /// <summary>
         ///     The main window, used as the parent of any loginPrompt error dialogs.
         /// </summary>
-        private MainWindow _mainWindow;
+        private readonly MainWindow _mainWindow;
 
         public MessageBoxLoginErrorHandler(MainWindow? mainWindow)
         {

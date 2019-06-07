@@ -1,4 +1,7 @@
-﻿namespace URY.BAPS.Client.Common.Auth
+﻿using URY.BAPS.Client.Common.Auth.LoginResult;
+using URY.BAPS.Client.Common.Auth.Prompt;
+
+namespace URY.BAPS.Client.Common.Auth
 {
     public interface IAuthedConnectionBuilder<TConn> where TConn : class
     {

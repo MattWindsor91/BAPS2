@@ -1,13 +1,12 @@
 ﻿using JetBrains.Annotations;
-using URY.BAPS.Client.Common.Utils;
 using Xunit;
 
-namespace URY.BAPS.Client.Common.Tests
+namespace URY.BAPS.Client.Common.Tests.Time
 {
     /// <summary>
     ///     Tests for the <see cref="Time" /> static class.
     /// </summary>
-    public class TimeUtilsTests
+    public class TimeTests
     {
         [UsedImplicitly]
         public static TheoryData<ushort, ushort, ushort, string> MillisecondsToTimeStringData =>
@@ -23,8 +22,8 @@ namespace URY.BAPS.Client.Common.Tests
         [MemberData(nameof(MillisecondsToTimeStringData))]
         public void TestMillisecondsToTimeString(ushort hours, ushort minutes, ushort seconds, string expected)
         {
-            var time = Time.BuildMilliseconds(hours, minutes, seconds);
-            Assert.Equal(expected, Time.MillisecondsToTimeString(time));
+            var time = Utils.Time.BuildMilliseconds(hours, minutes, seconds);
+            Assert.Equal(expected, Utils.Time.MillisecondsToTimeString(time));
         }
     }
 }

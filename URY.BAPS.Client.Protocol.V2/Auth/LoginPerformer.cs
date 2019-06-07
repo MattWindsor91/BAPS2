@@ -1,6 +1,8 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using URY.BAPS.Client.Common.Auth;
+using URY.BAPS.Client.Common.Auth.LoginResult;
+using URY.BAPS.Client.Common.Auth.Prompt;
 using URY.BAPS.Common.Protocol.V2.Commands;
 using URY.BAPS.Common.Protocol.V2.Encode;
 using URY.BAPS.Common.Protocol.V2.Io;
@@ -42,7 +44,7 @@ namespace URY.BAPS.Client.Protocol.V2.Auth
             loginMessage.Send(_connection);
 
             var (matched, authResult, description) = _connection.ReceiveSystemStringCommand(SystemOp.LoginResult);
-            if (!matched) return new InvalidProcedureLoginResult("login result listen");
+            if (!matched) return new InvalidProtocolLoginResult("login result listen");
 
             var authenticated = authResult.Value() == 0;
             if (!authenticated) return new UserFailureLoginResult(description ?? "(no description)");

@@ -1,8 +1,8 @@
-﻿namespace URY.BAPS.Client.Common.Auth
+﻿namespace URY.BAPS.Client.Common.Auth.LoginResult
 {
     /// <summary>
     ///     Interface for results returned from the inner parts of an
-    ///     <see cref="Authenticator"/> stack.
+    ///     <see cref="Authenticator{TConn}"/> stack.
     /// </summary>
     public interface ILoginResult
     {
@@ -17,7 +17,7 @@
         bool IsDone { get; }
 
         /// <summary>
-        ///     Whether the login failed due to a user error.
+        ///     Whether the login failed due to a user error or decision.
         /// </summary>
         bool IsUserFault { get; }
 

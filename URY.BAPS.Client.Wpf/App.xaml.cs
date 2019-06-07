@@ -4,6 +4,7 @@ using Autofac;
 using GalaSoft.MvvmLight.Threading;
 using Microsoft.Extensions.Configuration;
 using URY.BAPS.Client.Common.Auth;
+using URY.BAPS.Client.Common.Auth.Prompt;
 using URY.BAPS.Client.Common.ClientConfig;
 using URY.BAPS.Client.Common.ServerConfig;
 using URY.BAPS.Client.Protocol.V2.Auth;

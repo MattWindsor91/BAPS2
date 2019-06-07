@@ -77,18 +77,15 @@ namespace URY.BAPS.Common.Model.ServerConfig
         {
             if (!Enum.IsDefined(typeof(RepeatMode), mode))
                 throw new InvalidEnumArgumentException(nameof(mode), (int) mode, typeof(RepeatMode));
-            switch (mode)
-            {
-                case RepeatMode.None:
-                    return RepeatNone;
-                case RepeatMode.One:
-                    return RepeatOne;
-                case RepeatMode.All:
-                    return RepeatAll;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(mode), mode,
-                        "Internal error: this should be unreachable");
-            }
+            return mode switch
+                {
+                RepeatMode.None => RepeatNone,
+                RepeatMode.One => RepeatOne,
+                RepeatMode.All => RepeatAll,
+                _ =>
+                throw new ArgumentOutOfRangeException(nameof(mode), mode,
+                    "Internal error: this should be unreachable")
+                };
         }
     }
 }

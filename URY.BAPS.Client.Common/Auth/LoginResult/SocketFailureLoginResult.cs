@@ -1,6 +1,6 @@
-﻿using System.Net.Sockets;
+﻿using System;
 
-namespace URY.BAPS.Client.Common.Auth
+namespace URY.BAPS.Client.Common.Auth.LoginResult
 {
     /// <summary>
     ///     Login result representing a socket failure.
@@ -13,7 +13,7 @@ namespace URY.BAPS.Client.Common.Auth
         /// <param name="e">
         ///     The exception whose error caused the login failure.
         /// </param>
-        public SocketFailureLoginResult(SocketException e)
+        public SocketFailureLoginResult(Exception e)
         {
             Description = e.Message;
         }

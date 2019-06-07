@@ -1,7 +1,7 @@
-﻿namespace URY.BAPS.Client.Common.Auth
+﻿namespace URY.BAPS.Client.Common.Auth.Prompt
 {
     /// <summary>
-    ///     Interface for authenticator components that display loginPrompt prompts.
+    ///     Interface for authenticator components that display login prompts.
     /// </summary>
     public interface ILoginPrompter
     {

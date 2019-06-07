@@ -1,4 +1,4 @@
-﻿namespace URY.BAPS.Client.Common.Auth
+﻿namespace URY.BAPS.Client.Common.Auth.LoginResult
 {
     /// <summary>
     ///     A successful login result.

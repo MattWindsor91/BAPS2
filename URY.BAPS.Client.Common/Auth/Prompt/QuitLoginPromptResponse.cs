@@ -1,4 +1,4 @@
-﻿namespace URY.BAPS.Client.Common.Auth
+﻿namespace URY.BAPS.Client.Common.Auth.Prompt
 {
     /// <summary>
     ///     A <see cref="ILoginPromptResponse"/> that represents the situation where
