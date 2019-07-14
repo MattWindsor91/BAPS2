@@ -51,18 +51,18 @@ namespace URY.BAPS.Client.Common.Auth
             return _builder.Connection;
         }
 
-        private ILoginResult Attempt()
-        {
-            _prompter.Prompt();
-            var response = _prompter.Response;
-            return response.HasCredentials ? _builder.Attempt(response) : new QuitLoginResult();
-        }
-
         private bool AttemptAndHandleErrors()
         {
             var result = Attempt();
             if (!result.IsSuccess) HandleError(result);
             return result.IsDone;
+        }
+
+        private ILoginResult Attempt()
+        {
+            _prompter.Prompt();
+            var response = _prompter.Response;
+            return response.HasCredentials ? _builder.Attempt(response) : new QuitLoginResult();
         }
 
         private void HandleError(ILoginResult result)

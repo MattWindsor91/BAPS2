@@ -5,25 +5,35 @@ using URY.BAPS.Client.Wpf.ViewModel;
 namespace URY.BAPS.Client.Wpf.Auth
 {
     /// <summary>
-    ///     A <see cref="DialogLoginPrompter"/> that uses the
+    ///     An <see cref="ILoginPrompter"/> that uses the
     ///     <see cref="Login"/> dialog to request loginPrompt details.
     /// </summary>
     public class DialogLoginPrompter : ILoginPrompter
     {
+        private readonly MainWindow _parent;
         private readonly LoginViewModel _viewModel;
 
-        public DialogLoginPrompter(LoginViewModel viewModel)
+        /// <summary>
+        ///     Constructs a <see cref="DialogLoginPrompter"/>.
+        /// </summary>
+        /// <param name="parent">
+        ///     The parent window, used to position the login dialogs.
+        /// </param>
+        /// <param name="viewModel">
+        ///     The view model, used to store non-sensitive parts of the
+        ///     login data.
+        /// </param>
+        public DialogLoginPrompter(MainWindow parent, LoginViewModel viewModel)
         {
+            _parent = parent;
             _viewModel = viewModel;
         }
-
-        public MainWindow? MainWindow { get; set; }
 
         public void Prompt()
         {
             var login = new Login
             {
-                Owner = MainWindow,
+                Owner = _parent,
                 DataContext = _viewModel
             };
 

@@ -1,19 +1,11 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using Autofac;
 using GalaSoft.MvvmLight.Threading;
 using Microsoft.Extensions.Configuration;
 using URY.BAPS.Client.Common.Auth;
-using URY.BAPS.Client.Common.Auth.Prompt;
 using URY.BAPS.Client.Common.ClientConfig;
 using URY.BAPS.Client.Common.ServerConfig;
-using URY.BAPS.Client.Protocol.V2.Auth;
-using URY.BAPS.Client.Protocol.V2.Controllers;
 using URY.BAPS.Client.Protocol.V2.Core;
-using URY.BAPS.Client.Wpf.Auth;
-using URY.BAPS.Client.Wpf.Dialogs;
-using URY.BAPS.Client.Wpf.Services;
-using URY.BAPS.Client.Wpf.ViewModel;
 using URY.BAPS.Common.Protocol.V2.Io;
 
 namespace URY.BAPS.Client.Wpf
@@ -25,9 +17,31 @@ namespace URY.BAPS.Client.Wpf
     {
         private MainWindow? _main;
 
+        private ILifetimeScope? _diScope;
+
         static App()
         {
             DispatcherHelper.Initialize();
+        }
+
+        private void Application_Startup(object sender, StartupEventArgs e)
+        {
+            var configManager = MakeClientConfigManager();
+
+            var config = TryGetConfig(configManager);
+            if (config is null)
+            {
+                Shutdown();
+                return;
+            }
+
+            var container = SetupDependencyContainer(configManager);
+            _diScope = container.BeginLifetimeScope();
+
+            _main = Resolve<MainWindow>();
+            _main.Show();
+
+            SetupServerConnection();
         }
 
         private IClientConfigManager MakeClientConfigManager()
@@ -50,36 +64,13 @@ namespace URY.BAPS.Client.Wpf
             }
         }
 
-        private ILifetimeScope? _diScope;
-
-        private void Application_Startup(object sender, StartupEventArgs e)
-        {
-            var configManager = MakeClientConfigManager();
-
-            var config = TryGetConfig(configManager);
-            if (config is null)
-            {
-                Shutdown();
-                return;
-            }
-
-            var container = SetupDependencyContainer(configManager);
-            _diScope = container.BeginLifetimeScope();
-
-            var vm = _diScope.Resolve<MainViewModel>();
-            _main = new MainWindow { DataContext = vm };
-            _main.Show();
-
-            SetupServerConnection();
-        }
-
         private void SetupServerConnection()
         {
-            var core = _diScope.Resolve<IClientCore>();
-            var cache = _diScope.Resolve<ConfigCache>();
+            var core = Resolve<IClientCore>();
+            var cache = Resolve<ConfigCache>();
             cache.SubscribeToReceiver(core.Updater);
 
-            var auth = _diScope.Resolve<Authenticator<TcpConnection>>();
+            var auth = Resolve<Authenticator<TcpConnection>>();
             var socket = auth.Run();
             if (socket is null)
             {
@@ -88,66 +79,24 @@ namespace URY.BAPS.Client.Wpf
             }
 
             core.Launch(socket);
-            var init = _diScope.Resolve<InitialUpdatePerformer>();
+            var init = Resolve<InitialUpdatePerformer>();
             init.Run();
         }
 
-        private IContainer SetupDependencyContainer(IClientConfigManager configManager)
+        private static IContainer SetupDependencyContainer(IClientConfigManager configManager)
         {
-            var builder = new ContainerBuilder();
-            RegisterCoreClasses(builder, configManager);
-            RegisterControllers(builder);
-            RegisterServices(builder);
-            RegisterViewModels(builder);
-            RegisterRest(builder);
+            var builder = new DependencyContainerBuilder(configManager);
             return builder.Build();
         }
-
-        private void RegisterCoreClasses(ContainerBuilder builder, IClientConfigManager configManager)
-        {
-            builder.RegisterInstance(configManager).As<IClientConfigManager>();
-            builder.RegisterType<ClientCore>().As<IClientCore>().InstancePerLifetimeScope();
-            builder.RegisterType<ConfigCache>().AsSelf().InstancePerLifetimeScope();
-            builder.RegisterType<InitialUpdatePerformer>().AsSelf().InstancePerLifetimeScope();
-        }
-
-        private static void RegisterControllers(ContainerBuilder builder)
-        {
-            builder.RegisterType<ConfigController>().AsSelf().InstancePerLifetimeScope();
-            builder.RegisterType<SystemController>().AsSelf().InstancePerLifetimeScope();
-            builder.RegisterType<ChannelControllerSet>().AsSelf().InstancePerLifetimeScope();
-            builder.RegisterType<DirectoryControllerSet>().AsSelf().InstancePerLifetimeScope();
-        }
-
-        private static void RegisterServices(ContainerBuilder builder)
-        {
-            builder.RegisterType<AudioWallService>().AsSelf().InstancePerLifetimeScope();
-            builder.RegisterType<ChannelFactoryService>().AsSelf().InstancePerLifetimeScope();
-            builder.RegisterType<DirectoryFactoryService>().AsSelf().InstancePerLifetimeScope();
-        }
-
-        private void RegisterViewModels(ContainerBuilder builder)
-        {
-            builder.RegisterType<TextViewModel>().As<ITextViewModel>();
-            builder.RegisterType<MainViewModel>();
-            builder.RegisterType<LoginViewModel>();
-        }
-
-        private void RegisterRest(ContainerBuilder builder)
-        {
-            builder.Register(c => new MainWindow { DataContext = c.Resolve<MainViewModel>()}).AsSelf().InstancePerLifetimeScope();
-            builder.RegisterType<DialogLoginPrompter>().As<ILoginPrompter>().InstancePerLifetimeScope();
-            builder.RegisterType<MessageBoxLoginErrorHandler>().As<ILoginErrorHandler>().InstancePerLifetimeScope();
-
-            builder.RegisterType<BapsAuthedConnectionBuilder>().As<IAuthedConnectionBuilder<TcpConnection>>()
-                .InstancePerLifetimeScope();
-            builder.RegisterType<Authenticator<TcpConnection>>().AsSelf().InstancePerLifetimeScope();
-        }
-
 
         private void Application_Exit(object sender, ExitEventArgs e)
         {
             _diScope?.Dispose();
+        }
+
+        private T Resolve<T>()
+        {
+            return _diScope.Resolve<T>();
         }
     }
 }
