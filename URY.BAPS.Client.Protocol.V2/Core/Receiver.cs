@@ -46,7 +46,7 @@ namespace URY.BAPS.Client.Protocol.V2.Core
         {
             while (!_token.IsCancellationRequested)
             {
-                var cmdReceived = _bapsNet.ReceiveCommand();
+                var cmdReceived = _bapsNet.ReceiveCommand(_token);
                 DecodeCommand(cmdReceived);
             }
 
