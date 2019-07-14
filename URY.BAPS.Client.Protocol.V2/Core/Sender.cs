@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Diagnostics;
 using System.Threading;
 using JetBrains.Annotations;
 using URY.BAPS.Common.Protocol.V2.Encode;
@@ -13,10 +12,11 @@ namespace URY.BAPS.Client.Protocol.V2.Core
     /// </summary>
     public class Sender
     {
+        [NotNull] private readonly IPrimitiveSink _primitiveSink;
+
         [ItemNotNull] [NotNull]
         private readonly BlockingCollection<MessageBuilder> _queue = new BlockingCollection<MessageBuilder>();
 
-        [NotNull] private readonly IPrimitiveSink _primitiveSink;
         private readonly CancellationToken _token;
 
         /// <summary>

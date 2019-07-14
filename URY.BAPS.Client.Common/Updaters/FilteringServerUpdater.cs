@@ -6,7 +6,7 @@ namespace URY.BAPS.Client.Common.Updaters
 {
     /// <summary>
     ///     A <see cref="IBaseServerUpdater" /> that works by filtering
-    ///     the message stream of a <see cref="Receiver" /> for various types of
+    ///     a message stream for various types of
     ///     server update messages.
     /// </summary>
     public class FilteringServerUpdater : IServerUpdater

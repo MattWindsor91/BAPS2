@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using URY.BAPS.Client.Common.Controllers;
 using URY.BAPS.Client.Common.Updaters;
 using URY.BAPS.Client.Protocol.V2.Core;

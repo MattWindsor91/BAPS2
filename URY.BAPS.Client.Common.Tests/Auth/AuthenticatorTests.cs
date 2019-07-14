@@ -6,13 +6,14 @@ using Xunit;
 namespace URY.BAPS.Client.Common.Tests.Auth
 {
     /// <summary>
-    ///     Tests covering the whole <see cref="Authenticator{TConn}"/>.
+    ///     Tests covering the whole <see cref="Authenticator{TConn}" />.
     /// </summary>
     public class AuthenticatorTests
     {
         private readonly DebugLoginErrorHandler _errorHandler = new DebugLoginErrorHandler();
 
-        private Authenticator<T> MakeAuthenticator<T>(T connection, ILoginPromptResponse response, ILoginResult result) where T : class
+        private Authenticator<T> MakeAuthenticator<T>(T connection, ILoginPromptResponse response, ILoginResult result)
+            where T : class
         {
             var prompter = new DummyLoginPrompter(response);
             var builder = new DummyAuthedConnectionBuilder<T>(connection, result);
@@ -43,7 +44,8 @@ namespace URY.BAPS.Client.Common.Tests.Auth
         [Fact]
         public void TestUserFailure()
         {
-            var auth = MakeAuthenticator("foo", new LoginPromptResponse("foo", "bar", "localhost", 1350), new UserFailureLoginResult("Invalid password."));
+            var auth =
+ MakeAuthenticator("foo", new LoginPromptResponse("foo", "bar", "localhost", 1350), new UserFailureLoginResult("Invalid password."));
             _ = auth.Run();
             AssertOneResultMatching("s|d|U|Invalid password.");
         }

@@ -1,6 +1,5 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
-using URY.BAPS.Client.Common.Auth;
 using URY.BAPS.Client.Common.Auth.LoginResult;
 using URY.BAPS.Client.Common.Auth.Prompt;
 using URY.BAPS.Common.Protocol.V2.Commands;
@@ -11,7 +10,8 @@ namespace URY.BAPS.Client.Protocol.V2.Auth
 {
     public static class AuthExtensions
     {
-        public static (bool matched, CommandWord command, string? payload) ReceiveSystemStringCommand(this IPrimitiveSource src, SystemOp expectedOp)
+        public static (bool matched, CommandWord command, string? payload) ReceiveSystemStringCommand(
+            this IPrimitiveSource src, SystemOp expectedOp)
         {
             var cmd = src.ReceiveCommand();
             _ = src.ReceiveUint(); // Discard length

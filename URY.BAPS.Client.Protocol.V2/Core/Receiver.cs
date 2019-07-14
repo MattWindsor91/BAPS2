@@ -30,7 +30,7 @@ namespace URY.BAPS.Client.Protocol.V2.Core
         {
             _bapsNet = bapsNet ?? throw new ArgumentNullException(nameof(bapsNet));
             _token = token;
-            
+
             _decoder = decoder;
         }
 

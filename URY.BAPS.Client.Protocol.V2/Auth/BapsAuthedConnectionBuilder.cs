@@ -13,19 +13,19 @@ namespace URY.BAPS.Client.Protocol.V2.Auth
     public class BapsAuthedConnectionBuilder : IAuthedConnectionBuilder<TcpConnection>
     {
         /// <summary>
-        ///     Cached instance of <see cref="SuccessLoginResult"/>.
+        ///     Cached instance of <see cref="SuccessLoginResult" />.
         /// </summary>
         private readonly SuccessLoginResult _success = new SuccessLoginResult();
+
+        private TcpConnection? _connection;
 
         private ILoginPromptResponse _lastResponse = new QuitLoginPromptResponse();
 
         private string? _seed;
 
-        private TcpConnection? _connection;
+        private bool ConnectionReady => _connection != null && _seed != null;
 
         public TcpConnection? Connection => ConnectionReady ? _connection : null;
-
-        private bool ConnectionReady => _connection != null && _seed != null;
 
         public ILoginResult Attempt(ILoginPromptResponse response)
         {
@@ -106,6 +106,5 @@ namespace URY.BAPS.Client.Protocol.V2.Auth
             var lp = new LoginPerformer(_connection, _seed);
             return lp.TryLogin(promptResponse);
         }
-
     }
 }

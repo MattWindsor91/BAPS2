@@ -1,32 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using URY.BAPS.Client.Common.Utils;
 using Xunit;
 
 namespace URY.BAPS.Client.Common.Tests.Utils
 {
     /// <summary>
-    ///     Tests for the <see cref="StringExtensions"/> extension set.
+    ///     Tests for the <see cref="StringExtensions" /> extension set.
     /// </summary>
     public class StringExtensionsTests
     {
         /// <summary>
-        ///     Tests that a long string is shortened, using the default length.
+        ///     Tests that a zero custom length causes an exception.
         /// </summary>
         [Fact]
-        public void TestSummary_LongStringWithDefaults()
+        public void TestSummary_InvalidCustomLength()
         {
-            Assert.Equal("The quick brown fox jumps over \u2026", "The quick brown fox jumps over the lazy dog".Summary());
-        }
-
-        /// <summary>
-        ///     Tests that a short string isn't shortened, using the default length.
-        /// </summary>
-        [Fact]
-        public void TestSummary_ShortStringWithDefaults()
-        {
-            Assert.Equal("foo", "foo".Summary());
+            Assert.ThrowsAny<ArgumentOutOfRangeException>(() => "foo".Summary(0));
         }
 
         /// <summary>
@@ -39,6 +28,16 @@ namespace URY.BAPS.Client.Common.Tests.Utils
         }
 
         /// <summary>
+        ///     Tests that a long string is shortened, using the default length.
+        /// </summary>
+        [Fact]
+        public void TestSummary_LongStringWithDefaults()
+        {
+            Assert.Equal("The quick brown fox jumps over \u2026",
+                "The quick brown fox jumps over the lazy dog".Summary());
+        }
+
+        /// <summary>
         ///     Tests that a short string isn't shortened, using a custom edge-case length.
         /// </summary>
         [Fact]
@@ -48,12 +47,12 @@ namespace URY.BAPS.Client.Common.Tests.Utils
         }
 
         /// <summary>
-        ///     Tests that a zero custom length causes an exception.
+        ///     Tests that a short string isn't shortened, using the default length.
         /// </summary>
         [Fact]
-        public void TestSummary_InvalidCustomLength()
+        public void TestSummary_ShortStringWithDefaults()
         {
-            Assert.ThrowsAny<ArgumentOutOfRangeException>(() => "foo".Summary(0));
+            Assert.Equal("foo", "foo".Summary());
         }
     }
 }
