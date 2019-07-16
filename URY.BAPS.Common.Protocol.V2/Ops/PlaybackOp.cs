@@ -67,11 +67,6 @@ namespace URY.BAPS.Common.Protocol.V2.Commands
                 };
         }
 
-        public static CommandWord AsCommandWord(this MarkerType pt)
-        {
-            return pt.AsPlaybackOp().AsCommandWord();
-        }
-
         public static MarkerType AsMarkerType(this PlaybackOp op)
         {
             return op switch
@@ -81,11 +76,6 @@ namespace URY.BAPS.Common.Protocol.V2.Commands
                 PlaybackOp.IntroPosition => MarkerType.Intro,
                 _ => throw new ArgumentOutOfRangeException(nameof(op), op, "Op is not a valid marker type")
                 };
-        }
-
-        public static MarkerType AsMarkerType(this CommandWord c)
-        {
-            return c.PlaybackOp().AsMarkerType();
         }
     }
 }

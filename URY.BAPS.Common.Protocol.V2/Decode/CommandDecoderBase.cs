@@ -76,10 +76,10 @@ namespace URY.BAPS.Common.Protocol.V2.Decode
             Dispatch(new UnknownCommandArgs($"possibly a malformed {group.ToString().ToUpper()}"));
         }
 
-        private void DecodeCount(CountType type, uint extra = 0)
+        private void DecodeCount(CountType type, uint index = 0)
         {
             var count = ReceiveUint();
-            Dispatch(new CountArgs(type, count, extra));
+            Dispatch(new CountArgs(type, count, index));
         }
 
         private void DecodeError(ErrorType type, byte errorCode)

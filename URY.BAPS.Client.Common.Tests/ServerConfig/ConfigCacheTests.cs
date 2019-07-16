@@ -63,17 +63,17 @@ namespace URY.BAPS.Client.Common.Tests.ServerConfig
 
         public class MockConfigServerUpdater : IConfigServerUpdater
         {
-            private IObservable<ConfigChoiceArgs> _observeConfigChoice;
-            private IObservable<ConfigOptionArgs> _observeConfigOption;
-            private IObservable<ConfigResultArgs> _observeConfigResult;
-            private IObservable<ConfigSettingArgs> _observeConfigSetting;
-            private IObservable<CountArgs> _observeIncomingCount;
-            private IObservable<IpRestrictionArgs> _observeIpRestriction;
-            private IObservable<object> _observeMessages;
-            private IObservable<PermissionArgs> _observePermission;
-            private IObservable<UnknownCommandArgs> _observeUnknownCommand;
-            private IObservable<UserArgs> _observeUser;
-            private IObservable<UserResultArgs> _observeUserResult;
+            private IObservable<ConfigChoiceArgs>? _observeConfigChoice;
+            private IObservable<ConfigOptionArgs>? _observeConfigOption;
+            private IObservable<ConfigResultArgs>? _observeConfigResult;
+            private IObservable<ConfigSettingArgs>? _observeConfigSetting;
+            private IObservable<CountArgs>? _observeIncomingCount;
+            private IObservable<IpRestrictionArgs>? _observeIpRestriction;
+            private IObservable<object>? _observeMessages;
+            private IObservable<PermissionArgs>? _observePermission;
+            private IObservable<UnknownCommandArgs>? _observeUnknownCommand;
+            private IObservable<UserArgs>? _observeUser;
+            private IObservable<UserResultArgs>? _observeUserResult;
             public Queue<object> Messages { get; } = new Queue<object>();
 
             private IObservable<object> ObserveMessages =>

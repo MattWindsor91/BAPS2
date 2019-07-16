@@ -114,7 +114,7 @@ namespace URY.BAPS.Common.Protocol.V2.Tests.Decode
 
             Assert.Equal(CountType.PlaylistItem, message.Type);
             Assert.Equal(count, message.Count);
-            Assert.Equal(ChannelId, message.Extra);
+            Assert.Equal(ChannelId, message.Index);
         }
 
         /// <summary>

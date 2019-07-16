@@ -10,16 +10,29 @@
     /// </summary>
     public class CountArgs : MessageArgsBase
     {
-        public CountArgs(CountType type, uint count, uint extra)
+        public CountArgs(CountType type, uint count, uint index)
         {
             Type = type;
             Count = count;
-            Extra = extra;
+            Index = index;
         }
 
+        /// <summary>
+        ///     The type of item being counted.
+        /// </summary>
         public CountType Type { get; }
+
+        /// <summary>
+        ///     The number of incoming items of the specified type.
+        /// </summary>
         public uint Count { get; }
-        public uint Extra { get; }
+
+        /// <summary>
+        ///     If the particular count type refers to an indexed
+        ///     item (such as a config option or a channel listing),
+        ///     this field contains the index.
+        /// </summary>
+        public uint Index { get; }
     }
 
     /// <summary>
@@ -28,7 +41,8 @@
     public enum CountType
     {
         /// <summary>
-        ///     The message is counting playlist items.
+        ///     The message is counting playlist items;
+        ///     the index field contains the channel ID.
         /// </summary>
         PlaylistItem,
         /// <summary>
@@ -44,6 +58,10 @@
         /// </summary>
         Listing,
         ConfigOption,
+        /// <summary>
+        ///     The message is counting config choices;
+        ///     the index field contains the option ID.
+        /// </summary>
         ConfigChoice,
         User,
         Permission,
