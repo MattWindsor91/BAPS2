@@ -1,4 +1,4 @@
-﻿namespace URY.BAPS.Common.Protocol.V2.Commands
+﻿namespace URY.BAPS.Common.Protocol.V2.Ops
 {
     // The numbers assigned to each of these enum values are significant:
     // when shifted left by the appropriate member of CommandShifts,

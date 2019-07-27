@@ -3,6 +3,7 @@ using System.Text;
 using URY.BAPS.Common.Protocol.V2.Commands;
 using URY.BAPS.Common.Protocol.V2.Encode;
 using URY.BAPS.Common.Protocol.V2.Io;
+using URY.BAPS.Common.Protocol.V2.Ops;
 using Xunit;
 
 namespace URY.BAPS.Common.Protocol.V2.Tests.Encode

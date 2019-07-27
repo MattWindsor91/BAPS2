@@ -1,5 +1,6 @@
 using URY.BAPS.Common.Model.MessageEvents;
 using URY.BAPS.Common.Protocol.V2.Commands;
+using URY.BAPS.Common.Protocol.V2.Ops;
 
 namespace URY.BAPS.Common.Protocol.V2.Decode
 {

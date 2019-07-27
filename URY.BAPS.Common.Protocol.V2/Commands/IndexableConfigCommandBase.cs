@@ -1,4 +1,6 @@
-﻿namespace URY.BAPS.Common.Protocol.V2.Commands
+﻿using URY.BAPS.Common.Protocol.V2.Ops;
+
+namespace URY.BAPS.Common.Protocol.V2.Commands
 {
     /// <summary>
     ///     Abstract base class for config commands that can take an index.

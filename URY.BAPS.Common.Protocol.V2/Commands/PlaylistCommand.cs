@@ -1,4 +1,6 @@
-﻿namespace URY.BAPS.Common.Protocol.V2.Commands
+﻿using URY.BAPS.Common.Protocol.V2.Ops;
+
+namespace URY.BAPS.Common.Protocol.V2.Commands
 {
     public class PlaylistCommand : ChannelCommandBase<PlaylistOp>
     {

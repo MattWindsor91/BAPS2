@@ -1,5 +1,4 @@
 using System;
-using System.Collections.ObjectModel;
 using System.Reactive.Linq;
 using System.Threading;
 using URY.BAPS.Common.Model.MessageEvents;

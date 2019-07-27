@@ -1,4 +1,5 @@
 ﻿using System;
+using URY.BAPS.Common.Protocol.V2.Ops;
 
 namespace URY.BAPS.Common.Protocol.V2.Commands
 {

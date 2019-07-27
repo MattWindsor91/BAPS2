@@ -10,6 +10,7 @@ using URY.BAPS.Common.Protocol.V2.Commands;
 using URY.BAPS.Common.Protocol.V2.Decode;
 using URY.BAPS.Common.Protocol.V2.Io;
 using URY.BAPS.Common.Protocol.V2.Model;
+using URY.BAPS.Common.Protocol.V2.Ops;
 using URY.BAPS.Common.Protocol.V2.Tests.Utils;
 using Xunit;
 
