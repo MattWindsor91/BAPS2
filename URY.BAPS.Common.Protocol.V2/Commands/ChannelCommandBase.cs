@@ -16,5 +16,11 @@ namespace URY.BAPS.Common.Protocol.V2.Commands
         public byte ChannelId { get; }
 
         public override CommandWord Packed => OpAsCommandWord(Op).WithChannelModeFlag(ModeFlag).WithChannel(ChannelId);
+
+        public override string ToString()
+        {
+            var modePrefix = ModeFlag ? "!" : "";
+            return $"{modePrefix}{Op}({ChannelId})";
+        }
     }
 }

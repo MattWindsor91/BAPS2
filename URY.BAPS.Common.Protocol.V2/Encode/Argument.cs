@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Globalization;
+using System.Text;
 using URY.BAPS.Common.Protocol.V2.Io;
 
 namespace URY.BAPS.Common.Protocol.V2.Encode
@@ -29,6 +30,11 @@ namespace URY.BAPS.Common.Protocol.V2.Encode
         {
             sock.SendString(Value);
         }
+
+        public override string ToString()
+        {
+            return $"\"{Value}\"";
+        }
     }
 
     /// <summary>
@@ -44,6 +50,11 @@ namespace URY.BAPS.Common.Protocol.V2.Encode
         {
             sock.SendUint(Value);
         }
+
+        public override string ToString()
+        {
+            return $"{Value}U";
+        }
     }
 
     /// <summary>
@@ -58,6 +69,11 @@ namespace URY.BAPS.Common.Protocol.V2.Encode
         public void Send(IPrimitiveSink sock)
         {
             sock.SendFloat(Value);
+        }
+
+        public override string ToString()
+        {
+            return $"{Value}F";
         }
     }
 }

@@ -1,4 +1,3 @@
-using System.Text;
 using Autofac;
 using URY.BAPS.Server.Reference.Config;
 
@@ -12,12 +11,12 @@ namespace URY.BAPS.Server.Reference
         /// <summary>
         ///     This server's configuration.
         /// </summary>
-        private ServerConfig _config;
+        private readonly ServerConfig _config;
 
         /// <summary>
         ///     This server's inversion-of-control container, used to acquire other server components.
         /// </summary>
-        private IContainer _container;
+        private readonly IContainer _container;
 
         public Server(ServerConfig config)
         {

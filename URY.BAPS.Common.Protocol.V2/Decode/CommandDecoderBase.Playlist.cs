@@ -31,8 +31,6 @@ namespace URY.BAPS.Common.Protocol.V2.Decode
             }
         }
 
-        protected abstract void DecodeItem(byte channelId);
-
         private void DecodeResetPlaylist(byte channelId)
         {
             Dispatch(new PlaylistResetArgs(channelId));
@@ -50,5 +48,11 @@ namespace URY.BAPS.Common.Protocol.V2.Decode
             var indexTo = ReceiveUint();
             Dispatch(new TrackMoveArgs(channelId, indexFrom, indexTo));
         }
+
+        #region Implemented differently for clients and servers
+
+        protected abstract void DecodeItem(byte channelId);
+
+        #endregion Implemented differently for clients and servers
     }
 }

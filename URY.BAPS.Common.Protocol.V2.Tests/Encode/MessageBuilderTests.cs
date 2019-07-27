@@ -3,6 +3,7 @@ using System.Text;
 using URY.BAPS.Common.Protocol.V2.Commands;
 using URY.BAPS.Common.Protocol.V2.Encode;
 using URY.BAPS.Common.Protocol.V2.Io;
+using URY.BAPS.Common.Protocol.V2.Model;
 using URY.BAPS.Common.Protocol.V2.Ops;
 using Xunit;
 
@@ -29,7 +30,7 @@ namespace URY.BAPS.Common.Protocol.V2.Tests.Encode
             Assert.Collection(sink.Items, finalElementInspectors);
         }
 
-        private void AssertEqualUint(uint expected, object actual)
+        private static void AssertEqualUint(uint expected, object actual)
         {
             var actualUint = Assert.IsAssignableFrom<uint>(actual);
             Assert.Equal(expected, actualUint);
@@ -104,7 +105,6 @@ namespace URY.BAPS.Common.Protocol.V2.Tests.Encode
             AssertMessage(m, cmd, expectedLength);
         }
 
-
         /// <summary>
         ///     Tests sending a command with zero arguments.
         /// </summary>
@@ -116,6 +116,19 @@ namespace URY.BAPS.Common.Protocol.V2.Tests.Encode
             // Even zero-argument commands have a trailing length (of 0).
             const uint expectedLength = 0;
             AssertMessage(m, cmd, expectedLength);
+        }
+
+        /// <summary>
+        ///     Tests converting a message builder to a string.
+        /// </summary>
+        [Fact]
+        public void TestToString()
+        {
+            // This command isn't well-formed, but checks each of the currently
+            // existing BAPS2 types.
+            var cmd = new PlaylistCommand(PlaylistOp.Item, 0);
+            var m = new MessageBuilder(cmd).Add(1.5F).Add((uint)TrackType.File).Add("example");
+            Assert.Equal("Item(0)[1.5F, 1U, \"example\"]", m.ToString());
         }
     }
 }
