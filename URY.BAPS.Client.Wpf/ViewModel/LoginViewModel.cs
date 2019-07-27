@@ -1,7 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using JetBrains.Annotations;
 using URY.BAPS.Client.Common.ClientConfig;
-using URY.BAPS.Client.Windows;
 
 namespace URY.BAPS.Client.Wpf.ViewModel
 {

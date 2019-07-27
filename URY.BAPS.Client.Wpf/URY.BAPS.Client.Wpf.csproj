@@ -50,7 +50,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\URY.BAPS.Client.Protocol.V2\URY.BAPS.Client.Protocol.V2.csproj" />
-    <ProjectReference Include="..\URY.BAPS.Client.Windows\URY.BAPS.Client.Windows.csproj" />
     <ProjectReference Include="..\URY.BAPS.Client.Common\URY.BAPS.Client.Common.csproj" />
     <ProjectReference Include="..\URY.BAPS.Common.Model\URY.BAPS.Common.Model.csproj" />
   </ItemGroup>
