@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using URY.BAPS.Common.Protocol.V2.Commands;
 using URY.BAPS.Common.Protocol.V2.Ops;
@@ -10,12 +11,6 @@ namespace URY.BAPS.Common.Protocol.V2.Tests.Commands
     /// </summary>
     public class CommandWordTests
     {
-        public static TheoryData<ushort> ChannelRoundTripData =>
-            new TheoryData<ushort>
-            {
-                0, 1, 2, 3
-            };
-
         public static TheoryData<ushort[]> MaskCoverageData =>
             // Each of these implicitly contains the group mask.
             new TheoryData<ushort[]>
@@ -31,28 +26,15 @@ namespace URY.BAPS.Common.Protocol.V2.Tests.Commands
                 new[] {CommandMasks.ChannelOp, CommandMasks.ChannelModeFlag, CommandMasks.ChannelId}
             };
 
-        public static TheoryData<CommandWord, CommandGroup> CommandGroupData =>
-            new TheoryData<CommandWord, CommandGroup>
+        public static TheoryData<CommandGroup> CommandGroupData =>
+            new TheoryData<CommandGroup>
             {
-                {CommandWord.Playback | CommandWord.Play, CommandGroup.Playback},
-                {CommandWord.Playlist | CommandWord.AddItem, CommandGroup.Playlist},
-                {CommandWord.Config | CommandWord.GetOption, CommandGroup.Config},
-                {CommandWord.Database | CommandWord.GetShows, CommandGroup.Database},
-                {CommandWord.System | CommandWord.Quit, CommandGroup.System}
+                CommandGroup.Playback,
+                CommandGroup.Playlist,
+                CommandGroup.Config,
+                CommandGroup.Database,
+                CommandGroup.System
             };
-
-        /// <summary>
-        ///     Tests that, if we add a channel to a command with
-        ///     <see cref="CommandExtensions.WithChannel" />, then the result of
-        ///     <see cref="CommandExtensions.Channel" /> is equal to that channel.
-        /// </summary>
-        [Theory]
-        [MemberData(nameof(ChannelRoundTripData))]
-        public void TestChannelRoundTrip(byte channelId)
-        {
-            const CommandWord cmd = CommandWord.Playback | CommandWord.Play;
-            Assert.Equal(channelId, cmd.WithChannel(channelId).Channel());
-        }
 
         /// <summary>
         ///     Checks that the given set of masks covers the full range of a
@@ -69,21 +51,13 @@ namespace URY.BAPS.Common.Protocol.V2.Tests.Commands
 
         /// <summary>
         ///     Tests that representative commands from each group return the
-        ///     correct <see cref="CommandGroup" /> under <see cref="CommandExtensions.Group" />.
+        ///     correct <see cref="CommandGroup" /> under <see cref="CommandUnpacking.Group" />.
         /// </summary>
         [Theory]
         [MemberData(nameof(CommandGroupData))]
-        public void TestCommandGroup(CommandWord commandWord, CommandGroup expectedGroup)
+        public void TestCommandGroup(CommandGroup expectedGroup)
         {
-            Assert.Equal(expectedGroup, commandWord.Group());
-        }
-
-        [Fact]
-        public void TestPlaylistOp_AsCommandWord()
-        {
-            const CommandWord expected = CommandWord.Playlist | CommandWord.ResetPlaylist;
-            var actual = PlaylistOp.ResetPlaylist.AsCommandWord();
-            Assert.Equal(expected, actual);
+            Assert.Equal(expectedGroup, CommandUnpacking.Group(expectedGroup.ToWordBits()));
         }
     }
 }

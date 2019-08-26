@@ -15,7 +15,8 @@ namespace URY.BAPS.Common.Protocol.V2.Tests.Commands
         [Fact]
         public void TestPacked_Flag()
         {
-            var expected = DatabaseOp.GetShows.AsCommandWord().WithModeFlag(true);
+            var expected = (ushort) (CommandGroup.Database.ToWordBits() | DatabaseOp.GetShows.ToWordBits() |
+                                     CommandMasks.ModeFlag);
 
             var unpacked = new DatabaseCommand(DatabaseOp.GetShows, 0, true);
             var actual = unpacked.Packed;

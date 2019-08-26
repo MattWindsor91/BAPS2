@@ -22,7 +22,7 @@ namespace URY.BAPS.Common.Protocol.V2.Tests.Encode
 
             var finalElementInspectors = new Action<object>[elementInspectors.Length + 2];
             finalElementInspectors[0] = actualCmd =>
-                Assert.Equal(expectedCommand.Packed, Assert.IsAssignableFrom<CommandWord>(actualCmd));
+                Assert.Equal(expectedCommand.Packed, Assert.IsAssignableFrom<ushort>(actualCmd));
             finalElementInspectors[1] = length =>
                 Assert.Equal(expectedLength, Assert.IsAssignableFrom<uint>(length));
             Array.Copy(elementInspectors, 0, finalElementInspectors, 2, elementInspectors.Length);

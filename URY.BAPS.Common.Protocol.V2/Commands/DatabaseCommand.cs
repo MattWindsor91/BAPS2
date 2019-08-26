@@ -8,14 +8,12 @@ namespace URY.BAPS.Common.Protocol.V2.Commands
         {
         }
 
-        protected override CommandWord OpAsCommandWord(DatabaseOp op)
-        {
-            return op.AsCommandWord();
-        }
-
         public override void Accept(ICommandVisitor? visitor)
         {
             visitor?.Visit(this);
         }
+
+        protected override CommandGroup Group => CommandGroup.Database;
+        protected override byte OpByte => (byte) Op;
     }
 }

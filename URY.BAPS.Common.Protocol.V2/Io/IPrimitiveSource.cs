@@ -13,8 +13,8 @@ namespace URY.BAPS.Common.Protocol.V2.Io
         ///     Performs a blocking (synchronous) read of a command word.
         /// </summary>
         /// <param name="token">An optional cancellation token that can be used to abort the receive.</param>
-        /// <returns>The resulting <see cref="CommandWord" />.</returns>
-        CommandWord ReceiveCommand(CancellationToken token = default);
+        /// <returns>The resulting 16-bit command word.</returns>
+        ushort ReceiveCommand(CancellationToken token = default);
 
         /// <summary>
         ///     Performs a blocking (synchronous) read of a string.

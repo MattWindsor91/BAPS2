@@ -9,11 +9,11 @@ namespace URY.BAPS.Common.Protocol.V2.Io
     public interface IPrimitiveSink
     {
         /// <summary>
-        ///     Sends a command down this sink.
+        ///     Sends a command word down this sink.
         /// </summary>
         /// <param name="cmd">The command to send.</param>
         /// <seealso cref="Flush" />
-        void SendCommand(CommandWord cmd);
+        void SendCommand(ushort cmd);
 
         /// <summary>
         ///     Sends a string down this sink.

@@ -15,8 +15,12 @@ namespace URY.BAPS.Common.Protocol.V2.Tests.Commands
         [Fact]
         public void TestPacked_ModeFlag()
         {
-            var expected = ConfigOp.SetConfigValue.AsCommandWord().WithConfigIndexedFlag(true).WithModeFlag(true)
-                .WithConfigIndex(5);
+            var expected = (ushort) (
+                CommandGroup.Config.ToWordBits()
+            | ConfigOp.SetConfigValue.ToWordBits()
+                    | CommandMasks.ConfigIndexedFlag
+                    | CommandMasks.ModeFlag
+                        | CommandPacking.ConfigIndex(5));
 
             var unpacked = new IndexedConfigCommand(ConfigOp.SetConfigValue, 5, true);
             var actual = unpacked.Packed;
@@ -30,7 +34,11 @@ namespace URY.BAPS.Common.Protocol.V2.Tests.Commands
         [Fact]
         public void TestPacked_NoModeFlag()
         {
-            var expected = ConfigOp.SetConfigValue.AsCommandWord().WithConfigIndexedFlag(true).WithConfigIndex(5);
+            var expected = (ushort) (
+                CommandGroup.Config.ToWordBits()
+            | ConfigOp.SetConfigValue.ToWordBits()
+            | CommandMasks.ConfigIndexedFlag
+            | CommandPacking.ConfigIndex(5));
 
             var unpacked = new IndexedConfigCommand(ConfigOp.SetConfigValue, 5, false);
             var actual = unpacked.Packed;

@@ -4,6 +4,7 @@ using System.Threading;
 using JetBrains.Annotations;
 using URY.BAPS.Common.Protocol.V2.Commands;
 using URY.BAPS.Common.Protocol.V2.Io;
+using URY.BAPS.Common.Protocol.V2.Ops;
 using Xunit;
 
 namespace URY.BAPS.Common.Protocol.V2.Tests.Io
@@ -28,14 +29,14 @@ namespace URY.BAPS.Common.Protocol.V2.Tests.Io
         {
             _stream.Flush();
             _stream.Seek(0, SeekOrigin.Begin);
-            var cts = new CancellationTokenSource(1_000);
+            using var cts = new CancellationTokenSource(1_000);
             return receive(cts.Token);
         }
 
         [Fact]
         public void TestSendAndReceiveCommand()
         {
-            const CommandWord expectedCommand = CommandWord.System | CommandWord.AutoUpdate;
+            var expectedCommand = (ushort) (CommandGroup.System.ToWordBits() | SystemOp.AutoUpdate.ToWordBits());
             _primitiveSink.SendCommand(expectedCommand);
             _primitiveSink.Flush();
             var actualCommand = SeekAndReceive(_primitiveSource.ReceiveCommand);

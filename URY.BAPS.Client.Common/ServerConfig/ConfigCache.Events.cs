@@ -13,7 +13,7 @@ namespace URY.BAPS.Client.Common.ServerConfig
         /// <summary>
         ///     Event raised when a choice-type config option changes.
         /// </summary>
-        public event EventHandler<ChoiceChangeEventArgs> ChoiceChanged;
+        public event EventHandler<ChoiceChangeEventArgs>? ChoiceChanged;
 
         protected virtual void OnChoiceChanged(ChoiceChangeEventArgs e)
         {
@@ -23,12 +23,12 @@ namespace URY.BAPS.Client.Common.ServerConfig
         /// <summary>
         ///     Event raised when an integer-type config option changes.
         /// </summary>
-        public event EventHandler<IntChangeEventArgs> IntChanged;
+        public event EventHandler<IntChangeEventArgs>? IntChanged;
 
         /// <summary>
         ///     Event raised when a string-type config option changes.
         /// </summary>
-        public event EventHandler<StringChangeEventArgs> StringChanged;
+        public event EventHandler<StringChangeEventArgs>? StringChanged;
 
         protected virtual void OnIntChanged(IntChangeEventArgs e)
         {

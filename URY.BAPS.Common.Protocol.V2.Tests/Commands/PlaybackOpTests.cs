@@ -26,16 +26,5 @@ namespace URY.BAPS.Common.Protocol.V2.Tests.Commands
         {
             Assert.Equal(state, state.AsPlaybackOp().AsPlaybackState());
         }
-
-        /// <summary>
-        ///     Checks that converting a state to a command, then back, does nothing.
-        /// </summary>
-        /// <param name="state">The state to test.</param>
-        [Theory]
-        [MemberData(nameof(PlaybackStateData))]
-        public void TestChannelStateCommandRoundTrip(PlaybackState state)
-        {
-            Assert.Equal(state, state.AsCommandWord().AsPlaybackState());
-        }
     }
 }

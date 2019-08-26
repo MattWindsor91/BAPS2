@@ -8,7 +8,7 @@ namespace URY.BAPS.Common.Protocol.V2.Decode
 {
     public partial class CommandDecoderBase
     {
-        private static int IndexAsInt(IndexableConfigCommandBase c)
+        private static int IndexAsInt(IndexableConfigCommand c)
         {
             return c.HasIndex ? c.Index : -1;
         }
@@ -111,7 +111,7 @@ namespace URY.BAPS.Common.Protocol.V2.Decode
             DecodeIndexableConfigCommand(command);
         }
 
-        private void DecodeIndexableConfigCommand(IndexableConfigCommandBase command)
+        private void DecodeIndexableConfigCommand(IndexableConfigCommand command)
         {
             var maybeIndex = IndexAsInt(command);
 

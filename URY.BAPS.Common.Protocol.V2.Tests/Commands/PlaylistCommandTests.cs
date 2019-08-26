@@ -15,7 +15,7 @@ namespace URY.BAPS.Common.Protocol.V2.Tests.Commands
         [Fact]
         public void TestPacked_ChannelOnly()
         {
-            var expected = PlaylistOp.ResetPlaylist.AsCommandWord().WithChannel(63);
+            var expected = (ushort) (CommandGroup.Playlist.ToWordBits() | PlaylistOp.ResetPlaylist.ToWordBits() | CommandPacking.Channel(63));
 
             var unpacked = new PlaylistCommand(PlaylistOp.ResetPlaylist, 63);
             var actual = unpacked.Packed;

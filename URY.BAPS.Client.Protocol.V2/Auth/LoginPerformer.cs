@@ -11,13 +11,13 @@ namespace URY.BAPS.Client.Protocol.V2.Auth
 {
     public static class AuthExtensions
     {
-        public static (bool matched, CommandWord command, string? payload) ReceiveSystemStringCommand(
+        public static (bool matched, ushort command, string? payload) ReceiveSystemStringCommand(
             this IPrimitiveSource src, SystemOp expectedOp)
         {
             var cmd = src.ReceiveCommand();
             _ = src.ReceiveUint(); // Discard length
-            var isRightGroup = cmd.Group() == CommandGroup.System;
-            var isRightOp = cmd.SystemOp() == expectedOp;
+            var isRightGroup = CommandUnpacking.Group(cmd) == CommandGroup.System;
+            var isRightOp = CommandUnpacking.SystemOp(cmd) == expectedOp;
             var isRightCommand = isRightGroup && isRightOp;
             return isRightCommand ? (true, cmd, src.ReceiveString()) : (false, default, null);
         }
@@ -47,7 +47,7 @@ namespace URY.BAPS.Client.Protocol.V2.Auth
             var (matched, authResult, description) = _connection.ReceiveSystemStringCommand(SystemOp.LoginResult);
             if (!matched) return new InvalidProtocolLoginResult("login result listen");
 
-            var authenticated = authResult.Value() == 0;
+            var authenticated = CommandUnpacking.Value(authResult) == 0;
             if (!authenticated) return new UserFailureLoginResult(description ?? "(no description)");
             return new SuccessLoginResult();
         }

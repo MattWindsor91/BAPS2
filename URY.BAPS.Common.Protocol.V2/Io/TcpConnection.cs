@@ -34,7 +34,7 @@ namespace URY.BAPS.Common.Protocol.V2.Io
         /// </summary>
         public bool IsValid => _clientSocket != null && _clientSocket.Connected;
 
-        public CommandWord ReceiveCommand(CancellationToken token = default)
+        public ushort ReceiveCommand(CancellationToken token = default)
         {
             return _primitiveSource.ReceiveCommand(token);
         }
@@ -54,7 +54,7 @@ namespace URY.BAPS.Common.Protocol.V2.Io
             return _primitiveSource.ReceiveUint(token);
         }
 
-        public void SendCommand(CommandWord cmd)
+        public void SendCommand(ushort cmd)
         {
             _primitiveSink.SendCommand(cmd);
         }

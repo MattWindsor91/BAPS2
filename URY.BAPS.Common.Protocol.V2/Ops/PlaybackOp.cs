@@ -47,16 +47,6 @@ namespace URY.BAPS.Common.Protocol.V2.Ops
                 };
         }
 
-        public static CommandWord AsCommandWord(this PlaybackState pt)
-        {
-            return pt.AsPlaybackOp().AsCommandWord();
-        }
-
-        public static PlaybackState AsPlaybackState(this CommandWord c)
-        {
-            return c.PlaybackOp().AsPlaybackState();
-        }
-
         public static PlaybackOp AsPlaybackOp(this MarkerType pt)
         {
             return pt switch

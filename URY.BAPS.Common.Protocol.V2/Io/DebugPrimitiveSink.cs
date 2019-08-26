@@ -13,7 +13,7 @@ namespace URY.BAPS.Common.Protocol.V2.Io
 
         public object[] Items { get; private set; } = { };
 
-        public void SendCommand(CommandWord cmd)
+        public void SendCommand(ushort cmd)
         {
             _itemQueue.Enqueue(cmd);
         }

@@ -3,7 +3,6 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using JetBrains.Annotations;
-using URY.BAPS.Common.Protocol.V2.Commands;
 
 namespace URY.BAPS.Common.Protocol.V2.Io
 {
@@ -25,9 +24,9 @@ namespace URY.BAPS.Common.Protocol.V2.Io
             _reader = new BinaryReader(stream, Encoding.UTF8, true);
         }
 
-        public CommandWord ReceiveCommand(CancellationToken token = default)
+        public ushort ReceiveCommand(CancellationToken token = default)
         {
-            return (CommandWord) BitConverter.ToUInt16(ReceiveNetworkOrder(2, token), 0);
+            return BitConverter.ToUInt16(ReceiveNetworkOrder(2, token), 0);
         }
 
         public string ReceiveString(CancellationToken token = default)

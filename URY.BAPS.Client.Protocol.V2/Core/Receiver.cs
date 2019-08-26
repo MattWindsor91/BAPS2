@@ -51,10 +51,10 @@ namespace URY.BAPS.Client.Protocol.V2.Core
             _token.ThrowIfCancellationRequested();
         }
 
-        private void DecodeCommand(CommandWord word)
+        private void DecodeCommand(ushort word)
         {
             _ /* length */ = _bapsNet.ReceiveUint();
-            var cmd = word.Unpack();
+            var cmd = CommandFactory.Unpack(word);
             cmd.Accept(_decoder);
         }
     }

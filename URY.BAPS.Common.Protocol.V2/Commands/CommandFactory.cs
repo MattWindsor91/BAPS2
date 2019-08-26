@@ -1,51 +1,54 @@
 ﻿using System;
 using URY.BAPS.Common.Protocol.V2.Ops;
 
+using static URY.BAPS.Common.Protocol.V2.Commands.CommandUnpacking;
+
 namespace URY.BAPS.Common.Protocol.V2.Commands
 {
+
     /// <summary>
-    ///     Builds unpacked <see cref="ICommand" />s from <see cref="CommandWord" />s.
+    ///     Builds unpacked <see cref="ICommand" />s from packed command words.
     /// </summary>
     public static class CommandFactory
     {
-        private static ICommand UnpackConfig(CommandWord word)
+        private static ICommand UnpackConfig(ushort word)
         {
-            var op = word.ConfigOp();
-            var modeFlag = word.HasModeFlag();
+            var op = ConfigOp(word);
+            var modeFlag = HasModeFlag(word);
 
             // Both config indices and config values only take up six bytes,
             // so we use the same mask.
             return op.CanTakeIndex()
                 ? UnpackIndexableConfig(op, modeFlag, word)
-                : new ValueConfigCommand(op, word.ConfigIndex(), modeFlag);
+                : new ValueConfigCommand(op, ConfigIndex(word), modeFlag);
         }
 
-        private static ICommand UnpackIndexableConfig(ConfigOp op, bool modeFlag, CommandWord word)
+        private static ICommand UnpackIndexableConfig(ConfigOp op, bool modeFlag, ushort word)
         {
-            var indexedFlag = word.HasConfigIndexedFlag();
+            var indexedFlag = HasConfigIndexedFlag(word);
             return indexedFlag
-                ? (ICommand) new IndexedConfigCommand(op, word.ConfigIndex(), modeFlag)
+                ? (ICommand) new IndexedConfigCommand(op, ConfigIndex(word), modeFlag)
                 : new NonIndexedConfigCommand(op, modeFlag);
         }
 
-        private static ICommand UnpackDatabase(CommandWord word)
+        private static ICommand UnpackDatabase(ushort word)
         {
-            return new DatabaseCommand(word.DatabaseOp(), word.Value(), word.HasModeFlag());
+            return new DatabaseCommand(DatabaseOp(word), Value(word), HasModeFlag(word));
         }
 
-        private static ICommand UnpackPlayback(CommandWord word)
+        private static ICommand UnpackPlayback(ushort word)
         {
-            return new PlaybackCommand(word.PlaybackOp(), word.Channel(), word.HasChannelModeFlag());
+            return new PlaybackCommand(PlaybackOp(word), Channel(word), HasChannelModeFlag(word));
         }
 
-        private static ICommand UnpackPlaylist(CommandWord word)
+        private static ICommand UnpackPlaylist(ushort word)
         {
-            return new PlaylistCommand(word.PlaylistOp(), word.Channel(), word.HasChannelModeFlag());
+            return new PlaylistCommand(PlaylistOp(word), Channel(word), HasChannelModeFlag(word));
         }
 
-        private static ICommand UnpackSystem(CommandWord word)
+        private static ICommand UnpackSystem(ushort word)
         {
-            return new SystemCommand(word.SystemOp(), word.Value(), word.HasModeFlag());
+            return new SystemCommand(SystemOp(word), Value(word), HasModeFlag(word));
         }
 
         /// <summary>
@@ -53,9 +56,9 @@ namespace URY.BAPS.Common.Protocol.V2.Commands
         /// </summary>
         /// <param name="word">The word to unpack.</param>
         /// <returns>An <see cref="ICommand" /> whose contents match those of the packed word <paramref name="word" />.</returns>
-        public static ICommand Unpack(this CommandWord word)
+        public static ICommand Unpack(ushort word)
         {
-            return word.Group() switch
+            return Group(word) switch
                 {
                 CommandGroup.Config => UnpackConfig(word),
                 CommandGroup.Database => UnpackDatabase(word),

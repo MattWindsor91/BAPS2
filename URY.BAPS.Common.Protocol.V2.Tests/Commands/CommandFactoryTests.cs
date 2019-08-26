@@ -3,6 +3,8 @@ using URY.BAPS.Common.Protocol.V2.Commands;
 using URY.BAPS.Common.Protocol.V2.Ops;
 using Xunit;
 
+using static URY.BAPS.Common.Protocol.V2.Commands.CommandFactory;
+
 namespace URY.BAPS.Common.Protocol.V2.Tests.Commands
 {
     /// <summary>
@@ -10,28 +12,29 @@ namespace URY.BAPS.Common.Protocol.V2.Tests.Commands
     /// </summary>
     public class CommandFactoryTests
     {
-        private const CommandWord NonIndexedConfigTest = CommandWord.Config | CommandWord.SetConfigValue;
+        private static readonly ushort NonIndexedConfigTest =
+            (ushort) (CommandGroup.Config.ToWordBits() | ConfigOp.SetConfigValue.ToWordBits());
 
-        private static readonly CommandWord IndexedConfigTest =
-            (CommandWord.Config | CommandWord.SetConfigValue).WithConfigIndexedFlag(true).WithConfigIndex(5);
+        private static readonly ushort IndexedConfigTest =
+            (ushort) (CommandGroup.Config.ToWordBits() | ConfigOp.SetConfigValue.ToWordBits() | CommandMasks.ConfigIndexedFlag | CommandPacking.ConfigIndex(5));
 
-        private const CommandWord DatabaseTest =
-            CommandWord.Database | CommandWord.GetShows;
+        private static readonly ushort DatabaseTest =
+            (ushort) (CommandGroup.Database.ToWordBits() | DatabaseOp.GetShows.ToWordBits());
 
-        private static readonly CommandWord FlaggedDatabaseTest =
-            (CommandWord.Database | CommandWord.GetShows).WithModeFlag(true);
+        private static readonly ushort FlaggedDatabaseTest =
+            (ushort) (CommandGroup.Database.ToWordBits() | DatabaseOp.GetShows.ToWordBits() | CommandMasks.ModeFlag);
 
-        private static readonly CommandWord PlaybackTest =
-            (CommandWord.Playback | CommandWord.Play).WithChannel(42);
+        private static readonly ushort PlaybackTest =
+            (ushort) (CommandGroup.Playback.ToWordBits() | PlaybackOp.Play.ToWordBits() | CommandPacking.Channel(42));
 
-        private static readonly CommandWord PlaylistTest =
-            (CommandWord.Playlist | CommandWord.ResetPlaylist).WithChannel(63);
+        private static readonly ushort PlaylistTest =
+            (ushort) (CommandGroup.Playlist.ToWordBits() | PlaylistOp.ResetPlaylist.ToWordBits() | CommandPacking.Channel(63));
 
-        private const CommandWord SystemTest = CommandWord.System | CommandWord.Quit;
+        private static readonly ushort SystemTest = (ushort) (CommandGroup.System.ToWordBits() | SystemOp.Quit.ToWordBits());
 
         [UsedImplicitly]
-        public static TheoryData<CommandWord> CommandWordRoundTripData =>
-            new TheoryData<CommandWord>
+        public static TheoryData<ushort> CommandWordRoundTripData =>
+            new TheoryData<ushort>
             {
                 NonIndexedConfigTest,
                 IndexedConfigTest,
@@ -48,9 +51,9 @@ namespace URY.BAPS.Common.Protocol.V2.Tests.Commands
         /// <param name="cmd">The packed word to test.</param>
         [Theory]
         [MemberData(nameof(CommandWordRoundTripData))]
-        public void TestUnpack_RoundTrip(CommandWord cmd)
+        public void TestUnpack_RoundTrip(ushort cmd)
         {
-            var unpacked = cmd.Unpack();
+            var unpacked = Unpack(cmd);
             var actualCmd = unpacked.Packed;
             Assert.Equal(cmd, actualCmd);
         }
@@ -61,7 +64,7 @@ namespace URY.BAPS.Common.Protocol.V2.Tests.Commands
         [Fact]
         public void TestUnpack_Database_Flagged()
         {
-            var raw = FlaggedDatabaseTest.Unpack();
+            var raw = Unpack(FlaggedDatabaseTest);
             var unpacked = Assert.IsAssignableFrom<DatabaseCommand>(raw);
             Assert.Equal(DatabaseOp.GetShows, unpacked.Op);
             Assert.True(unpacked.ModeFlag);
@@ -73,7 +76,7 @@ namespace URY.BAPS.Common.Protocol.V2.Tests.Commands
         [Fact]
         public void TestUnpack_IndexedConfig()
         {
-            var raw = IndexedConfigTest.Unpack();
+            var raw = Unpack(IndexedConfigTest);
             var unpacked = Assert.IsAssignableFrom<IndexedConfigCommand>(raw);
             Assert.Equal(ConfigOp.SetConfigValue, unpacked.Op);
             Assert.Equal(5, unpacked.Index);
@@ -85,7 +88,7 @@ namespace URY.BAPS.Common.Protocol.V2.Tests.Commands
         [Fact]
         public void TestUnpack_NonIndexedConfig()
         {
-            var raw = NonIndexedConfigTest.Unpack();
+            var raw = Unpack(NonIndexedConfigTest);
             var unpacked = Assert.IsAssignableFrom<NonIndexedConfigCommand>(raw);
             Assert.Equal(ConfigOp.SetConfigValue, unpacked.Op);
         }
@@ -96,7 +99,7 @@ namespace URY.BAPS.Common.Protocol.V2.Tests.Commands
         [Fact]
         public void TestUnpack_Playback()
         {
-            var raw = PlaybackTest.Unpack();
+            var raw = Unpack(PlaybackTest);
             var unpacked = Assert.IsAssignableFrom<PlaybackCommand>(raw);
             Assert.Equal(PlaybackOp.Play, unpacked.Op);
             Assert.Equal(42, unpacked.ChannelId);
@@ -109,7 +112,7 @@ namespace URY.BAPS.Common.Protocol.V2.Tests.Commands
         [Fact]
         public void TestUnpack_Playlist()
         {
-            var raw = PlaylistTest.Unpack();
+            var raw = Unpack(PlaylistTest);
             var unpacked = Assert.IsAssignableFrom<PlaylistCommand>(raw);
             Assert.Equal(PlaylistOp.ResetPlaylist, unpacked.Op);
             Assert.Equal(63, unpacked.ChannelId);
@@ -122,7 +125,7 @@ namespace URY.BAPS.Common.Protocol.V2.Tests.Commands
         [Fact]
         public void TestUnpack_System()
         {
-            var raw = SystemTest.Unpack();
+            var raw = Unpack(SystemTest);
             var unpacked = Assert.IsAssignableFrom<SystemCommand>(raw);
             Assert.Equal(SystemOp.Quit, unpacked.Op);
             Assert.False(unpacked.ModeFlag);

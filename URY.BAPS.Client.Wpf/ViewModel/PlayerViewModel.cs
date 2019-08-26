@@ -252,19 +252,19 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         protected override void RequestPlay()
         {
             Debug.Assert(Controller != null, nameof(Controller) + " != null");
-            Controller.SetState(PlaybackState.Playing);
+            Controller?.SetState(PlaybackState.Playing);
         }
 
         protected override void RequestPause()
         {
             Debug.Assert(Controller != null, nameof(Controller) + " != null");
-            Controller.SetState(PlaybackState.Paused);
+            Controller?.SetState(PlaybackState.Paused);
         }
 
         protected override void RequestStop()
         {
             Debug.Assert(Controller != null, nameof(Controller) + " != null");
-            Controller.SetState(PlaybackState.Stopped);
+            Controller?.SetState(PlaybackState.Stopped);
         }
 
 

@@ -15,7 +15,10 @@ namespace URY.BAPS.Common.Protocol.V2.Tests.Commands
         [Fact]
         public void TestPacked_ChannelOnly()
         {
-            var expected = PlaybackOp.Play.AsCommandWord().WithChannel(42);
+            var expected = (ushort) (
+                CommandGroup.Playback.ToWordBits()
+            | PlaybackOp.Play.ToWordBits()
+            | CommandPacking.Channel(42));
 
             var unpacked = new PlaybackCommand(PlaybackOp.Play, 42);
             var actual = unpacked.Packed;

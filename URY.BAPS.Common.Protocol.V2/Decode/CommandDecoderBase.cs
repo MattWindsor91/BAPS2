@@ -26,7 +26,7 @@ namespace URY.BAPS.Common.Protocol.V2.Decode
         ///     An event that fires every time the <see cref="CommandDecoderBase"/>
         ///     decodes a new message.
         /// </summary>
-        public event EventHandler<MessageArgsBase> OnMessage;
+        public event EventHandler<MessageArgsBase>? OnMessage;
 
         private IObservable<MessageArgsBase>? _observeMessage;
         

@@ -5,7 +5,7 @@
     ///     mode mask and value.
     /// </summary>
     /// <typeparam name="TOp">The enumeration of allowed operations.</typeparam>
-    public abstract class NormalCommandBase<TOp> : CommandBase<TOp>
+    public abstract class NormalCommandBase<TOp> : NonChannelCommand<TOp>
     {
         protected NormalCommandBase(TOp op, byte value, bool modeFlag) : base(op, modeFlag)
         {
@@ -14,6 +14,6 @@
 
         public byte Value { get; }
 
-        public override CommandWord Packed => OpAsCommandWord(Op).WithModeFlag(ModeFlag).WithValue(Value);
+        protected override ushort CommandWordFlags => CommandPacking.NormalCommandFlags(ModeFlag, Value);
     }
 }

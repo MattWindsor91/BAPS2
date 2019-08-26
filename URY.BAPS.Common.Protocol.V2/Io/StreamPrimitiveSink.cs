@@ -33,7 +33,7 @@ namespace URY.BAPS.Common.Protocol.V2.Io
         }
 
         /// <inheritdoc cref="IPrimitiveSink" />
-        public void SendCommand(CommandWord cmd)
+        public void SendCommand(ushort cmd)
         {
             SendNetworkOrder(BitConverter.GetBytes((ushort) cmd));
         }

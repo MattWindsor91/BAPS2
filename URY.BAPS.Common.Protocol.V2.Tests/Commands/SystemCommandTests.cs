@@ -15,7 +15,7 @@ namespace URY.BAPS.Common.Protocol.V2.Tests.Commands
         [Fact]
         public void TestPacked_NullaryCommand()
         {
-            var expected = SystemOp.Quit.AsCommandWord();
+            var expected = (ushort) (CommandGroup.System.ToWordBits() | SystemOp.Quit.ToWordBits());
 
             var unpacked = new SystemCommand(SystemOp.Quit);
             var actual = unpacked.Packed;

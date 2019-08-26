@@ -12,7 +12,7 @@ namespace URY.BAPS.Common.Protocol.V2.Io
     {
         private readonly Queue<object> _itemQueue = new Queue<object>();
 
-        public CommandWord ReceiveCommand(CancellationToken token = default)
+        public ushort ReceiveCommand(CancellationToken token = default)
         {
             
             throw new System.NotImplementedException("Can't receive commands from this source.");

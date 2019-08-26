@@ -16,7 +16,7 @@ namespace URY.BAPS.Client.Common.Tests.Updaters
     {
         private readonly DetachableServerUpdater _updater = new DetachableServerUpdater();
 
-        private event EventHandler<MessageArgsBase> Messages;
+        private event EventHandler<MessageArgsBase>? Messages;
         private readonly IObservable<MessageArgsBase> _messageObservable;
         public DetachableServerUpdaterTests()
         {

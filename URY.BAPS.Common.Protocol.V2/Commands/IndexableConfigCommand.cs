@@ -5,16 +5,12 @@ namespace URY.BAPS.Common.Protocol.V2.Commands
     /// <summary>
     ///     Abstract base class for config commands that can take an index.
     /// </summary>
-    public abstract class IndexableConfigCommandBase : CommandBase<ConfigOp>
+    public abstract class IndexableConfigCommand : ConfigCommand
     {
-        protected IndexableConfigCommandBase(ConfigOp op, bool modeFlag) : base(op, modeFlag)
+        protected IndexableConfigCommand(ConfigOp op, bool modeFlag) : base(op, modeFlag)
         {
         }
 
-        protected override CommandWord OpAsCommandWord(ConfigOp op)
-        {
-            return op.AsCommandWord();
-        }
 
         #region Convenience methods for working with indices
 
