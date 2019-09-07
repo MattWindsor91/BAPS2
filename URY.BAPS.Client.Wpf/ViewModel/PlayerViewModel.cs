@@ -87,7 +87,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             {
                 if (_state == value) return;
                 _state = value;
-                Application.Current.Dispatcher.Invoke(PlayCommand.RaiseCanExecuteChanged);
+                Application.Current.Dispatcher?.Invoke(PlayCommand.RaiseCanExecuteChanged);
                 RaisePropertyChanged(nameof(State));
                 // Derived properties
                 RaisePropertyChanged(nameof(IsPlaying));
@@ -251,20 +251,23 @@ namespace URY.BAPS.Client.Wpf.ViewModel
 
         protected override void RequestPlay()
         {
-            Debug.Assert(Controller != null, nameof(Controller) + " != null");
-            Controller?.SetState(PlaybackState.Playing);
+            SetState(PlaybackState.Playing);
         }
 
         protected override void RequestPause()
         {
-            Debug.Assert(Controller != null, nameof(Controller) + " != null");
-            Controller?.SetState(PlaybackState.Paused);
+            SetState(PlaybackState.Paused);
         }
 
         protected override void RequestStop()
         {
+            SetState(PlaybackState.Stopped);
+        }
+
+        private void SetState(PlaybackState newState)
+        {
             Debug.Assert(Controller != null, nameof(Controller) + " != null");
-            Controller?.SetState(PlaybackState.Stopped);
+            Controller?.SetState(newState);
         }
 
 
