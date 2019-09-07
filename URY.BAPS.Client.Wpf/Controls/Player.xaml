@@ -45,21 +45,21 @@
         <!-- Transport controls -->
         <controls:TransportButton
             Grid.Row="0" Grid.Column="0"
-            Icon="Play"
+            Icon="Solid_Play"
             IsHighlighted="{Binding IsPlaying}"
             HighlightBrush="{StaticResource PlayBrush}"
             ToolTip="Play"
             Command="{Binding PlayCommand}" />
         <controls:TransportButton
             Grid.Row="0" Grid.Column="1"
-            Icon="Pause"
+            Icon="Solid_Pause"
             IsHighlighted="{Binding IsPaused}"
             HighlightBrush="{StaticResource PauseBrush}"
             ToolTip="Pause"
             Command="{Binding PauseCommand}" />
         <controls:TransportButton
             Grid.Row="0" Grid.Column="2"
-            Icon="Stop"
+            Icon="Solid_Stop"
             IsHighlighted="{Binding IsStopped}"
             HighlightBrush="{StaticResource StopBrush}"
             ToolTip="Stop"

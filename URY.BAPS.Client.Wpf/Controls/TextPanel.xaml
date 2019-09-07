@@ -16,7 +16,7 @@
         </Style>
     </UserControl.Resources>
     <DockPanel>
-        <controls:Header DockPanel.Dock="Top" Icon="CommentOutline" Text="Text" />
+        <controls:Header DockPanel.Dock="Top" Icon="Regular_Comment" Text="Text" />
         <TextBox DockPanel.Dock="Bottom" MinHeight="72pt"
                  Style="{StaticResource MainTextBoxStyle}"
                  TextWrapping="Wrap"

@@ -7,6 +7,7 @@
              xmlns:controls="clr-namespace:URY.BAPS.Client.Wpf.Controls"
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              xmlns:designData="clr-namespace:URY.BAPS.Client.Wpf.DesignData"
+             xmlns:fa5="http://schemas.fontawesome.com/icons/"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance designData:MockDirectoryViewModel, IsDesignTimeCreatable=True}"
              d:DesignHeight="240" d:DesignWidth="300" MaxHeight="300">
@@ -16,11 +17,11 @@
             <RowDefinition Name="FileListRow" />
         </Grid.RowDefinitions>
         <controls:Header Grid.Row="0" Grid.Column="0"
-                         Icon="FolderOpen"
+                         Icon="Solid_FolderOpen"
                          Text="{Binding Name, FallbackValue='Unknown Directory'}"
                          x:Name="DirectoryHeader">
             <Button Width="32px" Command="{Binding RefreshCommand }">
-                <fa:ImageAwesome Icon="Refresh" Margin="2px" />
+                <fa5:SvgAwesome Icon="Solid_Sync" Margin="2px" />
             </Button>
         </controls:Header>
         <ListBox Grid.Row="1" Grid.Column="0" Name="FileList"

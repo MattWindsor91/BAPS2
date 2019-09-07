@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using FontAwesome.WPF;
+using FontAwesome5;
 
 namespace URY.BAPS.Client.Wpf.Controls
 {
@@ -16,6 +16,8 @@ namespace URY.BAPS.Client.Wpf.Controls
     ///                 (the control's body).
     ///             </item>
     ///         </list>
+    ///         The presence of the content section means that this control
+    ///         is a custom control and not a user control.
     ///     </para>
     /// </summary>
     public class Header : ContentControl
@@ -53,17 +55,17 @@ namespace URY.BAPS.Client.Wpf.Controls
         ///     Registers a dependency property as backing store for the Icon property
         /// </summary>
         public static readonly DependencyProperty IconProperty =
-            DependencyProperty.Register("Icon", typeof(FontAwesomeIcon), typeof(Header),
-                new FrameworkPropertyMetadata(FontAwesomeIcon.Question,
+            DependencyProperty.Register("Icon", typeof(EFontAwesomeIcon), typeof(Header),
+                new FrameworkPropertyMetadata(EFontAwesomeIcon.Solid_Question,
                     FrameworkPropertyMetadataOptions.AffectsRender |
                     FrameworkPropertyMetadataOptions.AffectsParentMeasure));
 
         /// <summary>
         ///     Gets or sets the icon.
         /// </summary>
-        public FontAwesomeIcon Icon
+        public EFontAwesomeIcon Icon
         {
-            get => (FontAwesomeIcon) GetValue(IconProperty);
+            get => (EFontAwesomeIcon) GetValue(IconProperty);
             set => SetValue(IconProperty, value);
         }
 

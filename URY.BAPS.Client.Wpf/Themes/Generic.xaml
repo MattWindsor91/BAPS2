@@ -1,8 +1,8 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:fa="http://schemas.fontawesome.io/icons/"
-    xmlns:controls="clr-namespace:URY.BAPS.Client.Wpf.Controls">
+    xmlns:controls="clr-namespace:URY.BAPS.Client.Wpf.Controls"
+    xmlns:fa5="http://schemas.fontawesome.com/icons/">
 
     <!-- Colours used throughout BAPS -->
     <SolidColorBrush
@@ -26,7 +26,7 @@
                     <DockPanel
                         Height="32px"
                         Background="{StaticResource {ComponentResourceKey TypeInTargetAssembly={x:Type controls:Header}, ResourceId=AccentBgBrush}}">
-                        <fa:ImageAwesome
+                        <fa5:SvgAwesome
                             DockPanel.Dock="Left"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"

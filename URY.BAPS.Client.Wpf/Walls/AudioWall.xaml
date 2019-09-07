@@ -9,7 +9,7 @@
         d:DataContext="{d:DesignInstance designData:MockChannelViewModel, IsDesignTimeCreatable=True}"
         Title="Audio Wall" Height="450" Width="800" WindowStyle="ToolWindow">
     <DockPanel>
-        <controls:Header DockPanel.Dock="Top" Icon="Table" Text="Audio Wall" />
+        <controls:Header DockPanel.Dock="Top" Icon="Solid_Table" Text="Audio Wall" />
         <ListBox
             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
             ScrollViewer.VerticalScrollBarVisibility="Disabled"

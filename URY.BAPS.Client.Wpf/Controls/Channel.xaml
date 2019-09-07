@@ -12,6 +12,7 @@ The main channel control.
              xmlns:designData="clr-namespace:URY.BAPS.Client.Wpf.DesignData"
              xmlns:behaviors="clr-namespace:URY.BAPS.Client.Wpf.Behaviors"
              xmlns:playback="clr-namespace:URY.BAPS.Common.Model.Playback;assembly=URY.BAPS.Common.Model"
+             xmlns:fa5="http://schemas.fontawesome.com/icons/"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800" MinWidth="360"
              d:DataContext="{d:DesignInstance designData:MockChannelViewModel, IsDesignTimeCreatable=True}">
@@ -24,7 +25,7 @@ The main channel control.
         <SolidColorBrush x:Key="ChannelLegendLampOn" Color="#FFEEEEEC" />
         <SolidColorBrush x:Key="ChannelLegendLampAlt" Color="#FFEF2929" />
         <!-- Styles -->
-        <Style x:Key="ChannelLampStyle" TargetType="{x:Type fa:ImageAwesome}">
+        <Style x:Key="ChannelLampStyle" TargetType="{x:Type fa5:SvgAwesome}">
             <Setter Property="Height" Value="{StaticResource ChannelBarHeightMinusMargin}" />
             <Setter Property="Width" Value="{StaticResource ChannelBarHeightMinusMargin}" />
             <Setter Property="Margin" Value="{StaticResource ChannelBarMargin}" />
@@ -34,12 +35,12 @@ The main channel control.
     <DockPanel>
         <controls:Header
             DockPanel.Dock="Top"
-            Icon="Music"
+            Icon="Solid_Music"
             Text="{Binding Name}">
             <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
                 <Button behaviors:ContextMenuLeftClickBehavior.IsLeftClickEnabled="True">
                     <Button.Content>
-                        <fa:ImageAwesome Margin="{StaticResource ChannelBarMargin}" Icon="Navicon" />
+                        <fa5:SvgAwesome Margin="{StaticResource ChannelBarMargin}" Icon="Solid_Bars" />
                     </Button.Content>
                     <Button.ContextMenu>
                         <ContextMenu FlowDirection="LeftToRight">
@@ -74,9 +75,9 @@ The main channel control.
                         </ContextMenu>
                     </Button.ContextMenu>
                 </Button>
-                <fa:ImageAwesome Icon="Repeat" ToolTip="Repeat mode">
-                    <fa:ImageAwesome.Style>
-                        <Style TargetType="{x:Type fa:ImageAwesome}"
+                <fa5:SvgAwesome Icon="Solid_Redo" ToolTip="Repeat mode">
+                    <fa5:SvgAwesome.Style>
+                        <Style TargetType="{x:Type fa5:SvgAwesome}"
                                BasedOn="{StaticResource ChannelLampStyle}">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding Path=RepeatMode}" Value="All">
@@ -87,11 +88,11 @@ The main channel control.
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
-                    </fa:ImageAwesome.Style>
-                </fa:ImageAwesome>
-                <fa:ImageAwesome Icon="AngleDoubleDown" ToolTip="Auto Advance">
-                    <fa:ImageAwesome.Style>
-                        <Style TargetType="{x:Type fa:ImageAwesome}"
+                    </fa5:SvgAwesome.Style>
+                </fa5:SvgAwesome>
+                <fa5:SvgAwesome Icon="Solid_AngleDoubleDown" ToolTip="Auto Advance">
+                    <fa5:SvgAwesome.Style>
+                        <Style TargetType="{x:Type fa5:SvgAwesome}"
                                BasedOn="{StaticResource ChannelLampStyle}">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding Path=IsAutoAdvance}" Value="true">
@@ -99,13 +100,13 @@ The main channel control.
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
-                    </fa:ImageAwesome.Style>
-                </fa:ImageAwesome>
-                <fa:ImageAwesome
-                    Icon="PlayCircleOutline"
+                    </fa5:SvgAwesome.Style>
+                </fa5:SvgAwesome>
+                <fa5:SvgAwesome
+                    Icon="Regular_PlayCircle"
                     ToolTip="Play on load">
-                    <fa:ImageAwesome.Style>
-                        <Style TargetType="{x:Type fa:ImageAwesome}"
+                    <fa5:SvgAwesome.Style>
+                        <Style TargetType="{x:Type fa5:SvgAwesome}"
                                BasedOn="{StaticResource ChannelLampStyle}">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding Path=IsPlayOnLoad}" Value="true">
@@ -113,8 +114,8 @@ The main channel control.
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
-                    </fa:ImageAwesome.Style>
-                </fa:ImageAwesome>
+                    </fa5:SvgAwesome.Style>
+                </fa5:SvgAwesome>
             </StackPanel>
         </controls:Header>
         <controls:Player DockPanel.Dock="Bottom" DataContext="{Binding Player}" />

@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using FontAwesome.WPF;
+using FontAwesome5;
 
 namespace URY.BAPS.Client.Wpf.Controls
 {
@@ -10,6 +10,12 @@ namespace URY.BAPS.Client.Wpf.Controls
     /// </summary>
     public partial class TransportButton
     {
+        /// <summary>
+        ///     The icon shown when the icon dependency property isn't
+        ///     bound to anything.
+        /// </summary>
+        private const EFontAwesomeIcon DefaultIcon = EFontAwesomeIcon.Solid_Question;
+
         public static readonly DependencyProperty CommandProperty = DependencyProperty.Register(
             "Command", typeof(ICommand), typeof(TransportButton), new PropertyMetadata(default(ICommand)));
 
@@ -21,7 +27,7 @@ namespace URY.BAPS.Client.Wpf.Controls
             new PropertyMetadata(SystemColors.HighlightBrush));
 
         public static readonly DependencyProperty IconProperty = DependencyProperty.Register(
-            "Icon", typeof(FontAwesomeIcon), typeof(TransportButton), new PropertyMetadata(FontAwesomeIcon.Question));
+            "Icon", typeof(EFontAwesomeIcon), typeof(TransportButton), new PropertyMetadata(DefaultIcon));
 
         public TransportButton()
         {
@@ -46,9 +52,9 @@ namespace URY.BAPS.Client.Wpf.Controls
             set => SetValue(HighlightBrushProperty, value);
         }
 
-        public FontAwesomeIcon Icon
+        public EFontAwesomeIcon Icon
         {
-            get => (FontAwesomeIcon) GetValue(IconProperty);
+            get => (EFontAwesomeIcon) GetValue(IconProperty);
             set => SetValue(IconProperty, value);
         }
     }

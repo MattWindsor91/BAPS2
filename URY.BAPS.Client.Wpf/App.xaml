@@ -5,6 +5,7 @@
              xmlns:viewModel="clr-namespace:URY.BAPS.Client.Wpf.ViewModel"
              xmlns:converters="clr-namespace:URY.BAPS.Client.Wpf.Converters"
              xmlns:fa="http://schemas.fontawesome.io/icons/"
+             xmlns:fa5="http://schemas.fontawesome.com/icons/"
              x:Class="URY.BAPS.Client.Wpf.App"
              Startup="Application_Startup"
              Exit="Application_Exit" mc:Ignorable="d">
@@ -40,10 +41,12 @@
                             <ColumnDefinition Width="24px" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <fa:ImageAwesome Grid.Row="0" Grid.Column="0"
-                                         Foreground="Black"
-                                         Margin="2px"
-                                         Icon="{Binding Converter={StaticResource EntryTypeToIconConverter}}" />
+                        <fa5:SvgAwesome Grid.Row="0" Grid.Column="0"
+                                        Foreground="Black"
+                                        Margin="2px"
+                                        Width="20px"
+                                        Height="20px"
+                                        Icon="{Binding Converter={StaticResource EntryTypeToIconConverter}}" />
                         <TextBlock
                             Grid.Row="0" Grid.Column="1"
                             VerticalAlignment="Center"
