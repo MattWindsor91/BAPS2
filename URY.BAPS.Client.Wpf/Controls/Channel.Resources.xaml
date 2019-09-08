@@ -1,0 +1,29 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:system="clr-namespace:System;assembly=mscorlib"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!--
+    This resource dictionary contains various dimensions shared between the
+    `Channel` and `ChannelSettingLamp` controls.
+    -->
+
+    <!--
+    Height of the bars at the top of each channel, in px.
+    
+    NB: this should be the same as the header height in
+    Themes\Generic.xaml.  Eventually, some clean way of organising this to
+    avoid the duplication should occur.
+    -->
+    <system:Double x:Key="ChannelBarHeight">32</system:Double>
+
+    <!--
+    Thickness of the margin used for channel bar content such as
+    lamps and buttons.
+    -->
+    <Thickness x:Key="ChannelBarMargin">6px</Thickness>
+    
+    <!-- ChannelBarHeight - (2*ChannelBarMargin) -->
+    <system:Double x:Key="ChannelBarHeightMinusMargin">20</system:Double>
+
+
+</ResourceDictionary>

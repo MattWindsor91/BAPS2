@@ -57,6 +57,7 @@
     <None Include="Resources\Main.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Controls\Channel.Resources.xaml" />
     <Resource Include="Resources\splashIcon.png" />
   </ItemGroup>
   <ItemGroup>

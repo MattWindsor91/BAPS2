@@ -4,7 +4,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:fa="http://schemas.fontawesome.io/icons/"
              xmlns:fa5="http://schemas.fontawesome.com/icons/"
              mc:Ignorable="d" d:DesignWidth="64" Height="48px">
     <Border BorderThickness="1px" BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}">
@@ -29,7 +28,7 @@
                 Command="{Binding Command, ElementName=TransportButtonControl}"
                 ToolTip="{Binding ToolTip, ElementName=TransportButtonControl}">
                 <fa5:SvgAwesome
-                    Icon="{Binding Icon, ElementName=TransportButtonControl, FallbackValue=Question}"
+                    Icon="{Binding Icon, ElementName=TransportButtonControl}"
                     HorizontalAlignment="Center" VerticalAlignment="Center" />
             </Button>
         </Border>
