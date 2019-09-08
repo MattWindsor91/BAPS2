@@ -18,7 +18,10 @@ namespace URY.BAPS.Client.Wpf.ViewModel
     {
         [NotNull] private readonly SystemController _controller;
 
-        private double _fontSize;
+        private const int MinimumFontScale = 50;
+        private const int MaximumFontScale = 200;
+
+        private int _fontScale = 100;
 
         private string _text = "";
 
@@ -41,17 +44,18 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         }
 
         /// <summary>
-        ///     The font size.
+        ///     The font scale, in percent.
         /// </summary>
-        public double FontSize
+        public int FontScale
         {
-            get => _fontSize;
+            get => _fontScale;
             private set
             {
-                if (_fontSize.Equals(value)) return;
-                if (_fontSize < 0) return;
-                _fontSize = value;
-                RaisePropertyChanged(nameof(FontSize));
+                if (_fontScale.Equals(value)) return;
+                if (_fontScale < MinimumFontScale) return;
+                if (MaximumFontScale <= _fontScale) return;
+                _fontScale = value;
+                RaisePropertyChanged(nameof(FontScale));
             }
         }
 
@@ -82,7 +86,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         private void AdjustFontSize(TextSettingDirection direction)
         {
             var delta = direction == TextSettingDirection.Up ? 1 : -1;
-            DispatcherHelper.CheckBeginInvokeOnUI(() => FontSize += delta);
+            DispatcherHelper.CheckBeginInvokeOnUI(() => FontScale += delta);
         }
 
         /// <summary>

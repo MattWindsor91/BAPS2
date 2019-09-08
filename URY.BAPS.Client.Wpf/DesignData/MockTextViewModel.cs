@@ -15,17 +15,17 @@ namespace URY.BAPS.Client.Wpf.DesignData
             "(for it is in London that our scene lies), rattling along the housetops, " +
             "and fiercely agitating the scanty flame of the lamps that struggled against the darkness.";
 
-        public MockTextViewModel(double fontSize, string text)
+        public MockTextViewModel(int fontScale, string text)
         {
-            FontSize = fontSize;
+            FontScale = fontScale;
             Text = text;
         }
 
-        public MockTextViewModel() : this(14.0, ExampleText)
+        public MockTextViewModel() : this(100, ExampleText)
         {
         }
 
-        public double FontSize { get; set; }
+        public int FontScale { get; set; }
         public string Text { get; set; }
     }
 }

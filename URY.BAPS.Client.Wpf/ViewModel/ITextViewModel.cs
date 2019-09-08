@@ -6,9 +6,9 @@
     public interface ITextViewModel
     {
         /// <summary>
-        ///     The font size.
+        ///     The font scale, in percent.
         /// </summary>
-        double FontSize { get; }
+        int FontScale { get; }
 
         /// <summary>
         ///     The text stored in the text panel.

@@ -6,19 +6,37 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:controls="clr-namespace:URY.BAPS.Client.Wpf.Controls"
              xmlns:designData="clr-namespace:URY.BAPS.Client.Wpf.DesignData"
+             xmlns:calcBinding="clr-namespace:CalcBinding;assembly=CalcBinding"
+             xmlns:fa5="http://schemas.fontawesome.com/icons/"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance Type=designData:MockTextViewModel, IsDesignTimeCreatable=True}"
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
-        <!-- Styles -->
-        <Style x:Key="MainTextBoxStyle" TargetType="{x:Type TextBox}">
-            <Setter Property="FontSize" Value="{Binding FontSize, Mode=OneWay}" />
-        </Style>
+
     </UserControl.Resources>
     <DockPanel>
-        <controls:Header DockPanel.Dock="Top" Icon="Regular_Comment" Text="Text" />
+        <controls:Header DockPanel.Dock="Top" Icon="Regular_CommentAlt" Text="Text">
+            <controls:Header.Content>
+                <StackPanel Orientation="Horizontal">
+                    <Button Width="32px" Height="32px"
+                            ToolTip="Reduce text size">
+                        <fa5:SvgAwesome Icon="Solid_CaretDown"/>
+                    </Button>
+                    <fa5:SvgAwesome Icon="Solid_TextHeight"
+                                    Foreground="{StaticResource AccentFg}"
+                                    Width="24px"
+                                    Height="24px"
+                                    Margin="4px"
+                                    />
+                    <Button Width="32px" Height="32px"
+                            ToolTip="Increase text size">
+                        <fa5:SvgAwesome Icon="Solid_CaretUp"/>
+                    </Button>
+                </StackPanel>
+            </controls:Header.Content>
+        </controls:Header>
         <TextBox DockPanel.Dock="Bottom" MinHeight="72pt"
-                 Style="{StaticResource MainTextBoxStyle}"
+                 FontSize="{calcBinding:Binding '12.0 * (FontScale / 100.0)', Mode=OneWay}"
                  TextWrapping="Wrap"
                  VerticalScrollBarVisibility="Auto"
                  Text="{Binding Text, Mode=TwoWay}" />
