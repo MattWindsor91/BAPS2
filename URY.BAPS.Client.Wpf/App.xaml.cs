@@ -66,7 +66,7 @@ namespace URY.BAPS.Client.Wpf
 
         private void SetupServerConnection()
         {
-            var core = Resolve<IClientCore>();
+            var core = Resolve<ClientCore>();
             var cache = Resolve<ConfigCache>();
             cache.SubscribeToReceiver(core.Updater);
 
@@ -78,7 +78,7 @@ namespace URY.BAPS.Client.Wpf
                 return;
             }
 
-            core.Launch(socket);
+            core.Launch(socket, socket);
             var init = Resolve<InitialUpdatePerformer>();
             init.Run();
         }
@@ -91,6 +91,9 @@ namespace URY.BAPS.Client.Wpf
 
         private void Application_Exit(object sender, ExitEventArgs e)
         {
+            var core = _diScope.ResolveOptional<ClientCore>();
+            core?.Shutdown();
+
             _diScope?.Dispose();
         }
 

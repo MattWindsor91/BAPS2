@@ -55,10 +55,10 @@ namespace URY.BAPS.Server.Reference.Model
 
         #region Event interface
 
-        public event EventHandler<TrackAddArgs> TrackAdd;
-        public event EventHandler<TrackDeleteArgs> TrackDelete;
-        public event EventHandler<TrackMoveArgs> TrackMove;
-        public event EventHandler<PlaylistResetArgs> PlaylistReset;
+        public event EventHandler<TrackAddArgs>? TrackAdd;
+        public event EventHandler<TrackDeleteArgs>? TrackDelete;
+        public event EventHandler<TrackMoveArgs>? TrackMove;
+        public event EventHandler<PlaylistResetArgs>? PlaylistReset;
 
         #endregion Event interface
 

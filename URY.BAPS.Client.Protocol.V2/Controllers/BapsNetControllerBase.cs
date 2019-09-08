@@ -12,13 +12,13 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
     /// </summary>
     public abstract class BapsNetControllerBase
     {
-        [NotNull] protected readonly IClientCore Core;
+        [NotNull] protected readonly ClientCore Core;
 
         /// <summary>
         ///     Base constructor for BapsNet controllers.
         /// </summary>
         /// <param name="core">The client core to use to send messages.</param>
-        protected BapsNetControllerBase(IClientCore? core)
+        protected BapsNetControllerBase(ClientCore? core)
         {
             Core = core ?? throw new ArgumentNullException(nameof(core));
         }

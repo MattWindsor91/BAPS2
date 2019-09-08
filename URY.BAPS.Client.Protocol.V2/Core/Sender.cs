@@ -17,8 +17,6 @@ namespace URY.BAPS.Client.Protocol.V2.Core
         [ItemNotNull] [NotNull]
         private readonly BlockingCollection<MessageBuilder> _queue = new BlockingCollection<MessageBuilder>();
 
-        private readonly CancellationToken _token;
-
         /// <summary>
         ///     Constructs a new <see cref="Sender" />.
         /// </summary>
@@ -26,13 +24,8 @@ namespace URY.BAPS.Client.Protocol.V2.Core
         ///     The <see cref="IPrimitiveSink" /> that the <see cref="Sender" /> will
         ///     send packed BapsNet messages on.
         /// </param>
-        /// <param name="token">
-        ///     The cancellation token that the <see cref="Sender" /> will check
-        ///     to see if it should shut down.
-        /// </param>
-        public Sender(IPrimitiveSink? primitiveSink, CancellationToken token)
+        public Sender(IPrimitiveSink? primitiveSink)
         {
-            _token = token;
             _primitiveSink = primitiveSink ?? throw new ArgumentNullException(nameof(primitiveSink));
         }
 
@@ -42,21 +35,24 @@ namespace URY.BAPS.Client.Protocol.V2.Core
         /// <param name="messageBuilder">The message to send.</param>
         public void Enqueue(MessageBuilder? messageBuilder)
         {
-            if (messageBuilder != null) _queue.Add(messageBuilder, _token);
+            if (messageBuilder != null) _queue.Add(messageBuilder);
         }
 
         /// <summary>
         ///     Runs the sender loop.
         /// </summary>
-        public void Run()
+        /// <param name="token">
+        ///     The cancellation token used to stop the sender from sending.
+        /// </param>
+        public void Run(CancellationToken token)
         {
-            while (!_token.IsCancellationRequested)
+            while (true)
             {
-                var msg = _queue.Take(_token);
+                token.ThrowIfCancellationRequested();
+
+                var msg = _queue.Take(token);
                 msg.Send(_primitiveSink);
             }
-
-            _token.ThrowIfCancellationRequested();
         }
     }
 }

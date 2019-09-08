@@ -12,7 +12,7 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
     [UsedImplicitly]
     public class SystemController : BapsNetControllerBase
     {
-        public SystemController(IClientCore? core) : base(core)
+        public SystemController(ClientCore? core) : base(core)
         {
         }
 

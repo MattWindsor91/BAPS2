@@ -21,7 +21,7 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
         /// </summary>
         [NotNull] private readonly ConfigCache _cache;
 
-        public ConfigController(IClientCore? core, ConfigCache? cache) : base(core)
+        public ConfigController(ClientCore? core, ConfigCache? cache) : base(core)
         {
             _cache = cache ?? throw new ArgumentNullException(nameof(cache));
         }

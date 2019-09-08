@@ -14,7 +14,7 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
     {
         private readonly byte _directoryId;
 
-        public DirectoryController(byte directoryId, IClientCore? core) : base(core)
+        public DirectoryController(byte directoryId, ClientCore? core) : base(core)
         {
             _directoryId = directoryId;
         }

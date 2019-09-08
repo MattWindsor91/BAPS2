@@ -8,7 +8,7 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
     /// </summary>
     public class DirectoryControllerSet : ControllerSetBase<DirectoryController>
     {
-        public DirectoryControllerSet(IClientCore? core) : base(core)
+        public DirectoryControllerSet(ClientCore? core) : base(core)
         {
         }
 

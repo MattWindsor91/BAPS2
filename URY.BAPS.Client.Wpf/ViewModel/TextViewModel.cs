@@ -29,15 +29,15 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         ///     The <see cref="SystemController" /> used to translate text-panel
         ///     actions into server requests.
         /// </param>
-        /// <param name="updater">
-        ///     The <see cref="ISystemServerUpdater" /> to which this view model
+        /// <param name="client">
+        ///     The <see cref="ClientCore" /> to which this view model
         ///     subscribes for text-property updates.
         /// </param>
-        public TextViewModel(SystemController? controller, IClientCore? updater)
+        public TextViewModel(SystemController? controller, ClientCore? client)
         {
             _controller = controller ?? throw new ArgumentNullException(nameof(controller));
 
-            SubscribeToServerUpdates(updater?.Updater);
+            SubscribeToServerUpdates(client?.Updater);
         }
 
         /// <summary>

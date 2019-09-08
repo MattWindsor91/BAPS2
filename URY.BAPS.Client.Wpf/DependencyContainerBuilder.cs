@@ -60,7 +60,7 @@ namespace URY.BAPS.Client.Wpf
         private void RegisterCoreClasses()
         {
             _builder.RegisterInstance(_configManager).As<IClientConfigManager>();
-            _builder.RegisterType<ClientCore>().As<IClientCore>().InstancePerLifetimeScope();
+            _builder.RegisterType<ClientCore>().AsSelf().InstancePerLifetimeScope();
             _builder.RegisterType<ConfigCache>().AsSelf().InstancePerLifetimeScope();
             _builder.RegisterType<InitialUpdatePerformer>().AsSelf().InstancePerLifetimeScope();
         }
