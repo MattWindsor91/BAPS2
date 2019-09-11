@@ -2,16 +2,16 @@ using System;
 using System.Reactive.Linq;
 using URY.BAPS.Common.Model.MessageEvents;
 
-namespace URY.BAPS.Client.Common.Updaters
+namespace URY.BAPS.Common.Model.EventFeed
 {
     /// <summary>
-    ///     A <see cref="IBaseServerUpdater" /> that works by filtering
+    ///     An <see cref="IFullEventFeed" /> that works by filtering
     ///     a message stream for various types of
     ///     server update messages.
     /// </summary>
-    public class FilteringServerUpdater : IServerUpdater
+    public class FilteringEventFeed : IFullEventFeed
     {
-        public FilteringServerUpdater(IObservable<MessageArgsBase> master)
+        public FilteringEventFeed(IObservable<MessageArgsBase> master)
         {
             ObserveMessages = master;
         }

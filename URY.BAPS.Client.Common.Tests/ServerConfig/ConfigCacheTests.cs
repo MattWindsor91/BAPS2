@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using JetBrains.Annotations;
 using URY.BAPS.Client.Common.ServerConfig;
-using URY.BAPS.Client.Common.Updaters;
+using URY.BAPS.Common.Model.EventFeed;
 using URY.BAPS.Common.Model.MessageEvents;
 using URY.BAPS.Common.Model.ServerConfig;
 using Xunit;
@@ -61,7 +61,7 @@ namespace URY.BAPS.Client.Common.Tests.ServerConfig
             Assert.Equal(1, _configCache.FindChoiceIndexFor(0, "No"));
         }
 
-        public class MockConfigServerUpdater : IConfigServerUpdater
+        public class MockConfigEventFeed : IConfigEventFeed
         {
             private IObservable<ConfigChoiceArgs>? _observeConfigChoice;
             private IObservable<ConfigOptionArgs>? _observeConfigOption;
@@ -135,7 +135,7 @@ namespace URY.BAPS.Client.Common.Tests.ServerConfig
         [Fact]
         public void TestReceiverChoice()
         {
-            var receiver = new MockConfigServerUpdater();
+            var receiver = new MockConfigEventFeed();
             receiver.Messages.Enqueue(new ConfigOptionArgs(99, ConfigType.Choice, "Keepo"));
             receiver.Messages.Enqueue(new ConfigChoiceArgs(99, 0, "Yes"));
             receiver.Messages.Enqueue(new ConfigChoiceArgs(99, 1, "No"));
@@ -150,7 +150,7 @@ namespace URY.BAPS.Client.Common.Tests.ServerConfig
         [Fact]
         public void TestReceiverString()
         {
-            var receiver = new MockConfigServerUpdater();
+            var receiver = new MockConfigEventFeed();
             receiver.Messages.Enqueue(new ConfigOptionArgs(64, ConfigType.Str, "Barbaz"));
             receiver.Messages.Enqueue(new ConfigSettingArgs(64, ConfigType.Str, "FrankerZ"));
 

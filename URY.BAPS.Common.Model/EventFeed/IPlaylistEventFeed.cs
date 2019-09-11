@@ -1,12 +1,12 @@
 using System;
 using URY.BAPS.Common.Model.MessageEvents;
 
-namespace URY.BAPS.Client.Common.Updaters
+namespace URY.BAPS.Common.Model.EventFeed
 {
     /// <summary>
-    ///     Event interface for classes that send BapsNet server playlist updates.
+    ///     Event interface for classes that contain BapsNet playlist event feeds.
     /// </summary>
-    public interface IPlaylistServerUpdater : IBaseServerUpdater
+    public interface IPlaylistEventFeed : IEventFeed
     {
         IObservable<TrackAddArgs> ObserveTrackAdd { get; }
         IObservable<TrackDeleteArgs> ObserveTrackDelete { get; }

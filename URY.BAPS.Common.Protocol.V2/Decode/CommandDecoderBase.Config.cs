@@ -6,7 +6,7 @@ using URY.BAPS.Common.Protocol.V2.Ops;
 
 namespace URY.BAPS.Common.Protocol.V2.Decode
 {
-    public partial class CommandDecoderBase
+    public partial class CommandDecoder
     {
         private static int IndexAsInt(IndexableConfigCommand c)
         {

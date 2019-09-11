@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Linq;
-using URY.BAPS.Client.Common.Updaters;
+using URY.BAPS.Common.Model.EventFeed;
 using URY.BAPS.Common.Model.MessageEvents;
 using URY.BAPS.Common.Model.Playback;
 using Xunit;
@@ -10,11 +10,11 @@ using Xunit;
 namespace URY.BAPS.Client.Common.Tests.Updaters
 {
     /// <summary>
-    ///     Tests for <see cref="DetachableServerUpdater"/>.
+    ///     Tests for <see cref="DetachableEventFeed"/>.
     /// </summary>
     public class DetachableServerUpdaterTests
     {
-        private readonly DetachableServerUpdater _updater = new DetachableServerUpdater();
+        private readonly DetachableEventFeed _updater = new DetachableEventFeed();
 
         private event EventHandler<MessageArgsBase>? Messages;
         private readonly IObservable<MessageArgsBase> _messageObservable;

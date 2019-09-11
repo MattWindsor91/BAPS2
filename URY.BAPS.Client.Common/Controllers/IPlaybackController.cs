@@ -1,4 +1,4 @@
-using URY.BAPS.Client.Common.Updaters;
+using URY.BAPS.Common.Model.EventFeed;
 using URY.BAPS.Common.Model.Playback;
 
 namespace URY.BAPS.Client.Common.Controllers
@@ -15,7 +15,7 @@ namespace URY.BAPS.Client.Common.Controllers
         ///         must check incoming events to see if they affect the right channel.
         ///     </para>
         /// </summary>
-        IPlaybackServerUpdater PlaybackUpdater { get; }
+        IPlaybackEventFeed PlaybackUpdater { get; }
 
         /// <summary>
         ///     Asks the server to set this channel's state to <see cref="state" />.

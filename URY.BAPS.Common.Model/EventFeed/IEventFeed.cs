@@ -1,12 +1,13 @@
 using System;
 using URY.BAPS.Common.Model.MessageEvents;
 
-namespace URY.BAPS.Client.Common.Updaters
+namespace URY.BAPS.Common.Model.EventFeed
 {
     /// <summary>
-    ///     Observable interface common to all server update classes.
+    ///     Basic interface for classes that expose observable feeds for
+    ///     BAPS events.
     /// </summary>
-    public interface IBaseServerUpdater
+    public interface IEventFeed
     {
         /// <summary>
         ///     Observable that notifies subscribers that a particular number of items is en route.

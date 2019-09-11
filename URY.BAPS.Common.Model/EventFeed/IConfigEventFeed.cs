@@ -1,12 +1,12 @@
 using System;
 using URY.BAPS.Common.Model.MessageEvents;
 
-namespace URY.BAPS.Client.Common.Updaters
+namespace URY.BAPS.Common.Model.EventFeed
 {
     /// <summary>
     ///     Observable interface for classes that send BapsNet server config updates.
     /// </summary>
-    public interface IConfigServerUpdater : IBaseServerUpdater
+    public interface IConfigEventFeed : IEventFeed
     {
         /// <summary>
         ///     Observable that reports when the server declares a config choice.

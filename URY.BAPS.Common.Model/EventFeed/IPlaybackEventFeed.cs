@@ -1,12 +1,12 @@
 using System;
 using URY.BAPS.Common.Model.MessageEvents;
 
-namespace URY.BAPS.Client.Common.Updaters
+namespace URY.BAPS.Common.Model.EventFeed
 {
     /// <summary>
     ///     Observable interface for classes that send BapsNet server playback updates.
     /// </summary>
-    public interface IPlaybackServerUpdater : IBaseServerUpdater
+    public interface IPlaybackEventFeed : IEventFeed
     {
         /// <summary>
         ///     Observable that reports when the server reports a change in channel state.

@@ -40,7 +40,6 @@ namespace URY.BAPS.Common.Model.MessageEvents
         /// <param name="channelId">The ID of the channel whose marker is being moved.</param>
         /// <param name="marker">The marker being moved.</param>
         /// <param name="newValue">The new value of the marker.</param>
-        /// <param name="status">Whether this is a request or a confirmation.</param>
         public MarkerChangeArgs(ushort channelId, MarkerType marker, uint newValue) : base(channelId, marker)
         {
             NewValue = newValue;

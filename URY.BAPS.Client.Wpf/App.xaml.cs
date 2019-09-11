@@ -68,7 +68,7 @@ namespace URY.BAPS.Client.Wpf
         {
             var core = Resolve<ClientCore>();
             var cache = Resolve<ConfigCache>();
-            cache.SubscribeToReceiver(core.Updater);
+            cache.SubscribeToReceiver(core.EventFeed);
 
             var auth = Resolve<Authenticator<TcpConnection>>();
             var socket = auth.Run();

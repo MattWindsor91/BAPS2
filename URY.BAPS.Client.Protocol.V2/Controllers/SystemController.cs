@@ -1,6 +1,6 @@
 using JetBrains.Annotations;
-using URY.BAPS.Client.Common.Updaters;
 using URY.BAPS.Client.Protocol.V2.Core;
+using URY.BAPS.Common.Model.EventFeed;
 using URY.BAPS.Common.Protocol.V2.Commands;
 using URY.BAPS.Common.Protocol.V2.Ops;
 
@@ -16,7 +16,7 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
         {
         }
 
-        public ISystemServerUpdater Updater => Core.Updater;
+        public ISystemEventFeed Updater => Core.EventFeed;
 
         public void AutoUpdate()
         {

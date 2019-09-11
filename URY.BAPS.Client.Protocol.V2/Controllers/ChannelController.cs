@@ -1,9 +1,9 @@
 ﻿using System;
 using JetBrains.Annotations;
 using URY.BAPS.Client.Common.Controllers;
-using URY.BAPS.Client.Common.Updaters;
 using URY.BAPS.Client.Common.Utils;
 using URY.BAPS.Client.Protocol.V2.Core;
+using URY.BAPS.Common.Model.EventFeed;
 using URY.BAPS.Common.Model.Playback;
 using URY.BAPS.Common.Model.ServerConfig;
 using URY.BAPS.Common.Model.Track;
@@ -36,7 +36,7 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
         ///         must check incoming events to see if they affect the right channel.
         ///     </para>
         /// </summary>
-        public IPlaylistServerUpdater PlaylistUpdater => Core.Updater;
+        public IPlaylistEventFeed PlaylistUpdater => Core.EventFeed;
 
         /// <summary>
         ///     An event interface that broadcasts playback server updates.
@@ -45,7 +45,7 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
         ///         must check incoming events to see if they affect the right channel.
         ///     </para>
         /// </summary>
-        public IPlaybackServerUpdater PlaybackUpdater => Core.Updater;
+        public IPlaybackEventFeed PlaybackUpdater => Core.EventFeed;
 
         /// <summary>
         ///     Asks the server to set this channel's state to <see cref="state" />.

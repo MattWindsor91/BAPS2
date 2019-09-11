@@ -1,6 +1,8 @@
 ﻿using System;
-using URY.BAPS.Client.Common.Updaters;
+using System.Threading;
+using URY.BAPS.Common.Model.EventFeed;
 using URY.BAPS.Common.Protocol.V2.Commands;
+using URY.BAPS.Common.Protocol.V2.Decode;
 using URY.BAPS.Common.Protocol.V2.Encode;
 using URY.BAPS.Common.Protocol.V2.Io;
 using URY.BAPS.Common.Protocol.V2.Ops;
@@ -19,8 +21,12 @@ namespace URY.BAPS.Client.Protocol.V2.Core
     {
         private Connection? _connection;
 
-        private readonly DetachableServerUpdater _updater = new DetachableServerUpdater();
-        public IServerUpdater Updater => _updater;
+        private readonly DetachableEventFeed _eventFeed = new DetachableEventFeed();
+
+        /// <summary>
+        ///     An event feed that receives 
+        /// </summary>
+        public IFullEventFeed EventFeed => _eventFeed;
 
         /// <summary>
         ///     Sends a message to the BapsNet server.
@@ -48,9 +54,14 @@ namespace URY.BAPS.Client.Protocol.V2.Core
         {
             if (_connection != null)
                 throw new InvalidOperationException("Already launched.");
-            _connection = new Connection(source, sink);
-            _connection.AttachToReceiver(_updater);
+            _connection = new Connection(source, sink, MakeClientCommandDecoder);
+            _connection.AttachToReceiver(_eventFeed);
             _connection.StartLoops();
+        }
+
+        private static CommandDecoder MakeClientCommandDecoder(IPrimitiveSource source, CancellationToken token)
+        {
+            return new ClientCommandDecoder(source, token);
         }
 
         public void Shutdown()
@@ -59,7 +70,7 @@ namespace URY.BAPS.Client.Protocol.V2.Core
                 throw new InvalidOperationException("Already shut down.");
             NotifyServerOfQuit();
             _connection.StopLoops();
-            _updater.Detach();
+            _eventFeed.Detach();
             _connection = null;
         }
 

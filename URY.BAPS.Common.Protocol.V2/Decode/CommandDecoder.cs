@@ -20,10 +20,10 @@ namespace URY.BAPS.Common.Protocol.V2.Decode
     ///  </summary>
     ///  <seealso cref="ClientCommandDecoder"/>
     ///  <seealso cref="ServerCommandDecoder"/>
-    public abstract partial class CommandDecoderBase : ICommandVisitor
+    public abstract partial class CommandDecoder : ICommandVisitor
     {
         /// <summary>
-        ///     An event that fires every time the <see cref="CommandDecoderBase"/>
+        ///     An event that fires every time the <see cref="CommandDecoder"/>
         ///     decodes a new message.
         /// </summary>
         public event EventHandler<MessageArgsBase>? OnMessage;
@@ -38,7 +38,7 @@ namespace URY.BAPS.Common.Protocol.V2.Decode
         private readonly IPrimitiveSource _primitiveSource;
         private readonly CancellationToken _token;
         
-        protected CommandDecoderBase(IPrimitiveSource primitiveSource, CancellationToken token)
+        protected CommandDecoder(IPrimitiveSource primitiveSource, CancellationToken token)
         {
             _primitiveSource = primitiveSource;
             _token = token;

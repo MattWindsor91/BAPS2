@@ -22,7 +22,7 @@ namespace URY.BAPS.Client.Protocol.V2.Core
         /// <summary>
         ///     The decoder used to receive and process the bodies of BapsNet messages.
         /// </summary>
-        private readonly CommandDecoderBase _decoder;
+        private readonly CommandDecoder _decoder;
 
         private readonly CancellationToken _token;
 
@@ -42,7 +42,7 @@ namespace URY.BAPS.Client.Protocol.V2.Core
         ///     This is provided up-front as the decoder should also
         ///     be using the same token.
         /// </param>
-        public Receiver(IPrimitiveSource? bapsNet, CommandDecoderBase decoder, CancellationToken token)
+        public Receiver(IPrimitiveSource? bapsNet, CommandDecoder decoder, CancellationToken token)
         {
             _bapsNet = bapsNet ?? throw new ArgumentNullException(nameof(bapsNet));
             _token = token;

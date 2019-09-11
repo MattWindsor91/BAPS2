@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Threading;
-using URY.BAPS.Client.Common.Updaters;
-using URY.BAPS.Common.Protocol.V2.Commands;
+using URY.BAPS.Common.Model.EventFeed;
 using URY.BAPS.Common.Protocol.V2.Decode;
 using URY.BAPS.Common.Protocol.V2.Encode;
 using URY.BAPS.Common.Protocol.V2.Io;
-using URY.BAPS.Common.Protocol.V2.Ops;
 
 namespace URY.BAPS.Client.Protocol.V2.Core
 {
@@ -33,9 +31,13 @@ namespace URY.BAPS.Client.Protocol.V2.Core
         /// </summary>
         /// <param name="source">The primitive source used to receive commands.</param>
         /// <param name="sink">The primitive sink used to send commands.</param>
-        public Connection(IPrimitiveSource source, IPrimitiveSink sink)
+        /// <param name="commandDecoderFactory">
+        ///     A function that produces command decoders appropriate for the
+        ///     role of this connection (client or server).
+        /// </param>
+        public Connection(IPrimitiveSource source, IPrimitiveSink sink, Func<IPrimitiveSource, CancellationToken, CommandDecoder> commandDecoderFactory)
         {
-            _receiver = CreateReceiver(source);
+            _receiver = CreateReceiver(source, commandDecoderFactory);
             _sender = new Sender(sink);
         }
 
@@ -46,7 +48,7 @@ namespace URY.BAPS.Client.Protocol.V2.Core
         /// <param name="updater">
         ///     The updater to attach to the receiver.
         /// </param>
-        public void AttachToReceiver(DetachableServerUpdater updater)
+        public void AttachToReceiver(DetachableEventFeed updater)
         {
             updater.Attach(_receiver.ObserveMessage);
         }
@@ -67,10 +69,9 @@ namespace URY.BAPS.Client.Protocol.V2.Core
             _tasks = ClientTaskHandle.CreateAndLaunchTasks(_receiver, _sender, _dead.Token);
         }
 
-        private Receiver CreateReceiver(IPrimitiveSource source)
+        private Receiver CreateReceiver(IPrimitiveSource source, Func<IPrimitiveSource, CancellationToken, CommandDecoder> commandDecoderFactory)
         {
-            // TODO(@MattWindsor91): inject these dependencies.
-            var decoder = new ClientCommandDecoder(source, _dead.Token);
+            var decoder = commandDecoderFactory(source, _dead.Token);
             return new Receiver(source, decoder, _dead.Token);
         }
 

@@ -2,9 +2,9 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Threading;
 using JetBrains.Annotations;
-using URY.BAPS.Client.Common.Updaters;
 using URY.BAPS.Client.Protocol.V2.Controllers;
 using URY.BAPS.Client.Protocol.V2.Core;
+using URY.BAPS.Common.Model.EventFeed;
 using URY.BAPS.Common.Model.MessageEvents;
 using ArgumentNullException = System.ArgumentNullException;
 
@@ -40,7 +40,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         {
             _controller = controller ?? throw new ArgumentNullException(nameof(controller));
 
-            SubscribeToServerUpdates(client?.Updater);
+            SubscribeToServerUpdates(client?.EventFeed);
         }
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             }
         }
 
-        private void SubscribeToServerUpdates(IServerUpdater? updater)
+        private void SubscribeToServerUpdates(IFullEventFeed? updater)
         {
             updater?.ObserveTrackLoad?.Subscribe(OnTrackLoad);
             updater?.ObserveTextSetting?.Subscribe(OnTextSetting);

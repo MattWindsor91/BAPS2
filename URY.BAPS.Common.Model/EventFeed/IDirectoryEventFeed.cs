@@ -1,12 +1,12 @@
 using System;
 using URY.BAPS.Common.Model.MessageEvents;
 
-namespace URY.BAPS.Client.Common.Updaters
+namespace URY.BAPS.Common.Model.EventFeed
 {
     /// <summary>
-    ///     Observable interface for classes that send BapsNet server directory updates.
+    ///     Observable interface for classes that contain BapsNet directory event feeds.
     /// </summary>
-    public interface IDirectoryServerUpdater : IBaseServerUpdater
+    public interface IDirectoryEventFeed : IEventFeed
     {
         IObservable<DirectoryFileAddArgs> ObserveDirectoryFileAdd { get; }
         IObservable<DirectoryPrepareEventArgs> ObserveDirectoryPrepare { get; }

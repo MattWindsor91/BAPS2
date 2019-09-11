@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using JetBrains.Annotations;
-using URY.BAPS.Client.Common.Updaters;
+using URY.BAPS.Common.Model.EventFeed;
 using URY.BAPS.Common.Model.MessageEvents;
 using URY.BAPS.Common.Model.ServerConfig;
 
@@ -127,8 +127,8 @@ namespace URY.BAPS.Client.Common.ServerConfig
         /// <summary>
         ///     Subscribes to the update observables on a given receiver.
         /// </summary>
-        /// <param name="r">The <see cref="IConfigServerUpdater" /> with whose event handlers we are registering.</param>
-        public void SubscribeToReceiver(IConfigServerUpdater r)
+        /// <param name="r">The <see cref="IConfigEventFeed" /> with whose event handlers we are registering.</param>
+        public void SubscribeToReceiver(IConfigEventFeed r)
         {
             // These subscriptions are in this order so that, if the receiver's observables react to subscriptions by
             // immediately dumping a list of events, then we first fill up the options, then the choices (which depend

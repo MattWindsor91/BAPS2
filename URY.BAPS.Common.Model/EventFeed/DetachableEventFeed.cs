@@ -4,21 +4,21 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using URY.BAPS.Common.Model.MessageEvents;
 
-namespace URY.BAPS.Client.Common.Updaters
+namespace URY.BAPS.Common.Model.EventFeed
 {
     /// <summary>
-    ///     A variant of <see cref="FilteringServerUpdater" /> that can take
+    ///     A variant of <see cref="FilteringEventFeed" /> that can take
     ///     subscribers before a server updater is available, and persist them
     ///     if the server updater becomes unavailable.
     /// </summary>
-    public class DetachableServerUpdater : FilteringServerUpdater
+    public class DetachableEventFeed : FilteringEventFeed
 
     {
         private readonly Subject<MessageArgsBase> _bridge = new Subject<MessageArgsBase>();
 
         private readonly IList<IDisposable> _subscriptions = new List<IDisposable>();
 
-        public DetachableServerUpdater() : base(Observable.Empty<MessageArgsBase>())
+        public DetachableEventFeed() : base(Observable.Empty<MessageArgsBase>())
         {
             ObserveMessages = _bridge;
         }

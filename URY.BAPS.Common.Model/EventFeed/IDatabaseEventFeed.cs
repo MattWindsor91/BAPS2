@@ -1,9 +1,9 @@
 using System;
 using URY.BAPS.Common.Model.MessageEvents;
 
-namespace URY.BAPS.Client.Common.Updaters
+namespace URY.BAPS.Common.Model.EventFeed
 {
-    public interface IDatabaseServerUpdater : IBaseServerUpdater
+    public interface IDatabaseEventFeed : IEventFeed
     {
         IObservable<LibraryResultArgs> ObserveLibraryResult { get; }
         IObservable<ListingResultArgs> ObserveListingResult { get; }
