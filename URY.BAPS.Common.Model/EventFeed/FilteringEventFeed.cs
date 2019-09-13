@@ -16,7 +16,7 @@ namespace URY.BAPS.Common.Model.EventFeed
             ObserveMessages = master;
         }
 
-        protected IObservable<MessageArgsBase> ObserveMessages { get; set; }
+        public IObservable<MessageArgsBase> ObserveMessages { get; protected set; }
 
         /// <summary>
         ///     Convenience observable for observing all protocol messages
@@ -54,8 +54,8 @@ namespace URY.BAPS.Common.Model.EventFeed
         public IObservable<DirectoryFileAddArgs> ObserveDirectoryFileAdd =>
             ObserveMessages.OfType<DirectoryFileAddArgs>();
 
-        public IObservable<DirectoryPrepareEventArgs> ObserveDirectoryPrepare =>
-            ObserveMessages.OfType<DirectoryPrepareEventArgs>();
+        public IObservable<DirectoryPrepareArgs> ObserveDirectoryPrepare =>
+            ObserveMessages.OfType<DirectoryPrepareArgs>();
 
         public IObservable<TrackAddArgs> ObserveTrackAdd =>
             ObserveMessages.OfType<TrackAddArgs>();

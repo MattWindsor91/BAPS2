@@ -33,6 +33,11 @@
         ///     this field contains the index.
         /// </summary>
         public uint Index { get; }
+
+        public override string ToString()
+        {
+            return $"Count: {Count} item(s) of type {Type} incoming (index {Index})";
+        }
     }
 
     /// <summary>

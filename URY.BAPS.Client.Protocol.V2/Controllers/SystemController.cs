@@ -12,11 +12,11 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
     [UsedImplicitly]
     public class SystemController : BapsNetControllerBase
     {
-        public SystemController(ClientCore? core) : base(core)
+        public SystemController(ConnectionManager? core) : base(core)
         {
         }
 
-        public ISystemEventFeed Updater => Core.EventFeed;
+        public ISystemEventFeed Updater => ConnectionManager.EventFeed;
 
         public void AutoUpdate()
         {

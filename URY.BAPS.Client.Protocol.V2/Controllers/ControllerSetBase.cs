@@ -24,7 +24,7 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
         /// <summary>
         ///     The client core.
         /// </summary>
-        [NotNull] protected readonly ClientCore Core;
+        [NotNull] protected readonly ConnectionManager ConnectionManager;
 
         /// <summary>
         ///     Abstract base constructor for controller sets.
@@ -32,9 +32,9 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
         /// <param name="core">
         ///     The client core.
         /// </param>
-        protected ControllerSetBase(ClientCore? core)
+        protected ControllerSetBase(ConnectionManager? core)
         {
-            Core = core ?? throw new ArgumentNullException(nameof(core));
+            ConnectionManager = core ?? throw new ArgumentNullException(nameof(core));
         }
 
         /// <summary>

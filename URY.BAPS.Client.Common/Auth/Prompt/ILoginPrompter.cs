@@ -7,7 +7,7 @@
     {
         /// <summary>
         ///     Asks the <see cref="ILoginPrompter"/> to prompt the user for
-        ///     loginPrompt details.
+        ///     login details.
         /// </summary>
         void Prompt();
 

@@ -9,6 +9,6 @@ namespace URY.BAPS.Common.Model.EventFeed
     public interface IDirectoryEventFeed : IEventFeed
     {
         IObservable<DirectoryFileAddArgs> ObserveDirectoryFileAdd { get; }
-        IObservable<DirectoryPrepareEventArgs> ObserveDirectoryPrepare { get; }
+        IObservable<DirectoryPrepareArgs> ObserveDirectoryPrepare { get; }
     }
 }

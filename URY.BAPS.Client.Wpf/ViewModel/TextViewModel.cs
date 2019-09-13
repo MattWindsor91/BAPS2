@@ -33,10 +33,10 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         ///     actions into server requests.
         /// </param>
         /// <param name="client">
-        ///     The <see cref="ClientCore" /> to which this view model
+        ///     The <see cref="ConnectionManager" /> to which this view model
         ///     subscribes for text-property updates.
         /// </param>
-        public TextViewModel(SystemController? controller, ClientCore? client)
+        public TextViewModel(SystemController? controller, ConnectionManager? client)
         {
             _controller = controller ?? throw new ArgumentNullException(nameof(controller));
 

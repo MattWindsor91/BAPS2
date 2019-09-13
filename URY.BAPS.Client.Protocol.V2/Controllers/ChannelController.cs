@@ -22,7 +22,7 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
         private readonly byte _channelId;
         [NotNull] private readonly ConfigController _config;
 
-        public ChannelController(byte channelId, ClientCore? core, ConfigController? config) :
+        public ChannelController(byte channelId, ConnectionManager? core, ConfigController? config) :
             base(core)
         {
             _channelId = channelId;
@@ -36,7 +36,7 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
         ///         must check incoming events to see if they affect the right channel.
         ///     </para>
         /// </summary>
-        public IPlaylistEventFeed PlaylistUpdater => Core.EventFeed;
+        public IPlaylistEventFeed PlaylistUpdater => ConnectionManager.EventFeed;
 
         /// <summary>
         ///     An event interface that broadcasts playback server updates.
@@ -45,7 +45,7 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
         ///         must check incoming events to see if they affect the right channel.
         ///     </para>
         /// </summary>
-        public IPlaybackEventFeed PlaybackUpdater => Core.EventFeed;
+        public IPlaybackEventFeed PlaybackUpdater => ConnectionManager.EventFeed;
 
         /// <summary>
         ///     Asks the server to set this channel's state to <see cref="state" />.

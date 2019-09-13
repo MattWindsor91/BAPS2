@@ -11,7 +11,7 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
     {
         [NotNull] private readonly ConfigController _config;
 
-        public ChannelControllerSet(ClientCore? core, ConfigController? config) : base(core)
+        public ChannelControllerSet(ConnectionManager? core, ConfigController? config) : base(core)
         {
             _config = config ?? throw new ArgumentNullException(nameof(config));
         }
@@ -19,7 +19,7 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
         [Pure]
         protected override ChannelController MakeController(byte channelId)
         {
-            return new ChannelController(channelId, Core, _config);
+            return new ChannelController(channelId, ConnectionManager, _config);
         }
     }
 }

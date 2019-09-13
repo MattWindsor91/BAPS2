@@ -49,6 +49,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\URY.BAPS.Client.Autofac\URY.BAPS.Client.Autofac.csproj" />
     <ProjectReference Include="..\URY.BAPS.Client.Protocol.V2\URY.BAPS.Client.Protocol.V2.csproj" />
     <ProjectReference Include="..\URY.BAPS.Client.Common\URY.BAPS.Client.Common.csproj" />
     <ProjectReference Include="..\URY.BAPS.Common.Model\URY.BAPS.Common.Model.csproj" />

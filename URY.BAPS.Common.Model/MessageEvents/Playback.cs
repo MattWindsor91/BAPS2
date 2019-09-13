@@ -35,5 +35,9 @@ namespace URY.BAPS.Common.Model.MessageEvents
         /// </summary>
         public PlaybackState State { get; }
 
+        public override string ToString()
+        {
+            return $"PlaybackStateChange: channel {ChannelId} is {State}";
+        }
     }
 }

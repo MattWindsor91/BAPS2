@@ -12,15 +12,15 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
     /// </summary>
     public abstract class BapsNetControllerBase
     {
-        [NotNull] protected readonly ClientCore Core;
+        [NotNull] protected readonly ConnectionManager ConnectionManager;
 
         /// <summary>
         ///     Base constructor for BapsNet controllers.
         /// </summary>
         /// <param name="core">The client core to use to send messages.</param>
-        protected BapsNetControllerBase(ClientCore? core)
+        protected BapsNetControllerBase(ConnectionManager? core)
         {
-            Core = core ?? throw new ArgumentNullException(nameof(core));
+            ConnectionManager = core ?? throw new ArgumentNullException(nameof(core));
         }
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
         /// <param name="messageBuilder">The message to send.</param>
         protected void Send(MessageBuilder? messageBuilder)
         {
-            Core.Send(messageBuilder);
+            ConnectionManager.Send(messageBuilder);
         }
 
         /// <summary>

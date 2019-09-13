@@ -65,7 +65,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         [NotNull]
         [Pure]
         private IObservable<TResult> OnThisDirectory<TResult>(IObservable<TResult> source)
-            where TResult : DirectoryEventArgsBase
+            where TResult : DirectoryArgsBase
         {
             return from ev in source where ev.DirectoryId == DirectoryId select ev;
         }
@@ -99,7 +99,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         ///     </para>
         /// </summary>
         /// <param name="e">The server update payload.</param>
-        private void HandleDirectoryPrepare(DirectoryPrepareEventArgs e)
+        private void HandleDirectoryPrepare(DirectoryPrepareArgs e)
         {
             Name = e.Name;
             DispatcherHelper.CheckBeginInvokeOnUI(Files.Clear);

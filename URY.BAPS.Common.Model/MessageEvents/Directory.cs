@@ -3,9 +3,9 @@
     /// <summary>
     ///     Base class for all directory update event payloads.
     /// </summary>
-    public abstract class DirectoryEventArgsBase : MessageArgsBase
+    public abstract class DirectoryArgsBase : MessageArgsBase
     {
-        protected DirectoryEventArgsBase(ushort directoryId)
+        protected DirectoryArgsBase(ushort directoryId)
         {
             DirectoryId = directoryId;
         }
@@ -21,9 +21,9 @@
     ///     Event payload for when the server clears out and renames a directory,
     ///     or creates one if it doesn't exist.
     /// </summary>
-    public class DirectoryPrepareEventArgs : DirectoryEventArgsBase
+    public class DirectoryPrepareArgs : DirectoryArgsBase
     {
-        public DirectoryPrepareEventArgs(ushort directoryId, string name)
+        public DirectoryPrepareArgs(ushort directoryId, string name)
             : base(directoryId)
         {
             Name = name;
@@ -33,13 +33,18 @@
         ///     The new name of the directory.
         /// </summary>
         public string Name { get; }
+
+        public override string ToString()
+        {
+            return $"DirectoryPrepare: directory {DirectoryId} is '{Name}'";
+        }
     }
 
     /// <inheritdoc />
     /// <summary>
     ///     Event payload for when the server adds a file to a directory.
     /// </summary>
-    public class DirectoryFileAddArgs : DirectoryEventArgsBase
+    public class DirectoryFileAddArgs : DirectoryArgsBase
     {
         public DirectoryFileAddArgs(ushort directoryId, uint index, string description)
             : base(directoryId)
@@ -57,5 +62,10 @@
         ///     The description of the file.
         /// </summary>
         public string Description { get; }
+
+        public override string ToString()
+        {
+            return $"DirectoryFileAdd: directory {DirectoryId} index {Index} is '{Description}'";
+        }
     }
 }

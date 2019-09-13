@@ -66,6 +66,12 @@ namespace URY.BAPS.Common.Model.MessageEvents
 
         /// <summary>The string description of the option.</summary>
         public string Description { get; }
+
+        public override string ToString()
+        {
+            var indexString = Index == -1 ? "no index" : $"index {Index}";
+            return $"ConfigOption: option ID {OptionId} ({indexString}) is {Type} '{Description}'";
+        }
     }
 
     /// <inheritdoc />
@@ -74,6 +80,8 @@ namespace URY.BAPS.Common.Model.MessageEvents
     /// </summary>
     public class ConfigSettingArgs : ConfigOptionTypeIndexArgsBase
     {
+        // TODO(@MattWindsor91): make this more type safe?
+
         /// <summary>The new value to apply.</summary>
         public readonly object Value;
 
@@ -81,6 +89,12 @@ namespace URY.BAPS.Common.Model.MessageEvents
             : base(optionId, type, index)
         {
             Value = value;
+        }
+
+        public override string ToString()
+        {
+            var indexString = Index == -1 ? "no index" : $"index {Index}";
+            return $"ConfigSetting: option ID {OptionId} ({indexString}) set to {Type} '{Value}'";
         }
     }
 
@@ -106,6 +120,12 @@ namespace URY.BAPS.Common.Model.MessageEvents
         ///     The new description of the choice.
         /// </summary>
         public string ChoiceDescription { get; }
+
+
+        public override string ToString()
+        {
+            return $"ConfigChoice: choice ID {ChoiceId} for option ID {OptionId} is '{ChoiceDescription}'";
+        }
     }
 
     /// <summary>

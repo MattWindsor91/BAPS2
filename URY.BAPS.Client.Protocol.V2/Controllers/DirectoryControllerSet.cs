@@ -8,14 +8,14 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
     /// </summary>
     public class DirectoryControllerSet : ControllerSetBase<DirectoryController>
     {
-        public DirectoryControllerSet(ClientCore? core) : base(core)
+        public DirectoryControllerSet(ConnectionManager? core) : base(core)
         {
         }
 
         [Pure]
         protected override DirectoryController MakeController(byte directoryId)
         {
-            return new DirectoryController(directoryId, Core);
+            return new DirectoryController(directoryId, ConnectionManager);
         }
     }
 }

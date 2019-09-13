@@ -10,6 +10,11 @@ namespace URY.BAPS.Common.Model.MessageEvents
         public TrackDeleteArgs(ushort channelId, uint index) : base(channelId, index)
         {
         }
+
+        public override string ToString()
+        {
+            return $"TrackDelete: channel {ChannelId} index {Index}";
+        }
     }
 
     /// <summary>
@@ -24,6 +29,11 @@ namespace URY.BAPS.Common.Model.MessageEvents
         }
 
         public uint NewIndex { get; }
+
+        public override string ToString()
+        {
+            return $"TrackMove: channel {ChannelId} index {Index} -> {NewIndex}";
+        }
     }
 
     /// <summary>
@@ -38,6 +48,11 @@ namespace URY.BAPS.Common.Model.MessageEvents
         }
 
         public ITrack Item { get; }
+
+        public override string ToString()
+        {
+            return $"TrackAdd: channel {ChannelId} index {Index} is {Item}";
+        }
     }
 
     /// <summary>
@@ -47,6 +62,11 @@ namespace URY.BAPS.Common.Model.MessageEvents
     {
         public PlaylistResetArgs(ushort channelId) : base(channelId)
         {
+        }
+
+        public override string ToString()
+        {
+            return $"PlaylistReset: channel {ChannelId}";
         }
     }
 }

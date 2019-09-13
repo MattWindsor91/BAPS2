@@ -14,7 +14,7 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
     {
         private readonly byte _directoryId;
 
-        public DirectoryController(byte directoryId, ClientCore? core) : base(core)
+        public DirectoryController(byte directoryId, ConnectionManager? core) : base(core)
         {
             _directoryId = directoryId;
         }
@@ -26,7 +26,7 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
         ///         must check incoming events to see if they affect the right channel.
         ///     </para>
         /// </summary>
-        public IDirectoryEventFeed Updater => Core.EventFeed;
+        public IDirectoryEventFeed Updater => ConnectionManager.EventFeed;
 
         public void Refresh()
         {

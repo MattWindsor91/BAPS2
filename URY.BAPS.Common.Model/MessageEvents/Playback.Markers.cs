@@ -27,6 +27,12 @@ namespace URY.BAPS.Common.Model.MessageEvents
         public MarkerGetArgs(ushort channelId, MarkerType marker) : base(channelId, marker)
         {
         }
+
+        public override string ToString()
+        {
+            return $"MarkerGet: {Marker} on channel {ChannelId}?";
+        }
+
     }
 
     /// <summary>
@@ -49,5 +55,10 @@ namespace URY.BAPS.Common.Model.MessageEvents
         ///     The new value of the position marker being set.
         /// </summary>
         public uint NewValue { get; }
+
+        public override string ToString()
+        {
+            return $"MarkerChange: {Marker} on channel {ChannelId} to {NewValue}";
+        }
     }
 }

@@ -63,7 +63,7 @@ namespace URY.BAPS.Common.Protocol.V2.Decode
         {
             _ = ReceiveUint();
             var niceDirectoryName = ReceiveString();
-            Dispatch(new DirectoryPrepareEventArgs(directoryIndex, niceDirectoryName));
+            Dispatch(new DirectoryPrepareArgs(directoryIndex, niceDirectoryName));
         }
 
         protected abstract void DecodeServerVersion();

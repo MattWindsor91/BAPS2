@@ -1,30 +1,28 @@
 ﻿using System;
 using System.Threading;
 using URY.BAPS.Common.Model.EventFeed;
-using URY.BAPS.Common.Protocol.V2.Commands;
 using URY.BAPS.Common.Protocol.V2.Decode;
 using URY.BAPS.Common.Protocol.V2.Encode;
 using URY.BAPS.Common.Protocol.V2.Io;
-using URY.BAPS.Common.Protocol.V2.Ops;
 
 namespace URY.BAPS.Client.Protocol.V2.Core
 {
     /// <summary>
-    ///     Manages a message-based BapsNet connection.
+    ///     Manages a single message-based BapsNet connection.
     ///     <para>
     ///         This object internally tracks a single connection, which can
     ///         be set up using <see cref="Launch"/> and shut down using
     ///         <see cref="Shutdown"/>.
     ///     </para>
     /// </summary>
-    public sealed class ClientCore
+    public sealed class ConnectionManager
     {
         private Connection? _connection;
 
         private readonly DetachableEventFeed _eventFeed = new DetachableEventFeed();
 
         /// <summary>
-        ///     An event feed that receives 
+        ///     An event feed that receives updates from the BAPS server.
         /// </summary>
         public IFullEventFeed EventFeed => _eventFeed;
 
@@ -40,7 +38,7 @@ namespace URY.BAPS.Client.Protocol.V2.Core
         }
 
         /// <summary>
-        ///     Attaches this <see cref="ClientCore"/> to a connection to a
+        ///     Attaches this <see cref="ConnectionManager"/> to a connection to a
         ///     BapsNet server, expressed as a pair of primitive source and
         ///     primitive sink, and starts the send and receive loops.
         /// </summary>
@@ -68,20 +66,10 @@ namespace URY.BAPS.Client.Protocol.V2.Core
         {
             if (_connection == null)
                 throw new InvalidOperationException("Already shut down.");
-            NotifyServerOfQuit();
+
             _connection.StopLoops();
             _eventFeed.Detach();
             _connection = null;
-        }
-
-
-        /// <summary>
-        ///     Sends a BAPSNet message telling the server that we've quit.
-        /// </summary>
-        private void NotifyServerOfQuit()
-        {
-            var cmd = new SystemCommand(SystemOp.End);
-            Send(new MessageBuilder(cmd).Add("Normal Termination"));
         }
 
         public void Dispose()
