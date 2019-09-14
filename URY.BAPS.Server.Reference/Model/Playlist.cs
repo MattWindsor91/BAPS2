@@ -4,7 +4,7 @@ using System.Reactive.Linq;
 using URY.BAPS.Common.Model.MessageEvents;
 using URY.BAPS.Common.Model.Track;
 
-namespace URY.BAPS.Server.Reference.Model
+namespace URY.BAPS.Server.Model
 {
     public sealed class Playlist
     {

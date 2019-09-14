@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 
-namespace URY.BAPS.Server.Reference.Config
+namespace URY.BAPS.Server.Config
 {
     public class ChannelSetConfig : ConfigBase<ChannelSetConfig>
     {

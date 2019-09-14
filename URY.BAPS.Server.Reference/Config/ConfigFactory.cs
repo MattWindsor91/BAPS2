@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace URY.BAPS.Server.Reference.Config
+namespace URY.BAPS.Server.Config
 {
     [Serializable]
     public class InvalidConfigException : Exception

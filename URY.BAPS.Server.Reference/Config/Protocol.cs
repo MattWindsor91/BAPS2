@@ -1,4 +1,4 @@
-namespace URY.BAPS.Server.Reference.Config
+namespace URY.BAPS.Server.Config
 {
     public enum Protocol
     {

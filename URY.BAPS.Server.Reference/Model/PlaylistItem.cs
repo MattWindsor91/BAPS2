@@ -1,6 +1,6 @@
 using URY.BAPS.Common.Model.Track;
 
-namespace URY.BAPS.Server.Reference.Model
+namespace URY.BAPS.Server.Model
 {
     /// <summary>
     ///     An item in a BAPS server playlist, consisting of an

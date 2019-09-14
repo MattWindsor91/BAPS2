@@ -1,6 +1,6 @@
 using URY.BAPS.Common.Model.Track;
 
-namespace URY.BAPS.Server.Reference.Model
+namespace URY.BAPS.Server.Model
 {
     /// <summary>
     ///     Interface for playlist items.

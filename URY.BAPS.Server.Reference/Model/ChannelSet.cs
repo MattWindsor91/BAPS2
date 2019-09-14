@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 
-namespace URY.BAPS.Server.Reference.Model
+namespace URY.BAPS.Server.Model
 {
     public class ChannelSet
     {

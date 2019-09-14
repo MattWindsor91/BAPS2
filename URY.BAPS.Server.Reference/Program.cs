@@ -1,11 +1,9 @@
 ﻿using System.IO;
-using Autofac;
-using Autofac.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using URY.BAPS.Server.Reference.Config;
+using URY.BAPS.Server.Config;
 
-namespace URY.BAPS.Server.Reference
+namespace URY.BAPS.Server
 {
     /// <summary>
     ///     Main entry point.

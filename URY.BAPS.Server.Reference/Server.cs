@@ -1,7 +1,7 @@
 using Autofac;
-using URY.BAPS.Server.Reference.Config;
+using URY.BAPS.Server.Config;
 
-namespace URY.BAPS.Server.Reference
+namespace URY.BAPS.Server
 {
     /// <summary>
     ///     Main encapsulating class of the BAPS server.

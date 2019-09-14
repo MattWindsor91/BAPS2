@@ -12,6 +12,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\URY.BAPS.Server.Reference\URY.BAPS.Server.Reference.csproj" />
+    <ProjectReference Include="..\URY.BAPS.Server.Reference\URY.BAPS.Server.csproj" />
   </ItemGroup>
 </Project>

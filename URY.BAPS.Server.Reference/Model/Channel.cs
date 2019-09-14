@@ -1,4 +1,4 @@
-namespace URY.BAPS.Server.Reference.Model
+namespace URY.BAPS.Server.Model
 {
     public class Channel
     {

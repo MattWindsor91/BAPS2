@@ -1,8 +1,8 @@
 using URY.BAPS.Common.Model.Track;
-using URY.BAPS.Server.Reference.Model;
+using URY.BAPS.Server.Model;
 using Xunit;
 
-namespace URY.BAPS.Server.Reference.Tests
+namespace URY.BAPS.Server.Tests
 {
     /// <summary>
     ///     Tests for <see cref="Playlist" />.
