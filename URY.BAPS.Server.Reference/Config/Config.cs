@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace URY.BAPS.Server.Reference.Config
+namespace URY.BAPS.Server.Config
 {
     /// <summary>
     ///     Base interface of all BAPS config tree nodes.
