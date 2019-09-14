@@ -13,7 +13,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="MessageEvents" />
     <Folder Include="Playback" />
     <Folder Include="Track" />
   </ItemGroup>

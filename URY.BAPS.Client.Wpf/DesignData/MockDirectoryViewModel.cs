@@ -1,4 +1,5 @@
-﻿using URY.BAPS.Client.Wpf.ViewModel;
+﻿using JetBrains.Annotations;
+using URY.BAPS.Client.Wpf.ViewModel;
 using URY.BAPS.Common.Model.Track;
 
 namespace URY.BAPS.Client.Wpf.DesignData
@@ -24,6 +25,7 @@ namespace URY.BAPS.Client.Wpf.DesignData
         /// <summary>
         ///     Constructs a mock directory view model with mocked-up parameters.
         /// </summary>
+        [UsedImplicitly]
         public MockDirectoryViewModel() : this(0, "Jingles")
         {
             Files.Add(new DirectoryEntry(DirectoryId, "URY Whisper (Dry)"));

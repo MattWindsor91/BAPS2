@@ -68,7 +68,7 @@ namespace URY.BAPS.Client.Protocol.V2.Core
 
         private void DecodeCommand(ushort word)
         {
-            _ /* length */ = _bapsNet.ReceiveUint(_token);
+            _bapsNet.ReceiveUint(_token); /* ignore length */
             var cmd = CommandFactory.Unpack(word);
             cmd.Accept(_decoder);
         }
