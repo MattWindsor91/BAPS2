@@ -46,7 +46,7 @@ namespace URY.BAPS.Client.Console
             {
                 receiveTask.Wait();
             }
-            catch (AggregateException _)
+            catch (AggregateException)
             {
                 // TODO(@MattWindsor91): handle?
             }

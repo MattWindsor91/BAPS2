@@ -55,7 +55,7 @@ namespace URY.BAPS.Client.Protocol.V2.Auth
         /** Generate an md5 sum of the raw argument **/
         private static string Md5Sum(string raw)
         {
-            var md5 = MD5.Create();
+            using var md5 = MD5.Create();
             var stringBuilder = new StringBuilder();
             var buffer = Encoding.ASCII.GetBytes(raw);
             var hash = md5.ComputeHash(buffer);

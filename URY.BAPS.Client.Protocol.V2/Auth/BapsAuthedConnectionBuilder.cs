@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Net.Sockets;
 using JetBrains.Annotations;
 using URY.BAPS.Client.Common.Auth;
@@ -92,7 +93,8 @@ namespace URY.BAPS.Client.Protocol.V2.Auth
 
         private void SetBinaryMode()
         {
-            Debug.Assert(_connection != null);
+            if (_connection is null)
+                throw new InvalidOperationException("Cannot set binary mode without a connection.");
 
             var binaryModeCommand = new SystemCommand(SystemOp.SetBinaryMode);
             var binaryModeMessage = new MessageBuilder(binaryModeCommand);
@@ -101,8 +103,10 @@ namespace URY.BAPS.Client.Protocol.V2.Auth
 
         private ILoginResult TryLogin(ILoginPromptResponse promptResponse)
         {
-            Debug.Assert(_connection != null);
-            Debug.Assert(_seed != null);
+            if (_connection is null)
+                throw new InvalidOperationException("Cannot log in without a connection.");
+            if (_seed is null)
+                throw new InvalidOperationException("Cannot log in without a seed.");
 
             var lp = new LoginPerformer(_connection, _seed);
             return lp.TryLogin(promptResponse);
