@@ -1,5 +1,5 @@
 using System.Globalization;
-using FontAwesome.WPF;
+using FontAwesome5;
 using JetBrains.Annotations;
 using URY.BAPS.Client.Wpf.Converters;
 using URY.BAPS.Common.Model.Track;
@@ -23,14 +23,14 @@ namespace URY.BAPS.Client.Wpf.Tests.Converters
         /// </summary>
         /// <param name="track">The track to convert.</param>
         /// <returns>The resulting icon (or null if the converter didn't produce a valid icon object).</returns>
-        private FontAwesomeIcon? Run(ITrack track)
+        private EFontAwesomeIcon? Run(ITrack track)
         {
             var obj = _conv.Convert(
                 track,
-                typeof(FontAwesomeIcon),
+                typeof(EFontAwesomeIcon),
                 null,
                 CultureInfo.CurrentCulture);
-            return obj as FontAwesomeIcon?;
+            return obj as EFontAwesomeIcon?;
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace URY.BAPS.Client.Wpf.Tests.Converters
         [Fact]
         public void Test_Convert_ErrorTrack_WarningIcon()
         {
-            Assert.Equal(FontAwesomeIcon.Warning, Run(new ErrorTrack()));
+            Assert.Equal(EFontAwesomeIcon.Solid_ExclamationTriangle, Run(new ErrorTrack()));
         }
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace URY.BAPS.Client.Wpf.Tests.Converters
         [Fact]
         public void Test_Convert_FileTrack_FileIcon()
         {
-            Assert.Equal(FontAwesomeIcon.FileAudioOutline, Run(new FileTrack("foo", 3600)));
+            Assert.Equal(EFontAwesomeIcon.Regular_FileAudio, Run(new FileTrack("foo", 3600)));
         }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace URY.BAPS.Client.Wpf.Tests.Converters
         [Fact]
         public void Test_Convert_LibraryTrack_MusicIcon()
         {
-            Assert.Equal(FontAwesomeIcon.Music, Run(new LibraryTrack("foo", 3600)));
+            Assert.Equal(EFontAwesomeIcon.Solid_Music, Run(new LibraryTrack("foo", 3600)));
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace URY.BAPS.Client.Wpf.Tests.Converters
         [Fact]
         public void Test_Convert_LoadingTrack_EllipsisIcon()
         {
-            Assert.Equal(FontAwesomeIcon.EllipsisH, Run(new LoadingTrack()));
+            Assert.Equal(EFontAwesomeIcon.Solid_EllipsisH, Run(new LoadingTrack()));
         }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace URY.BAPS.Client.Wpf.Tests.Converters
         [Fact]
         public void Test_Convert_NullTrack_QuestionIcon()
         {
-            Assert.Equal(FontAwesomeIcon.Question, Run(new NullTrack()));
+            Assert.Equal(EFontAwesomeIcon.Solid_Question, Run(new NullTrack()));
         }
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace URY.BAPS.Client.Wpf.Tests.Converters
         [Fact]
         public void Test_Convert_TextTrack_SpeechIcon()
         {
-            Assert.Equal(FontAwesomeIcon.CommentOutline, Run(new TextTrack("foo", "bar")));
+            Assert.Equal(EFontAwesomeIcon.Regular_Comment, Run(new TextTrack("foo", "bar")));
         }
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace URY.BAPS.Client.Wpf.Tests.Converters
         [Fact]
         public void Test_ConvertBack_NullTrack()
         {
-            var trackObject = _conv.ConvertBack(FontAwesomeIcon.FileAudioOutline, typeof(TrackBase), null,
+            var trackObject = _conv.ConvertBack(EFontAwesomeIcon.Regular_FileAudio, typeof(TrackBase), null,
                 CultureInfo.CurrentCulture);
             Assert.NotNull(trackObject);
             Assert.IsAssignableFrom<ITrack>(trackObject);
