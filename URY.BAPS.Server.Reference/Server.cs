@@ -1,39 +1,37 @@
-using Autofac;
-using URY.BAPS.Server.Config;
+﻿using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using URY.BAPS.Server.Managers;
 
 namespace URY.BAPS.Server
 {
     /// <summary>
-    ///     Main encapsulating class of the BAPS server.
+    ///     The main server object.
     /// </summary>
     public class Server
     {
-        /// <summary>
-        ///     This server's configuration.
-        /// </summary>
-        private readonly ServerConfig _config;
+        private ILogger<Server> Logger { get; }
 
-        /// <summary>
-        ///     This server's inversion-of-control container, used to acquire other server components.
-        /// </summary>
-        private readonly IContainer _container;
+        private readonly ClientManager _clientManager;
+        private readonly ConfigManager _configManager;
+        private readonly UserManager _userManager;
 
-        public Server(ServerConfig config)
+        public Server(ILoggerFactory loggerFactory, ClientManager clientManager, ConfigManager configManager, UserManager userManager)
         {
-            _config = config;
-            _container = MakeContainer(config);
+            _clientManager = clientManager;
+            _configManager = configManager;
+            _userManager = userManager;
+
+            Logger = loggerFactory.CreateLogger<Server>();
         }
 
-        public void Run()
+        public Task Run()
         {
-            using var scope = _container.BeginLifetimeScope();
-            _config.DumpToLogger();
-        }
+            Logger.LogInformation("Server starting.");
 
-        private static IContainer MakeContainer(ServerConfig config)
-        {
-            var cb = new ContainerBuilder();
-            return cb.Build();
+            var tf = new TaskFactory(_clientManager.Token, TaskCreationOptions.LongRunning, TaskContinuationOptions.None, TaskScheduler.Default);
+            var clientManagerTask = tf.StartNew(_clientManager.Run);
+
+            return Task.WhenAll(clientManagerTask);
         }
     }
 }

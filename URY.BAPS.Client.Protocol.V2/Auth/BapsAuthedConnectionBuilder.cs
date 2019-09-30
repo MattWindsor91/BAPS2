@@ -69,14 +69,19 @@ namespace URY.BAPS.Client.Protocol.V2.Auth
 
         private ILoginResult Connect(ILoginPromptResponse promptResponse)
         {
+            TcpClient? clientSocket = null;
+
             try
             {
-                _connection = new TcpConnection(promptResponse.Host, promptResponse.Port);
+                clientSocket = new TcpClient(promptResponse.Host, promptResponse.Port) { LingerState = new LingerOption(false, 0), NoDelay = true };
             }
             catch (SocketException e)
             {
+                clientSocket?.Dispose();
                 return new SocketFailureLoginResult(e);
             }
+            _connection = new TcpConnection(clientSocket);
+
 
             /** Receive the greeting string, this is the only communication
                 that does not follow the 'command' 'command-length' 'argument1'...

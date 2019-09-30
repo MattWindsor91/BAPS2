@@ -9,7 +9,7 @@ namespace URY.BAPS.Server
     ///     Main entry point.
     ///     <para>
     ///         The purpose of <see cref="Program"/> is to instantiate the server config, then
-    ///         build and run a <see cref="Server"/> using it.
+    ///         build and run a <see cref="ServerRunner"/> using it.
     ///     </para>
     /// </summary>
     internal class Program
@@ -23,15 +23,15 @@ namespace URY.BAPS.Server
 
         private void Run()
         {
-            var config = GetServerConfig();
-            var server = new Server(config);
-            server.Run();
-        }
-
-        private ServerConfig GetServerConfig()
-        {
             var configuration = MakeConfiguration();
             var loggerFactory = MakeLoggerFactory(configuration);
+            var config = GetServerConfig(configuration, loggerFactory);
+            using var server = new ServerRunner(loggerFactory, config);
+            server.Run().Wait();
+        }
+
+        private ServerConfig GetServerConfig(IConfigurationRoot configuration, ILoggerFactory loggerFactory)
+        {
             var configFactory = new ConfigFactory(loggerFactory);
             var config = configFactory.FromConfiguration(configuration);
             return config;

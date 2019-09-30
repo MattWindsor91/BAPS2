@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Net.Sockets;
 using System.Threading;
-using URY.BAPS.Common.Protocol.V2.Commands;
 
 namespace URY.BAPS.Common.Protocol.V2.Io
 {
     /// <summary>
-    ///     This class defines all the low level network connection functions and functions
-    ///     for how to send and receive the 4 fundamental data types used in BAPSNet.
+    ///     A low-level BapsNetV2 connection over TCP/IP.
     /// </summary>
     public class TcpConnection : IConnection, IDisposable
     {
@@ -20,11 +18,15 @@ namespace URY.BAPS.Common.Protocol.V2.Io
 
         private readonly StreamPrimitiveSink _primitiveSink;
 
-        public TcpConnection(string host, int port)
+        /// <summary>
+        ///     Constructs a <see cref="TcpConnection"/> over a <see cref="TcpClient"/>.
+        /// </summary>
+        /// <param name="clientSocket">The socket representing the connection.</param>
+        public TcpConnection(TcpClient clientSocket)
         {
-            _clientSocket = new TcpClient(host, port) {LingerState = new LingerOption(false, 0), NoDelay = true};
-            var stream = _clientSocket.GetStream();
+            _clientSocket = clientSocket;
 
+            var stream = _clientSocket.GetStream();
             _primitiveSink = new StreamPrimitiveSink(stream);
             _primitiveSource = new StreamPrimitiveSource(stream);
         }
