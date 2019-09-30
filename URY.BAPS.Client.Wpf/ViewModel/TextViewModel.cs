@@ -1,5 +1,4 @@
 ﻿using System;
-using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Threading;
 using JetBrains.Annotations;
 using URY.BAPS.Client.Protocol.V2.Controllers;
@@ -14,8 +13,10 @@ namespace URY.BAPS.Client.Wpf.ViewModel
     ///     A view model that represents the text panel, and its various
     ///     configurable aspects.
     /// </summary>
-    internal class TextViewModel : ViewModelBase, ITextViewModel
+    public class TextViewModel : TextViewModelBase
     {
+
+
         [NotNull] private readonly SystemController _controller;
 
         private const int MinimumFontScale = 50;
@@ -40,24 +41,13 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         {
             _controller = controller ?? throw new ArgumentNullException(nameof(controller));
 
-            SubscribeToServerUpdates(client?.EventFeed);
+            SubscribeToServerUpdates(client?.EventFeed ?? throw new ArgumentNullException(nameof(client)));
         }
 
         /// <summary>
         ///     The font scale, in percent.
         /// </summary>
-        public int FontScale
-        {
-            get => _fontScale;
-            private set
-            {
-                if (_fontScale.Equals(value)) return;
-                if (_fontScale < MinimumFontScale) return;
-                if (MaximumFontScale <= _fontScale) return;
-                _fontScale = value;
-                RaisePropertyChanged(nameof(FontScale));
-            }
-        }
+        public override int FontScale => _fontScale;
 
         /// <summary>
         ///     The text stored in the text panel.
@@ -66,7 +56,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         ///         the server loads a text item.
         ///     </para>
         /// </summary>
-        public string Text
+        public override string Text
         {
             get => _text;
             set
@@ -77,16 +67,10 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             }
         }
 
-        private void SubscribeToServerUpdates(IFullEventFeed? updater)
+        private void SubscribeToServerUpdates(IFullEventFeed updater)
         {
-            updater?.ObserveTrackLoad?.Subscribe(OnTrackLoad);
-            updater?.ObserveTextSetting?.Subscribe(OnTextSetting);
-        }
-
-        private void AdjustFontSize(TextSettingDirection direction)
-        {
-            var delta = direction == TextSettingDirection.Up ? 1 : -1;
-            DispatcherHelper.CheckBeginInvokeOnUI(() => FontScale += delta);
+            SubscribeTo(updater.ObserveTrackLoad, OnTrackLoad);
+            SubscribeTo(updater.ObserveTextSetting, OnTextSetting);
         }
 
         /// <summary>
@@ -113,7 +97,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             switch (args.Setting)
             {
                 case TextSetting.FontSize:
-                    AdjustFontSize(args.Direction);
+                    AdjustTextSize(args.Direction);
                     break;
                 case TextSetting.Scroll:
                     // TODO(@MattWindsor91): handle scroll somehow.
@@ -122,5 +106,44 @@ namespace URY.BAPS.Client.Wpf.ViewModel
                     throw new ArgumentOutOfRangeException();
             }
         }
+
+        #region Commands
+
+        // These commands deliberately don't go through the system controller.
+        // This is because the server doesn't actually understand text setting
+        // changes; it can only send them, and only does so if a connected
+        // BAPS paddle etc. requests it.
+
+        protected override void AdjustTextSize(TextSettingDirection direction)
+        {
+            var delta = direction == TextSettingDirection.Up ? 10 : -10;
+            DispatcherHelper.CheckBeginInvokeOnUI(() => SetFontScale(FontScale + delta));
+        }
+
+        private void SetFontScale(int value)
+        {
+            value = Math.Max(value, MinimumFontScale);
+            value = Math.Min(value, MaximumFontScale);
+            if (_fontScale.Equals(value)) return;
+            _fontScale = value;
+            RaisePropertyChanged(nameof(FontScale));
+            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            {
+                IncreaseTextSizeCommand.RaiseCanExecuteChanged();
+                DecreaseTextSizeCommand.RaiseCanExecuteChanged();
+            });
+        }
+
+        protected override bool CanIncreaseTextSize()
+        {
+            return FontScale < MaximumFontScale;
+        }
+
+        protected override bool CanDecreaseTextSize()
+        {
+            return MinimumFontScale < FontScale;
+        }
+
+        #endregion Commands
     }
 }

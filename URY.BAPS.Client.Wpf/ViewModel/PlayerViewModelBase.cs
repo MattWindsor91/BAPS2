@@ -81,8 +81,6 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             RequestSetPosition,
             CanRequestSetPosition);
 
-        public abstract void Dispose();
-
         protected abstract void RequestSetCue(uint newCue);
         protected abstract bool CanRequestSetCue(uint newCue);
 

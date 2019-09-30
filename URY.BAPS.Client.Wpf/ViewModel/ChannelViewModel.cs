@@ -18,8 +18,6 @@ namespace URY.BAPS.Client.Wpf.ViewModel
     public class ChannelViewModel : ChannelViewModelBase
     {
         private readonly AudioWallService? _audioWallService;
-
-        private readonly IList<IDisposable> _subscriptions = new List<IDisposable>();
         private string _name = "";
 
         public ChannelViewModel(ushort channelId,
@@ -34,7 +32,6 @@ namespace URY.BAPS.Client.Wpf.ViewModel
 
             _config = config;
 
-            RegisterForServerUpdates();
             RegisterForConfigUpdates();
         }
 
@@ -61,20 +58,9 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         public override void Dispose()
         {
             base.Dispose();
-            UnsubscribeFromServerUpdates();
             UnsubscribeFromConfigUpdates();
         }
 
-        /// <summary>
-        ///     Registers the view model against server update events.
-        ///     <para>
-        ///         This view model can be disposed during run-time, so <see cref="UnsubscribeFromServerUpdates" />
-        ///         (called during <see cref="Dispose" />) should be kept in sync with it.
-        ///     </para>
-        /// </summary>
-        private void RegisterForServerUpdates()
-        {
-        }
 
         /// <summary>
         ///     Registers the view model against the config cache's config update events.
@@ -88,14 +74,6 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             if (_config is null) return;
             _config.ChoiceChanged += HandleConfigChoiceChanged;
             _config.StringChanged += HandleConfigStringChanged;
-        }
-
-        /// <summary>
-        ///     Unregisters the view model from all server update events.
-        /// </summary>
-        private void UnsubscribeFromServerUpdates()
-        {
-            foreach (var subscription in _subscriptions) subscription.Dispose();
         }
 
         /// <summary>

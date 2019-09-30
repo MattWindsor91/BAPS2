@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
 using JetBrains.Annotations;
@@ -8,7 +7,6 @@ using URY.BAPS.Common.Model.MessageEvents;
 using URY.BAPS.Common.Model.Playback;
 using URY.BAPS.Common.Model.Track;
 using ArgumentNullException = System.ArgumentNullException;
-using IDisposable = System.IDisposable;
 
 namespace URY.BAPS.Client.Wpf.ViewModel
 {
@@ -17,11 +15,6 @@ namespace URY.BAPS.Client.Wpf.ViewModel
     /// </summary>
     public class PlayerViewModel : PlayerViewModelBase
     {
-        /// <summary>
-        ///     The list of handles to observable subscriptions that this view model creates.
-        /// </summary>
-        private readonly IList<IDisposable> _subscriptions = new List<IDisposable>();
-
         private uint _cuePosition;
         private uint _introPosition;
 
@@ -147,11 +140,6 @@ namespace URY.BAPS.Client.Wpf.ViewModel
 
         private IPlaybackController? Controller { get; }
 
-        public override void Dispose()
-        {
-            UnsubscribeFromServerUpdates();
-        }
-
         protected override void RequestSetCue(uint newCue)
         {
             // NOTE: this, and the similar early-returns in the other markers, serve two purposes.
@@ -216,14 +204,9 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             if (Controller == null) return;
 
             var updater = Controller.PlaybackUpdater;
-            _subscriptions.Add(OnThisChannel(updater.ObservePlayerState).Subscribe(HandlePlayerState));
-            _subscriptions.Add(OnThisChannel(updater.ObserveMarker).Subscribe(HandleMarker));
-            _subscriptions.Add(OnThisChannel(updater.ObserveTrackLoad).Subscribe(HandleTrackLoad));
-        }
-
-        private void UnsubscribeFromServerUpdates()
-        {
-            foreach (var subscription in _subscriptions) subscription.Dispose();
+            SubscribeTo(OnThisChannel(updater.ObservePlayerState), HandlePlayerState);
+            SubscribeTo(OnThisChannel(updater.ObserveMarker), HandleMarker);
+            SubscribeTo(OnThisChannel(updater.ObserveTrackLoad), HandleTrackLoad);
         }
 
         private void HandlePlayerState(PlaybackStateChangeArgs id)

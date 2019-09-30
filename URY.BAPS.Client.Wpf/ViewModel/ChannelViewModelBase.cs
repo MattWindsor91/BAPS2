@@ -121,8 +121,10 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         /// <param name="newValue">The intended new value for auto-advance.</param>
         protected abstract void SetConfigFlag(ChannelFlag setting, bool newValue);
 
-        public virtual void Dispose()
+        public override void Dispose()
         {
+            base.Dispose();
+
             Player.Dispose();
             TrackList.Dispose();
         }

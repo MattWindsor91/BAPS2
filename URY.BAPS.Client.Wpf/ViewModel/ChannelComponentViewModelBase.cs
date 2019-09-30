@@ -10,7 +10,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
     ///     Base class for view models that refer to part or all of a channel, and therefore have an associated
     ///     channel ID.
     /// </summary>
-    public abstract class ChannelComponentViewModelBase : ViewModelBase
+    public abstract class ChannelComponentViewModelBase : SubscribingViewModel
     {
         protected ChannelComponentViewModelBase(ushort channelId)
         {
