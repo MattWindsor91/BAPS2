@@ -13,15 +13,15 @@ namespace URY.BAPS.Client.Wpf.Converters
     {
         public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            switch (value)
+            return value switch
             {
-                case ITrack entry when entry.IsError: return EFontAwesomeIcon.Solid_ExclamationTriangle;
-                case ITrack entry when entry.IsLoading: return EFontAwesomeIcon.Solid_EllipsisH;
-                case ITrack entry when entry.IsTextItem: return EFontAwesomeIcon.Regular_Comment;
-                case ITrack entry when entry.IsAudioItem && entry.IsFromLibrary: return EFontAwesomeIcon.Solid_Music;
-                case ITrack entry when entry.IsAudioItem: return EFontAwesomeIcon.Regular_FileAudio;
-                default: return EFontAwesomeIcon.Solid_Question;
-            }
+                ITrack entry when entry.IsError => EFontAwesomeIcon.Solid_ExclamationTriangle,
+                ITrack entry when entry.IsLoading => EFontAwesomeIcon.Solid_EllipsisH,
+                ITrack entry when entry.IsTextItem => EFontAwesomeIcon.Regular_Comment,
+                ITrack entry when entry.IsAudioItem && entry.IsFromLibrary => EFontAwesomeIcon.Solid_Music,
+                ITrack entry when entry.IsAudioItem => EFontAwesomeIcon.Regular_FileAudio,
+                _ => EFontAwesomeIcon.Solid_Question
+            };
         }
 
         public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
