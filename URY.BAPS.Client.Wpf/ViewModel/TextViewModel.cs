@@ -15,10 +15,6 @@ namespace URY.BAPS.Client.Wpf.ViewModel
     /// </summary>
     public class TextViewModel : TextViewModelBase
     {
-
-
-        [NotNull] private readonly SystemController _controller;
-
         private const int MinimumFontScale = 50;
         private const int MaximumFontScale = 200;
 
@@ -29,19 +25,13 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         /// <summary>
         ///     Constructs a <see cref="TextViewModel" />.
         /// </summary>
-        /// <param name="controller">
-        ///     The <see cref="SystemController" /> used to translate text-panel
-        ///     actions into server requests.
-        /// </param>
-        /// <param name="client">
-        ///     The <see cref="ConnectionManager" /> to which this view model
+        /// <param name="eventFeed">
+        ///     The <see cref="IFullEventFeed" /> to which this view model
         ///     subscribes for text-property updates.
         /// </param>
-        public TextViewModel(SystemController? controller, ConnectionManager? client)
+        public TextViewModel(IFullEventFeed? eventFeed)
         {
-            _controller = controller ?? throw new ArgumentNullException(nameof(controller));
-
-            SubscribeToServerUpdates(client?.EventFeed ?? throw new ArgumentNullException(nameof(client)));
+            SubscribeToServerUpdates(eventFeed ?? throw new ArgumentNullException(nameof(eventFeed)));
         }
 
         /// <summary>

@@ -7,6 +7,7 @@ using URY.BAPS.Client.Common.ServerConfig;
 using URY.BAPS.Client.Protocol.V2.Auth;
 using URY.BAPS.Client.Protocol.V2.Controllers;
 using URY.BAPS.Client.Protocol.V2.Core;
+using URY.BAPS.Common.Model.EventFeed;
 using URY.BAPS.Common.Protocol.V2.Io;
 
 namespace URY.BAPS.Client.Autofac
@@ -56,6 +57,8 @@ namespace URY.BAPS.Client.Autofac
         private static void RegisterCoreComponents(ContainerBuilder builder)
         {
             builder.RegisterType<ConnectionManager>().AsSelf().InstancePerLifetimeScope();
+            builder.Register(c => c.Resolve<ConnectionManager>().EventFeed).As<IFullEventFeed>()
+                .InstancePerLifetimeScope();
             builder.RegisterType<ConfigCache>().AsSelf().InstancePerLifetimeScope();
             builder.RegisterType<InitialUpdatePerformer>().AsSelf().InstancePerLifetimeScope();
             builder.RegisterType<Protocol.V2.Core.Client>().AsSelf().InstancePerLifetimeScope();
