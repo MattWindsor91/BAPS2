@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <ProjectTypeGuids>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
     <AssemblyTitle>URY.BAPS.Client.Wpf.Tests</AssemblyTitle>
     <Product>URY.BAPS.Client.Wpf.Tests</Product>
     <Copyright>Copyright ©  2019</Copyright>

@@ -41,7 +41,7 @@ namespace URY.BAPS.Client.Wpf.Services
             _wall.Show();
         }
 
-        private void HandleWallClosing(object sender, EventArgs e)
+        private void HandleWallClosing(object? sender, EventArgs e)
         {
             if (_wall is { } w) w.Closed -= HandleWallClosing;
             _wall = null;
