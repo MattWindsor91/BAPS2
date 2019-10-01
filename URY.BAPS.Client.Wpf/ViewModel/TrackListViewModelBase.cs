@@ -108,7 +108,5 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         /// </summary>
         /// <param name="text">The text to handle.</param>
         protected abstract void DropText(string text);
-
-        public abstract void Dispose();
     }
 }
