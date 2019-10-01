@@ -1,8 +1,5 @@
 ﻿using System;
 using GalaSoft.MvvmLight.Threading;
-using JetBrains.Annotations;
-using URY.BAPS.Client.Protocol.V2.Controllers;
-using URY.BAPS.Client.Protocol.V2.Core;
 using URY.BAPS.Common.Model.EventFeed;
 using URY.BAPS.Common.Model.MessageEvents;
 using ArgumentNullException = System.ArgumentNullException;
@@ -117,11 +114,8 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             if (_fontScale.Equals(value)) return;
             _fontScale = value;
             RaisePropertyChanged(nameof(FontScale));
-            DispatcherHelper.CheckBeginInvokeOnUI(() =>
-            {
-                IncreaseTextSizeCommand.RaiseCanExecuteChanged();
-                DecreaseTextSizeCommand.RaiseCanExecuteChanged();
-            });
+            IncreaseTextSizeCommand.RaiseCanExecuteChanged();
+            DecreaseTextSizeCommand.RaiseCanExecuteChanged();
         }
 
         protected override bool CanIncreaseTextSize()

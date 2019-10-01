@@ -1,9 +1,13 @@
 ﻿using GalaSoft.MvvmLight.CommandWpf;
-using GalaSoft.MvvmLight.Threading;
+using URY.BAPS.Client.Wpf.DesignData;
 using URY.BAPS.Common.Model.MessageEvents;
 
 namespace URY.BAPS.Client.Wpf.ViewModel
 {
+    /// <summary>
+    ///     Abstract base class used for both <see cref="TextViewModel"/> and
+    ///     <see cref="MockTextViewModel"/>.
+    /// </summary>
     public abstract class TextViewModelBase : SubscribingViewModel, ITextViewModel
     {
         private RelayCommand? _increaseTextSizeCommand;
