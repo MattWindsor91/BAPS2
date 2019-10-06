@@ -19,7 +19,12 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         /// <param name="callback">The callback to use when the observable fires.</param>
         protected void SubscribeTo<T>(IObservable<T> observable, Action<T> callback)
         {
-            _subscriptions.Add(observable.Subscribe(callback));
+            AddSubscription(observable.Subscribe(callback));
+        }
+
+        protected void AddSubscription(IDisposable subscription)
+        {
+            _subscriptions.Add(subscription);
         }
 
         public virtual void Dispose()

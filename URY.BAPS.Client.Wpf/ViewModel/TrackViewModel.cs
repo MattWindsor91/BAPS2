@@ -47,7 +47,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         [Pure]
         public override string ToString()
         {
-            return _underlyingTrack.ToString();
+            return _underlyingTrack.ToString() ?? "(null)";
         }
 
         /// <summary>

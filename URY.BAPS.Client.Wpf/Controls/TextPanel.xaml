@@ -20,8 +20,8 @@
                 <StackPanel Orientation="Horizontal">
                     <Button Width="32px" Height="32px"
                             ToolTip="Decrease text size"
-                            Command="{Binding DecreaseTextSizeCommand}">
-                        <fa5:SvgAwesome Icon="Solid_CaretDown"/>
+                            Command="{Binding DecreaseFontScale}">
+                        <fa5:FontAwesome VerticalAlignment="Center" Icon="Solid_CaretDown" FontSize="32"/>
                     </Button>
                     <fa5:SvgAwesome Icon="Solid_TextHeight"
                                     Foreground="{StaticResource AccentFg}"
@@ -31,8 +31,8 @@
                                     />
                     <Button Width="32px" Height="32px"
                             ToolTip="Increase text size"
-                            Command="{Binding IncreaseTextSizeCommand}">
-                        <fa5:SvgAwesome Icon="Solid_CaretUp"/>
+                            Command="{Binding IncreaseFontScale}">
+                        <fa5:FontAwesome VerticalAlignment="Center" Icon="Solid_CaretUp" FontSize="32"/>
                     </Button>
                 </StackPanel>
             </controls:Header.Content>

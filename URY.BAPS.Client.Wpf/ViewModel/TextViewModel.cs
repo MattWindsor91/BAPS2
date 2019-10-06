@@ -1,5 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Reactive;
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using GalaSoft.MvvmLight.Threading;
+using ReactiveUI;
 using URY.BAPS.Common.Model.EventFeed;
 using URY.BAPS.Common.Model.MessageEvents;
 using ArgumentNullException = System.ArgumentNullException;
@@ -10,13 +15,12 @@ namespace URY.BAPS.Client.Wpf.ViewModel
     ///     A view model that represents the text panel, and its various
     ///     configurable aspects.
     /// </summary>
-    public class TextViewModel : TextViewModelBase
+    public class TextViewModel : ReactiveObject, ITextViewModel, IDisposable
     {
         private const int MinimumFontScale = 50;
         private const int MaximumFontScale = 200;
 
         private int _fontScale = 100;
-
         private string _text = "";
 
         /// <summary>
@@ -26,15 +30,24 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         ///     The <see cref="IFullEventFeed" /> to which this view model
         ///     subscribes for text-property updates.
         /// </param>
-        public TextViewModel(IFullEventFeed? eventFeed)
+        public TextViewModel(IFullEventFeed? eventFeed = null)
         {
-            SubscribeToServerUpdates(eventFeed ?? throw new ArgumentNullException(nameof(eventFeed)));
+            DecreaseFontScale = ReactiveCommand.Create(DecreaseFontScaleImpl, CanDecreaseTextSize);
+            IncreaseFontScale = ReactiveCommand.Create(IncreaseFontScaleImpl, CanIncreaseTextSize);
+            LoadTrack = ReactiveCommand.Create<TrackLoadArgs>(LoadTrackImpl);
+
+            if (! (eventFeed is null)) SubscribeToServerUpdates(eventFeed);
+
         }
 
         /// <summary>
         ///     The font scale, in percent.
         /// </summary>
-        public override int FontScale => _fontScale;
+        public int FontScale
+        {
+            get => _fontScale;
+            protected set => this.RaiseAndSetIfChanged(ref _fontScale, value);
+        }
 
         /// <summary>
         ///     The text stored in the text panel.
@@ -43,55 +56,22 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         ///         the server loads a text item.
         ///     </para>
         /// </summary>
-        public override string Text
+        public string Text
         {
             get => _text;
-            set
-            {
-                if (_text == value) return;
-                _text = value;
-                RaisePropertyChanged(nameof(Text));
-            }
+            set => this.RaiseAndSetIfChanged(ref _text, value);
         }
 
         private void SubscribeToServerUpdates(IFullEventFeed updater)
         {
-            SubscribeTo(updater.ObserveTrackLoad, OnTrackLoad);
-            SubscribeTo(updater.ObserveTextSetting, OnTextSetting);
-        }
+            AddSubscription(updater.ObserveTrackLoad.InvokeCommand(LoadTrack));
 
-        /// <summary>
-        ///     Observes a track load from the server.
-        ///     <para>
-        ///         The text view model observes track loads so as to
-        ///         handle text-track loads; it doesn't react to any other
-        ///         track load.
-        ///     </para>
-        /// </summary>
-        /// <param name="args">Information about the newly-loaded track.</param>
-        private void OnTrackLoad(TrackLoadArgs args)
-        {
-            if (!args.Track.IsTextItem) return;
-            Text = args.Track.Text;
-        }
-
-        /// <summary>
-        ///     Observes a text setting change from the server.
-        /// </summary>
-        /// <param name="args">Information about the text setting change.</param>
-        private void OnTextSetting(TextSettingArgs args)
-        {
-            switch (args.Setting)
-            {
-                case TextSetting.FontSize:
-                    AdjustTextSize(args.Direction);
-                    break;
-                case TextSetting.Scroll:
-                    // TODO(@MattWindsor91): handle scroll somehow.
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+            var fontSizeChanges =
+                updater.ObserveTextSetting.Where(x => x.Setting == TextSetting.FontSize);
+            AddSubscription(fontSizeChanges.Where(x => x.Direction == TextSettingDirection.Up)
+                .InvokeCommand(IncreaseFontScale));
+            AddSubscription(fontSizeChanges.Where(x => x.Direction == TextSettingDirection.Down)
+                    .InvokeCommand(DecreaseFontScale));
         }
 
         #region Commands
@@ -101,33 +81,58 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         // changes; it can only send them, and only does so if a connected
         // BAPS paddle etc. requests it.
 
-        protected override void AdjustTextSize(TextSettingDirection direction)
+        private ReactiveCommand<TrackLoadArgs, Unit> LoadTrack { get; }
+
+        /// <summary>
+        ///     A command that, when invoked, increases the text size.
+        /// </summary>
+        public ReactiveCommand<Unit, Unit> IncreaseFontScale { get; }
+
+        /// <summary>
+        ///     A command that, when invoked, increases the text size.
+        /// </summary>
+        public ReactiveCommand<Unit, Unit> DecreaseFontScale { get; }
+
+        private void LoadTrackImpl(TrackLoadArgs args)
         {
-            var delta = direction == TextSettingDirection.Up ? 10 : -10;
-            DispatcherHelper.CheckBeginInvokeOnUI(() => SetFontScale(FontScale + delta));
+            if (args.Track.IsTextItem) Text = args.Track.Text;
         }
 
-        private void SetFontScale(int value)
+        private void IncreaseFontScaleImpl()
         {
-            value = Math.Max(value, MinimumFontScale);
-            value = Math.Min(value, MaximumFontScale);
-            if (_fontScale.Equals(value)) return;
-            _fontScale = value;
-            RaisePropertyChanged(nameof(FontScale));
-            IncreaseTextSizeCommand.RaiseCanExecuteChanged();
-            DecreaseTextSizeCommand.RaiseCanExecuteChanged();
+            FontScale += 10;
         }
 
-        protected override bool CanIncreaseTextSize()
+        private void DecreaseFontScaleImpl()
         {
-            return FontScale < MaximumFontScale;
+            FontScale -= 10;
         }
 
-        protected override bool CanDecreaseTextSize()
-        {
-            return MinimumFontScale < FontScale;
-        }
+        private IObservable<bool> CanIncreaseTextSize =>
+            this.WhenAnyValue(x => x.FontScale, scale => scale < MaximumFontScale);
+
+        private IObservable<bool> CanDecreaseTextSize =>
+            this.WhenAnyValue(x => x.FontScale, scale => MinimumFontScale < scale);
 
         #endregion Commands
+
+        #region Temporary
+
+        private readonly IList<IDisposable> _subscriptions = new List<IDisposable>();
+
+        protected void AddSubscription(IDisposable subscription)
+        {
+            _subscriptions.Add(subscription);
+        }
+
+        public virtual void Dispose()
+        {
+            foreach (var subscription in _subscriptions)
+            {
+                subscription.Dispose();
+            }
+        }
+
+        #endregion Temporary
     }
 }

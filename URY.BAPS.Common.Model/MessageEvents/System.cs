@@ -52,6 +52,27 @@ namespace URY.BAPS.Common.Model.MessageEvents
         Up = 1
     }
 
+    /// <summary>
+    ///     Extension methods for <see cref="TextSettingDirection"/>.
+    /// </summary>
+    public static class TextSettingDirectionExtensions
+    {
+        /// <summary>
+        ///     Converts a <see cref="TextSettingDirection"/> to a delta by
+        ///     adding a magnitude.
+        /// </summary>
+        /// <param name="direction">The direction being converted.</param>
+        /// <param name="magnitude">The magnitude to which the direction is applied.</param>
+        /// <returns>
+        ///     If <paramref name="direction"/> is down, -1 times <paramref name="magnitude"/>;
+        ///     else, <paramref name="magnitude"/>.
+        /// </returns>
+        public static int ToDelta(this TextSettingDirection direction, int magnitude)
+        {
+            return direction == TextSettingDirection.Down ? -magnitude : magnitude;
+        }
+    }
+
     #endregion Text
 
     public class ServerVersionArgs : MessageArgsBase
