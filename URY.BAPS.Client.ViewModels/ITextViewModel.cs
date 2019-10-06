@@ -1,4 +1,5 @@
-﻿using System.Reactive;
+﻿using System;
+using System.Reactive;
 using ReactiveUI;
 
 namespace URY.BAPS.Client.ViewModel
@@ -22,7 +23,7 @@ namespace URY.BAPS.Client.ViewModel
     ///         like 'scroll up' or 'decrease text size'.
     ///     </para>
     /// </summary>
-    public interface ITextViewModel
+    public interface ITextViewModel : IDisposable
     {
         /// <summary>
         ///     The font scale, in percent.

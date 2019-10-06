@@ -35,5 +35,11 @@ namespace URY.BAPS.Client.ViewModel.DesignData
         public string Text { get; set; }
         public ReactiveCommand<Unit, Unit> IncreaseFontScale { get; }
         public ReactiveCommand<Unit, Unit> DecreaseFontScale { get; }
+
+        public void Dispose()
+        {
+            IncreaseFontScale?.Dispose();
+            DecreaseFontScale?.Dispose();
+        }
     }
 }
