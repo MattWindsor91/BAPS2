@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reactive;
-using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using GalaSoft.MvvmLight.Threading;
 using ReactiveUI;
 using URY.BAPS.Common.Model.EventFeed;
 using URY.BAPS.Common.Model.MessageEvents;
-using ArgumentNullException = System.ArgumentNullException;
 
-namespace URY.BAPS.Client.Wpf.ViewModel
+namespace URY.BAPS.Client.ViewModel
 {
     /// <summary>
     ///     A view model that represents the text panel, and its various

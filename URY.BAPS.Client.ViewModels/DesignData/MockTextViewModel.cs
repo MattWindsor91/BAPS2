@@ -1,13 +1,9 @@
-﻿using System;
-using System.Reactive;
+﻿using System.Reactive;
 using System.Reactive.Linq;
 using JetBrains.Annotations;
 using ReactiveUI;
-using URY.BAPS.Client.ViewModel;
-using URY.BAPS.Client.Wpf.ViewModel;
-using URY.BAPS.Common.Model.MessageEvents;
 
-namespace URY.BAPS.Client.Wpf.DesignData
+namespace URY.BAPS.Client.ViewModel.DesignData
 {
     /// <summary>
     ///     A mock-up view model for the text pane.

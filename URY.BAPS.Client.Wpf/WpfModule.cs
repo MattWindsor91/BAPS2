@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using URY.BAPS.Client.Common.Auth;
 using URY.BAPS.Client.Common.Auth.Prompt;
+using URY.BAPS.Client.ViewModel;
 using URY.BAPS.Client.Wpf.Auth;
 using URY.BAPS.Client.Wpf.Services;
 using URY.BAPS.Client.Wpf.ViewModel;
