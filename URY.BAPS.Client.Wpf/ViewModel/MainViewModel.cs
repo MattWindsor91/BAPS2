@@ -7,6 +7,7 @@ using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Threading;
 using JetBrains.Annotations;
 using URY.BAPS.Client.Common.ServerConfig;
+using URY.BAPS.Client.ViewModel;
 using URY.BAPS.Client.Wpf.Services;
 using URY.BAPS.Common.Model.ServerConfig;
 
@@ -114,7 +115,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             _config.IntChanged += HandleConfigIntChange;
         }
 
-        private void HandleConfigIntChange(object sender, ConfigCache.IntChangeEventArgs args)
+        private void HandleConfigIntChange(object? sender, ConfigCache.IntChangeEventArgs args)
         {
             switch (args.Key)
             {

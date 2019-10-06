@@ -86,7 +86,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             _config.StringChanged -= HandleConfigStringChanged;
         }
 
-        private void HandleConfigStringChanged(object sender, ConfigCache.StringChangeEventArgs args)
+        private void HandleConfigStringChanged(object? sender, ConfigCache.StringChangeEventArgs args)
         {
             switch (args.Key)
             {
@@ -102,7 +102,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
             Name = args.Value;
         }
 
-        private void HandleConfigChoiceChanged(object sender, ConfigCache.ChoiceChangeEventArgs e)
+        private void HandleConfigChoiceChanged(object? sender, ConfigCache.ChoiceChangeEventArgs e)
         {
             switch (e.Key)
             {
