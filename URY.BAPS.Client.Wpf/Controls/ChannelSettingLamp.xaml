@@ -6,9 +6,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:fa5="http://schemas.fontawesome.com/icons/"
              mc:Ignorable="d"
-             Width="{DynamicResource ChannelBarHeight}"
-             Height="{DynamicResource ChannelBarHeight}"
-             d:DesignHeight="450" d:DesignWidth="800">
+             Width="{DynamicResource HeaderButtonHeight}"
+             Height="{DynamicResource HeaderButtonHeight}"
+             d:DesignHeight="32" d:DesignWidth="32">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -20,11 +20,11 @@
             <SolidColorBrush x:Key="ChannelLegendLampAlt" Color="#FFEF2929" />
 
             <Style TargetType="{x:Type fa5:FontAwesome}" x:Key="BasicStyle">
-                <Setter Property="FontSize" Value="{StaticResource ChannelBarHeightMinusMargin}"/>
-                <Setter Property="LineHeight" Value="{StaticResource ChannelBarHeightMinusMargin}"/>
-                <Setter Property="Height" Value="{StaticResource ChannelBarHeight}"/>
-                <Setter Property="Width" Value="{StaticResource ChannelBarHeight}"/>
-                <Setter Property="Padding" Value="{StaticResource ChannelBarMargin}"/>
+                <Setter Property="FontSize" Value="{StaticResource HeaderButtonIconHeight}"/>
+                <Setter Property="LineHeight" Value="{StaticResource HeaderButtonIconHeight}"/>
+                <Setter Property="Height" Value="{StaticResource HeaderButtonHeight}"/>
+                <Setter Property="Width" Value="{StaticResource HeaderButtonHeight}"/>
+                <Setter Property="Padding" Value="{StaticResource HeaderButtonIconMargin}"/>
                 <Setter Property="HorizontalAlignment" Value="Center"/>
                 <Setter Property="VerticalAlignment" Value="Center"/>
             </Style>

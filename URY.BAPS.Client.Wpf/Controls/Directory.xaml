@@ -5,7 +5,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:dd="urn:gong-wpf-dragdrop"
              xmlns:controls="clr-namespace:URY.BAPS.Client.Wpf.Controls"
-             xmlns:fa="http://schemas.fontawesome.io/icons/"
              xmlns:designData="clr-namespace:URY.BAPS.Client.Wpf.DesignData"
              xmlns:fa5="http://schemas.fontawesome.com/icons/"
              mc:Ignorable="d"
@@ -20,9 +19,7 @@
                          Icon="Solid_FolderOpen"
                          Text="{Binding Name, FallbackValue='Unknown Directory'}"
                          x:Name="DirectoryHeader">
-            <Button Width="32px" Command="{Binding RefreshCommand }">
-                <fa5:SvgAwesome Icon="Solid_Sync" Margin="2px" />
-            </Button>
+            <Button Style="{StaticResource HeaderButton}" controls:ButtonProperties.Icon="Solid_Sync" Command="{Binding RefreshCommand }" />
         </controls:Header>
         <ListBox Grid.Row="1" Grid.Column="0" Name="FileList"
                  dd:DragDrop.IsDragSource="true"

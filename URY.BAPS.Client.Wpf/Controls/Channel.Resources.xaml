@@ -8,22 +8,22 @@
     -->
 
     <!--
-    Height of the bars at the top of each channel, in px.
+    Height of the content sections on the bars at the top of each channel, in px.
     
-    NB: this should be the same as the header height in
+    NB: this should be the same as the header height minus margin in
     Themes\Generic.xaml.  Eventually, some clean way of organising this to
     avoid the duplication should occur.
     -->
-    <system:Double x:Key="ChannelBarHeight">32</system:Double>
+    <system:Double x:Key="ChannelBarHeight">28</system:Double>
 
     <!--
     Thickness of the margin used for channel bar content such as
     lamps and buttons.
     -->
-    <Thickness x:Key="ChannelBarMargin">6px</Thickness>
+    <Thickness x:Key="ChannelBarMargin">2px</Thickness>
     
     <!-- ChannelBarHeight - (2*ChannelBarMargin) -->
-    <system:Double x:Key="ChannelBarHeightMinusMargin">20</system:Double>
+    <system:Double x:Key="ChannelBarHeightMinusMargin">24</system:Double>
 
 
 </ResourceDictionary>

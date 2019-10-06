@@ -5,9 +5,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:controls="clr-namespace:URY.BAPS.Client.Wpf.Controls"
-             xmlns:designData="clr-namespace:URY.BAPS.Client.Wpf.DesignData"
              xmlns:calcBinding="clr-namespace:CalcBinding;assembly=CalcBinding"
              xmlns:fa5="http://schemas.fontawesome.com/icons/"
+             xmlns:designData="clr-namespace:URY.BAPS.Client.ViewModel.DesignData;assembly=URY.BAPS.Client.ViewModel"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance Type=designData:MockTextViewModel, IsDesignTimeCreatable=True}"
              d:DesignHeight="300" d:DesignWidth="300">
@@ -18,22 +18,20 @@
         <controls:Header DockPanel.Dock="Top" Icon="Regular_CommentAlt" Text="Text">
             <controls:Header.Content>
                 <StackPanel Orientation="Horizontal">
-                    <Button Width="32px" Height="32px"
+                    <Button Style="{StaticResource HeaderButton}"
+                            controls:ButtonProperties.Icon="Solid_CaretDown"
                             ToolTip="Decrease text size"
-                            Command="{Binding DecreaseFontScale}">
-                        <fa5:FontAwesome VerticalAlignment="Center" Icon="Solid_CaretDown" FontSize="32"/>
-                    </Button>
+                            Command="{Binding DecreaseFontScale}"/>
                     <fa5:SvgAwesome Icon="Solid_TextHeight"
                                     Foreground="{StaticResource AccentFg}"
                                     Width="24px"
                                     Height="24px"
                                     Margin="4px"
                                     />
-                    <Button Width="32px" Height="32px"
+                    <Button Style="{StaticResource HeaderButton}"
+                            controls:ButtonProperties.Icon="Solid_CaretUp"
                             ToolTip="Increase text size"
-                            Command="{Binding IncreaseFontScale}">
-                        <fa5:FontAwesome VerticalAlignment="Center" Icon="Solid_CaretUp" FontSize="32"/>
-                    </Button>
+                            Command="{Binding IncreaseFontScale}"/>
                 </StackPanel>
             </controls:Header.Content>
         </controls:Header>

@@ -26,6 +26,7 @@
                     <DockPanel
                         Height="32px"
                         Background="{StaticResource {ComponentResourceKey TypeInTargetAssembly={x:Type controls:Header}, ResourceId=AccentBgBrush}}">
+                        <!-- Header icon, on left -->
                         <fa5:SvgAwesome
                             DockPanel.Dock="Left"
                             HorizontalAlignment="Left"
@@ -33,7 +34,12 @@
                             Margin="4px"
                             Foreground="{StaticResource {ComponentResourceKey TypeInTargetAssembly={x:Type controls:Header}, ResourceId=AccentFgBrush}}"
                             Icon="{TemplateBinding Icon}" />
-                        <ContentControl DockPanel.Dock="Right" Content="{TemplateBinding Content}" />
+                        <!-- Optional header buttons etc., on right -->
+                        <ContentControl
+                            Height="28px"
+                            Margin="2px"
+                            DockPanel.Dock="Right" Content="{TemplateBinding Content}"/>
+                        <!-- Header text, in middle -->
                         <Label
                             Foreground="{StaticResource {ComponentResourceKey TypeInTargetAssembly={x:Type controls:Header}, ResourceId=AccentFgBrush}}"
                             FontSize="18px"
