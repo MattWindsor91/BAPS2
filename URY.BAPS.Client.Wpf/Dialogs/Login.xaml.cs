@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using URY.BAPS.Client.ViewModel;
 using URY.BAPS.Client.Wpf.ViewModel;
 
 namespace URY.BAPS.Client.Wpf.Dialogs
@@ -12,11 +13,6 @@ namespace URY.BAPS.Client.Wpf.Dialogs
         {
             InitializeComponent();
         }
-
-        /// <summary>
-        ///     Exposes the loginPrompt view model.
-        /// </summary>
-        public LoginViewModel? ViewModel => DataContext as LoginViewModel;
 
         private void LoginBtn_Click(object sender, RoutedEventArgs e)
         {

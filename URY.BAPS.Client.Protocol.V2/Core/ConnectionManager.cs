@@ -15,7 +15,7 @@ namespace URY.BAPS.Client.Protocol.V2.Core
     ///         <see cref="Shutdown"/>.
     ///     </para>
     /// </summary>
-    public sealed class ConnectionManager
+    public sealed class ConnectionManager : IDisposable
     {
         private Connection? _connection;
 

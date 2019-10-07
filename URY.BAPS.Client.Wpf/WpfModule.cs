@@ -5,6 +5,7 @@ using URY.BAPS.Client.ViewModel;
 using URY.BAPS.Client.Wpf.Auth;
 using URY.BAPS.Client.Wpf.Services;
 using URY.BAPS.Client.Wpf.ViewModel;
+using LoginViewModel = URY.BAPS.Client.ViewModel.LoginViewModel;
 
 namespace URY.BAPS.Client.Wpf
 {

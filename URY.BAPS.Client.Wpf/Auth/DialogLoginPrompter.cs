@@ -1,6 +1,6 @@
 ﻿using URY.BAPS.Client.Common.Auth.Prompt;
+using URY.BAPS.Client.ViewModel;
 using URY.BAPS.Client.Wpf.Dialogs;
-using URY.BAPS.Client.Wpf.ViewModel;
 
 namespace URY.BAPS.Client.Wpf.Auth
 {

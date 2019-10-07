@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\URY.BAPS.Client.Common\URY.BAPS.Client.Common.csproj" />
     <ProjectReference Include="..\URY.BAPS.Common.Model\URY.BAPS.Common.Model.csproj" />
   </ItemGroup>
 
