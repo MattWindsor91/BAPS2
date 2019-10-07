@@ -12,7 +12,7 @@ using URY.BAPS.Common.Protocol.V2.Ops;
 
 namespace URY.BAPS.Client.Protocol.V2.Auth
 {
-    public class BapsAuthedConnectionBuilder : IAuthedConnectionBuilder<TcpConnection>
+    public class BapsAuthedConnectionBuilder : IAuthedConnectionBuilder<TcpConnection>, IDisposable
     {
         /// <summary>
         ///     Cached instance of <see cref="SuccessLoginResult" />.
@@ -115,6 +115,11 @@ namespace URY.BAPS.Client.Protocol.V2.Auth
 
             var lp = new LoginPerformer(_connection, _seed);
             return lp.TryLogin(promptResponse);
+        }
+
+        public void Dispose()
+        {
+            _connection?.Dispose();
         }
     }
 }

@@ -10,7 +10,7 @@ namespace URY.BAPS.Client.Protocol.V2.Core
     /// <summary>
     ///     A message-send loop for BapsNet.
     /// </summary>
-    public class Sender
+    public class Sender : IDisposable
     {
         [NotNull] private readonly IPrimitiveSink _primitiveSink;
 
@@ -53,6 +53,11 @@ namespace URY.BAPS.Client.Protocol.V2.Core
                 var msg = _queue.Take(token);
                 msg.Send(_primitiveSink);
             }
+        }
+
+        public void Dispose()
+        {
+            _queue.Dispose();
         }
     }
 }

@@ -11,7 +11,7 @@ namespace URY.BAPS.Client.Protocol.V2.Core
     ///     An object representing a live connection to a BapsNet client, with
     ///     running send and receive loops.
     /// </summary>
-    public sealed class Connection
+    public sealed class Connection : IDisposable
     {
         /// <summary>
         ///     The amount of delay added to the cancellation request when
@@ -97,6 +97,7 @@ namespace URY.BAPS.Client.Protocol.V2.Core
         public void Dispose()
         {
             _dead?.Dispose();
+            _sender?.Dispose();
             _tasks?.Dispose();
         }
     }
