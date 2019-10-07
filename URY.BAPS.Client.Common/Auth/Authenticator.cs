@@ -38,8 +38,6 @@ namespace URY.BAPS.Client.Common.Auth
             _builder = builder ?? throw new ArgumentNullException(nameof(builder));
         }
 
-
-
         /// <summary>
         ///     Tries to construct an authenticated <see cref="TConn" />.
         /// </summary>
