@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows;
 using GalaSoft.MvvmLight.CommandWpf;
 using GongSolutions.Wpf.DragDrop;
+using URY.BAPS.Client.ViewModel;
 using URY.BAPS.Common.Model.Track;
 
 namespace URY.BAPS.Client.Wpf.ViewModel

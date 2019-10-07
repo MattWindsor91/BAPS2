@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using GalaSoft.MvvmLight.Threading;
 using JetBrains.Annotations;
 using URY.BAPS.Client.Protocol.V2.Controllers;
+using URY.BAPS.Client.ViewModel;
 using URY.BAPS.Common.Model.MessageEvents;
 using URY.BAPS.Common.Model.Track;
 

@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using GalaSoft.MvvmLight.CommandWpf;
 using GongSolutions.Wpf.DragDrop;
 using JetBrains.Annotations;
+using URY.BAPS.Client.ViewModel;
 
 namespace URY.BAPS.Client.Wpf.ViewModel
 {

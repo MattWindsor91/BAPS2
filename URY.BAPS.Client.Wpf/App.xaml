@@ -2,11 +2,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:viewModel="clr-namespace:URY.BAPS.Client.Wpf.ViewModel"
              xmlns:converters="clr-namespace:URY.BAPS.Client.Wpf.Converters"
              xmlns:fa5="http://schemas.fontawesome.com/icons/"
              xmlns:ap="clr-namespace:URY.BAPS.Client.Wpf.Controls"
              xmlns:system="clr-namespace:System;assembly=System.Runtime"
+             xmlns:viewModel="clr-namespace:URY.BAPS.Client.ViewModel;assembly=URY.BAPS.Client.ViewModel"
              x:Class="URY.BAPS.Client.Wpf.App"
              Startup="Application_Startup"
              Exit="Application_Exit" mc:Ignorable="d">

@@ -1,15 +1,15 @@
 ﻿using System;
-using GalaSoft.MvvmLight;
 using JetBrains.Annotations;
+using ReactiveUI;
 using URY.BAPS.Common.Model.Track;
 
-namespace URY.BAPS.Client.Wpf.ViewModel
+namespace URY.BAPS.Client.ViewModel
 {
     /// <summary>
     ///     A view model that wraps a <see cref="TrackBase" />, adding tracking for
     ///     whether the item is loaded.
     /// </summary>
-    public class TrackViewModel : ViewModelBase, ITrack
+    public class TrackViewModel : ReactiveObject, ITrack
     {
         [NotNull] private readonly ITrack _underlyingTrack;
 
@@ -26,14 +26,8 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         public bool IsLoaded
         {
             get => _isLoaded;
-            set
-            {
-                if (_isLoaded == value) return;
-                _isLoaded = value;
-                RaisePropertyChanged(nameof(IsLoaded));
-            }
+            set => this.RaiseAndSetIfChanged(ref _isLoaded, value);
         }
-
 
         public string Description => _underlyingTrack.Description;
         public string Text => _underlyingTrack.Text;
@@ -47,7 +41,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         [Pure]
         public override string ToString()
         {
-            return _underlyingTrack.ToString() ?? "(null)";
+            return _underlyingTrack.ToString();
         }
 
         /// <summary>
