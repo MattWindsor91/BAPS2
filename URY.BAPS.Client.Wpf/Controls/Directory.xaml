@@ -4,9 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:dd="urn:gong-wpf-dragdrop"
+             xmlns:designData="clr-namespace:URY.BAPS.Client.ViewModel.DesignData;assembly=URY.BAPS.Client.ViewModel"
              xmlns:controls="clr-namespace:URY.BAPS.Client.Wpf.Controls"
-             xmlns:designData="clr-namespace:URY.BAPS.Client.Wpf.DesignData"
-             xmlns:fa5="http://schemas.fontawesome.com/icons/"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance designData:MockDirectoryViewModel, IsDesignTimeCreatable=True}"
              d:DesignHeight="240" d:DesignWidth="300" MaxHeight="300">
@@ -19,7 +18,7 @@
                          Icon="Solid_FolderOpen"
                          Text="{Binding Name, FallbackValue='Unknown Directory'}"
                          x:Name="DirectoryHeader">
-            <Button Style="{StaticResource HeaderButton}" controls:ButtonProperties.Icon="Solid_Sync" Command="{Binding RefreshCommand }" />
+            <Button Style="{StaticResource HeaderButton}" controls:ButtonProperties.Icon="Solid_Sync" Command="{Binding Refresh }" />
         </controls:Header>
         <ListBox Grid.Row="1" Grid.Column="0" Name="FileList"
                  dd:DragDrop.IsDragSource="true"
