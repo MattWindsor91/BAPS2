@@ -107,7 +107,7 @@ namespace URY.BAPS.Client.Protocol.V2.Core
         private void NotifyServerOfQuit()
         {
             var cmd = new SystemCommand(SystemOp.End);
-            Send(new MessageBuilder(cmd).Add("Normal Termination"));
+            _connection.TrySend(new MessageBuilder(cmd).Add("Normal Termination"));
         }
     }
 }

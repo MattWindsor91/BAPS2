@@ -34,7 +34,17 @@ namespace URY.BAPS.Client.Protocol.V2.Core
         {
             if (_connection == null)
                 throw new InvalidOperationException("Tried to send without a connection.");
-            _connection.Send(messageBuilder);
+            TrySend(messageBuilder);
+        }
+
+        /// <summary>
+        ///     Sends a message to the BapsNet server, silently discarding if
+        ///     there is no active connection.
+        /// </summary>
+        /// <param name="messageBuilder">The message to send.  If null, nothing is sent.</param>
+        public void TrySend(MessageBuilder? messageBuilder)
+        {
+            _connection?.Send(messageBuilder);
         }
 
         /// <summary>
@@ -62,12 +72,16 @@ namespace URY.BAPS.Client.Protocol.V2.Core
             return new ClientCommandDecoder(source, token);
         }
 
+        /// <summary>
+        ///     Shuts down any active connection.
+        ///     <para>
+        ///         It should be safe to call this multiple times, or call it
+        ///         before a connection is established.
+        ///     </para>
+        /// </summary>
         public void Shutdown()
         {
-            if (_connection == null)
-                throw new InvalidOperationException("Already shut down.");
-
-            _connection.StopLoops();
+            _connection?.StopLoops();
             _eventFeed.Detach();
             _connection = null;
         }
