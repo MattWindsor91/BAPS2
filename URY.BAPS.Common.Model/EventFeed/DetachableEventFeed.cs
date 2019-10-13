@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using URY.BAPS.Common.Model.MessageEvents;
@@ -11,12 +12,12 @@ namespace URY.BAPS.Common.Model.EventFeed
     ///     subscribers before a server updater is available, and persist them
     ///     if the server updater becomes unavailable.
     /// </summary>
-    public class DetachableEventFeed : FilteringEventFeed
+    public class DetachableEventFeed : FilteringEventFeed, IDisposable
 
     {
         private readonly Subject<MessageArgsBase> _bridge = new Subject<MessageArgsBase>();
 
-        private readonly IList<IDisposable> _subscriptions = new List<IDisposable>();
+        private readonly CompositeDisposable _subscriptions = new CompositeDisposable();
 
         public DetachableEventFeed() : base(Observable.Empty<MessageArgsBase>())
         {
@@ -40,8 +41,13 @@ namespace URY.BAPS.Common.Model.EventFeed
         /// </summary>
         public void Detach()
         {
-            foreach (var subscription in _subscriptions) subscription.Dispose();
             _subscriptions.Clear();
+        }
+
+        public void Dispose()
+        {
+            _bridge?.Dispose();
+            _subscriptions?.Dispose();
         }
     }
 }

@@ -23,11 +23,12 @@
             </Border.Style>
             <Button
                 Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
-                Padding="8px"
+                Padding="4px"
                 MinWidth="32px"
                 Command="{Binding Command, ElementName=TransportButtonControl}"
                 ToolTip="{Binding ToolTip, ElementName=TransportButtonControl}">
-                <fa5:SvgAwesome
+                <fa5:FontAwesome
+                    FontSize="24px"
                     Icon="{Binding Icon, ElementName=TransportButtonControl}"
                     HorizontalAlignment="Center" VerticalAlignment="Center" />
             </Button>

@@ -12,7 +12,7 @@ namespace URY.BAPS.Client.ViewModel
     ///     A view model that represents the text panel, and its various
     ///     configurable aspects.
     /// </summary>
-    public class TextViewModel : ReactiveObject, ITextViewModel
+    public class TextViewModel : ViewModelBase, ITextViewModel
     {
         private const int MinimumFontScale = 50;
         private const int MaximumFontScale = 200;
@@ -113,27 +113,12 @@ namespace URY.BAPS.Client.ViewModel
 
         #endregion Commands
 
-        #region Temporary
-
-        private readonly IList<IDisposable> _subscriptions = new List<IDisposable>();
-
-        protected void AddSubscription(IDisposable subscription)
-        {
-            _subscriptions.Add(subscription);
-        }
-
-        public virtual void Dispose()
+        public override void Dispose()
         {
             DecreaseFontScale.Dispose();
             IncreaseFontScale.Dispose();
             LoadTrack.Dispose();
-
-            foreach (var subscription in _subscriptions)
-            {
-                subscription.Dispose();
-            }
+            base.Dispose();
         }
-
-        #endregion Temporary
     }
 }

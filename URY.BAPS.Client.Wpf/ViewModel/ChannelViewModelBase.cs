@@ -1,6 +1,7 @@
 ﻿using System;
 using GalaSoft.MvvmLight.CommandWpf;
 using JetBrains.Annotations;
+using URY.BAPS.Client.ViewModel;
 using URY.BAPS.Common.Model.Playback;
 
 namespace URY.BAPS.Client.Wpf.ViewModel

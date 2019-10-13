@@ -10,6 +10,7 @@ using URY.BAPS.Client.Common.ServerConfig;
 using URY.BAPS.Client.ViewModel;
 using URY.BAPS.Client.Wpf.Services;
 using URY.BAPS.Common.Model.ServerConfig;
+using ViewModelBase = GalaSoft.MvvmLight.ViewModelBase;
 
 namespace URY.BAPS.Client.Wpf.ViewModel
 {
@@ -58,6 +59,8 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         public ObservableCollection<IDirectoryViewModel> Directories { get; } =
             new ObservableCollection<IDirectoryViewModel>();
 
+        // TODO(@MattWindsor91): re-enable these commands
+
         /// <summary>
         ///     A command that, when executed, sends a play command to the channel
         ///     with the given index.
@@ -65,9 +68,9 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         [NotNull]
         public RelayCommand<ushort> ForwardPlayCommand =>
             _forwardPlayCommand ??= new RelayCommand<ushort>(
-                channelId => { ChannelAt(channelId)?.Player?.PlayCommand?.Execute(null); },
+                channelId => { ChannelAt(channelId)?.Player?.Play?.Execute(); },
                 channelId =>
-                    ChannelAt(channelId)?.Player?.PlayCommand?.CanExecute(null) ?? false
+                    /*ChannelAt(channelId)?.Player?.Play?.CanExecute(null) ??*/ false
             );
 
         /// <summary>
@@ -77,9 +80,9 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         [NotNull]
         public RelayCommand<ushort> ForwardPauseCommand =>
             _forwardPauseCommand ??= new RelayCommand<ushort>(
-                channelId => { ChannelAt(channelId)?.Player?.PauseCommand?.Execute(null); },
+                channelId => { ChannelAt(channelId)?.Player?.Pause?.Execute(); },
                 channelId =>
-                    ChannelAt(channelId)?.Player?.PauseCommand?.CanExecute(null) ?? false
+                    /*ChannelAt(channelId)?.Player?.Pause?.CanExecute(null) ??*/ false
             );
 
         /// <summary>
@@ -89,9 +92,9 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         [NotNull]
         public RelayCommand<ushort> ForwardStopCommand =>
             _forwardStopCommand ??= new RelayCommand<ushort>(
-                channelId => { ChannelAt(channelId)?.Player?.StopCommand?.Execute(null); },
+                channelId => { ChannelAt(channelId)?.Player?.Stop?.Execute(); },
                 channelId =>
-                    ChannelAt(channelId)?.Player?.StopCommand?.CanExecute(null) ?? false
+                    /*ChannelAt(channelId)?.Player?.Stop?.CanExecute(null) ??*/ false
             );
 
         /// <summary>

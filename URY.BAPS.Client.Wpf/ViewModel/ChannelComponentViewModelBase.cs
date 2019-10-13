@@ -1,6 +1,5 @@
 using System;
 using System.Reactive.Linq;
-using GalaSoft.MvvmLight;
 using JetBrains.Annotations;
 using URY.BAPS.Common.Model.MessageEvents;
 
@@ -25,9 +24,12 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         /// <summary>
         ///     Restricts a channel observable to returning only events for this channel.
         /// </summary>
-        /// <param name="source"></param>
-        /// <typeparam name="TResult"></typeparam>
-        /// <returns></returns>
+        /// <param name="source">The observable to restrict.</param>
+        /// <typeparam name="TResult">Type of results from <paramref name="source"/>.</typeparam>
+        /// <returns>
+        ///     <paramref name="source"/>, but restricted to returning only events for
+        ///     channel <see cref="ChannelId"/>.
+        /// </returns>
         [Pure]
         protected IObservable<TResult> OnThisChannel<TResult>(IObservable<TResult> source)
             where TResult : ChannelArgsBase

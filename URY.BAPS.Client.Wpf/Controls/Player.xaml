@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:converters="clr-namespace:URY.BAPS.Client.Wpf.Converters"
              xmlns:controls="clr-namespace:URY.BAPS.Client.Wpf.Controls"
-             xmlns:designData="clr-namespace:URY.BAPS.Client.Wpf.DesignData"
+             xmlns:designData="clr-namespace:URY.BAPS.Client.ViewModel.DesignData;assembly=URY.BAPS.Client.ViewModel"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance designData:MockPlayerViewModel, IsDesignTimeCreatable=True}"
              d:DesignWidth="300">
@@ -49,21 +49,21 @@
             IsHighlighted="{Binding IsPlaying}"
             HighlightBrush="{StaticResource PlayBrush}"
             ToolTip="Play"
-            Command="{Binding PlayCommand}" />
+            Command="{Binding Play}" />
         <controls:TransportButton
             Grid.Row="0" Grid.Column="1"
             Icon="Solid_Pause"
             IsHighlighted="{Binding IsPaused}"
             HighlightBrush="{StaticResource PauseBrush}"
             ToolTip="Pause"
-            Command="{Binding PauseCommand}" />
+            Command="{Binding Pause}" />
         <controls:TransportButton
             Grid.Row="0" Grid.Column="2"
             Icon="Solid_Stop"
             IsHighlighted="{Binding IsStopped}"
             HighlightBrush="{StaticResource StopBrush}"
             ToolTip="Stop"
-            Command="{Binding StopCommand}" />
+            Command="{Binding Stop}" />
         <!-- Track name -->
         <controls:TrackLegend Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" DataContext="{Binding LoadedTrack}" />
         <!-- Track bar -->

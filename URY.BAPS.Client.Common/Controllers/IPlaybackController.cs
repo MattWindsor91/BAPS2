@@ -4,16 +4,13 @@ using URY.BAPS.Common.Model.Playback;
 namespace URY.BAPS.Client.Common.Controllers
 {
     /// <summary>
-    ///     Interface for controllers that allow players to interact with the playback aspects of a BAPS server.
+    ///     Interface for controllers that allow players to interact with the
+    ///     playback aspects of a BAPS server.
     /// </summary>
     public interface IPlaybackController
     {
         /// <summary>
-        ///     An event interface that broadcasts playback server updates.
-        ///     <para>
-        ///         Note that the updates may include other channels; anything subscribing to this interface
-        ///         must check incoming events to see if they affect the right channel.
-        ///     </para>
+        ///     An event feed for playback messages affecting this channel.
         /// </summary>
         IPlaybackEventFeed PlaybackUpdater { get; }
 

@@ -27,25 +27,20 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
         {
             _channelId = channelId;
             _config = config ?? throw new ArgumentNullException(nameof(config));
+
+            PlaybackUpdater = new SinglePlaybackEventFeed(ConnectionManager.EventFeed, channelId);
+            PlaylistUpdater = new SinglePlaylistEventFeed(ConnectionManager.EventFeed, channelId);
         }
 
         /// <summary>
         ///     An event interface that broadcasts playlist server updates.
-        ///     <para>
-        ///         Note that the updates may include other channels; anything subscribing to this interface
-        ///         must check incoming events to see if they affect the right channel.
-        ///     </para>
         /// </summary>
-        public IPlaylistEventFeed PlaylistUpdater => ConnectionManager.EventFeed;
+        public IPlaylistEventFeed PlaylistUpdater { get; }
 
         /// <summary>
         ///     An event interface that broadcasts playback server updates.
-        ///     <para>
-        ///         Note that the updates may include other channels; anything subscribing to this interface
-        ///         must check incoming events to see if they affect the right channel.
-        ///     </para>
         /// </summary>
-        public IPlaybackEventFeed PlaybackUpdater => ConnectionManager.EventFeed;
+        public IPlaybackEventFeed PlaybackUpdater { get; }
 
         /// <summary>
         ///     Asks the server to set this channel's state to <see cref="state" />.

@@ -1,9 +1,13 @@
 using System;
-using GalaSoft.MvvmLight.CommandWpf;
+using System.Reactive;
+using ReactiveUI;
 using URY.BAPS.Common.Model.Track;
 
-namespace URY.BAPS.Client.Wpf.ViewModel
+namespace URY.BAPS.Client.ViewModel
 {
+    /// <summary>
+    ///     Interface for player view models.
+    /// </summary>
     public interface IPlayerViewModel : IDisposable
     {
         /// <summary>
@@ -14,7 +18,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         /// <summary>
         ///     The currently loaded item (if any).
         /// </summary>
-        ITrack LoadedTrack { get; set; }
+        ITrack LoadedTrack { get; }
 
         /// <summary>
         ///     True provided that there is a currently loaded item, and it is an audio track.
@@ -23,38 +27,23 @@ namespace URY.BAPS.Client.Wpf.ViewModel
 
         /// <summary>
         ///     Whether this channel is playing, according to the server.
-        ///     <para>
-        ///         This property should only be set when the server state
-        ///         changes.  When the user requests the channel to play, send
-        ///         <see cref="PlayCommand" />.
-        ///     </para>
         /// </summary>
         bool IsPlaying { get; }
 
         /// <summary>
         ///     Whether this channel is paused, according to the server.
-        ///     <para>
-        ///         This property should only be set when the server state
-        ///         changes.  When the user requests the channel to pause, send
-        ///         <see cref="PauseCommand" />.
-        ///     </para>
         /// </summary>
         bool IsPaused { get; }
 
         /// <summary>
         ///     Whether this channel is stopped, according to the server.
-        ///     <para>
-        ///         This property should only be set when the server state
-        ///         changes.  When the user requests the channel to stop, send
-        ///         <see cref="StopCommand" />.
-        ///     </para>
         /// </summary>
         bool IsStopped { get; }
 
         /// <summary>
         ///     The position of the currently loaded item (if any), in milliseconds.
         /// </summary>
-        uint Position { get; set; }
+        uint Position { get; }
 
         /// <summary>
         ///     The duration of the currently loaded item (if any), in milliseconds.
@@ -69,44 +58,44 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         /// <summary>
         ///     The cue position of the currently loaded item (if any), in milliseconds.
         /// </summary>
-        uint CuePosition { get; set; }
+        uint CuePosition { get; }
 
         /// <summary>
         ///     The intro position of the currently loaded item (if any).
         /// </summary>
-        uint IntroPosition { get; set; }
+        uint IntroPosition { get; }
 
         /// <summary>
         ///     A command that, when fired, asks the server to start playing
         ///     on this channel.
         /// </summary>
-        RelayCommand PlayCommand { get; }
+        ReactiveCommand<Unit, Unit> Play { get; }
 
         /// <summary>
         ///     A command that, when fired, asks the server to pause
         ///     this channel.
         /// </summary>
-        RelayCommand PauseCommand { get; }
+        ReactiveCommand<Unit, Unit> Pause { get; }
 
         /// <summary>
         ///     A command that, when fired, asks the server to stop
         ///     this channel.
         /// </summary>
-        RelayCommand StopCommand { get; }
+        ReactiveCommand<Unit, Unit> Stop { get; }
 
         /// <summary>
         ///     A command that, when fired, asks the server to move the cue marker to the given position.
         /// </summary>
-        RelayCommand<uint> SetCueCommand { get; }
+        ReactiveCommand<uint, Unit> SetCue { get; }
 
         /// <summary>
         ///     A command that, when fired, asks the server to move the position marker to the given position.
         /// </summary>
-        RelayCommand<uint> SetPositionCommand { get; }
+        ReactiveCommand<uint, Unit> SetPosition { get; }
 
         /// <summary>
         ///     A command that, when fired, asks the server to move the intro marker to the given position.
         /// </summary>
-        RelayCommand<uint> SetIntroCommand { get; }
+        ReactiveCommand<uint, Unit> SetIntro { get; }
     }
 }

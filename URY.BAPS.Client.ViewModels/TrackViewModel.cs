@@ -9,7 +9,7 @@ namespace URY.BAPS.Client.ViewModel
     ///     A view model that wraps a <see cref="TrackBase" />, adding tracking for
     ///     whether the item is loaded.
     /// </summary>
-    public class TrackViewModel : ReactiveObject, ITrack
+    public class TrackViewModel : ViewModelBase, ITrack
     {
         [NotNull] private readonly ITrack _underlyingTrack;
 

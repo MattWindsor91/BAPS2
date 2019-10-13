@@ -8,7 +8,7 @@ namespace URY.BAPS.Client.ViewModel
     ///     Normal implementation of a <see cref="ILoginViewModel"/>.
     /// </summary>
     [UsedImplicitly]
-    public class LoginViewModel : ReactiveObject, ILoginViewModel
+    public class LoginViewModel : ViewModelBase, ILoginViewModel
     {
         private int _port;
         [NotNull] private string _server;

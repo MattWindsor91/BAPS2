@@ -15,15 +15,13 @@ namespace URY.BAPS.Client.ViewModel
     /// <summary>
     ///     The view model for a directory.
     /// </summary>
-    public class DirectoryViewModel : ReactiveObject, IDirectoryViewModel
+    public class DirectoryViewModel : ViewModelBase, IDirectoryViewModel
     {
         private readonly DirectoryController? _controller;
 
         private readonly ReadOnlyObservableCollection<DirectoryEntry> _files;
 
         private readonly ObservableAsPropertyHelper<string> _name;
-
-        private readonly CompositeDisposable _subscriptions = new CompositeDisposable();
 
 
         /// <summary>
@@ -46,13 +44,9 @@ namespace URY.BAPS.Client.ViewModel
 
             Refresh = ReactiveCommand.Create(RefreshImpl);
 
-            _subscriptions.Add(DirectoryChanges().ObserveOn(RxApp.MainThreadScheduler).Bind(out _files).Subscribe());
-            _name = (from x in ThisDirectoryPrepare select x.Name).DefaultIfEmpty().ToProperty(this, x => x.Name);
+            AddSubscription(DirectoryChanges().ObserveOn(RxApp.MainThreadScheduler).Bind(out _files).Subscribe());
+            _name = (from x in ThisDirectoryPrepare select x.Name).StartWith("").ToProperty(this, x => x.Name);
         }
-
-        private IObservable<DirectoryFileAddArgs> ThisDirectoryFileAdd { get; }
-        private IObservable<DirectoryPrepareArgs> ThisDirectoryPrepare { get; }
-
 
         /// <summary>
         ///     The numeric server-side identifier of this directory.
@@ -69,12 +63,18 @@ namespace URY.BAPS.Client.ViewModel
         /// </summary>
         public string Name => _name.Value;
 
-        public void Dispose()
+        public override void Dispose()
         {
             _name.Dispose();
-            _subscriptions.Dispose();
             Refresh?.Dispose();
+
+            base.Dispose();
         }
+
+        #region Observable plumbing
+
+        private IObservable<DirectoryFileAddArgs> ThisDirectoryFileAdd { get; }
+        private IObservable<DirectoryPrepareArgs> ThisDirectoryPrepare { get; }
 
         /// <summary>
         ///     Restricts a directory observable to returning only events for this directory.
@@ -112,6 +112,8 @@ namespace URY.BAPS.Client.ViewModel
                 return new CompositeDisposable(adder, clearer);
             });
         }
+
+        #endregion Observable plumbing
 
         #region Commands
 
