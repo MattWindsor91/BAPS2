@@ -1,5 +1,6 @@
 using System;
 using JetBrains.Annotations;
+using ReactiveUI;
 using URY.BAPS.Client.Common.ServerConfig;
 using URY.BAPS.Client.Protocol.V2.Controllers;
 using URY.BAPS.Client.ViewModel;
@@ -48,7 +49,7 @@ namespace URY.BAPS.Client.Wpf.Services
         public IChannelViewModel Make(byte id)
         {
             var controller = _controllerSet.ControllerFor(id);
-            var player = new PlayerViewModel(id, controller);
+            var player = new PlayerViewModel(id, controller, RxApp.MainThreadScheduler);
             var trackList = new TrackListViewModel(id, controller);
             return new ChannelViewModel(id, _config, player, trackList, controller, _audioWallService);
         }

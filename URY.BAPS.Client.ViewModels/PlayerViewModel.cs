@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Reactive;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using JetBrains.Annotations;
 using ReactiveUI;
@@ -17,8 +18,10 @@ namespace URY.BAPS.Client.ViewModel
     /// </summary>
     public class PlayerViewModel : ChannelComponentViewModelBase, IPlayerViewModel
     {
-        public PlayerViewModel(ushort channelId, IPlaybackController? controller) : base(channelId)
+        public PlayerViewModel(ushort channelId, IPlaybackController? controller, IScheduler? scheduler = null) : base(channelId)
         {
+            scheduler ??= RxApp.MainThreadScheduler;
+
             Controller = controller;
             PlaybackEvents = controller?.PlaybackUpdater ?? new EmptyEventFeed();
 
@@ -28,7 +31,7 @@ namespace URY.BAPS.Client.ViewModel
 
             // Things that derive from PlaybackEvents need specifically telling
             // to run on the UI thread.
-            _state = (from x in PlaybackEvents.ObservePlayerState select x.State).ToProperty(this, x => x.State, PlaybackState.Stopped, scheduler:RxApp.MainThreadScheduler);
+            _state = (from x in PlaybackEvents.ObservePlayerState select x.State).ToProperty(this, x => x.State, PlaybackState.Stopped, scheduler: scheduler);
             _isPlaying = PlaybackStateEquals(PlaybackState.Playing).ToProperty(this, x => x.IsPlaying);
             _isPaused = PlaybackStateEquals(PlaybackState.Paused).ToProperty(this, x => x.IsPaused);
             _isStopped = PlaybackStateEquals(PlaybackState.Stopped).ToProperty(this, x => x.IsStopped);
@@ -40,25 +43,25 @@ namespace URY.BAPS.Client.ViewModel
             Debug.Assert(LoadedTrack != null);
 
             var hasLoadedAudioTrack = this.WhenAnyValue(x => x.LoadedTrack, track => track.IsAudioItem);
-            _hasLoadedAudioTrack = hasLoadedAudioTrack.ToProperty(this, x => x.HasLoadedAudioTrack);
+            _hasLoadedAudioTrack = hasLoadedAudioTrack.ToProperty(this, x => x.HasLoadedAudioTrack, scheduler: RxApp.MainThreadScheduler);
 
             _position = MarkerValue(MarkerType.Position).ToProperty(this, x => x.Position, 0u, scheduler:RxApp.MainThreadScheduler);
             _cuePosition = MarkerValue(MarkerType.Cue).ToProperty(this, x => x.CuePosition, 0u, scheduler:RxApp.MainThreadScheduler);
             _introPosition = MarkerValue(MarkerType.Intro).ToProperty(this, x => x.IntroPosition, 0u, scheduler:RxApp.MainThreadScheduler);
 
             _duration = this.WhenAnyValue(x => x.LoadedTrack, (ITrack track) => track.Duration)
-                .ToProperty(this, x => x.Duration);
+                .ToProperty(this, x => x.Duration, scheduler: RxApp.MainThreadScheduler);
             _remaining = this
                 .WhenAnyValue(x => x.Duration, x => x.Position, (duration, position) => duration - position)
-                .ToProperty(this, x => x.Remaining);
+                .ToProperty(this, x => x.Remaining, scheduler: RxApp.MainThreadScheduler);
 
-            _positionScale = MarkerScale(x => x.Position).ToProperty(this, x => x.PositionScale);
-            _cuePositionScale = MarkerScale(x => x.CuePosition).ToProperty(this, x => x.CuePositionScale);
-            _introPositionScale = MarkerScale(x => x.IntroPosition).ToProperty(this, x => x.IntroPositionScale);
+            _positionScale = MarkerScale(x => x.Position).ToProperty(this, x => x.PositionScale, scheduler: RxApp.MainThreadScheduler);
+            _cuePositionScale = MarkerScale(x => x.CuePosition).ToProperty(this, x => x.CuePositionScale, scheduler: RxApp.MainThreadScheduler);
+            _introPositionScale = MarkerScale(x => x.IntroPosition).ToProperty(this, x => x.IntroPositionScale, scheduler: RxApp.MainThreadScheduler);
 
-            Play = ReactiveCommand.Create(PlayImpl, CanPlay());
-            Pause = ReactiveCommand.Create(PauseImpl, CanPause());
-            Stop = ReactiveCommand.Create(StopImpl, CanStop());
+            Play = ReactiveCommand.Create(PlayImpl, CanPlay);
+            Pause = ReactiveCommand.Create(PauseImpl, CanPause);
+            Stop = ReactiveCommand.Create(StopImpl, CanStop);
 
             SetPosition = ReactiveCommand.Create<uint>(SetPositionImpl, hasLoadedAudioTrack);
             SetCue = ReactiveCommand.Create<uint>(SetCueImpl, hasLoadedAudioTrack);
@@ -121,34 +124,18 @@ namespace URY.BAPS.Client.ViewModel
         /// <summary>
         ///     Whether it is ok to ask the server to start playing on this channel.
         /// </summary>
-        /// <returns>True provided that the <see cref="Play" /> can fire.</returns>
-        [Pure]
-        protected IObservable<bool> CanPlay()
-        {
-            return
-            this.WhenAnyValue(x => x.HasController, x => x.IsPlaying,
+        protected IObservable<bool> CanPlay => this.WhenAnyValue(x => x.HasController, x => x.IsPlaying,
                 (hasController, isPlaying) => hasController && !isPlaying);
-        }
 
         /// <summary>
         ///     Whether it is ok to ask the server to pause this channel.
         /// </summary>
-        /// <returns>True provided that the <see cref="Pause" /> can fire.</returns>
-        [Pure]
-        protected IObservable<bool> CanPause()
-        {
-            return this.WhenAnyValue(x => x.HasController);
-        }
+        protected IObservable<bool> CanPause => this.WhenAnyValue(x => x.HasController);
 
         /// <summary>
         ///     Whether it is ok to ask the server to stop this channel.
         /// </summary>
-        /// <returns>True provided that the <see cref="Stop" /> can fire.</returns>
-        [Pure]
-        protected IObservable<bool> CanStop()
-        {
-            return this.WhenAnyValue(x => x.HasController);
-        }
+        protected IObservable<bool> CanStop => this.WhenAnyValue(x => x.HasController);
 
         private void SetState(PlaybackState newState)
         {
@@ -271,7 +258,7 @@ namespace URY.BAPS.Client.ViewModel
                 where !x.Track.IsTextItem && !x.Track.IsAudioItem
                 select 0u;
 
-            return directChanges.Merge(trackLoadZero).DefaultIfEmpty();
+            return directChanges.Merge(trackLoadZero);
         }
 
         #endregion Marker values

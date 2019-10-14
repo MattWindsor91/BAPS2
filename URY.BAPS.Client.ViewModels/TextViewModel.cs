@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Linq;
 using ReactiveUI;
@@ -34,7 +33,6 @@ namespace URY.BAPS.Client.ViewModel
             LoadTrack = ReactiveCommand.Create<TrackLoadArgs>(LoadTrackImpl);
 
             if (! (eventFeed is null)) SubscribeToServerUpdates(eventFeed);
-
         }
 
         /// <summary>
