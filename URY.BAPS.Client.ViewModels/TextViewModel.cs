@@ -18,7 +18,7 @@ namespace URY.BAPS.Client.ViewModel
         private const int InitialFontScale = 100;
         private const int MaximumFontScale = 200;
 
-        private event EventHandler<TextSettingDirection> ChangeFontSize;
+        private event EventHandler<TextSettingDirection>? ChangeFontSize;
         
         /// <summary>
         ///     Constructs a <see cref="TextViewModel" />.
@@ -57,14 +57,14 @@ namespace URY.BAPS.Client.ViewModel
             IncreaseFontScale = ReactiveCommand.Create(IncreaseFontScaleImpl, CanIncreaseTextSize);
         }
 
-        private ObservableAsPropertyHelper<int> _fontScale;
+        private readonly ObservableAsPropertyHelper<int> _fontScale;
 
         /// <summary>
         ///     The font scale, in percent.
         /// </summary>
         public int FontScale => _fontScale.Value;
 
-        private ObservableAsPropertyHelper<string> _text;
+        private readonly ObservableAsPropertyHelper<string> _text;
 
         /// <summary>
         ///     The text stored in the text panel.

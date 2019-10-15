@@ -46,39 +46,39 @@
         <controls:TransportButton
             Grid.Row="0" Grid.Column="0"
             Icon="Solid_Play"
-            IsHighlighted="{Binding IsPlaying}"
+            IsHighlighted="{Binding Transport.IsPlaying}"
             HighlightBrush="{StaticResource PlayBrush}"
             ToolTip="Play"
-            Command="{Binding Play}" />
+            Command="{Binding Transport.Play}" />
         <controls:TransportButton
             Grid.Row="0" Grid.Column="1"
             Icon="Solid_Pause"
-            IsHighlighted="{Binding IsPaused}"
+            IsHighlighted="{Binding Transport.IsPaused}"
             HighlightBrush="{StaticResource PauseBrush}"
             ToolTip="Pause"
-            Command="{Binding Pause}" />
+            Command="{Binding Transport.Pause}" />
         <controls:TransportButton
             Grid.Row="0" Grid.Column="2"
             Icon="Solid_Stop"
-            IsHighlighted="{Binding IsStopped}"
+            IsHighlighted="{Binding Transport.IsStopped}"
             HighlightBrush="{StaticResource StopBrush}"
             ToolTip="Stop"
-            Command="{Binding Stop}" />
+            Command="{Binding Transport.Stop}" />
         <!-- Track name -->
         <controls:TrackLegend Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" DataContext="{Binding LoadedTrack}" />
         <!-- Track bar -->
-        <controls:TrackBar Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" DataContext="{Binding}" />
+        <controls:TrackBar Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" DataContext="{Binding Markers}" />
         <!-- Position displays -->
         <controls:PositionDisplay
             Grid.Row="3" Grid.Column="0"
             SubText="Elapsed"
-            MainText="{Binding Position, Converter={StaticResource MsecToPositionStringConverter}}" />
+            MainText="{Binding Markers.Position, Converter={StaticResource MsecToPositionStringConverter}}" />
         <controls:PositionDisplay Grid.Row="3" Grid.Column="1"
                                   SubText="Remaining"
-                                  MainText="{Binding Remaining, Converter={StaticResource MsecToPositionStringConverter}}" />
+                                  MainText="{Binding Markers.Remaining, Converter={StaticResource MsecToPositionStringConverter}}" />
         <controls:PositionDisplay Grid.Row="3" Grid.Column="2"
 
                                   SubText="Start at:"
-                                  MainText="{Binding StartTime, Converter={StaticResource MsecToPositionStringConverter}}" />
+                                  MainText="TODO" />
     </Grid>
 </UserControl>

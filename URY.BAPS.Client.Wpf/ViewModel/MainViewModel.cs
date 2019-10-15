@@ -68,7 +68,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         [NotNull]
         public RelayCommand<ushort> ForwardPlayCommand =>
             _forwardPlayCommand ??= new RelayCommand<ushort>(
-                channelId => { ChannelAt(channelId)?.Player?.Play?.Execute(); },
+                channelId => { ChannelAt(channelId)?.Player?.Transport?.Play?.Execute(); },
                 channelId =>
                     /*ChannelAt(channelId)?.Player?.Play?.CanExecute(null) ??*/ false
             );
@@ -80,7 +80,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         [NotNull]
         public RelayCommand<ushort> ForwardPauseCommand =>
             _forwardPauseCommand ??= new RelayCommand<ushort>(
-                channelId => { ChannelAt(channelId)?.Player?.Pause?.Execute(); },
+                channelId => { ChannelAt(channelId)?.Player?.Transport?.Pause?.Execute(); },
                 channelId =>
                     /*ChannelAt(channelId)?.Player?.Pause?.CanExecute(null) ??*/ false
             );
@@ -92,7 +92,7 @@ namespace URY.BAPS.Client.Wpf.ViewModel
         [NotNull]
         public RelayCommand<ushort> ForwardStopCommand =>
             _forwardStopCommand ??= new RelayCommand<ushort>(
-                channelId => { ChannelAt(channelId)?.Player?.Stop?.Execute(); },
+                channelId => { ChannelAt(channelId)?.Player?.Transport?.Stop?.Execute(); },
                 channelId =>
                     /*ChannelAt(channelId)?.Player?.Stop?.CanExecute(null) ??*/ false
             );

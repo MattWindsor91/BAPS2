@@ -7,95 +7,28 @@ namespace URY.BAPS.Client.ViewModel
 {
     /// <summary>
     ///     Interface for player view models.
+    ///     <para>
+    ///         Player view models are a composite of various smaller view
+    ///         models, each of which governs a specific part of the player UI.
+    ///     </para>
     /// </summary>
     public interface IPlayerViewModel : IDisposable
     {
-        /// <summary>
-        ///     The expected start time of the currently loaded item (if any).
-        /// </summary>
-        uint StartTime { get; set; }
-
         /// <summary>
         ///     The currently loaded item (if any).
         /// </summary>
         ITrack LoadedTrack { get; }
 
         /// <summary>
-        ///     True provided that there is a currently loaded item, and it is an audio track.
+        ///     The sub-view-model for the transport (play/stop/pause) part of
+        ///     the player.
         /// </summary>
-        bool HasLoadedAudioTrack { get; }
+        IPlayerTransportViewModel Transport { get; }
 
         /// <summary>
-        ///     Whether this channel is playing, according to the server.
+        ///     The sub-view-model for the marker (position/cue/intro) part of
+        ///     the player.
         /// </summary>
-        bool IsPlaying { get; }
-
-        /// <summary>
-        ///     Whether this channel is paused, according to the server.
-        /// </summary>
-        bool IsPaused { get; }
-
-        /// <summary>
-        ///     Whether this channel is stopped, according to the server.
-        /// </summary>
-        bool IsStopped { get; }
-
-        /// <summary>
-        ///     The position of the currently loaded item (if any), in milliseconds.
-        /// </summary>
-        uint Position { get; }
-
-        /// <summary>
-        ///     The duration of the currently loaded item (if any), in milliseconds.
-        /// </summary>
-        uint Duration { get; }
-
-        /// <summary>
-        ///     The amount of milliseconds remaining in the currently loaded item.
-        /// </summary>
-        uint Remaining { get; }
-
-        /// <summary>
-        ///     The cue position of the currently loaded item (if any), in milliseconds.
-        /// </summary>
-        uint CuePosition { get; }
-
-        /// <summary>
-        ///     The intro position of the currently loaded item (if any).
-        /// </summary>
-        uint IntroPosition { get; }
-
-        /// <summary>
-        ///     A command that, when fired, asks the server to start playing
-        ///     on this channel.
-        /// </summary>
-        ReactiveCommand<Unit, Unit> Play { get; }
-
-        /// <summary>
-        ///     A command that, when fired, asks the server to pause
-        ///     this channel.
-        /// </summary>
-        ReactiveCommand<Unit, Unit> Pause { get; }
-
-        /// <summary>
-        ///     A command that, when fired, asks the server to stop
-        ///     this channel.
-        /// </summary>
-        ReactiveCommand<Unit, Unit> Stop { get; }
-
-        /// <summary>
-        ///     A command that, when fired, asks the server to move the cue marker to the given position.
-        /// </summary>
-        ReactiveCommand<uint, Unit> SetCue { get; }
-
-        /// <summary>
-        ///     A command that, when fired, asks the server to move the position marker to the given position.
-        /// </summary>
-        ReactiveCommand<uint, Unit> SetPosition { get; }
-
-        /// <summary>
-        ///     A command that, when fired, asks the server to move the intro marker to the given position.
-        /// </summary>
-        ReactiveCommand<uint, Unit> SetIntro { get; }
+        IPlayerMarkerViewModel Markers { get; }
     }
 }

@@ -11,7 +11,7 @@
     x:Class="URY.BAPS.Client.Wpf.Controls.TrackBar"
     mc:Ignorable="d"
     Height="72px" d:DesignWidth="800"
-    d:DataContext="{d:DesignInstance {x:Type designData:MockPlayerViewModel}, IsDesignTimeCreatable=True}">
+    d:DataContext="{d:DesignInstance {x:Type designData:MockPlayerMarkerViewModel}, IsDesignTimeCreatable=True}">
     <UserControl.Resources>
         <SolidColorBrush x:Key="IntroBorderBrush" Color="#AAD13438" />
         <LinearGradientBrush x:Key="IntroBrush" StartPoint="0,0" EndPoint="0,1">
@@ -246,7 +246,8 @@
         <Slider Grid.Row="0" x:Name="IntroSlider"
                 Maximum="{Binding Duration, Mode=OneWay}"
                 Value="{Binding IntroPosition, Mode=OneWay}"
-                Width="{Binding ActualWidth, ElementName=Canvas}">
+                Width="{Binding ActualWidth, ElementName=Canvas}"
+                IsEnabled="{Binding CanSetMarkers}">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="ValueChanged">
                     <mvvm:EventToCommand Command="{Binding SetIntro, Mode=OneWay}"
@@ -260,7 +261,8 @@
         <Slider Grid.Row="1" x:Name="PositionSlider"
                 Maximum="{Binding Duration, Mode=OneWay}"
                 Value="{Binding Position, Mode=OneWay}"
-                Width="{Binding ActualWidth, ElementName=Canvas}">
+                Width="{Binding ActualWidth, ElementName=Canvas}"
+                IsEnabled="{Binding CanSetMarkers}">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="ValueChanged">
                     <mvvm:EventToCommand Command="{Binding SetPosition, Mode=OneWay}"
@@ -277,7 +279,7 @@
                 Width="{Binding ActualWidth, ElementName=Canvas}"
                 TickPlacement="Both"
                 TickFrequency="10000"
-                IsEnabled="{Binding HasLoadedAudioTrack}">
+                IsEnabled="{Binding CanSetMarkers}">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="ValueChanged">
                     <mvvm:EventToCommand Command="{Binding SetCue, Mode=OneWay}"

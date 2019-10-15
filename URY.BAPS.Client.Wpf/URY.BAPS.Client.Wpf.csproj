@@ -24,9 +24,9 @@
     <PackageReference Include="FontAwesome5" Version="2.0.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.6.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Ini" Version="3.0.0" />
-    <PackageReference Include="ReactiveUI" Version="10.3.6" />
-    <PackageReference Include="ReactiveUI.Events.WPF" Version="10.3.6" />
-    <PackageReference Include="ReactiveUI.WPF" Version="10.3.6" />
+    <PackageReference Include="ReactiveUI" Version="10.5.1" />
+    <PackageReference Include="ReactiveUI.Events.WPF" Version="10.5.1" />
+    <PackageReference Include="ReactiveUI.WPF" Version="10.5.1" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
     <PackageReference Include="System.Drawing.Common" Version="4.6.0" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
@@ -37,7 +37,7 @@
     <PackageReference Include="JetBrains.Annotations" Version="2019.1.3" />
     <PackageReference Include="MvvmLight" Version="5.4.1.1" />
     <PackageReference Include="MvvmLightLibs" Version="5.4.1.1" />
-    <PackageReference Include="System.Reactive" Version="4.2.0-preview.625" />
+    <PackageReference Include="System.Reactive" Version="4.2.0" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.6.0" />
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.3" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
