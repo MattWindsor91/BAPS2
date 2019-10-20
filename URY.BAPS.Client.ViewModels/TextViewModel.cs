@@ -15,10 +15,11 @@ namespace URY.BAPS.Client.ViewModel
     public class TextViewModel : ViewModelBase, ITextViewModel
     {
         private const int MinimumFontScale = 50;
+        private const int InitialFontScale = 100;
         private const int MaximumFontScale = 200;
 
-        private int _fontScale = 100;
-
+        private event EventHandler<TextSettingDirection> ChangeFontSize;
+        
         /// <summary>
         ///     Constructs a <see cref="TextViewModel" />.
         /// </summary>
@@ -28,20 +29,40 @@ namespace URY.BAPS.Client.ViewModel
         /// </param>
         public TextViewModel(IFullEventFeed? eventFeed = null)
         {
+            eventFeed ??= new EmptyEventFeed();
+
+
+            var textLoads =
+                from t in eventFeed.ObserveTrackLoad
+                where t.Track.IsTextItem
+                select t.Track.Text;
+            _text = textLoads.ToProperty(this, x => x.Text, "");
+
+            var externalFontSizeChanges =
+                from x in eventFeed.ObserveTextSetting
+                where x.Setting == TextSetting.FontSize
+                select x.Direction;
+
+            var internalFontSizeChanges =
+                from x in Observable.FromEventPattern<TextSettingDirection>(x => ChangeFontSize += x,
+                    x => ChangeFontSize -= x)
+                select x.EventArgs;
+
+            var fontSizeChanges = internalFontSizeChanges.Merge(externalFontSizeChanges);
+
+            _fontScale =
+                fontSizeChanges.Scan(InitialFontScale, UpdateFontSize).ToProperty(this, x => x.FontScale, InitialFontScale);
+            
             DecreaseFontScale = ReactiveCommand.Create(DecreaseFontScaleImpl, CanDecreaseTextSize);
             IncreaseFontScale = ReactiveCommand.Create(IncreaseFontScaleImpl, CanIncreaseTextSize);
-
-            if (! (eventFeed is null)) SubscribeToServerUpdates(eventFeed);
         }
+
+        private ObservableAsPropertyHelper<int> _fontScale;
 
         /// <summary>
         ///     The font scale, in percent.
         /// </summary>
-        public int FontScale
-        {
-            get => _fontScale;
-            private set => this.RaiseAndSetIfChanged(ref _fontScale, value);
-        }
+        public int FontScale => _fontScale.Value;
 
         private ObservableAsPropertyHelper<string> _text;
 
@@ -54,20 +75,14 @@ namespace URY.BAPS.Client.ViewModel
         /// </summary>
         public string Text => _text.Value;
 
-        private void SubscribeToServerUpdates(IFullEventFeed updater)
+        private static int UpdateFontSize(int current, TextSettingDirection direction)
         {
-            var textLoads =
-                from t in updater.ObserveTrackLoad
-                where t.Track.IsTextItem
-                select t.Track.Text;
-            _text = textLoads.ToProperty(this, x => x.Text, "");
-
-            var fontSizeChanges =
-                updater.ObserveTextSetting.Where(x => x.Setting == TextSetting.FontSize);
-            AddSubscription(fontSizeChanges.Where(x => x.Direction == TextSettingDirection.Up)
-                .InvokeCommand(IncreaseFontScale));
-            AddSubscription(fontSizeChanges.Where(x => x.Direction == TextSettingDirection.Down)
-                    .InvokeCommand(DecreaseFontScale));
+            return direction switch
+            {
+                TextSettingDirection.Down => Math.Max(MinimumFontScale, current - 10),
+                TextSettingDirection.Up => Math.Min(MaximumFontScale, current + 10),
+                _ => current
+            };
         }
 
         #region Commands
@@ -89,12 +104,12 @@ namespace URY.BAPS.Client.ViewModel
 
         private void IncreaseFontScaleImpl()
         {
-            FontScale += 10;
+            ChangeFontSize?.Invoke(this, TextSettingDirection.Up);
         }
 
         private void DecreaseFontScaleImpl()
         {
-            FontScale -= 10;
+            ChangeFontSize?.Invoke(this, TextSettingDirection.Down);
         }
 
         private IObservable<bool> CanIncreaseTextSize =>
@@ -107,6 +122,7 @@ namespace URY.BAPS.Client.ViewModel
 
         public override void Dispose()
         {
+            _fontScale.Dispose();
             _text.Dispose();
             DecreaseFontScale.Dispose();
             IncreaseFontScale.Dispose();
