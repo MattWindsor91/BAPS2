@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.Design;
 using System.Reactive;
 using System.Reactive.Linq;
 using ReactiveUI;
@@ -17,7 +18,6 @@ namespace URY.BAPS.Client.ViewModel
         private const int MaximumFontScale = 200;
 
         private int _fontScale = 100;
-        private string _text = "";
 
         /// <summary>
         ///     Constructs a <see cref="TextViewModel" />.
@@ -30,7 +30,6 @@ namespace URY.BAPS.Client.ViewModel
         {
             DecreaseFontScale = ReactiveCommand.Create(DecreaseFontScaleImpl, CanDecreaseTextSize);
             IncreaseFontScale = ReactiveCommand.Create(IncreaseFontScaleImpl, CanIncreaseTextSize);
-            LoadTrack = ReactiveCommand.Create<TrackLoadArgs>(LoadTrackImpl);
 
             if (! (eventFeed is null)) SubscribeToServerUpdates(eventFeed);
         }
@@ -41,8 +40,10 @@ namespace URY.BAPS.Client.ViewModel
         public int FontScale
         {
             get => _fontScale;
-            protected set => this.RaiseAndSetIfChanged(ref _fontScale, value);
+            private set => this.RaiseAndSetIfChanged(ref _fontScale, value);
         }
+
+        private ObservableAsPropertyHelper<string> _text;
 
         /// <summary>
         ///     The text stored in the text panel.
@@ -51,15 +52,15 @@ namespace URY.BAPS.Client.ViewModel
         ///         the server loads a text item.
         ///     </para>
         /// </summary>
-        public string Text
-        {
-            get => _text;
-            set => this.RaiseAndSetIfChanged(ref _text, value);
-        }
+        public string Text => _text.Value;
 
         private void SubscribeToServerUpdates(IFullEventFeed updater)
         {
-            AddSubscription(updater.ObserveTrackLoad.InvokeCommand(LoadTrack));
+            var textLoads =
+                from t in updater.ObserveTrackLoad
+                where t.Track.IsTextItem
+                select t.Track.Text;
+            _text = textLoads.ToProperty(this, x => x.Text, "");
 
             var fontSizeChanges =
                 updater.ObserveTextSetting.Where(x => x.Setting == TextSetting.FontSize);
@@ -76,8 +77,6 @@ namespace URY.BAPS.Client.ViewModel
         // changes; it can only send them, and only does so if a connected
         // BAPS paddle etc. requests it.
 
-        private ReactiveCommand<TrackLoadArgs, Unit> LoadTrack { get; }
-
         /// <summary>
         ///     A command that, when invoked, increases the text size.
         /// </summary>
@@ -87,11 +86,6 @@ namespace URY.BAPS.Client.ViewModel
         ///     A command that, when invoked, increases the text size.
         /// </summary>
         public ReactiveCommand<Unit, Unit> DecreaseFontScale { get; }
-
-        private void LoadTrackImpl(TrackLoadArgs args)
-        {
-            if (args.Track.IsTextItem) Text = args.Track.Text;
-        }
 
         private void IncreaseFontScaleImpl()
         {
@@ -113,9 +107,9 @@ namespace URY.BAPS.Client.ViewModel
 
         public override void Dispose()
         {
+            _text.Dispose();
             DecreaseFontScale.Dispose();
             IncreaseFontScale.Dispose();
-            LoadTrack.Dispose();
             base.Dispose();
         }
     }

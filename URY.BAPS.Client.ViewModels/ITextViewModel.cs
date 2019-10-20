@@ -33,7 +33,7 @@ namespace URY.BAPS.Client.ViewModel
         /// <summary>
         ///     The text stored in the text panel.
         /// </summary>
-        string Text { get; set; }
+        string Text { get; }
 
         /// <summary>
         ///     A command that, when invoked, increases the text size.
