@@ -13,19 +13,13 @@ namespace URY.BAPS.Client.ViewModel.Tests
     /// <summary>
     ///     Tests for <see cref="TextViewModel" />.
     /// </summary>
-    public class TextViewModelTests
+    public class TextViewModelTests : ServerMessageViewModelTestsBase
     {
         public TextViewModelTests()
         {
-            var messages =
-                from ev in Observable.FromEventPattern<MessageArgsBase>(x => SendMessage += x, x => SendMessage -= x)
-                select ev.EventArgs;
-            var events = new FilteringEventFeed(messages);
-
-            _viewModel = new TextViewModel(events);
+            _viewModel = new TextViewModel(Events);
         }
 
-        private event EventHandler<MessageArgsBase>? SendMessage;
         private readonly TextViewModel _viewModel;
 
         private void AssertTextEqual(string expected)
@@ -45,7 +39,7 @@ namespace URY.BAPS.Client.ViewModel.Tests
 
         private void SendTrackLoadMessage(ITrack track)
         {
-            SendMessage?.Invoke(this, new TrackLoadArgs(0, 0, track));
+            SendMessage(new TrackLoadArgs(0, 0, track));
         }
 
         /// <summary>
@@ -128,6 +122,13 @@ namespace URY.BAPS.Client.ViewModel.Tests
 
         private static void AssertCanExecute(bool expected, IReactiveCommand cmd)
         {
+            // If the command is currently executing, CanExecute will return
+            // false even if the command _can_, theoretically, execute.
+            // This is insurance to prevent heisenbugs occurring if we check
+            // CanExecute before the command is done.
+            //
+            // Yes, this has happened in practice.
+            cmd.IsExecuting.Where(x => !x).FirstAsync().Wait();
             Assert.Equal(expected, cmd.CanExecute.FirstAsync().Wait());
         }
 
@@ -154,7 +155,7 @@ namespace URY.BAPS.Client.ViewModel.Tests
 
         private void SendFontScaleMessage(TextSettingDirection direction)
         {
-            SendMessage?.Invoke(this, new TextSettingArgs(TextSetting.FontSize, direction));
+            SendMessage(new TextSettingArgs(TextSetting.FontSize, direction));
         }
 
         /// <summary>
