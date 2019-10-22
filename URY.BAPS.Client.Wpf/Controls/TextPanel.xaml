@@ -39,6 +39,6 @@
                  FontSize="{calcBinding:Binding '12.0 * (FontScale / 100.0)', Mode=OneWay}"
                  TextWrapping="Wrap"
                  VerticalScrollBarVisibility="Auto"
-                 Text="{Binding Text, Mode=TwoWay}" />
+                 Text="{Binding Text, Mode=OneWay}" />
     </DockPanel>
 </UserControl>
