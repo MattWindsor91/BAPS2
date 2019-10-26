@@ -65,7 +65,7 @@
             ToolTip="Stop"
             Command="{Binding Transport.Stop}" />
         <!-- Track name -->
-        <controls:TrackLegend Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" DataContext="{Binding LoadedTrack}" />
+        <controls:TrackLegend Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" DataContext="{Binding Track.LoadedTrack}" />
         <!-- Track bar -->
         <controls:TrackBar Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" DataContext="{Binding Markers}" />
         <!-- Position displays -->

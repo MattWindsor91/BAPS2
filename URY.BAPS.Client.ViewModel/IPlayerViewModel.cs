@@ -1,6 +1,4 @@
 using System;
-using System.Reactive;
-using ReactiveUI;
 using URY.BAPS.Common.Model.Track;
 
 namespace URY.BAPS.Client.ViewModel
@@ -15,9 +13,9 @@ namespace URY.BAPS.Client.ViewModel
     public interface IPlayerViewModel : IDisposable
     {
         /// <summary>
-        ///     The currently loaded item (if any).
+        ///     The sub-view-model for the currently loaded track part of the player.
         /// </summary>
-        ITrack LoadedTrack { get; }
+        IPlayerTrackViewModel Track { get; }
 
         /// <summary>
         ///     The sub-view-model for the transport (play/stop/pause) part of

@@ -9,6 +9,9 @@ using URY.BAPS.Common.Model.Playback;
 
 namespace URY.BAPS.Client.ViewModel
 {
+    /// <summary>
+    ///     ReactiveUI implementation of <see cref="IPlayerMarkerViewModel"/>.
+    /// </summary>
     public class PlayerMarkerViewModel : ViewModelBase, IPlayerMarkerViewModel
     {
         public PlayerMarkerViewModel(IPlaybackController? controller)

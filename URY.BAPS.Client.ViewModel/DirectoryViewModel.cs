@@ -63,12 +63,14 @@ namespace URY.BAPS.Client.ViewModel
         /// </summary>
         public string Name => _name.Value;
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            _name.Dispose();
-            Refresh?.Dispose();
-
-            base.Dispose();
+            if (disposing)
+            {
+                _name.Dispose();
+                Refresh?.Dispose();
+            }
+            base.Dispose(disposing);
         }
 
         #region Observable plumbing

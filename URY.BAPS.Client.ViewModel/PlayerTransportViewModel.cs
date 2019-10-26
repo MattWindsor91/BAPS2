@@ -128,16 +128,19 @@ namespace URY.BAPS.Client.ViewModel
 
         #endregion Commands
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            _isPlaying.Dispose();
-            _isPaused.Dispose();
-            _isStopped.Dispose();
-            _state.Dispose();
-            Play.Dispose();
-            Pause.Dispose();
-            Stop.Dispose();
-            base.Dispose();
+            if (disposing)
+            {
+                _isPlaying.Dispose();
+                _isPaused.Dispose();
+                _isStopped.Dispose();
+                _state.Dispose();
+                Play.Dispose();
+                Pause.Dispose();
+                Stop.Dispose();
+            }
+            base.Dispose(disposing);
         }
     }
 }

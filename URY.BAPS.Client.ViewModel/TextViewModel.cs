@@ -120,13 +120,16 @@ namespace URY.BAPS.Client.ViewModel
 
         #endregion Commands
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            _fontScale.Dispose();
-            _text.Dispose();
-            DecreaseFontScale.Dispose();
-            IncreaseFontScale.Dispose();
-            base.Dispose();
+            if (disposing)
+            {
+                _fontScale.Dispose();
+                _text.Dispose();
+                DecreaseFontScale.Dispose();
+                IncreaseFontScale.Dispose();
+            }
+            base.Dispose(disposing);
         }
     }
 }

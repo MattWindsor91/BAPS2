@@ -35,9 +35,16 @@ namespace URY.BAPS.Client.ViewModel
         ///     Disposes of a <see cref="ViewModelBase"/> by disposing of its
         ///     registered subscriptions.
         /// </summary>
-        public virtual void Dispose()
+        protected virtual void Dispose(bool disposing)
         {
-            _subscriptions?.Dispose();
+            if (!disposing) return;
+            _subscriptions.Dispose();
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }
