@@ -89,6 +89,7 @@ namespace URY.BAPS.Client.Protocol.V2.Core
         public void Dispose()
         {
             _connection?.Dispose();
+            _eventFeed.Dispose();
         }
     }
 }
