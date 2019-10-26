@@ -58,7 +58,7 @@ namespace URY.BAPS.Client.Wpf.Services
         private static PlayerViewModel MakePlayerViewModel(IPlaybackController controller)
         {
             // TODO(@MattWindsor91): Autofac should be doing this.
-            var transport = new PlayerTransportViewModel(controller);
+            var transport = new PlayerTransportViewModel(controller, RxApp.MainThreadScheduler);
             var markers = new PlayerMarkerViewModel(controller);
             var track = new PlayerTrackViewModel(controller);
             var player = new PlayerViewModel(transport, markers, track);

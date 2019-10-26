@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Reactive;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using ReactiveUI;
 using URY.BAPS.Client.Common.Controllers;
@@ -10,11 +11,23 @@ using URY.BAPS.Common.Model.Playback;
 namespace URY.BAPS.Client.ViewModel
 {
     /// <summary>
-    ///     ReactiveUI implementation of <see cref="IPlayerTransportViewModel"/>.
+    ///     Reactive implementation of <see cref="IPlayerTransportViewModel"/>.
     /// </summary>
     public class PlayerTransportViewModel : ViewModelBase, IPlayerTransportViewModel
     {
-        public PlayerTransportViewModel(IPlaybackController? controller)
+        /// <summary>
+        ///     Constructs the view model.
+        /// </summary>
+        /// <param name="controller">
+        ///     The playback controller that this view model will use to
+        ///     acquire and request playback state changes.
+        /// </param>
+        /// <param name="scheduler">
+        ///     The scheduler on which property change updates will be
+        ///     scheduled.  This should usually be
+        ///     <see cref="RxApp.MainThreadScheduler"/>.
+        /// </param>
+        public PlayerTransportViewModel(IPlaybackController? controller, IScheduler? scheduler)
         {
             Controller = controller;
             PlaybackEvents = controller?.PlaybackUpdater ?? new EmptyEventFeed();
@@ -25,10 +38,10 @@ namespace URY.BAPS.Client.ViewModel
 
             // Things that derive from PlaybackEvents need specifically telling
             // to run on the UI thread.
-            _state = (from x in PlaybackEvents.ObservePlayerState select x.State).ToProperty(this, x => x.State, PlaybackState.Stopped, scheduler: RxApp.MainThreadScheduler);
-            _isPlaying = PlaybackStateEquals(PlaybackState.Playing).ToProperty(this, x => x.IsPlaying);
-            _isPaused = PlaybackStateEquals(PlaybackState.Paused).ToProperty(this, x => x.IsPaused);
-            _isStopped = PlaybackStateEquals(PlaybackState.Stopped).ToProperty(this, x => x.IsStopped);
+            _state = (from x in PlaybackEvents.ObservePlayerState select x.State).ToProperty(this, x => x.State, PlaybackState.Stopped, scheduler: scheduler);
+            _isPlaying = PlaybackStateEquals(PlaybackState.Playing).ToProperty(this, x => x.IsPlaying, scheduler: scheduler);
+            _isPaused = PlaybackStateEquals(PlaybackState.Paused).ToProperty(this, x => x.IsPaused, scheduler: scheduler);
+            _isStopped = PlaybackStateEquals(PlaybackState.Stopped).ToProperty(this, x => x.IsStopped, scheduler: scheduler);
 
             Play = ReactiveCommand.Create(PlayImpl, CanPlay);
             Pause = ReactiveCommand.Create(PauseImpl, CanPause);
