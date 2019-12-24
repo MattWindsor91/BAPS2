@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using System;
+using Autofac;
 using Microsoft.Extensions.Configuration;
 using URY.BAPS.Client.Common.Auth;
 using URY.BAPS.Client.Common.Auth.Prompt;
@@ -44,7 +45,7 @@ namespace URY.BAPS.Client.Autofac
         private IClientConfigManager MakeConfigManager(IComponentContext _)
         {
             var builder = new ConfigurationBuilder();
-            builder.AddIniFile(ConfigPath);
+            builder.SetBasePath(Environment.CurrentDirectory).AddIniFile(ConfigPath);
             return new NetcoreConfigManager(builder);
         }
 

@@ -1,25 +1,26 @@
 ﻿using System;
+using System.Globalization;
 using System.Text;
 using URY.BAPS.Client.Common.Auth.Prompt;
 using URY.BAPS.Client.Common.ClientConfig;
 
-namespace URY.BAPS.Client.Console
+namespace URY.BAPS.Client.Cli
 {
     /// <summary>
     ///     A <see cref="ILoginPrompter"/> that uses the console.
     /// </summary>
-    public class ConsoleLoginPrompter : ILoginPrompter
+    public class CliLoginPrompter : ILoginPrompter
     {
         private readonly ClientConfig _config;
 
         /// <summary>
-        ///     Creates a <see cref="ConsoleLoginPrompter"/>
+        ///     Creates a <see cref="CliLoginPrompter"/>
         /// </summary>
         /// <param name="configManager">
         ///     The config manager, used to retrieve the default address,
         ///     port, and username.
         /// </param>
-        public ConsoleLoginPrompter(IClientConfigManager configManager)
+        public CliLoginPrompter(IClientConfigManager configManager)
         {
             _config = configManager.LoadConfig();
         }
@@ -41,8 +42,10 @@ namespace URY.BAPS.Client.Console
 
         private int GetServerPort()
         {
-            var portString = GetText("Server port", _config.ServerPort.ToString());
-            return int.Parse(portString);
+            var culture = CultureInfo.InvariantCulture;
+            
+            var portString = GetText("Server port", _config.ServerPort.ToString(culture));
+            return int.Parse(portString, NumberStyles.None, culture);
         }
 
         private string GetUsername()
@@ -88,11 +91,11 @@ namespace URY.BAPS.Client.Console
             return sb.ToString();
         }
 
-        private string GetText(string prompt, string defaultValue)
+        private static string GetText(string prompt, string defaultValue)
         {
             System.Console.Write($"{prompt} (default: {defaultValue}): ");
             var input = System.Console.ReadLine();
-            return input == "" ? defaultValue : input;
+            return string.IsNullOrWhiteSpace(input) ? defaultValue : input;
         }
 
         public ILoginPromptResponse Response { get; private set; } = new QuitLoginPromptResponse();
