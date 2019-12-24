@@ -45,7 +45,7 @@ namespace URY.BAPS.Server.Managers
 
             var observable = _server.ObserveNewConnection;
 
-            observable.ForEachAsync(HandleNewConnection, Token).Wait();
+            observable.ForEachAsync(HandleNewConnection, Token).Wait(CancellationToken.None);
 
         }
 
