@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using URY.BAPS.Server.Managers;
 
@@ -29,7 +30,7 @@ namespace URY.BAPS.Server
             Logger.LogInformation("Server starting.");
 
             var tf = new TaskFactory(_clientManager.Token, TaskCreationOptions.LongRunning, TaskContinuationOptions.None, TaskScheduler.Default);
-            var clientManagerTask = tf.StartNew(_clientManager.Run);
+            var clientManagerTask = tf.StartNew(_clientManager.Run, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
 
             return Task.WhenAll(clientManagerTask);
         }

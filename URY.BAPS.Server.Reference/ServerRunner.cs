@@ -9,7 +9,7 @@ namespace URY.BAPS.Server
     /// <summary>
     ///     Allows running a BAPS server as a standalone program.
     /// </summary>
-    public class ServerRunner : IDisposable
+    public sealed class ServerRunner : IDisposable
     {
         private readonly ILoggerFactory _loggerFactory;
 
