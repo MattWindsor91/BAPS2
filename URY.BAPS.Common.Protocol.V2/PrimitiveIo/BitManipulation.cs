@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace URY.BAPS.Common.Protocol.V2.Io
+namespace URY.BAPS.Common.Protocol.V2.PrimitiveIo
 {
     /// <summary>
     ///     Utilities for bit twiddling.

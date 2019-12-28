@@ -30,16 +30,37 @@ namespace URY.BAPS.Common.Model.EventFeed
         /// <param name="obs">
         ///     The observable source of server updates.
         /// </param>
-        public void Attach(IObservable<MessageArgsBase> obs)
+        /// <return>
+        ///     The subscription produced by attaching, which can either be
+        ///     ignored (as the feed will detach and dispose all subscriptions
+        ///     when disposed itself), or passed to <see cref="Detach"/> to
+        ///     dispose the subscription early.
+        /// </return>
+        public IDisposable Attach(IObservable<MessageArgsBase> obs)
         {
-            _subscriptions.Add(obs.Subscribe(_bridge));
+            var sub = obs.Subscribe(_bridge);
+            _subscriptions.Add(sub);
+            return sub;
+        }
+
+        /// <summary>
+        ///     Detaches this updater from the source specified by the given
+        ///     subscription (as returned by <see cref="Attach"/>).
+        /// </summary>
+        /// <param name="subscription">
+        ///     The subscription to remove.
+        /// </param>
+        /// <return>Whether or not <paramref name="subscription"/> was adequately disposed-of.</return>
+        public bool Detach(IDisposable subscription)
+        {
+            return _subscriptions.Remove(subscription);
         }
 
         /// <summary>
         ///     Detaches this updater from all sources to which it was
         ///     previously attached using <see cref="Attach"/>.
         /// </summary>
-        public void Detach()
+        public void DetachAll()
         {
             _subscriptions.Clear();
         }

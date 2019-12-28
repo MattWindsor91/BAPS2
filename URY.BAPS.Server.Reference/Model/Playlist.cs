@@ -169,7 +169,7 @@ namespace URY.BAPS.Server.Model
 
         private void NotifyAdd(PlaylistItem item)
         {
-            var args = new TrackAddArgs(_channelId, item.Index, item);
+            var args = new TrackAddArgs(MakeTrackIndex(item.Index), item);
             OnTrackAdd(args);
         }
 
@@ -200,7 +200,7 @@ namespace URY.BAPS.Server.Model
 
         private void NotifyRemove(uint index)
         {
-            var args = new TrackDeleteArgs(_channelId, index);
+            var args = new TrackDeleteArgs(MakeTrackIndex(index));
             OnTrackDelete(args);
         }
 
@@ -231,7 +231,7 @@ namespace URY.BAPS.Server.Model
 
         private void NotifyMove(uint oldIndex, uint newIndex)
         {
-            var args = new TrackMoveArgs(_channelId, oldIndex, newIndex);
+            var args = new TrackMoveArgs(MakeTrackIndex(oldIndex), newIndex);
             OnTrackMove(args);
         }
 
@@ -269,7 +269,7 @@ namespace URY.BAPS.Server.Model
 
         #endregion Resetting
 
-        #region Index book-keeping
+        #region Position book-keeping
 
         private void RefreshIndicesAfterMove(int oldIndex, int newIndex)
         {
@@ -294,6 +294,20 @@ namespace URY.BAPS.Server.Model
             _entries[at].Index = (uint) at;
         }
 
-        #endregion Index book-keeping
+        #endregion Position book-keeping
+
+        /// <summary>
+        ///     Makes a track index relative to this playlist's channel.
+        /// </summary>
+        /// <param name="position">The zero-based position in this playlist.</param>
+        /// <returns>
+        ///     A <see cref="TrackIndex"/> with channel ID set to this
+        ///     playlist's channel ID and position set to
+        ///     <paramref name="position" />.
+        /// </returns>
+        private TrackIndex MakeTrackIndex(uint position)
+        {
+            return new TrackIndex {ChannelId = _channelId, Position = position};
+        }
     }
 }

@@ -4,9 +4,9 @@ using JetBrains.Annotations;
 using URY.BAPS.Common.Model.MessageEvents;
 using URY.BAPS.Common.Protocol.V2.Commands;
 using URY.BAPS.Common.Protocol.V2.Decode;
-using URY.BAPS.Common.Protocol.V2.Io;
+using URY.BAPS.Common.Protocol.V2.PrimitiveIo;
 
-namespace URY.BAPS.Client.Protocol.V2.Core
+namespace URY.BAPS.Common.Protocol.V2.MessageIo
 {
     /// <summary>
     ///     Listens on an <see cref="IPrimitiveSource" /> for incoming BapsNet commands, decodes them, and sends server update

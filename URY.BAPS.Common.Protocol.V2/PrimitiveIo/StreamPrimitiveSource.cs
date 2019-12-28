@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading;
 using JetBrains.Annotations;
 
-namespace URY.BAPS.Common.Protocol.V2.Io
+namespace URY.BAPS.Common.Protocol.V2.PrimitiveIo
 {
     /// <summary>
     ///     Takes requests to receive BapsNet primitives, and applies them to a

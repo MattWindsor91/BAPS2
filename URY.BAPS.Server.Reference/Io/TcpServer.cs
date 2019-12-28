@@ -5,28 +5,28 @@ using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using URY.BAPS.Common.Protocol.V2.Io;
+using URY.BAPS.Common.Protocol.V2.PrimitiveIo;
 using URY.BAPS.Server.Config;
 
 namespace URY.BAPS.Server.Io
 {
     /// <summary>
     ///     A TCP server that listens on the configured host and port, and
-    ///     produces <see cref="TcpConnection"/>s.
+    ///     produces <see cref="TcpClient"/>s.
     /// </summary>
     public class TcpServer
     {
         private readonly TcpListener _listener;
-        private IObservable<TcpConnection>? _observeNewConnection;
+        private IObservable<TcpClient>? _observeNewConnection;
         private ILogger<TcpServer> Logger { get; }
 
         /// <summary>
         ///     Event triggered when a new connection is accepted.
         /// </summary>
-        public event EventHandler<TcpConnection>? NewConnection;
+        public event EventHandler<TcpClient>? NewConnection;
 
-        public IObservable<TcpConnection> ObserveNewConnection =>
-            _observeNewConnection ??= Observable.FromEventPattern<TcpConnection>(e => NewConnection += e, e => NewConnection -= e)
+        public IObservable<TcpClient> ObserveNewConnection =>
+            _observeNewConnection ??= Observable.FromEventPattern<TcpClient>(e => NewConnection += e, e => NewConnection -= e)
                 .Select(x => x.EventArgs);
 
         public TcpServer(ILoggerFactory loggerFactory, ListenConfig config)
@@ -36,20 +36,20 @@ namespace URY.BAPS.Server.Io
             Logger = loggerFactory.CreateLogger<TcpServer>();
         }
 
-        public void Run(CancellationToken token)
+        public async Task RunAsync(CancellationToken token)
         {
             _listener.Start();
             Logger.LogInformation("Started listening.");
 
             try
             {
-                MainLoop(token).Wait();
+                await MainLoop(token).ConfigureAwait(false);
             }
             finally
             {
                 _listener.Stop();
                 Logger.LogInformation("Stopped listening.");
-            }
+            }            
         }
 
         private async Task MainLoop(CancellationToken token)
@@ -59,17 +59,11 @@ namespace URY.BAPS.Server.Io
                 token.ThrowIfCancellationRequested();
                 var client = await _listener.AcceptTcpClientAsync();
 
-                MakeAndSendConnection(client);
+                OnNewConnection(client);
             }
         }
 
-        private void MakeAndSendConnection(TcpClient client)
-        {
-            var connection = new TcpConnection(client);
-            OnNewConnection(connection);
-        }
-
-        protected virtual void OnNewConnection(TcpConnection e)
+        protected virtual void OnNewConnection(TcpClient e)
         {
             NewConnection?.Invoke(this, e);
         }

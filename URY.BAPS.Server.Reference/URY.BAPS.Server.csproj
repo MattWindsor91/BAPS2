@@ -23,5 +23,6 @@
   <ItemGroup>
     <ProjectReference Include="..\URY.BAPS.Common.Model\URY.BAPS.Common.Model.csproj" />
     <ProjectReference Include="..\URY.BAPS.Common.Protocol.V2\URY.BAPS.Common.Protocol.V2.csproj" />
+    <ProjectReference Include="..\URY.BAPS.Server.Protocol.V2\URY.BAPS.Server.Protocol.V2.csproj" />
   </ItemGroup>
 </Project>

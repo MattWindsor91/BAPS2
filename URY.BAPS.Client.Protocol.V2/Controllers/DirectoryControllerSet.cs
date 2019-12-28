@@ -1,5 +1,6 @@
 using JetBrains.Annotations;
 using URY.BAPS.Client.Protocol.V2.Core;
+using URY.BAPS.Common.Protocol.V2.MessageIo;
 
 namespace URY.BAPS.Client.Protocol.V2.Controllers
 {
@@ -8,7 +9,7 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
     /// </summary>
     public class DirectoryControllerSet : ControllerSetBase<DirectoryController>
     {
-        public DirectoryControllerSet(ConnectionManager? core) : base(core)
+        public DirectoryControllerSet(DetachableConnection? core) : base(core)
         {
         }
 

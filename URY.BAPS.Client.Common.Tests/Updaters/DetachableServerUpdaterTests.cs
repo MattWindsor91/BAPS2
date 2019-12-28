@@ -31,7 +31,7 @@ namespace URY.BAPS.Client.Common.Tests.Updaters
         [Fact]
         public void TestDetach_NothingAttached_NoThrow()
         {
-            _updater.Detach();
+            _updater.DetachAll();
         }
 
         [Fact]
@@ -52,7 +52,7 @@ namespace URY.BAPS.Client.Common.Tests.Updaters
             Messages?.Invoke(this, message1);
             _updater.Attach(_messageObservable);
             Messages?.Invoke(this, message2);
-            _updater.Detach();
+            _updater.DetachAll();
             Messages?.Invoke(this, message3);
 
             Assert.Collection(results, m =>

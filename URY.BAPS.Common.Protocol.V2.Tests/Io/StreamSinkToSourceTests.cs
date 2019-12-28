@@ -3,7 +3,7 @@ using System.IO;
 using System.Threading;
 using JetBrains.Annotations;
 using URY.BAPS.Common.Protocol.V2.Commands;
-using URY.BAPS.Common.Protocol.V2.Io;
+using URY.BAPS.Common.Protocol.V2.PrimitiveIo;
 using URY.BAPS.Common.Protocol.V2.Ops;
 using Xunit;
 

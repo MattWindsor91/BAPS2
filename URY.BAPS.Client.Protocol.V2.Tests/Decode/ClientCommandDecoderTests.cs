@@ -3,18 +3,19 @@ using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using System.Threading;
 using JetBrains.Annotations;
+using URY.BAPS.Client.Protocol.V2.Decode;
 using URY.BAPS.Common.Model.MessageEvents;
 using URY.BAPS.Common.Model.Playback;
 using URY.BAPS.Common.Model.ServerConfig;
 using URY.BAPS.Common.Protocol.V2.Commands;
 using URY.BAPS.Common.Protocol.V2.Decode;
-using URY.BAPS.Common.Protocol.V2.Io;
+using URY.BAPS.Common.Protocol.V2.PrimitiveIo;
 using URY.BAPS.Common.Protocol.V2.Model;
 using URY.BAPS.Common.Protocol.V2.Ops;
 using URY.BAPS.Common.Protocol.V2.Tests.Utils;
 using Xunit;
 
-namespace URY.BAPS.Common.Protocol.V2.Tests.Decode
+namespace URY.BAPS.Client.Protocol.V2.Tests.Decode
 {
     /// <summary>
     ///     Tests for the <see cref="ClientCommandDecoder"/>, including any decoding logic common to both client
@@ -125,17 +126,17 @@ namespace URY.BAPS.Common.Protocol.V2.Tests.Decode
         [Fact]
         public void TestDecode_Item()
         {
-            const uint index = 30U;
+            const uint position = 30U;
             const TrackType type = TrackType.Library;
             const string description = "Abacab";
             
             var command = new PlaylistCommand(PlaylistOp.Item, ChannelId, true);
-            _primitiveSource.AddUint(index).AddUint((uint) type).AddString(description);
+            _primitiveSource.AddUint(position).AddUint((uint) type).AddString(description);
             
             var message = DecodeAndAssertMessageType<TrackAddArgs>(command);
 
             Assert.Equal(ChannelId, message.ChannelId);
-            Assert.Equal(index, message.Index);
+            Assert.Equal(position, message.Index.Position);
             Assert.Equal("e|l|A|I|t|Abacab|0|", message.Item.Summarise());
         }
 

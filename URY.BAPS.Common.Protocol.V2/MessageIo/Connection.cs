@@ -3,15 +3,15 @@ using System.Threading;
 using URY.BAPS.Common.Model.EventFeed;
 using URY.BAPS.Common.Protocol.V2.Decode;
 using URY.BAPS.Common.Protocol.V2.Encode;
-using URY.BAPS.Common.Protocol.V2.Io;
+using URY.BAPS.Common.Protocol.V2.PrimitiveIo;
 
-namespace URY.BAPS.Client.Protocol.V2.Core
+namespace URY.BAPS.Common.Protocol.V2.MessageIo
 {
     /// <summary>
-    ///     An object representing a live connection to a BapsNet client, with
+    ///     An object representing a live message-level connection to a BapsNet endpoint, with
     ///     running send and receive loops.
     /// </summary>
-    public sealed class Connection : IDisposable
+    public sealed class Connection : IConnection
     {
         /// <summary>
         ///     The amount of delay added to the cancellation request when
@@ -23,24 +23,25 @@ namespace URY.BAPS.Client.Protocol.V2.Core
 
         private readonly Receiver _receiver;
         private readonly Sender _sender;
-        private ClientTaskHandle? _tasks;
+        private TaskHandle? _tasks;
 
         /// <summary>
         ///     Constructs a <see cref="Connection"/> on top of the given
         ///     BapsNet primitive handlers.
         /// </summary>
-        /// <param name="source">The primitive source used to receive commands.</param>
-        /// <param name="sink">The primitive sink used to send commands.</param>
+        /// <param name="connection">The primitive connection used to receive commands.</param>
         /// <param name="commandDecoderFactory">
         ///     A function that produces command decoders appropriate for the
         ///     role of this connection (client or server).
         /// </param>
-        public Connection(IPrimitiveSource source, IPrimitiveSink sink, Func<IPrimitiveSource, CancellationToken, CommandDecoder> commandDecoderFactory)
+        public Connection(PrimitiveIo.IConnection connection, Func<IPrimitiveSource, CancellationToken, CommandDecoder> commandDecoderFactory)
         {
-            _receiver = CreateReceiver(source, commandDecoderFactory);
-            _sender = new Sender(sink);
+            _receiver = CreateReceiver(connection, commandDecoderFactory);
+            _sender = new Sender(connection);
         }
-
+        
+        public IFullEventFeed EventFeed => new FilteringEventFeed(_receiver.ObserveMessage);
+        
         /// <summary>
         ///     Attaches the given server updater to this connection's
         ///     receiver, causing it to receive decoded server messages.
@@ -66,7 +67,7 @@ namespace URY.BAPS.Client.Protocol.V2.Core
         {
             if (_tasks != null)
                 throw new InvalidOperationException("This connection is already running.");
-            _tasks = ClientTaskHandle.CreateAndLaunchTasks(_receiver, _sender, _dead.Token);
+            _tasks = TaskHandle.CreateAndLaunchTasks(_receiver, _sender, _dead.Token);
         }
 
         private Receiver CreateReceiver(IPrimitiveSource source, Func<IPrimitiveSource, CancellationToken, CommandDecoder> commandDecoderFactory)

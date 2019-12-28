@@ -20,23 +20,6 @@ namespace URY.BAPS.Common.Model.MessageEvents
         public ushort ChannelId { get; }
     }
 
-    /// <summary>
-    ///     Abstract base class of event payloads that reference
-    ///     indices in channel track lists.
-    /// </summary>
-    public abstract class TrackIndexArgsBase : ChannelArgsBase
-    {
-        protected TrackIndexArgsBase(ushort channelId, uint index) : base(channelId)
-        {
-            Index = index;
-        }
-
-        /// <summary>
-        ///     The track-list index being mentioned in the event.
-        /// </summary>
-        public uint Index { get; }
-    }
-
     public class ErrorEventArgs : MessageArgsBase
     {
         public ErrorEventArgs(ErrorType type, byte code, string description)
@@ -69,5 +52,22 @@ namespace URY.BAPS.Common.Model.MessageEvents
         }
 
         public string Description { get; }
+    }
+    
+    /// <summary>
+    ///     Abstract base class of event payloads that reference
+    ///     indices in channel track lists.
+    /// </summary>
+    public abstract class TrackIndexArgsBase : ChannelArgsBase
+    {
+        protected TrackIndexArgsBase(TrackIndex index) : base(index.ChannelId)
+        {
+            Index = index;
+        }
+
+        /// <summary>
+        ///     The track-list index being mentioned in the event.
+        /// </summary>
+        public TrackIndex Index { get; }
     }
 }

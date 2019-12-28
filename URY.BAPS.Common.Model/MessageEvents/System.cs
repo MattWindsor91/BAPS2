@@ -2,7 +2,41 @@ using URY.BAPS.Common.Model.ServerConfig;
 
 namespace URY.BAPS.Common.Model.MessageEvents
 {
+    #region No-argument requests
+
+    /// <summary>
+    ///     Enumeration of system requests wrapped within <see cref="SystemRequestArgs"/>.
+    /// </summary>
+    public enum SystemRequest
+    {
+        GetVersion,
+        Quit
+    }
+    
+    /// <summary>
+    ///     Represents a zero-argument system request from a client to a server.
+    /// </summary>
+    public class SystemRequestArgs : MessageArgsBase
+    {
+        /// <summary>
+        ///     The type of request that this message describes.
+        /// </summary>
+        public SystemRequest Request { get; }
+
+        /// <summary>
+        ///     Constructs a system request.
+        /// </summary>
+        /// <param name="request">The type of request.</param>
+        public SystemRequestArgs(SystemRequest request)
+        {
+            Request = request;
+        }
+    }
+    
+    #endregion No-argument requests
+    
     #region Text
+    
 
     /// <summary>
     ///     Event structure representing a change in a text setting.
@@ -75,6 +109,9 @@ namespace URY.BAPS.Common.Model.MessageEvents
 
     #endregion Text
 
+    /// <summary>
+    ///     Event structure representing a server version response.
+    /// </summary>
     public class ServerVersionArgs : MessageArgsBase
     {
         public ServerVersionArgs(ServerVersion version)
@@ -85,6 +122,9 @@ namespace URY.BAPS.Common.Model.MessageEvents
         public ServerVersion Version { get; }
     }
 
+    /// <summary>
+    ///     Event structure representing the fact that the server has quit.
+    /// </summary>
     public class ServerQuitArgs : MessageArgsBase
     {
         public ServerQuitArgs(bool wasRequested)

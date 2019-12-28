@@ -7,12 +7,12 @@ using URY.BAPS.Client.Common.Auth.LoginResult;
 using URY.BAPS.Client.Common.Auth.Prompt;
 using URY.BAPS.Common.Protocol.V2.Commands;
 using URY.BAPS.Common.Protocol.V2.Encode;
-using URY.BAPS.Common.Protocol.V2.Io;
+using URY.BAPS.Common.Protocol.V2.PrimitiveIo;
 using URY.BAPS.Common.Protocol.V2.Ops;
 
 namespace URY.BAPS.Client.Protocol.V2.Auth
 {
-    public class BapsAuthedConnectionBuilder : IAuthedConnectionBuilder<TcpConnection>, IDisposable
+    public sealed class BapsLoginAttempter : ILoginAttempter<TcpConnection>, IDisposable
     {
         /// <summary>
         ///     Cached instance of <see cref="SuccessLoginResult" />.
@@ -83,10 +83,10 @@ namespace URY.BAPS.Client.Protocol.V2.Auth
             _connection = new TcpConnection(clientSocket);
 
 
-            /** Receive the greeting string, this is the only communication
+            /* Receive the greeting string, this is the only communication
                 that does not follow the 'command' 'command-length' 'argument1'...
                 structure
-             **/
+             */
             _ = _connection.ReceiveString();
             SetBinaryMode();
 

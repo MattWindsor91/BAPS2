@@ -3,7 +3,7 @@ using System.Reactive.Linq;
 using System.Threading;
 using URY.BAPS.Common.Model.MessageEvents;
 using URY.BAPS.Common.Protocol.V2.Commands;
-using URY.BAPS.Common.Protocol.V2.Io;
+using URY.BAPS.Common.Protocol.V2.PrimitiveIo;
 using URY.BAPS.Common.Protocol.V2.Model;
 
 namespace URY.BAPS.Common.Protocol.V2.Decode
@@ -18,8 +18,6 @@ namespace URY.BAPS.Common.Protocol.V2.Decode
     ///         position.
     ///     </para>
     ///  </summary>
-    ///  <seealso cref="ClientCommandDecoder"/>
-    ///  <seealso cref="ServerCommandDecoder"/>
     public abstract partial class CommandDecoder : ICommandVisitor
     {
         /// <summary>

@@ -14,7 +14,7 @@ namespace URY.BAPS.Client.Common.Auth
     {
         private readonly ILoginPrompter _prompter;
         private readonly ILoginErrorHandler _errorHandler;
-        private readonly IAuthedConnectionBuilder<TConn> _builder;
+        private readonly ILoginAttempter<TConn> _builder;
 
         /// <summary>
         ///     Constructs a <see cref="Authenticator{TConn}" />.
@@ -31,7 +31,7 @@ namespace URY.BAPS.Client.Common.Auth
         /// <typeparam name="TConn">
         ///     Type of authenticated connections.
         /// </typeparam>
-        public Authenticator(ILoginPrompter? prompter, ILoginErrorHandler? errorHandler, IAuthedConnectionBuilder<TConn>? builder)
+        public Authenticator(ILoginPrompter? prompter, ILoginErrorHandler? errorHandler, ILoginAttempter<TConn>? builder)
         {
             _prompter = prompter ?? throw new ArgumentNullException(nameof(prompter));
             _errorHandler = errorHandler ?? throw new ArgumentNullException(nameof(errorHandler));

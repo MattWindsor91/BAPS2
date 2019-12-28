@@ -54,7 +54,9 @@ namespace URY.BAPS.Common.Protocol.V2.Decode
 
         private void DecodeLoad(ushort channelId)
         {
-            var index = ReceiveUint();
+            var position = ReceiveUint();
+            var index = new TrackIndex {ChannelId = channelId, Position = position};
+            
             var type = DecodeTrackType();
             var description = ReceiveString();
 
@@ -67,7 +69,7 @@ namespace URY.BAPS.Common.Protocol.V2.Decode
             var track = TrackFactory.Create(type, description, duration, text);
 
             Dispatch(new MarkerChangeArgs(channelId, MarkerType.Position, 0U));
-            Dispatch(new TrackLoadArgs(channelId, index, track));
+            Dispatch(new TrackLoadArgs(index, track));
         }
 
         private void DecodeMarkerGet(byte channelId, MarkerType markerType)

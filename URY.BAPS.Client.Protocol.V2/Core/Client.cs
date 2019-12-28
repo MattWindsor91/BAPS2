@@ -3,8 +3,10 @@ using URY.BAPS.Client.Common.ServerConfig;
 using URY.BAPS.Common.Model.EventFeed;
 using URY.BAPS.Common.Protocol.V2.Commands;
 using URY.BAPS.Common.Protocol.V2.Encode;
-using URY.BAPS.Common.Protocol.V2.Io;
+using URY.BAPS.Common.Protocol.V2.MessageIo;
+using URY.BAPS.Common.Protocol.V2.PrimitiveIo;
 using URY.BAPS.Common.Protocol.V2.Ops;
+using IConnection = URY.BAPS.Common.Protocol.V2.MessageIo.IConnection;
 
 namespace URY.BAPS.Client.Protocol.V2.Core
 {
@@ -18,10 +20,10 @@ namespace URY.BAPS.Client.Protocol.V2.Core
     /// </summary>
     public class Client
     {
-        private readonly ConnectionManager _connection;
+        private readonly DetachableConnection _connection;
         private readonly ConfigCache _configCache;
         private readonly InitialUpdatePerformer _init;
-        private readonly Authenticator<TcpConnection> _auth;
+        private readonly Authenticator<IConnection> _auth;
 
         /// <summary>
         ///     An event feed that receives updates from the BAPS server.
@@ -47,7 +49,7 @@ namespace URY.BAPS.Client.Protocol.V2.Core
         ///     </para>
         /// </summary>
         /// <param name="connection">
-        ///     A <see cref="ConnectionManager"/>, used to build and hold onto
+        ///     A <see cref="DetachableConnection"/>, used to build and hold onto
         ///     message-passing connections to a BAPS server.
         /// </param>
         /// <param name="configCache">
@@ -64,8 +66,8 @@ namespace URY.BAPS.Client.Protocol.V2.Core
         ///     <see cref="TcpConnection"/>s that are then sent to the
         ///     <paramref name="connection"/>.
         /// </param>
-        public Client(ConnectionManager connection, ConfigCache configCache, InitialUpdatePerformer init,
-            Authenticator<TcpConnection> auth)
+        public Client(DetachableConnection connection, ConfigCache configCache, InitialUpdatePerformer init,
+            Authenticator<IConnection> auth)
         {
             _connection = connection;
             _configCache = configCache;

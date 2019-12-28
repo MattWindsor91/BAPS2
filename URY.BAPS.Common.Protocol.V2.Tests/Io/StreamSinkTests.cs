@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using URY.BAPS.Common.Protocol.V2.Io;
+using URY.BAPS.Common.Protocol.V2.PrimitiveIo;
 using Xunit;
 
 namespace URY.BAPS.Common.Protocol.V2.Tests.Io

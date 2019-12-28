@@ -3,9 +3,9 @@ using System.Collections.Concurrent;
 using System.Threading;
 using JetBrains.Annotations;
 using URY.BAPS.Common.Protocol.V2.Encode;
-using URY.BAPS.Common.Protocol.V2.Io;
+using URY.BAPS.Common.Protocol.V2.PrimitiveIo;
 
-namespace URY.BAPS.Client.Protocol.V2.Core
+namespace URY.BAPS.Common.Protocol.V2.MessageIo
 {
     /// <summary>
     ///     A message-send loop for BapsNet.

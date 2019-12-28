@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using URY.BAPS.Common.Protocol.V2.Commands;
 
-namespace URY.BAPS.Common.Protocol.V2.Io
+namespace URY.BAPS.Common.Protocol.V2.PrimitiveIo
 {
     /// <inheritdoc />
     /// <summary>

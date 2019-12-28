@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 using System.Text;
-using URY.BAPS.Common.Protocol.V2.Io;
+using URY.BAPS.Common.Protocol.V2.PrimitiveIo;
 
 namespace URY.BAPS.Common.Protocol.V2.Encode
 {

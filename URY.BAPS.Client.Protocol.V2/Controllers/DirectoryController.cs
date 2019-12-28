@@ -3,6 +3,7 @@ using URY.BAPS.Client.Protocol.V2.Core;
 using URY.BAPS.Common.Model.EventFeed;
 using URY.BAPS.Common.Protocol.V2.Commands;
 using URY.BAPS.Common.Protocol.V2.Encode;
+using URY.BAPS.Common.Protocol.V2.MessageIo;
 using URY.BAPS.Common.Protocol.V2.Ops;
 
 namespace URY.BAPS.Client.Protocol.V2.Controllers
@@ -14,7 +15,7 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
     {
         private readonly byte _directoryId;
 
-        public DirectoryController(byte directoryId, ConnectionManager? core) : base(core)
+        public DirectoryController(byte directoryId, DetachableConnection? core) : base(core)
         {
             _directoryId = directoryId;
         }

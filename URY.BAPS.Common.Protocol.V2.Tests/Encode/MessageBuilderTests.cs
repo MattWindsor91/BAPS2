@@ -2,7 +2,7 @@
 using System.Text;
 using URY.BAPS.Common.Protocol.V2.Commands;
 using URY.BAPS.Common.Protocol.V2.Encode;
-using URY.BAPS.Common.Protocol.V2.Io;
+using URY.BAPS.Common.Protocol.V2.PrimitiveIo;
 using URY.BAPS.Common.Protocol.V2.Model;
 using URY.BAPS.Common.Protocol.V2.Ops;
 using Xunit;

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using JetBrains.Annotations;
 using URY.BAPS.Client.Protocol.V2.Core;
+using URY.BAPS.Common.Protocol.V2.MessageIo;
 
 namespace URY.BAPS.Client.Protocol.V2.Controllers
 {
@@ -24,7 +25,7 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
         /// <summary>
         ///     The client core.
         /// </summary>
-        [NotNull] protected readonly ConnectionManager ConnectionManager;
+        [NotNull] protected readonly DetachableConnection ConnectionManager;
 
         /// <summary>
         ///     Abstract base constructor for controller sets.
@@ -32,7 +33,7 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
         /// <param name="core">
         ///     The client core.
         /// </param>
-        protected ControllerSetBase(ConnectionManager? core)
+        protected ControllerSetBase(DetachableConnection? core)
         {
             ConnectionManager = core ?? throw new ArgumentNullException(nameof(core));
         }

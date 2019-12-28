@@ -38,15 +38,15 @@ namespace URY.BAPS.Common.Protocol.V2.Decode
 
         private void DecodeDeleteItem(byte channelId)
         {
-            var index = ReceiveUint();
-            Dispatch(new TrackDeleteArgs(channelId, index));
+            var position = ReceiveUint();
+            Dispatch(new TrackDeleteArgs(new TrackIndex { ChannelId = channelId, Position = position }));
         }
 
         private void DecodeMoveItemTo(byte channelId)
         {
-            var indexFrom = ReceiveUint();
-            var indexTo = ReceiveUint();
-            Dispatch(new TrackMoveArgs(channelId, indexFrom, indexTo));
+            var fromPosition = ReceiveUint();
+            var toPosition = ReceiveUint();
+            Dispatch(new TrackMoveArgs(new TrackIndex {ChannelId = channelId, Position = fromPosition }, toPosition));
         }
 
         #region Implemented differently for clients and servers

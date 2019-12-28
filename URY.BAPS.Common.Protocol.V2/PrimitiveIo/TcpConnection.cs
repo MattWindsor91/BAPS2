@@ -2,7 +2,7 @@
 using System.Net.Sockets;
 using System.Threading;
 
-namespace URY.BAPS.Common.Protocol.V2.Io
+namespace URY.BAPS.Common.Protocol.V2.PrimitiveIo
 {
     /// <summary>
     ///     A low-level BapsNetV2 connection over TCP/IP.

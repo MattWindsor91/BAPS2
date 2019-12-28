@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Net.Sockets;
 using System.Reactive.Linq;
 using System.Threading;
 using Microsoft.Extensions.Logging;
-using URY.BAPS.Common.Protocol.V2.Io;
+using URY.BAPS.Common.Protocol.V2.MessageIo;
+using URY.BAPS.Common.Protocol.V2.PrimitiveIo;
 using URY.BAPS.Server.Io;
 using URY.BAPS.Server.Model;
 
@@ -16,7 +18,9 @@ namespace URY.BAPS.Server.Managers
         /// <summary>
         ///     The current pool of connected clients.
         /// </summary>
-        private readonly ConcurrentDictionary<Client, bool> _clients = new ConcurrentDictionary<Client, bool>();
+        private readonly ClientPool _clients = new ClientPool();
+
+        private readonly ConnectionFactory<ClientHandle> _clientFactory;
 
         private readonly CancellationTokenSource _cts = new CancellationTokenSource();
         private readonly ChannelSet _channels;
@@ -29,10 +33,11 @@ namespace URY.BAPS.Server.Managers
 
         private ILogger<ClientManager> Logger { get; }
 
-        public ClientManager(ILoggerFactory loggerFactory, TcpServer server, ChannelSet channels)
+        public ClientManager(ILoggerFactory loggerFactory, TcpServer server, ChannelSet channels, ConnectionFactory<ClientHandle> clientFactory)
         {
             _server = server;
             _channels = channels;
+            _clientFactory = clientFactory;
             Logger = loggerFactory.CreateLogger<ClientManager>();
         }
 
@@ -45,26 +50,32 @@ namespace URY.BAPS.Server.Managers
 
             var observable = _server.ObserveNewConnection;
 
-            observable.ForEachAsync(HandleNewConnection, Token).Wait(CancellationToken.None);
-
+            var connectionHandleTask = observable.ForEachAsync(HandleNewConnection, Token);
+            var serverTask = _server.RunAsync(Token);
+            
+            connectionHandleTask.Wait(CancellationToken.None);
+            serverTask.Wait(CancellationToken.None);
         }
 
-        private void HandleNewConnection(TcpConnection e)
+        private void HandleNewConnection(TcpClient e)
         {
-            var client = new Client(e);
-            if (!_clients.TryAdd(client, true))
+            Logger.LogInformation("New client connection: {0}", e);
+
+            ClientHandle? client = null;
+            try
             {
-                Logger.LogError("Couldn't add client {0} to client pool");
+                client = _clientFactory.Build(e);
+                _clients.Add(client);
+                client = null;
+            } finally {
+                client?.Dispose();
             }
         }
 
         public void Dispose()
         {
             _cts?.Dispose();
-            foreach (var (client, _) in _clients)
-            {
-                client.Dispose();
-            }
+            _clients.Dispose();
         }
     }
 }

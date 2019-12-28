@@ -9,7 +9,7 @@ namespace URY.BAPS.Common.Model.MessageEvents
     /// </summary>
     public class TrackLoadArgs : TrackIndexArgsBase
     {
-        public TrackLoadArgs(ushort channelId, uint index, ITrack track) : base(channelId, index)
+        public TrackLoadArgs(TrackIndex index, ITrack track) : base(index)
         {
             Track = track;
         }

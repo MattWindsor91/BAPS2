@@ -1,6 +1,7 @@
 using System;
 using JetBrains.Annotations;
 using URY.BAPS.Client.Protocol.V2.Core;
+using URY.BAPS.Common.Protocol.V2.MessageIo;
 
 namespace URY.BAPS.Client.Protocol.V2.Controllers
 {
@@ -11,7 +12,7 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
     {
         [NotNull] private readonly ConfigController _config;
 
-        public ChannelControllerSet(ConnectionManager? core, ConfigController? config) : base(core)
+        public ChannelControllerSet(DetachableConnection? core, ConfigController? config) : base(core)
         {
             _config = config ?? throw new ArgumentNullException(nameof(config));
         }

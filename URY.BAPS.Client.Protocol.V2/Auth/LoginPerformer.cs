@@ -4,7 +4,7 @@ using URY.BAPS.Client.Common.Auth.LoginResult;
 using URY.BAPS.Client.Common.Auth.Prompt;
 using URY.BAPS.Common.Protocol.V2.Commands;
 using URY.BAPS.Common.Protocol.V2.Encode;
-using URY.BAPS.Common.Protocol.V2.Io;
+using URY.BAPS.Common.Protocol.V2.PrimitiveIo;
 using URY.BAPS.Common.Protocol.V2.Ops;
 
 namespace URY.BAPS.Client.Protocol.V2.Auth

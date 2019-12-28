@@ -1,10 +1,11 @@
 using System.Threading;
 using URY.BAPS.Common.Model.MessageEvents;
 using URY.BAPS.Common.Model.ServerConfig;
-using URY.BAPS.Common.Protocol.V2.Io;
+using URY.BAPS.Common.Protocol.V2.Decode;
 using URY.BAPS.Common.Protocol.V2.Model;
+using URY.BAPS.Common.Protocol.V2.PrimitiveIo;
 
-namespace URY.BAPS.Common.Protocol.V2.Decode
+namespace URY.BAPS.Client.Protocol.V2.Decode
 {
     /// <summary>
     ///     A decoder for the client side of the BapsNet protocol.
@@ -23,11 +24,13 @@ namespace URY.BAPS.Common.Protocol.V2.Decode
         protected override void DecodeItem(byte channelId)
         {
             // The client version of this command gets the item information.
-            var index = ReceiveUint();
+            var position = ReceiveUint();
+            var index = new TrackIndex {ChannelId = channelId, Position = position};
+            
             var type = DecodeTrackType();
             var description = ReceiveString();
             var entry = TrackFactory.Create(type, description);
-            Dispatch(new TrackAddArgs(channelId, index, entry));
+            Dispatch(new TrackAddArgs(index, entry));
         }
 
         protected override void DecodeServerVersion()
@@ -43,8 +46,10 @@ namespace URY.BAPS.Common.Protocol.V2.Decode
 
         protected override void DecodeFeedback()
         {
-            // The client version of this command just contains a 'yes/no' result.
-            _ = ReceiveUint();
+            // The client version of this command gets whether the feedback it
+            // previously requested was sent, as a C-style Boolean.
+            var wasSent = ReceiveUint() != 0;
+            Dispatch(new FeedbackResponseArgs(wasSent));
         }
     }
 }

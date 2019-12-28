@@ -16,7 +16,7 @@ namespace URY.BAPS.Client.Common.Tests.Auth
             where T : class
         {
             var prompter = new DummyLoginPrompter(response);
-            var builder = new DummyAuthedConnectionBuilder<T>(connection, result);
+            var builder = new DummyLoginAttempter<T>(connection, result);
             return new Authenticator<T>(prompter, _errorHandler, builder);
         }
 

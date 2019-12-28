@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Sockets;
 using Autofac;
 using Microsoft.Extensions.Configuration;
 using URY.BAPS.Client.Common.Auth;
@@ -8,8 +9,12 @@ using URY.BAPS.Client.Common.ServerConfig;
 using URY.BAPS.Client.Protocol.V2.Auth;
 using URY.BAPS.Client.Protocol.V2.Controllers;
 using URY.BAPS.Client.Protocol.V2.Core;
+using URY.BAPS.Client.Protocol.V2.Decode;
 using URY.BAPS.Common.Model.EventFeed;
-using URY.BAPS.Common.Protocol.V2.Io;
+using URY.BAPS.Common.Protocol.V2.Commands;
+using URY.BAPS.Common.Protocol.V2.Decode;
+using URY.BAPS.Common.Protocol.V2.MessageIo;
+using URY.BAPS.Common.Protocol.V2.PrimitiveIo;
 
 namespace URY.BAPS.Client.Autofac
 {
@@ -57,12 +62,22 @@ namespace URY.BAPS.Client.Autofac
         /// </param>
         private static void RegisterCoreComponents(ContainerBuilder builder)
         {
-            builder.RegisterType<ConnectionManager>().AsSelf().InstancePerLifetimeScope();
-            builder.Register(c => c.Resolve<ConnectionManager>().EventFeed).As<IFullEventFeed>()
+            RegisterProtocolV2ConnectionComponents(builder);
+
+            builder.Register(c => c.Resolve<DetachableConnection>().EventFeed).As<IFullEventFeed>()
                 .InstancePerLifetimeScope();
             builder.RegisterType<ConfigCache>().AsSelf().InstancePerLifetimeScope();
             builder.RegisterType<InitialUpdatePerformer>().AsSelf().InstancePerLifetimeScope();
             builder.RegisterType<Protocol.V2.Core.Client>().AsSelf().InstancePerLifetimeScope();
+        }
+
+        private static void RegisterProtocolV2ConnectionComponents(ContainerBuilder builder)
+        {
+            builder.RegisterType<TcpConnection>().As<BAPS.Common.Protocol.V2.MessageIo.IConnection>()
+                .InstancePerLifetimeScope();
+            builder.RegisterType<DetachableConnection>().AsSelf().InstancePerLifetimeScope();
+            builder.RegisterType<ClientCommandDecoder>().As<CommandDecoder>().InstancePerLifetimeScope();
+            builder.RegisterType<ConnectionFactory<DetachableConnection>>().AsSelf().InstancePerLifetimeScope();
         }
 
         /// <summary>
@@ -78,7 +93,7 @@ namespace URY.BAPS.Client.Autofac
         /// </param>
         private static void RegisterAuthComponents(ContainerBuilder builder)
         {
-            builder.RegisterType<BapsAuthedConnectionBuilder>().As<IAuthedConnectionBuilder<TcpConnection>>()
+            builder.RegisterType<BapsLoginAttempter>().As<ILoginAttempter<TcpConnection>>()
                 .InstancePerLifetimeScope();
             builder.RegisterType<Authenticator<TcpConnection>>().AsSelf().InstancePerLifetimeScope();
         }

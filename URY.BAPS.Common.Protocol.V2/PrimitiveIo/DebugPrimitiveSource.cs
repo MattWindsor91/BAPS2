@@ -3,7 +3,7 @@ using System.Threading;
 using JetBrains.Annotations;
 using URY.BAPS.Common.Protocol.V2.Commands;
 
-namespace URY.BAPS.Common.Protocol.V2.Io
+namespace URY.BAPS.Common.Protocol.V2.PrimitiveIo
 {
     /// <summary>
     ///     A BapsNet primitive source that reads primitive items from a queue.

@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 using URY.BAPS.Client.Protocol.V2.Core;
 using URY.BAPS.Common.Protocol.V2.Commands;
 using URY.BAPS.Common.Protocol.V2.Encode;
+using URY.BAPS.Common.Protocol.V2.MessageIo;
 
 namespace URY.BAPS.Client.Protocol.V2.Controllers
 {
@@ -12,13 +13,13 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
     /// </summary>
     public abstract class BapsNetControllerBase
     {
-        [NotNull] protected readonly ConnectionManager ConnectionManager;
+        [NotNull] protected readonly DetachableConnection ConnectionManager;
 
         /// <summary>
         ///     Base constructor for BapsNet controllers.
         /// </summary>
         /// <param name="core">The client core to use to send messages.</param>
-        protected BapsNetControllerBase(ConnectionManager? core)
+        protected BapsNetControllerBase(DetachableConnection? core)
         {
             ConnectionManager = core ?? throw new ArgumentNullException(nameof(core));
         }

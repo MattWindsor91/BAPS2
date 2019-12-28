@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using JetBrains.Annotations;
 using URY.BAPS.Common.Protocol.V2.Commands;
-using URY.BAPS.Common.Protocol.V2.Io;
+using URY.BAPS.Common.Protocol.V2.PrimitiveIo;
 
 namespace URY.BAPS.Common.Protocol.V2.Encode
 {

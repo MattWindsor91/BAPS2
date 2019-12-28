@@ -7,6 +7,7 @@ using URY.BAPS.Client.Protocol.V2.Core;
 using URY.BAPS.Common.Model.ServerConfig;
 using URY.BAPS.Common.Protocol.V2.Commands;
 using URY.BAPS.Common.Protocol.V2.Encode;
+using URY.BAPS.Common.Protocol.V2.MessageIo;
 using URY.BAPS.Common.Protocol.V2.Ops;
 
 namespace URY.BAPS.Client.Protocol.V2.Controllers
@@ -21,7 +22,7 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
         /// </summary>
         [NotNull] private readonly ConfigCache _cache;
 
-        public ConfigController(ConnectionManager? core, ConfigCache? cache) : base(core)
+        public ConfigController(DetachableConnection? core, ConfigCache? cache) : base(core)
         {
             _cache = cache ?? throw new ArgumentNullException(nameof(cache));
         }

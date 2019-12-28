@@ -15,4 +15,7 @@
   <ItemGroup>
     <ProjectReference Include="..\URY.BAPS.Common.Protocol.V2\URY.BAPS.Common.Protocol.V2.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Decode" />
+  </ItemGroup>
 </Project>

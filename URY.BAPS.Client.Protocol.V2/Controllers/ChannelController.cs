@@ -9,6 +9,7 @@ using URY.BAPS.Common.Model.ServerConfig;
 using URY.BAPS.Common.Model.Track;
 using URY.BAPS.Common.Protocol.V2.Commands;
 using URY.BAPS.Common.Protocol.V2.Encode;
+using URY.BAPS.Common.Protocol.V2.MessageIo;
 using URY.BAPS.Common.Protocol.V2.Model;
 using URY.BAPS.Common.Protocol.V2.Ops;
 
@@ -22,7 +23,7 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
         private readonly byte _channelId;
         [NotNull] private readonly ConfigController _config;
 
-        public ChannelController(byte channelId, ConnectionManager? core, ConfigController? config) :
+        public ChannelController(byte channelId, DetachableConnection? core, ConfigController? config) :
             base(core)
         {
             _channelId = channelId;

@@ -2,18 +2,19 @@
 
 namespace URY.BAPS.Common.Model.MessageEvents
 {
+
     /// <summary>
     ///     Payload for a track-list item delete server update.
     /// </summary>
     public class TrackDeleteArgs : TrackIndexArgsBase
     {
-        public TrackDeleteArgs(ushort channelId, uint index) : base(channelId, index)
+        public TrackDeleteArgs(TrackIndex index) : base(index)
         {
         }
 
         public override string ToString()
         {
-            return $"TrackDelete: channel {ChannelId} index {Index}";
+            return $"TrackDelete ({Index})";
         }
     }
 
@@ -22,17 +23,17 @@ namespace URY.BAPS.Common.Model.MessageEvents
     /// </summary>
     public class TrackMoveArgs : TrackIndexArgsBase
     {
-        public TrackMoveArgs(ushort channelId, uint fromIndex, uint toIndex)
-            : base(channelId, fromIndex)
+        public TrackMoveArgs(TrackIndex fromIndex, uint newPosition)
+            : base(fromIndex)
         {
-            NewIndex = toIndex;
+            NewPosition = newPosition;
         }
 
-        public uint NewIndex { get; }
+        public uint NewPosition { get; }
 
         public override string ToString()
         {
-            return $"TrackMove: channel {ChannelId} index {Index} -> {NewIndex}";
+            return $"TrackMove ({Index} -> {NewPosition})";
         }
     }
 
@@ -41,8 +42,7 @@ namespace URY.BAPS.Common.Model.MessageEvents
     /// </summary>
     public class TrackAddArgs : TrackIndexArgsBase
     {
-        public TrackAddArgs(ushort channelId, uint index, ITrack item)
-            : base(channelId, index)
+        public TrackAddArgs(TrackIndex index, ITrack item) : base(index)
         {
             Item = item;
         }
@@ -51,7 +51,7 @@ namespace URY.BAPS.Common.Model.MessageEvents
 
         public override string ToString()
         {
-            return $"TrackAdd: channel {ChannelId} index {Index} is {Item}";
+            return $"TrackAdd: index {Index} is {Item}";
         }
     }
 

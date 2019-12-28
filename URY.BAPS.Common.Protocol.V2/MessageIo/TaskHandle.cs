@@ -2,13 +2,12 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace URY.BAPS.Client.Protocol.V2.Core
+namespace URY.BAPS.Common.Protocol.V2.MessageIo
 {
     /// <summary>
-    ///     A handle that allows for waiting on the client sender and receiver
-    ///     tasks.
+    ///     A handle that allows for waiting on sender and receiver tasks.
     /// </summary>
-    public sealed class ClientTaskHandle : IDisposable
+    public sealed class TaskHandle : IDisposable
     {
         private readonly Task _receiverTask;
 
@@ -26,20 +25,20 @@ namespace URY.BAPS.Client.Protocol.V2.Core
         ///     longer needed.
         /// </param>
         /// <returns>
-        ///     A <see cref="ClientTaskHandle"/> that can be used to wait on
+        ///     A <see cref="TaskHandle"/> that can be used to wait on
         ///     both sender and receiver.
         /// </returns>
-        public static ClientTaskHandle CreateAndLaunchTasks(Receiver receiver, Sender sender, CancellationToken token)
+        public static TaskHandle CreateAndLaunchTasks(Receiver receiver, Sender sender, CancellationToken token)
         {
             var tf = new TaskFactory(token, TaskCreationOptions.LongRunning, TaskContinuationOptions.None,
                 TaskScheduler.Current);
             var receiverTask = tf.StartNew(receiver.Run, token);
             var senderTask = tf.StartNew(() => sender.Run(token), token);
 
-            return new ClientTaskHandle(receiverTask, senderTask);
+            return new TaskHandle(receiverTask, senderTask);
         }
 
-        public ClientTaskHandle(Task receiverTask, Task senderTask)
+        public TaskHandle(Task receiverTask, Task senderTask)
         {
             _receiverTask = receiverTask;
             _senderTask = senderTask;

@@ -3,20 +3,25 @@ using System.Threading;
 using URY.BAPS.Common.Model.EventFeed;
 using URY.BAPS.Common.Protocol.V2.Decode;
 using URY.BAPS.Common.Protocol.V2.Encode;
-using URY.BAPS.Common.Protocol.V2.Io;
+using URY.BAPS.Common.Protocol.V2.PrimitiveIo;
 
-namespace URY.BAPS.Client.Protocol.V2.Core
+namespace URY.BAPS.Common.Protocol.V2.MessageIo
 {
     /// <summary>
-    ///     Manages a single message-based BapsNet connection.
+    ///     Wraps a single message-based BapsNet connection, providing the
+    ///     ability to subscribe to its messages before the connection is
+    ///     made.
     ///     <para>
     ///         This object internally tracks a single connection, which can
     ///         be set up using <see cref="Launch"/> and shut down using
     ///         <see cref="Shutdown"/>.
     ///     </para>
     /// </summary>
-    public sealed class ConnectionManager : IDisposable
+    public sealed class DetachableConnection : IConnection
     {
+        /// <summary>
+        ///     The underlying connection, if one has been created.
+        /// </summary>
         private Connection? _connection;
 
         private readonly DetachableEventFeed _eventFeed = new DetachableEventFeed();
@@ -48,28 +53,20 @@ namespace URY.BAPS.Client.Protocol.V2.Core
         }
 
         /// <summary>
-        ///     Attaches this <see cref="ConnectionManager"/> to a connection to a
-        ///     BapsNet server, expressed as a pair of primitive source and
-        ///     primitive sink, and starts the send and receive loops.
+        ///     Attaches this <see cref="DetachableConnection"/> to another message-level connection,
+        ///     starting its loops.
         /// </summary>
-        /// <param name="source">
-        ///     The primitive source from which BapsNet commands will be read.
+        /// <param name="connection">
+        ///     The connection to attach to the detachable connection.
         /// </param>
-        /// <param name="sink">
-        ///     The primitive sink to which BapsNet commands will be written.
-        /// </param>
-        public void Launch(IPrimitiveSource source, IPrimitiveSink sink)
+        public void Launch(Connection connection)
         {
             if (_connection != null)
-                throw new InvalidOperationException("Already launched.");
-            _connection = new Connection(source, sink, MakeClientCommandDecoder);
+                throw new InvalidOperationException("This detachable connection already has a connection attached.");
+            
+            _connection = connection;
             _connection.AttachToReceiver(_eventFeed);
             _connection.StartLoops();
-        }
-
-        private static CommandDecoder MakeClientCommandDecoder(IPrimitiveSource source, CancellationToken token)
-        {
-            return new ClientCommandDecoder(source, token);
         }
 
         /// <summary>
@@ -82,7 +79,7 @@ namespace URY.BAPS.Client.Protocol.V2.Core
         public void Shutdown()
         {
             _connection?.StopLoops();
-            _eventFeed.Detach();
+            _eventFeed.DetachAll();
             _connection = null;
         }
 
