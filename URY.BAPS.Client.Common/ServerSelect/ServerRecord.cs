@@ -19,11 +19,11 @@ namespace URY.BAPS.Client.Common.ServerSelect
         ///     The hostname at which the server resides.
         /// </summary>
         public string Host { get; set; }
-        
+
         /// <summary>
         ///     The TCP port at which the server resides.
         /// </summary>
-        public int Port { get; set; }
+        public int Port { get; set; } = 1350;
 
         /// <summary>
         ///     The colour hint for the server, if any.

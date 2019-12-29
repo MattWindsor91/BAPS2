@@ -53,7 +53,7 @@ namespace URY.BAPS.Common.Model.EventFeed
         /// <return>Whether or not <paramref name="subscription"/> was adequately disposed-of.</return>
         public bool Detach(IDisposable subscription)
         {
-            return _subscriptions.Remove(subscription);
+            return _subscriptions.IsDisposed || _subscriptions.Remove(subscription);
         }
 
         /// <summary>
