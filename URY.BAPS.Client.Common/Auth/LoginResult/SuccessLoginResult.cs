@@ -6,7 +6,7 @@
     public class SuccessLoginResult : ILoginResult
     {
         public bool IsSuccess => true;
-        public bool IsDone => true;
+        public bool IsFatal => true;
         public bool IsUserFault => false;
 
         public string Description => "(success)";

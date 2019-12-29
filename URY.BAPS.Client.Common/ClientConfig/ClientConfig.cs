@@ -5,10 +5,14 @@
     /// </summary>
     public class ClientConfig
     {
-        public string ServerAddress { get; set; } = "localhost";
-
-        public int ServerPort { get; set; } = 1350;
-
+        /// <summary>
+        ///     The configured set of known and default BAPS servers.
+        /// </summary>
+        public ServerPoolConfig Servers { get; set; } = new ServerPoolConfig();
+       
+        /// <summary>
+        ///     The default username to use when connecting to a BAPS server.
+        /// </summary>
         public string DefaultUsername { get; set; } = "";
     }
 }

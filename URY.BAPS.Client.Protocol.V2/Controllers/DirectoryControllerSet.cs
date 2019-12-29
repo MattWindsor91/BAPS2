@@ -9,7 +9,7 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
     /// </summary>
     public class DirectoryControllerSet : ControllerSetBase<DirectoryController>
     {
-        public DirectoryControllerSet(DetachableConnection? core) : base(core)
+        public DirectoryControllerSet(MessageConnectionManager? core) : base(core)
         {
         }
 

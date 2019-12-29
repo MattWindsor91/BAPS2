@@ -1,12 +1,13 @@
 ﻿using URY.BAPS.Client.Common.Auth;
 using URY.BAPS.Client.Common.ServerConfig;
+using URY.BAPS.Client.Common.ServerSelect;
+using URY.BAPS.Client.Protocol.V2.Auth;
 using URY.BAPS.Common.Model.EventFeed;
 using URY.BAPS.Common.Protocol.V2.Commands;
 using URY.BAPS.Common.Protocol.V2.Encode;
 using URY.BAPS.Common.Protocol.V2.MessageIo;
 using URY.BAPS.Common.Protocol.V2.PrimitiveIo;
 using URY.BAPS.Common.Protocol.V2.Ops;
-using IConnection = URY.BAPS.Common.Protocol.V2.MessageIo.IConnection;
 
 namespace URY.BAPS.Client.Protocol.V2.Core
 {
@@ -18,17 +19,18 @@ namespace URY.BAPS.Client.Protocol.V2.Core
     ///         into one place.
     ///     </para>
     /// </summary>
-    public class Client
+    public class V2Client
     {
-        private readonly DetachableConnection _connection;
+        private readonly MessageConnectionManager _connectionManager;
         private readonly ConfigCache _configCache;
         private readonly InitialUpdatePerformer _init;
-        private readonly Authenticator<IConnection> _auth;
+        private readonly ServerSelector _serverSelector;
+        private readonly LoginPerformer<SeededPrimitiveConnection, IMessageConnection> _login;
 
         /// <summary>
         ///     An event feed that receives updates from the BAPS server.
         /// </summary>
-        public IFullEventFeed EventFeed => _connection.EventFeed;
+        public IFullEventFeed EventFeed => _connectionManager.EventFeed;
 
         /// <summary>
         ///     Sends a message to the BapsNet server.
@@ -36,20 +38,20 @@ namespace URY.BAPS.Client.Protocol.V2.Core
         /// <param name="messageBuilder">The message to send.  If null, nothing is sent.</param>
         public void Send(MessageBuilder? messageBuilder)
         {
-            _connection.Send(messageBuilder);
+            _connectionManager.Send(messageBuilder);
         }
 
         /// <summary>
-        ///     Constructs a <see cref="Client"/>.
+        ///     Constructs a <see cref="V2Client"/>.
         ///     <para>
         ///         This constructor takes in a lot of dependencies; generally,
-        ///         code using <see cref="Client"/> will just ask for one from
+        ///         code using <see cref="V2Client"/> will just ask for one from
         ///         a dependency injector rather than manually constructing
         ///         one.
         ///     </para>
         /// </summary>
-        /// <param name="connection">
-        ///     A <see cref="DetachableConnection"/>, used to build and hold onto
+        /// <param name="connectionManager">
+        ///     A <see cref="MessageConnectionManager"/>, used to build and hold onto
         ///     message-passing connections to a BAPS server.
         /// </param>
         /// <param name="configCache">
@@ -60,19 +62,23 @@ namespace URY.BAPS.Client.Protocol.V2.Core
         ///     An initial update performer, used to send certain set-up
         ///     messages to a BAPS server on connecting to one.
         /// </param>
-        /// <param name="auth">
-        ///     An object that performs authentication for low-level
-        ///     connections to the BAPS server, returning
-        ///     <see cref="TcpConnection"/>s that are then sent to the
-        ///     <paramref name="connection"/>.
+        /// <param name="serverSelector">
+        ///     An object that performs server selection.
         /// </param>
-        public Client(DetachableConnection connection, ConfigCache configCache, InitialUpdatePerformer init,
-            Authenticator<IConnection> auth)
+        /// <param name="login">
+        ///     An object that performs authentication for low-level connections to the BAPS server, returning
+        ///     <see cref="TcpPrimitiveConnection"/>s that are then sent to the
+        ///     <paramref name="connectionManager"/>.
+        /// </param>
+        public V2Client(MessageConnectionManager connectionManager, ConfigCache configCache, InitialUpdatePerformer init,
+            ServerSelector serverSelector,
+            LoginPerformer<SeededPrimitiveConnection, IMessageConnection> login)
         {
-            _connection = connection;
+            _connectionManager = connectionManager;
             _configCache = configCache;
             _init = init;
-            _auth = auth;
+            _serverSelector = serverSelector;
+            _login = login;
         }
 
         /// <summary>
@@ -86,10 +92,13 @@ namespace URY.BAPS.Client.Protocol.V2.Core
         {
             _configCache.SubscribeToReceiver(EventFeed);
 
-            var socket = _auth.Run();
-            if (socket is null) return false;
+            _serverSelector.Run();
+            if (!_serverSelector.HasConnection) return false;
 
-            _connection.Launch(socket, socket);
+            _login.Run(_serverSelector.Connection);
+            if (!_login.HasConnection) return false;
+            
+            _connectionManager.Launch(_login.Connection);
             _init.Run();
             return true;
         }
@@ -100,7 +109,7 @@ namespace URY.BAPS.Client.Protocol.V2.Core
         public void Stop()
         {
             NotifyServerOfQuit();
-            _connection.Shutdown();
+            _connectionManager.Shutdown();
         }
 
         /// <summary>
@@ -109,7 +118,7 @@ namespace URY.BAPS.Client.Protocol.V2.Core
         private void NotifyServerOfQuit()
         {
             var cmd = new SystemCommand(SystemOp.End);
-            _connection.TrySend(new MessageBuilder(cmd).Add("Normal Termination"));
+            _connectionManager.TrySend(new MessageBuilder(cmd).Add("Normal Termination"));
         }
     }
 }

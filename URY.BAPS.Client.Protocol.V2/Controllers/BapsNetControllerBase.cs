@@ -13,13 +13,13 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
     /// </summary>
     public abstract class BapsNetControllerBase
     {
-        [NotNull] protected readonly DetachableConnection ConnectionManager;
+        [NotNull] protected readonly MessageConnectionManager ConnectionManager;
 
         /// <summary>
         ///     Base constructor for BapsNet controllers.
         /// </summary>
         /// <param name="core">The client core to use to send messages.</param>
-        protected BapsNetControllerBase(DetachableConnection? core)
+        protected BapsNetControllerBase(MessageConnectionManager? core)
         {
             ConnectionManager = core ?? throw new ArgumentNullException(nameof(core));
         }

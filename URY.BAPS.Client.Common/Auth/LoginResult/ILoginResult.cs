@@ -2,7 +2,7 @@
 {
     /// <summary>
     ///     Interface for results returned from the inner parts of an
-    ///     <see cref="Authenticator{TConn}"/> stack.
+    ///     <see cref="LoginPerformer{TRawConn,TAuthConn}"/> stack.
     /// </summary>
     public interface ILoginResult
     {
@@ -14,7 +14,7 @@
         /// <summary>
         ///     Whether the login should be abandoned.
         /// </summary>
-        bool IsDone { get; }
+        bool IsFatal { get; }
 
         /// <summary>
         ///     Whether the login failed due to a user error or decision.

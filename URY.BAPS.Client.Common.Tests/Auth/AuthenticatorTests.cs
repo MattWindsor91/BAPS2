@@ -6,23 +6,23 @@ using Xunit;
 namespace URY.BAPS.Client.Common.Tests.Auth
 {
     /// <summary>
-    ///     Tests covering the whole <see cref="Authenticator{TConn}" />.
+    ///     Tests covering the whole <see cref="LoginPerformer{TRawConn,TAuthConn}" />.
     /// </summary>
     public class AuthenticatorTests
     {
         private readonly DebugLoginErrorHandler _errorHandler = new DebugLoginErrorHandler();
 
-        private Authenticator<T> MakeAuthenticator<T>(T connection, ILoginPromptResponse response, ILoginResult result)
+        private LoginPerformer<,> MakeAuthenticator<T>(T connection, IAuthPromptResponse response, ILoginResult result)
             where T : class
         {
-            var prompter = new DummyLoginPrompter(response);
-            var builder = new DummyLoginAttempter<T>(connection, result);
-            return new Authenticator<T>(prompter, _errorHandler, builder);
+            var prompter = new DummyAuthPrompter(response);
+            var builder = new DummyAuthPerformer<T>(connection, result);
+            return new LoginPerformer<,>(prompter, _errorHandler, builder);
         }
 
         private string SummariseResult(ILoginResult r)
         {
-            return string.Join('|', r.IsSuccess ? "S" : "s", r.IsDone ? "D" : "d", r.IsUserFault ? "U" : "u",
+            return string.Join('|', r.IsSuccess ? "S" : "s", r.IsFatal ? "D" : "d", r.IsUserFault ? "U" : "u",
                 r.Description);
         }
 
@@ -34,7 +34,7 @@ namespace URY.BAPS.Client.Common.Tests.Auth
         [Fact]
         public void TestPromptQuit()
         {
-            var auth = MakeAuthenticator("foo", new QuitLoginPromptResponse(), new SuccessLoginResult());
+            var auth = MakeAuthenticator("foo", new QuitAuthPromptResponse(), new SuccessLoginResult());
             _ = auth.Run();
             AssertOneResultMatching("s|D|U|User quit the login prompt.");
         }
@@ -45,7 +45,7 @@ namespace URY.BAPS.Client.Common.Tests.Auth
         public void TestUserFailure()
         {
             var auth =
- MakeAuthenticator("foo", new LoginPromptResponse("foo", "bar", "localhost", 1350), new UserFailureLoginResult("Invalid password."));
+ MakeAuthenticator("foo", new AuthPromptResponse("foo", "bar", "localhost", 1350), new UserFailureLoginResult("Invalid password."));
             _ = auth.Run();
             AssertOneResultMatching("s|d|U|Invalid password.");
         }

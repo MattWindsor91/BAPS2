@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using URY.BAPS.Common.Model.EventFeed;
+using URY.BAPS.Common.Model.MessageEvents;
 using URY.BAPS.Common.Protocol.V2.Decode;
 using URY.BAPS.Common.Protocol.V2.Encode;
 using URY.BAPS.Common.Protocol.V2.PrimitiveIo;
@@ -11,7 +12,7 @@ namespace URY.BAPS.Common.Protocol.V2.MessageIo
     ///     An object representing a live message-level connection to a BapsNet endpoint, with
     ///     running send and receive loops.
     /// </summary>
-    public sealed class Connection : IConnection
+    public sealed class MessageConnection : IMessageConnection
     {
         /// <summary>
         ///     The amount of delay added to the cancellation request when
@@ -26,7 +27,7 @@ namespace URY.BAPS.Common.Protocol.V2.MessageIo
         private TaskHandle? _tasks;
 
         /// <summary>
-        ///     Constructs a <see cref="Connection"/> on top of the given
+        ///     Constructs a <see cref="MessageConnection"/> on top of the given
         ///     BapsNet primitive handlers.
         /// </summary>
         /// <param name="connection">The primitive connection used to receive commands.</param>
@@ -34,25 +35,13 @@ namespace URY.BAPS.Common.Protocol.V2.MessageIo
         ///     A function that produces command decoders appropriate for the
         ///     role of this connection (client or server).
         /// </param>
-        public Connection(PrimitiveIo.IConnection connection, Func<IPrimitiveSource, CancellationToken, CommandDecoder> commandDecoderFactory)
+        public MessageConnection(IPrimitiveConnection connection, Func<IPrimitiveSource, CancellationToken, CommandDecoder> commandDecoderFactory)
         {
             _receiver = CreateReceiver(connection, commandDecoderFactory);
             _sender = new Sender(connection);
         }
         
-        public IFullEventFeed EventFeed => new FilteringEventFeed(_receiver.ObserveMessage);
-        
-        /// <summary>
-        ///     Attaches the given server updater to this connection's
-        ///     receiver, causing it to receive decoded server messages.
-        /// </summary>
-        /// <param name="updater">
-        ///     The updater to attach to the receiver.
-        /// </param>
-        public void AttachToReceiver(DetachableEventFeed updater)
-        {
-            updater.Attach(_receiver.ObserveMessage);
-        }
+        public IObservable<MessageArgsBase> RawEventFeed => _receiver.ObserveMessage;
 
         /// <summary>
         ///     Sends a message to the BapsNet server.

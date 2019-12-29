@@ -7,7 +7,7 @@ namespace URY.BAPS.Common.Protocol.V2.PrimitiveIo
     /// <summary>
     ///     A low-level BapsNetV2 connection over TCP/IP.
     /// </summary>
-    public class TcpConnection : IConnection, IDisposable
+    public class TcpPrimitiveConnection : IPrimitiveConnection
     {
         private readonly StreamPrimitiveSource _primitiveSource;
 
@@ -19,10 +19,10 @@ namespace URY.BAPS.Common.Protocol.V2.PrimitiveIo
         private readonly StreamPrimitiveSink _primitiveSink;
 
         /// <summary>
-        ///     Constructs a <see cref="TcpConnection"/> over a <see cref="TcpClient"/>.
+        ///     Constructs a <see cref="TcpPrimitiveConnection"/> over a <see cref="TcpClient"/>.
         /// </summary>
         /// <param name="clientSocket">The socket representing the connection.</param>
-        public TcpConnection(TcpClient clientSocket)
+        public TcpPrimitiveConnection(TcpClient clientSocket)
         {
             _clientSocket = clientSocket;
 

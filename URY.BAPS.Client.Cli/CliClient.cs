@@ -10,12 +10,12 @@ namespace URY.BAPS.Client.Cli
     /// </summary>
     public class CliClient
     {
-        public CliClient(Protocol.V2.Core.Client client)
+        public CliClient(Protocol.V2.Core.V2Client client)
         {
             _client = client;
         }
         
-        private readonly Protocol.V2.Core.Client _client;
+        private readonly Protocol.V2.Core.V2Client _client;
         
         public void Run()
         {

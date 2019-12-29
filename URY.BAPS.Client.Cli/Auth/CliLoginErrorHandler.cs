@@ -1,7 +1,7 @@
 ﻿using URY.BAPS.Client.Common.Auth;
 using URY.BAPS.Client.Common.Auth.LoginResult;
 
-namespace URY.BAPS.Client.Cli
+namespace URY.BAPS.Client.Cli.Auth
 {
     /// <summary>
     ///     A <see cref="ILoginErrorHandler"/> that dumps errors onto standard

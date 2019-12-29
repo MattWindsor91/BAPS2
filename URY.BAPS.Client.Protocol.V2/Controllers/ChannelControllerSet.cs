@@ -12,7 +12,7 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
     {
         [NotNull] private readonly ConfigController _config;
 
-        public ChannelControllerSet(DetachableConnection? core, ConfigController? config) : base(core)
+        public ChannelControllerSet(MessageConnectionManager? core, ConfigController? config) : base(core)
         {
             _config = config ?? throw new ArgumentNullException(nameof(config));
         }

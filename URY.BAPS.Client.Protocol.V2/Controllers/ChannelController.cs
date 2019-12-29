@@ -23,7 +23,7 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
         private readonly byte _channelId;
         [NotNull] private readonly ConfigController _config;
 
-        public ChannelController(byte channelId, DetachableConnection? core, ConfigController? config) :
+        public ChannelController(byte channelId, MessageConnectionManager? core, ConfigController? config) :
             base(core)
         {
             _channelId = channelId;

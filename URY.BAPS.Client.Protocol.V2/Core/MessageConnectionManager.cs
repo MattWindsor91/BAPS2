@@ -17,12 +17,12 @@ namespace URY.BAPS.Common.Protocol.V2.MessageIo
     ///         <see cref="Shutdown"/>.
     ///     </para>
     /// </summary>
-    public sealed class DetachableConnection : IConnection
+    public sealed class MessageConnectionManager : IDisposable
     {
         /// <summary>
         ///     The underlying connection, if one has been created.
         /// </summary>
-        private Connection? _connection;
+        private IMessageConnection? _connection;
 
         private readonly DetachableEventFeed _eventFeed = new DetachableEventFeed();
 
@@ -53,22 +53,22 @@ namespace URY.BAPS.Common.Protocol.V2.MessageIo
         }
 
         /// <summary>
-        ///     Attaches this <see cref="DetachableConnection"/> to another message-level connection,
+        ///     Attaches this <see cref="MessageConnectionManager"/> to another message-level connection,
         ///     starting its loops.
         /// </summary>
-        /// <param name="connection">
+        /// <param name="messageConnection">
         ///     The connection to attach to the detachable connection.
         /// </param>
-        public void Launch(Connection connection)
+        public void Launch(IMessageConnection messageConnection)
         {
             if (_connection != null)
                 throw new InvalidOperationException("This detachable connection already has a connection attached.");
+            _connection = messageConnection ?? throw new ArgumentNullException(nameof(messageConnection));
             
-            _connection = connection;
-            _connection.AttachToReceiver(_eventFeed);
+            _eventFeed.Attach(_connection.RawEventFeed);
             _connection.StartLoops();
         }
-
+        
         /// <summary>
         ///     Shuts down any active connection.
         ///     <para>
@@ -78,7 +78,6 @@ namespace URY.BAPS.Common.Protocol.V2.MessageIo
         /// </summary>
         public void Shutdown()
         {
-            _connection?.StopLoops();
             _eventFeed.DetachAll();
             _connection = null;
         }

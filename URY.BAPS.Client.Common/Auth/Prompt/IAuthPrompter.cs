@@ -3,18 +3,18 @@
     /// <summary>
     ///     Interface for authenticator components that display login prompts.
     /// </summary>
-    public interface ILoginPrompter
+    public interface IAuthPrompter
     {
         /// <summary>
-        ///     Asks the <see cref="ILoginPrompter"/> to prompt the user for
+        ///     Asks the <see cref="IAuthPrompter"/> to prompt the user for
         ///     login details.
         /// </summary>
         void Prompt();
 
         /// <summary>
-        ///     Gets the <see cref="ILoginPromptResponse"/> corresponding to the last
+        ///     Gets the <see cref="IAuthPromptResponse"/> corresponding to the last
         ///     call to <see cref="Prompt"/>.
         /// </summary>
-        ILoginPromptResponse Response { get; }
+        IAuthPromptResponse Response { get; }
     }
 }

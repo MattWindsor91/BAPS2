@@ -12,7 +12,7 @@
 
         public bool IsSuccess => false;
 
-        public bool IsDone => false;
+        public bool IsFatal => false;
 
         public bool IsUserFault => true;
 

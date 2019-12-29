@@ -20,7 +20,7 @@ namespace URY.BAPS.Client.Common.Auth.LoginResult
 
         public bool IsSuccess => false;
 
-        public bool IsDone => false;
+        public bool IsFatal => true;
 
         public bool IsUserFault => false;
 

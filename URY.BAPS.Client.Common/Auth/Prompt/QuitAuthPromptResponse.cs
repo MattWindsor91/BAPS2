@@ -1,20 +1,18 @@
 ﻿namespace URY.BAPS.Client.Common.Auth.Prompt
 {
     /// <summary>
-    ///     A <see cref="ILoginPromptResponse"/> that represents the situation where
+    ///     A <see cref="IAuthPromptResponse"/> that represents the situation where
     ///     the user gave up on trying to log into a server.
     /// </summary>
-    public class QuitLoginPromptResponse : ILoginPromptResponse
+    public class QuitAuthPromptResponse : IAuthPromptResponse
     {
         public bool HasCredentials => false;
-        public bool IsDifferentServer(ILoginPromptResponse other)
+        public bool IsDifferentServer(IAuthPromptResponse other)
         {
             return other.HasCredentials;
         }
 
         public string Username => "";
         public string Password => "";
-        public string Host => "";
-        public int Port => -1;
     }
 }

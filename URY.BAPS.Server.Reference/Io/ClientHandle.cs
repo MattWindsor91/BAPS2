@@ -9,28 +9,28 @@ namespace URY.BAPS.Server.Io
     /// <summary>
     ///     A handle for a particular BAPS server client.
     /// </summary>
-    public sealed class ClientHandle : MessageIo.IConnection
+    public sealed class ClientHandle : MessageIo.IMessageConnection
     {
         /// <summary>
         ///     The message-IO connection to the client.
         /// </summary>
-        private readonly MessageIo.IConnection _connection;
+        private readonly MessageIo.IMessageConnection _messageConnection;
 
-        public ClientHandle(MessageIo.IConnection connection)
+        public ClientHandle(MessageIo.IMessageConnection messageConnection)
         {
-            _connection = connection;
+            _messageConnection = messageConnection;
         }
 
         public void Dispose()
         {
-            _connection?.Dispose();
+            _messageConnection?.Dispose();
         }
 
-        public IFullEventFeed EventFeed => _connection.EventFeed;
+        public IFullEventFeed EventFeed => _messageConnection.EventFeed;
 
         public void Send(MessageBuilder? messageBuilder)
         {
-            _connection.Send(messageBuilder);
+            _messageConnection.Send(messageBuilder);
         }
     }
 }

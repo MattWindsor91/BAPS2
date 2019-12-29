@@ -14,7 +14,7 @@ namespace URY.BAPS.Client.Protocol.V2.Controllers
     [UsedImplicitly]
     public class SystemController : BapsNetControllerBase
     {
-        public SystemController(DetachableConnection? core) : base(core)
+        public SystemController(MessageConnectionManager? core) : base(core)
         {
         }
 

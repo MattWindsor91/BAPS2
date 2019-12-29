@@ -5,9 +5,12 @@ using System.Threading;
 using Autofac;
 using Autofac.Core;
 using URY.BAPS.Client.Autofac;
+using URY.BAPS.Client.Cli.Auth;
+using URY.BAPS.Client.Cli.ServerSelect;
 using URY.BAPS.Client.Common.Auth;
 using URY.BAPS.Client.Common.Auth.Prompt;
 using URY.BAPS.Client.Common.ClientConfig;
+using URY.BAPS.Client.Common.ServerSelect;
 using URY.BAPS.Common.Model.MessageEvents;
 
 namespace URY.BAPS.Client.Cli
@@ -30,21 +33,18 @@ namespace URY.BAPS.Client.Cli
 
         private static ClientModule? GetClientModule(IReadOnlyList<string> args)
         {
-            var module = new ClientModule();
-
-            switch (args.Count)
+            return args.Count switch
             {
-                case 0:
-                    break;
-                case 1:
-                    module.ConfigPath = args[0];
-                    break;
-                default:
-                    System.Console.Error.WriteLine($"Usage: {AppDomain.CurrentDomain.FriendlyName} [INI_PATH]");
-                    return null;
-            }
-
-            return module;
+                0 => ClientModule.WithConfigFromIniFile(),
+                1 => ClientModule.WithConfigFromIniFile(args[0]),
+                _ => ArgError()
+            };
+        }
+        
+        private static ClientModule? ArgError()
+        {
+            Console.Error.WriteLine($"Usage: {AppDomain.CurrentDomain.FriendlyName} [INI_PATH]");
+            return null;
         }
 
         private static CliClient? TryGetConsole(IComponentContext scope)
@@ -56,7 +56,7 @@ namespace URY.BAPS.Client.Cli
             }
             catch (DependencyResolutionException exc)
             {
-                System.Console.Error.WriteLine("Couldn't set up the components required to start the BAPS client.");
+                Console.Error.WriteLine("Couldn't set up the components required to start the BAPS client.");
                 ShowNestedErrorMessage(exc);
             }
 
@@ -78,16 +78,18 @@ namespace URY.BAPS.Client.Cli
                 (inner, exc) = (exc.InnerException, inner);
             }
             
-            System.Console.Error.WriteLine($"Reason: {exc.Message}");
+            Console.Error.WriteLine($"Reason: {exc.Message}");
         }
 
 
-        private static IContainer BuildDependencyInjectionContainer(ClientModule module)
+        private static IContainer BuildDependencyInjectionContainer(IModule clientModule)
         {
             var builder = new ContainerBuilder();
-            builder.RegisterModule(module);
-            builder.RegisterType<CliLoginPrompter>().As<ILoginPrompter>().InstancePerLifetimeScope();
+            builder.RegisterModule(clientModule);
+            builder.RegisterType<CliAuthPrompter>().As<IAuthPrompter>().InstancePerLifetimeScope();
             builder.RegisterType<CliLoginErrorHandler>().As<ILoginErrorHandler>().InstancePerLifetimeScope();
+            builder.RegisterType<CliServerPrompter>().As<IServerPrompter>().InstancePerLifetimeScope();
+            builder.RegisterType<CliServerErrorHandler>().As<IServerErrorHandler>().InstancePerLifetimeScope();
             builder.RegisterType<CliClient>().AsSelf().InstancePerLifetimeScope();
             var container = builder.Build();
             return container;
