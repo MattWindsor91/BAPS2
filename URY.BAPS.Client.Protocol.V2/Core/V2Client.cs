@@ -1,7 +1,7 @@
-﻿using URY.BAPS.Client.Common.Auth;
+﻿using URY.BAPS.Client.Common.Login;
 using URY.BAPS.Client.Common.ServerConfig;
 using URY.BAPS.Client.Common.ServerSelect;
-using URY.BAPS.Client.Protocol.V2.Auth;
+using URY.BAPS.Client.Protocol.V2.Login;
 using URY.BAPS.Common.Model.EventFeed;
 using URY.BAPS.Common.Protocol.V2.Commands;
 using URY.BAPS.Common.Protocol.V2.Encode;
@@ -25,7 +25,7 @@ namespace URY.BAPS.Client.Protocol.V2.Core
         private readonly ConfigCache _configCache;
         private readonly InitialUpdatePerformer _init;
         private readonly ServerSelector _serverSelector;
-        private readonly LoginPerformer<SeededPrimitiveConnection, IMessageConnection> _login;
+        private readonly ClientSideLoginPerformer<SeededPrimitiveConnection, IMessageConnection> _login;
 
         /// <summary>
         ///     An event feed that receives updates from the BAPS server.
@@ -72,7 +72,7 @@ namespace URY.BAPS.Client.Protocol.V2.Core
         /// </param>
         public V2Client(MessageConnectionManager connectionManager, ConfigCache configCache, InitialUpdatePerformer init,
             ServerSelector serverSelector,
-            LoginPerformer<SeededPrimitiveConnection, IMessageConnection> login)
+            ClientSideLoginPerformer<SeededPrimitiveConnection, IMessageConnection> login)
         {
             _connectionManager = connectionManager;
             _configCache = configCache;

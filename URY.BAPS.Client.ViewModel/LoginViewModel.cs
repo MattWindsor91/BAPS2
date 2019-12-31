@@ -10,8 +10,6 @@ namespace URY.BAPS.Client.ViewModel
     [UsedImplicitly]
     public class LoginViewModel : ViewModelBase, ILoginViewModel
     {
-        private int _port;
-        [NotNull] private string _server;
         [NotNull] private string _username;
 
         /// <summary>
@@ -25,8 +23,6 @@ namespace URY.BAPS.Client.ViewModel
         public LoginViewModel(IClientConfigManager configManager)
         {
             var config = configManager.LoadConfig();
-            _server = config.ServerAddress;
-            _port = config.ServerPort;
             _username = config.DefaultUsername;
         }
 
@@ -35,18 +31,6 @@ namespace URY.BAPS.Client.ViewModel
         {
             get => _username;
             set => this.RaiseAndSetIfChanged(ref _username, value);
-        }
-
-        public string Server
-        {
-            get => _server;
-            set => this.RaiseAndSetIfChanged(ref _server, value);
-        }
-
-        public int Port
-        {
-            get => _port;
-            set => this.RaiseAndSetIfChanged(ref _port, value);
         }
     }
 }

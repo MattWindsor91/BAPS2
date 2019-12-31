@@ -1,5 +1,6 @@
 using System.Net;
 using Microsoft.Extensions.Logging;
+using URY.BAPS.Common.Infrastructure;
 
 namespace URY.BAPS.Server.Config
 {
@@ -35,12 +36,12 @@ namespace URY.BAPS.Server.Config
         /// </summary>
         public IPEndPoint HostEndPoint => new IPEndPoint(HostAddress, Port);
 
-        public Protocol Protocol { get; set; } = Protocol.BapsNetV2;
+        public BapsProtocol BapsProtocol { get; set; } = BapsProtocol.BapsNetV2;
 
         public void DumpToLogger()
         {
             _logger.LogInformation("Listening on host {Host}, port {Port}, on BAPS protocol {Protocol}.", Host, Port,
-                Protocol);
+                BapsProtocol);
         }
     }
 }

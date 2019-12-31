@@ -2,15 +2,15 @@
 using System.Net.Sockets;
 using Autofac;
 using Microsoft.Extensions.Configuration;
-using URY.BAPS.Client.Common.Auth;
-using URY.BAPS.Client.Common.Auth.Prompt;
 using URY.BAPS.Client.Common.ClientConfig;
+using URY.BAPS.Client.Common.Login;
+using URY.BAPS.Client.Common.Login.Prompt;
 using URY.BAPS.Client.Common.ServerConfig;
 using URY.BAPS.Client.Common.ServerSelect;
-using URY.BAPS.Client.Protocol.V2.Auth;
 using URY.BAPS.Client.Protocol.V2.Controllers;
 using URY.BAPS.Client.Protocol.V2.Core;
 using URY.BAPS.Client.Protocol.V2.Decode;
+using URY.BAPS.Client.Protocol.V2.Login;
 using URY.BAPS.Common.Model.EventFeed;
 using URY.BAPS.Common.Protocol.V2.Decode;
 using URY.BAPS.Common.Protocol.V2.MessageIo;
@@ -116,7 +116,7 @@ namespace URY.BAPS.Client.Autofac
                  .InstancePerLifetimeScope();
              builder.RegisterType<V2AuthPerformer>().As<IAuthPerformer<SeededPrimitiveConnection,IMessageConnection>>()
                  .InstancePerLifetimeScope();           
-             builder.RegisterType<LoginPerformer<SeededPrimitiveConnection,IMessageConnection>>().AsSelf().InstancePerLifetimeScope();
+             builder.RegisterType<ClientSideLoginPerformer<SeededPrimitiveConnection,IMessageConnection>>().AsSelf().InstancePerLifetimeScope();
         }
 
         /// <summary>

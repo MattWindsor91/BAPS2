@@ -57,7 +57,7 @@ namespace URY.BAPS.Server.Io
             while (true)
             {
                 token.ThrowIfCancellationRequested();
-                var client = await _listener.AcceptTcpClientAsync();
+                var client = await _listener.AcceptTcpClientAsync().ConfigureAwait(true);
 
                 OnNewConnection(client);
             }

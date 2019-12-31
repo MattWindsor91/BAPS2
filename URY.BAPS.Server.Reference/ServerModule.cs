@@ -5,12 +5,14 @@ using Autofac;
 using Autofac.Core;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using URY.BAPS.Common.Infrastructure.Login;
 using URY.BAPS.Common.Protocol.V2.Decode;
 using URY.BAPS.Server.Config;
 using URY.BAPS.Server.Io;
 using URY.BAPS.Server.Managers;
 using URY.BAPS.Server.Model;
 using URY.BAPS.Server.Protocol.V2.Decode;
+using URY.BAPS.Server.Protocol.V2.Io;
 
 namespace URY.BAPS.Server
 {
@@ -33,7 +35,7 @@ namespace URY.BAPS.Server
             RegisterModels(builder);
             RegisterManagers(builder);
 
-            builder.RegisterType<Server>().AsSelf().InstancePerLifetimeScope();
+            builder.RegisterType<BapsServer>().AsSelf().InstancePerLifetimeScope();
         }
 
         private void RegisterConfig(ContainerBuilder builder)
@@ -46,7 +48,8 @@ namespace URY.BAPS.Server
         private static void RegisterIoComponents(ContainerBuilder builder)
         {
             builder.RegisterType<ServerCommandDecoder>().As<CommandDecoder>().InstancePerDependency();
-            
+            builder.RegisterType<ServerSideLoginPerformer>().As<ILoginPerformer<ClientHandle>>()
+                .InstancePerLifetimeScope();
             builder.RegisterType<ClientPool>().AsSelf().InstancePerLifetimeScope();
             builder.RegisterType<TcpServer>().AsSelf().InstancePerLifetimeScope();
         }

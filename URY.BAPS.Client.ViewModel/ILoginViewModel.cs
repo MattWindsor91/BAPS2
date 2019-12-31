@@ -19,6 +19,8 @@
         /// </summary>
         string Username { get; set; }
 
+        // TODO(@MattWindsor91): move to a new view model
+#if false
         /// <summary>
         ///     The hostname of the custom server.
         /// </summary>
@@ -28,5 +30,6 @@
         ///     The port of the custom server.
         /// </summary>
         int Port { get; set; }
+#endif
     }
 }

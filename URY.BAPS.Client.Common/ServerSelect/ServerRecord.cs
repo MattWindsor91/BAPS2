@@ -14,11 +14,11 @@ namespace URY.BAPS.Client.Common.ServerSelect
         ///     The human-readable name of the server.
         /// </summary>
         public string Name { get; set; } = "<untitled>";
-        
+
         /// <summary>
         ///     The hostname at which the server resides.
         /// </summary>
-        public string Host { get; set; }
+        public string Host { get; set; } = "";
 
         /// <summary>
         ///     The TCP port at which the server resides.

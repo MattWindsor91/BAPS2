@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Concurrent;
-using System.Reactive;
 using URY.BAPS.Common.Model.EventFeed;
+using URY.BAPS.Server.Protocol.V2.Io;
 
 namespace URY.BAPS.Server.Io
 {
@@ -44,6 +44,7 @@ namespace URY.BAPS.Server.Io
                 client.Dispose();
                 _requestFeed.Detach(subscription);
             }
+            _requestFeed.Dispose();
         }
     }
 }

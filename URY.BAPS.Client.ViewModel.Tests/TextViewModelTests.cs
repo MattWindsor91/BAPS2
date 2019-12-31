@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
+using JetBrains.Annotations;
 using ReactiveUI;
 using URY.BAPS.Common.Model.EventFeed;
 using URY.BAPS.Common.Model.MessageEvents;
@@ -39,7 +40,7 @@ namespace URY.BAPS.Client.ViewModel.Tests
 
         private void SendTrackLoadMessage(ITrack track)
         {
-            SendMessage(new TrackLoadArgs(0, 0, track));
+            SendMessage(new TrackLoadArgs(new TrackIndex {ChannelId = 0, Position = 0}, track));
         }
 
         /// <summary>
@@ -120,6 +121,7 @@ namespace URY.BAPS.Client.ViewModel.Tests
             };
         }
 
+        [AssertionMethod]
         private static void AssertCanExecute(bool expected, IReactiveCommand cmd)
         {
             // If the command is currently executing, CanExecute will return
@@ -132,6 +134,7 @@ namespace URY.BAPS.Client.ViewModel.Tests
             Assert.Equal(expected, cmd.CanExecute.FirstAsync().Wait());
         }
 
+        [AssertionMethod]
         private void AssertFontScaleEqual(int expected)
         {
             Assert.Equal(expected, _viewModel.FontScale);

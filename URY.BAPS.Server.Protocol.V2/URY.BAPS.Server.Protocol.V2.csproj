@@ -2,14 +2,12 @@
 
     <PropertyGroup>
         <TargetFramework>netstandard2.1</TargetFramework>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Common\URY.BAPS.Common.Infrastructure\URY.BAPS.Common.Infrastructure.csproj" />
       <ProjectReference Include="..\URY.BAPS.Common.Protocol.V2\URY.BAPS.Common.Protocol.V2.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Io" />
     </ItemGroup>
 
 </Project>

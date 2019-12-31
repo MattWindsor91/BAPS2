@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Threading;
 using URY.BAPS.Common.Model.EventFeed;
-using URY.BAPS.Common.Protocol.V2.Decode;
 using URY.BAPS.Common.Protocol.V2.Encode;
-using URY.BAPS.Common.Protocol.V2.PrimitiveIo;
+using URY.BAPS.Common.Protocol.V2.MessageIo;
 
-namespace URY.BAPS.Common.Protocol.V2.MessageIo
+namespace URY.BAPS.Client.Protocol.V2.Core
 {
     /// <summary>
     ///     Wraps a single message-based BapsNet connection, providing the

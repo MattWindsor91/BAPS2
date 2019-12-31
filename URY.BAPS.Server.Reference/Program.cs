@@ -30,7 +30,7 @@ namespace URY.BAPS.Server
             server.Run().Wait();
         }
 
-        private ServerConfig GetServerConfig(IConfigurationRoot configuration, ILoggerFactory loggerFactory)
+        private static ServerConfig GetServerConfig(IConfigurationRoot configuration, ILoggerFactory loggerFactory)
         {
             var configFactory = new ConfigFactory(loggerFactory);
             var config = configFactory.FromConfiguration(configuration);
@@ -44,7 +44,7 @@ namespace URY.BAPS.Server
             return confBuilder.Build();
         }
 
-        private ILoggerFactory MakeLoggerFactory(IConfiguration configuration)
+        private static ILoggerFactory MakeLoggerFactory(IConfiguration configuration)
         {
             var loggingSection = configuration.GetSection("logging");
             return LoggerFactory.Create(builder =>

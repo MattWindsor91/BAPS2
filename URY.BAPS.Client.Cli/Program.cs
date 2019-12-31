@@ -5,11 +5,11 @@ using System.Threading;
 using Autofac;
 using Autofac.Core;
 using URY.BAPS.Client.Autofac;
-using URY.BAPS.Client.Cli.Auth;
+using URY.BAPS.Client.Cli.Login;
 using URY.BAPS.Client.Cli.ServerSelect;
-using URY.BAPS.Client.Common.Auth;
-using URY.BAPS.Client.Common.Auth.Prompt;
 using URY.BAPS.Client.Common.ClientConfig;
+using URY.BAPS.Client.Common.Login;
+using URY.BAPS.Client.Common.Login.Prompt;
 using URY.BAPS.Client.Common.ServerSelect;
 using URY.BAPS.Common.Model.MessageEvents;
 

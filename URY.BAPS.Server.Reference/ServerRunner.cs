@@ -35,7 +35,7 @@ namespace URY.BAPS.Server
         public Task Run()
         {
             _config.DumpToLogger();
-            return _diScope.Resolve<Server>().Run();
+            return _diScope.Resolve<BapsServer>().Run();
         }
 
         private ILifetimeScope MakeContainer(ServerConfig config)

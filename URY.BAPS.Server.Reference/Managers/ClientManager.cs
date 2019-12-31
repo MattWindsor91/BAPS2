@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Net.Sockets;
 using System.Reactive.Linq;
 using System.Threading;
 using Microsoft.Extensions.Logging;
-using URY.BAPS.Common.Protocol.V2.MessageIo;
-using URY.BAPS.Common.Protocol.V2.PrimitiveIo;
+using URY.BAPS.Common.Infrastructure.Login;
 using URY.BAPS.Server.Io;
 using URY.BAPS.Server.Model;
+using URY.BAPS.Server.Protocol.V2.Io;
 
 namespace URY.BAPS.Server.Managers
 {
@@ -20,7 +19,7 @@ namespace URY.BAPS.Server.Managers
         /// </summary>
         private readonly ClientPool _clients = new ClientPool();
 
-        private readonly ConnectionFactory<ClientHandle> _clientFactory;
+        private readonly ILoginPerformer<ClientHandle> _clientFactory;
 
         private readonly CancellationTokenSource _cts = new CancellationTokenSource();
         private readonly ChannelSet _channels;
@@ -33,7 +32,7 @@ namespace URY.BAPS.Server.Managers
 
         private ILogger<ClientManager> Logger { get; }
 
-        public ClientManager(ILoggerFactory loggerFactory, TcpServer server, ChannelSet channels, ConnectionFactory<ClientHandle> clientFactory)
+        public ClientManager(ILoggerFactory loggerFactory, TcpServer server, ChannelSet channels, ILoginPerformer<ClientHandle> clientFactory)
         {
             _server = server;
             _channels = channels;
@@ -64,7 +63,10 @@ namespace URY.BAPS.Server.Managers
             ClientHandle? client = null;
             try
             {
-                client = _clientFactory.Build(e);
+                _clientFactory.Run(e);
+                if (!_clientFactory.HasConnection) return;
+                
+                client = _clientFactory.Connection;
                 _clients.Add(client);
                 client = null;
             } finally {
