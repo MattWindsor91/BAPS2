@@ -63,22 +63,22 @@ namespace URY.BAPS.Client.Cli
             return console;
         }
 
-        private static void ShowNestedErrorMessage(Exception exc)
+        private static void ShowNestedErrorMessage(Exception? exc)
         {
-            var inner = exc.InnerException;
+            var inner = exc?.InnerException;
             while (inner != null)
             {
                  switch (inner)
                  {
                      case ClientConfigException e:
-                         System.Console.Error.WriteLine("This is because of a problem getting the BAPS client's configuration.");
-                         System.Console.Error.WriteLine($"Reason: {e.Message}");
+                         Console.Error.WriteLine("This is because of a problem getting the BAPS client's configuration.");
+                         Console.Error.WriteLine($"Reason: {e.Message}");
                          return;
                  }               
-                (inner, exc) = (exc.InnerException, inner);
+                (inner, exc) = (exc?.InnerException, inner);
             }
             
-            Console.Error.WriteLine($"Reason: {exc.Message}");
+            Console.Error.WriteLine($"Reason: {exc?.Message ?? "(unknown)"}");
         }
 
 

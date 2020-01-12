@@ -95,7 +95,7 @@ namespace URY.BAPS.Client.Protocol.V2.Core
             _serverSelector.Run();
             if (!_serverSelector.HasConnection) return false;
 
-            _login.Run(_serverSelector.Connection);
+            _login.TryLogin(_serverSelector.Connection);
             if (!_login.HasConnection) return false;
             
             _connectionManager.Launch(_login.Connection);

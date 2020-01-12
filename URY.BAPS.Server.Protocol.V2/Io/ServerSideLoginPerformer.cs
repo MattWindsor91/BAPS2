@@ -14,18 +14,13 @@ namespace URY.BAPS.Server.Protocol.V2.Io
     public class ServerSideLoginPerformer : ILoginPerformer<ClientHandle>
     {
         private readonly Func<IPrimitiveSource, CancellationToken, CommandDecoder> _decoderFunc;
-        private ClientHandle? _connection;
-
-        public ClientHandle Connection => _connection ?? throw new InvalidOperationException("No connection yet available.");
-
-        public bool HasConnection => _connection != null;
 
         public ServerSideLoginPerformer(Func<IPrimitiveSource, CancellationToken, CommandDecoder> decoderFunc)
         {
             _decoderFunc = decoderFunc;
         }
         
-        public void Run(TcpClient client)
+        public bool TryLogin(TcpClient client, out ClientHandle handle)
         {
             IPrimitiveConnection? primConn = null;
             IMessageConnection? msgConn = null;
@@ -35,11 +30,12 @@ namespace URY.BAPS.Server.Protocol.V2.Io
                 primConn = new TcpPrimitiveConnection(client);
                 // TODO(@MattWindsor91): handshake etc.
                 msgConn = new MessageConnection(primConn, _decoderFunc);
-                _connection = new ClientHandle(msgConn);
+                handle = new ClientHandle(msgConn);
                 
                 // Prevent disposals in finally block below.
                 primConn = null;
                 msgConn = null;
+                return true;
             }
             finally
             {

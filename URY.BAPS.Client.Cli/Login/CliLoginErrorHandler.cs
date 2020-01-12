@@ -11,6 +11,7 @@ namespace URY.BAPS.Client.Cli.Login
     {
         public void Handle(ILoginResult result)
         {
+            if (result is null) return;
             System.Console.Error.WriteLine($"{BlameString(result)} error: {result.Description}");
         }
 

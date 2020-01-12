@@ -32,7 +32,6 @@ namespace URY.BAPS.Client.Cli.Login
             Response = new AuthPromptResponse(username, password);
         }
 
-
         private string GetUsername()
         {
             return GetText("Username", _config.DefaultUsername);
@@ -40,10 +39,7 @@ namespace URY.BAPS.Client.Cli.Login
 
         private static string GetPassword()
         {
-            Console.Write("Password: ");
-            var sb = GetPasswordWithoutPrompt();
-            Console.WriteLine();
-            return sb;
+            return ReadLine.ReadPassword("Password: ");
         }
 
         private static string GetPasswordWithoutPrompt()

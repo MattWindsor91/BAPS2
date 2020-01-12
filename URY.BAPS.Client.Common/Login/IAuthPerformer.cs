@@ -1,5 +1,6 @@
 ﻿using URY.BAPS.Client.Common.Login.LoginResult;
 using URY.BAPS.Client.Common.Login.Prompt;
+using URY.BAPS.Common.Infrastructure;
 
 namespace URY.BAPS.Client.Common.Login
 {
@@ -13,18 +14,26 @@ namespace URY.BAPS.Client.Common.Login
     /// <typeparam name="TAuthConn">
     ///     Type of authenticated (usually message-level) connection.
     /// </typeparam>
-    public interface IAuthPerformer<in TRawConn, out TAuthConn>
+    public interface IAuthPerformer<in TRawConn, out TAuthConn> where TAuthConn : IMessageConnection
     {
         /// <summary>
-        ///     The last authenticated connection.
+        ///     A fallback connection value for use when part of the login process fails.  This should have that
+        ///     <code>IsConnected == false</code>.
         /// </summary>
-        TAuthConn Connection { get; }
-
+        TAuthConn Fallback { get; }
+    
         /// <summary>
-        ///     The result of the last authentication attempt.
+        ///     Attempts to authenticate a connection.
         /// </summary>
-        ILoginResult Result { get; }
-        
-        void Attempt(TRawConn conn, IAuthPromptResponse promptResponse);
+        /// <param name="conn">The raw connection that will be promoted to an authenticated connection on success.</param>
+        /// <param name="promptResponse">The result of asking the user to authenticate.</param>
+        /// <returns>
+        ///     An authenticated connection object.
+        /// </returns>
+        /// <remarks>
+        ///     The caller should take ownership of any <typeparamref name="TAuthConn"/> returned, and take
+        ///     responsibility for disposing it if it is disposable.
+        /// </remarks>
+        TAuthConn Attempt(TRawConn conn, IAuthPromptResponse promptResponse);
     }
 }

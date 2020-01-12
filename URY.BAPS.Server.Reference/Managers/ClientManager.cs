@@ -63,7 +63,7 @@ namespace URY.BAPS.Server.Managers
             ClientHandle? client = null;
             try
             {
-                _clientFactory.Run(e);
+                _clientFactory.TryLogin(e);
                 if (!_clientFactory.HasConnection) return;
                 
                 client = _clientFactory.Connection;

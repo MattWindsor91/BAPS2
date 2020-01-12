@@ -41,18 +41,18 @@ namespace URY.BAPS.Client.Cli.ServerSelect
             while (!chosen)
             {
                 var rawLine = ReadLine.Read("Choice: ");
-                var line = rawLine.ToLowerInvariant().Trim();
+                var line = rawLine.ToUpperInvariant().Trim();
 
                 chosen = true;
                 switch (line)
                 {
-                    case "custom":
+                    case "CUSTOM":
                         PromptForCustomServer();
                         break;
-                    case "default" when DefaultRecord.IsValid:
+                    case "DEFAULT" when DefaultRecord.IsValid:
                         Selection = DefaultRecord;
                         break;
-                    case "quit":
+                    case "QUIT":
                         GaveUp = true;
                         break;
                     case var _ when TryParseServerIndex(line, out var pos):

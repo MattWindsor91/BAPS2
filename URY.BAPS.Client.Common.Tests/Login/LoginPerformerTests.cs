@@ -57,7 +57,7 @@ namespace URY.BAPS.Client.Common.Tests.Login
             
             // TcpClients without host/port in constructor don't make any connections, and the bits of the login
             // performer we're testing don't require one.
-            auth.Run(new TcpClient());
+            auth.TryLogin(new TcpClient());
             
             AssertOneErrorMatching("s|D|U|User quit the login prompt.");
         }
@@ -68,8 +68,8 @@ namespace URY.BAPS.Client.Common.Tests.Login
         public void TestUserFailure()
         {
             var auth =
- MakeLoginPerformer("foo", new AuthPromptResponse("foo", "bar", "localhost", 1350), new UserFailureLoginResult("Invalid password."));
-            _ = auth.Run();
+ MakeLoginPerformer("foo", new AuthPromptResponse("foo", "bar", "localhost", 1350), new UserLoginException("Invalid password."));
+            _ = auth.TryLogin();
             AssertOneErrorMatching("s|d|U|Invalid password.");
         }
 #endif

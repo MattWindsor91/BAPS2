@@ -8,23 +8,20 @@ namespace URY.BAPS.Common.Infrastructure.Login
     ///         'Login', in this case, is a catch-all term for the entire process from starting a TCP connection
     ///         to bringing up a correctly authenticated message-level wrapper over it.
     /// </summary>
-    public interface ILoginPerformer<out TConn>
+    public interface ILoginPerformer<TConn>
     {
         /// <summary>
-        ///     The most recently authenticated connection.
+        ///     Tries to construct an authenticated <see cref="TConn" />.
         /// </summary>
-        public TConn Connection { get; }
- 
-        /// <summary>
-        ///     Whether the last call to <see cref="Run"/> was successful.
-        /// </summary>
-        public bool HasConnection { get; }
-
-        /// <summary>
-        ///     Tries to construct an authenticated <see cref="TAuthConn" />.  If successful,
-        ///     <see cref="HasConnection"/> will be <c>true</c>, and <see cref="Connection"/> will point to the
-        ///     authenticated connection.
-        /// </summary>
-        public void Run(TcpClient client);
+        /// <param name="client">
+        ///     The incoming TCP client (must be non-null, and generally should be pre-connected).
+        /// </param>
+        /// <param name="conn">
+        ///     If the login is successful, this variable receives the new connection.
+        /// </param>
+        /// <returns>
+        ///     Whether the login was successful.
+        /// </returns>
+        public bool TryLogin(TcpClient client, out TConn conn);
     }
 }

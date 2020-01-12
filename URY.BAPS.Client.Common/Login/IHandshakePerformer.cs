@@ -5,8 +5,6 @@ namespace URY.BAPS.Client.Common.Login
 {
     public interface IHandshakePerformer<out T>
     {
-        T Result { get; }
-        
-        ILoginResult DoHandshake(TcpClient client);
+        T DoHandshake(TcpClient client);
     }
 }

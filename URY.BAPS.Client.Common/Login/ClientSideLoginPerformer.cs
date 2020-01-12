@@ -2,6 +2,7 @@
 using System.Net.Sockets;
 using URY.BAPS.Client.Common.Login.LoginResult;
 using URY.BAPS.Client.Common.Login.Prompt;
+using URY.BAPS.Common.Infrastructure;
 using URY.BAPS.Common.Infrastructure.Login;
 
 namespace URY.BAPS.Client.Common.Login
@@ -33,13 +34,15 @@ namespace URY.BAPS.Client.Common.Login
     /// <typeparam name="TAuthConn">
     ///     Type of authenticated (often message-level) connections.
     /// </typeparam>
-    public class ClientSideLoginPerformer<TRawConn, TAuthConn> : ILoginPerformer<TAuthConn>
+    public class ClientSideLoginPerformer<TRawConn, TAuthConn> : ILoginPerformer<TAuthConn> where TAuthConn : IMessageConnection
     {
         private readonly IHandshakePerformer<TRawConn> _handshake;
         private readonly IAuthPrompter _prompter;
         private readonly ILoginErrorHandler _errorHandler;
         private readonly IAuthPerformer<TRawConn, TAuthConn> _auth;
 
+        public bool KeepTrying { get; } = true;
+        
         /// <summary>
         ///     Constructs a <see cref="ClientSideLoginPerformer{TRawConn,TAuthConn}" />.
         /// </summary>
@@ -67,68 +70,67 @@ namespace URY.BAPS.Client.Common.Login
             _errorHandler = errorHandler ?? throw new ArgumentNullException(nameof(errorHandler));
             _auth = auth ?? throw new ArgumentNullException(nameof(auth));
         }
-
-        /// <summary>
-        ///     The most recently authenticated connection.
-        /// </summary>
-        public TAuthConn Connection => _auth.Connection;
-
-        /// <summary>
-        ///     Whether the last call to <see cref="Run"/> was successful.
-        /// </summary>
-        public bool HasConnection { get; private set; }
         
-        /// <summary>
-        ///     Tries to construct an authenticated <see cref="TAuthConn" />.  If successful,
-        ///     <see cref="HasConnection"/> will be <c>true</c>, and <see cref="Connection"/> will point to the
-        ///     authenticated connection.
-        /// </summary>
-        public void Run(TcpClient client)
+        public bool TryLogin(TcpClient? client, out TAuthConn conn)
         {
-            HasConnection = false;
-            
-            var result = _handshake.DoHandshake(client);
-            if (result.IsSuccess)
+            if (client is null) throw new ArgumentNullException(nameof(client));
+            try
             {
-                LoginLoop(_handshake.Result);
+                var rawConn = _handshake.DoHandshake(client);
+                
+                // If we got here, `rawConn` now owns `client`, and so we shouldn't close it.
+                client = null;
+                
+                return LoginLoop(rawConn, out conn);
             }
-            else
+            catch (LoginException exception)
             {
-                HandleError(result);
+                HandleError(exception);
+                conn = default;
+                return false;
+            }
+            finally
+            {
+                client?.Close();
             }
         }
-        
-        private void LoginLoop(TRawConn conn)
+
+        private bool LoginLoop(TRawConn conn, out TAuthConn outConn)
         {
-            var shouldQuit = false;
-            while (!shouldQuit) shouldQuit = AttemptAndHandleErrors(conn);
-        }
-        
-        private bool AttemptAndHandleErrors(TRawConn conn)
-        {
-            var result = Attempt(conn);
+            do
+            {
+                try
+                {
+                    if (Attempt(conn, out outConn)) return true;
+                }
+                catch (LoginException e)
+                {
+                    HandleError(e);
+                    if (e.IsFatal) break;
+                }
+            } while (KeepTrying);
             
-            HasConnection = result.IsSuccess;
-            if (!HasConnection) HandleError(result);
-            
-            return result.IsFatal;
+            outConn = default;
+            return false;
         }
 
-        private ILoginResult Attempt(TRawConn conn)
+        private void HandleError(LoginException exception)
+        {
+            _errorHandler.Handle(exception);
+        }
+
+        private bool Attempt(TRawConn conn, out TAuthConn outConn)
         {
             _prompter.Prompt();
-            
             var response = _prompter.Response;
-            if (!response.HasCredentials) return new QuitLoginResult();
+            if (!response.HasCredentials)
+            {
+                outConn = default;
+                return false;
+            }
             
-            _auth.Attempt(conn, response);
-            return _auth.Result;
+            outConn = _auth.Attempt(conn, response);
+            return outConn.IsConnected;
         }
-
-        private void HandleError(ILoginResult result)
-        {
-            _errorHandler.Handle(result);
-        }
-
     }
 }

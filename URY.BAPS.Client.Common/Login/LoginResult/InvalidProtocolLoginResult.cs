@@ -4,18 +4,13 @@
     ///     Represents a login failure due to a mismatch in the way that the
     ///     BAPS client and server are talking to each other.
     /// </summary>
-    public class InvalidProtocolLoginResult : ILoginResult
+    public class InvalidProtocolLoginResult : LoginException
     {
-        private readonly string _where;
-
-        public InvalidProtocolLoginResult(string where)
+        public InvalidProtocolLoginResult(string where) : base($"Invalid login protocol at {where}")
         {
-            _where = where;
         }
 
-        public bool IsSuccess => false;
-        public bool IsFatal => true;
-        public bool IsUserFault => false;
-        public string Description => $"Invalid login protocol at {_where}.";
+        public override bool IsFatal => true;
+        public override bool IsUserFault => false;
     }
 }

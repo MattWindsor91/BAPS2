@@ -12,6 +12,6 @@ namespace URY.BAPS.Client.Common.Login
     /// </summary>
     public interface ILoginErrorHandler
     {
-        void Handle(ILoginResult result);
+        void Handle(LoginException result);
     }
 }

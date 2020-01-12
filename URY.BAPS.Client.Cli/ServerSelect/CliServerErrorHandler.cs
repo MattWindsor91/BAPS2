@@ -21,6 +21,7 @@ namespace URY.BAPS.Client.Cli.ServerSelect
 
         public void HandleSocketException(SocketException exc)
         {
+            if (exc is null) return;
             Console.Error.WriteLine($"Couldn't connect to server: {exc.Message}");
         }
     }
